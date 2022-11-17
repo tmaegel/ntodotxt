@@ -11,7 +11,7 @@ test:
   stage: test
   image: "cirrusci/flutter:stable"
   script:
-    - flutter test --machine --coverage
+    - flutter test --coverage
     - lcov --summary coverage/lcov.info
     - genhtml coverage/lcov.info --output=coverage
   coverage: '/lines\.*: \d+\.\d+\%/'
@@ -19,5 +19,3 @@ test:
     name: coverage
     paths:
       - $CI_PROJECT_DIR/coverage
-    reports:
-      junit: report.xml
