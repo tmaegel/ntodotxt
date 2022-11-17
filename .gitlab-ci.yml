@@ -7,24 +7,9 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Flutter.gitlab-ci.yml
 
-code_quality:
-  stage: test
-  image: "cirrusci/flutter:stable"
-  before_script:
-    - pub global activate dart_code_metrics
-    - export PATH="$PATH:$HOME/.pub-cache/bin"
-  script:
-    - metrics lib -r codeclimate  > gl-code-quality-report.json
-  artifacts:
-    reports:
-      codequality: gl-code-quality-report.json
-
 test:
   stage: test
   image: "cirrusci/flutter:stable"
-  before_script:
-    - pub global activate junitreport
-    - export PATH="$PATH:$HOME/.pub-cache/bin"
   script:
     - flutter test --machine --coverage | tojunit -o report.xml
     - lcov --summary coverage/lcov.info
@@ -36,8 +21,3 @@ test:
       - $CI_PROJECT_DIR/coverage
     reports:
       junit: report.xml
-
-deploy:
-  stage: deploy
-  script: echo "Define your deployment script!"
-  environment: production
