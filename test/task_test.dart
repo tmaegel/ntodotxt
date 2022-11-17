@@ -100,15 +100,13 @@ void main() {
 
   group("set: priority", () {
     test("Priority of task is set", () {
-      const String taskRaw = "Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("Call Mom");
       task.priority = "A";
       expect(task.priority, "A");
-      expect(task.raw, "(A) $taskRaw");
+      expect(task.raw, "(A) Call Mom");
     });
     test("Priority of task is change", () {
-      const String taskRaw = "(A) Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("(A) Call Mom");
       task.priority = "B";
       expect(task.priority, "B");
       expect(task.raw, "(B) Call Mom");
@@ -117,153 +115,159 @@ void main() {
 
   group("get: completion date", () {
     test("Completion date is set", () {
-      const String taskRaw = "x 2022-11-16 (A) 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("x 2022-11-16 (A) 2022-11-01 Call Mom");
       expect(task.completionDate, DateTime.parse("2022-11-16"));
     });
     test("Completion date is set (without priority)", () {
-      const String taskRaw = "x 2022-11-16 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("x 2022-11-16 2022-11-01 Call Mom");
       expect(task.completionDate, DateTime.parse("2022-11-16"));
     });
     test("Completion date is set (without one date in description)", () {
-      const String taskRaw = "x 2022-11-16 2022-11-01 2022-08-10 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("x 2022-11-16 2022-11-01 2022-08-10 Call Mom");
       expect(task.completionDate, DateTime.parse("2022-11-16"));
     });
     test("Completion date is set (without one date in description)", () {
-      const String taskRaw =
-          "x 2022-11-16 2022-11-01 2022-08-10 2022-08-09 Call Mom";
-      final task = Task(taskRaw);
+      final task =
+          Task("x 2022-11-16 2022-11-01 2022-08-10 2022-08-09 Call Mom");
       expect(task.completionDate, DateTime.parse("2022-11-16"));
     });
     test("Completion date is unset if status is missing (incompleted task)",
         () {
-      const String taskRaw = "(A) 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("(A) 2022-11-01 Call Mom");
       expect(task.completionDate, null);
     });
     test(
         "Completion date throw exception if status is missing (status is mandatory)",
         () {
-      const String taskRaw = "2022-11-16 (A) 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-16 (A) 2022-11-01 Call Mom");
       expect(() => task.completionDate, throwsA(isA<FormatException>()));
     });
     test(
         "Completion date thow exception if creation date is missing (creation date is mandatory)",
         () {
-      const String taskRaw = "x 2022-11-16 (A) Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("x 2022-11-16 (A) Call Mom");
       expect(() => task.completionDate, throwsA(isA<FormatException>()));
     });
   });
 
   group("get: creation date", () {
     test("Creation date is set", () {
-      const String taskRaw = "2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom");
       expect(task.creationDate, DateTime.parse("2022-11-01"));
     });
     test("Creation date is set (with priority)", () {
-      const String taskRaw = "(A) 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("(A) 2022-11-01 Call Mom");
       expect(task.creationDate, DateTime.parse("2022-11-01"));
     });
     test("Creation date is set (with status, priority & completion date)", () {
-      const String taskRaw = "x 2022-11-16 (A) 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("x 2022-11-16 (A) 2022-11-01 Call Mom");
       expect(task.creationDate, DateTime.parse("2022-11-01"));
     });
     test("Creation date is set (with one date in description)", () {
-      const String taskRaw = "(A) 2022-11-01 2022-08-10 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("(A) 2022-11-01 2022-08-10 Call Mom");
       expect(task.creationDate, DateTime.parse("2022-11-01"));
     });
     test("Creation date is set (with two dates in description)", () {
-      const String taskRaw = "(A) 2022-11-01 2022-08-10 2022-08-09 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("(A) 2022-11-01 2022-08-10 2022-08-09 Call Mom");
       expect(task.creationDate, DateTime.parse("2022-11-01"));
     });
     test("Creation date is unset", () {
-      const String taskRaw = "Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("Call Mom");
       expect(task.creationDate, null);
     });
     test("Creation date is unset (with priority)", () {
-      const String taskRaw = "(A) Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("(A) Call Mom");
       expect(task.creationDate, null);
     });
     test(
         "Creation date throw exception if creation date is missing (creation date is mandatory)",
         () {
-      const String taskRaw = "x 2022-11-16 (A) Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("x 2022-11-16 (A) Call Mom");
       expect(() => task.creationDate, throwsA(isA<FormatException>()));
     });
     test(
         "Creation date throw exception if status is missing (status is mandatory)",
         () {
-      const String taskRaw = "2022-11-16 (A) 2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-16 (A) 2022-11-01 Call Mom");
       expect(() => task.creationDate, throwsA(isA<FormatException>()));
     });
   });
 
   group("get: project", () {
     test("No project is set", () {
-      const String taskRaw = "2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom");
       expect(task.projectTags, []);
     });
     test("Single project is set", () {
-      const String taskRaw = "2022-11-01 Call Mom +home";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom +home");
       expect(task.projectTags, ["home"]);
     });
-    test("Multiple projects is set", () {
-      const String taskRaw = "2022-11-01 Call Mom +home +phone";
-      final task = Task(taskRaw);
+    test("Multiple projects are set", () {
+      final task = Task("2022-11-01 Call Mom +home +phone");
       expect(task.projectTags, ["home", "phone"]);
     });
-    test("Multiple projects is set (not in row)", () {
-      const String taskRaw = "2022-11-01 Call +home Mom +phone";
-      final task = Task(taskRaw);
+    test("Multiple projects are set (not in row)", () {
+      final task = Task("2022-11-01 Call +home Mom +phone");
       expect(task.projectTags, ["home", "phone"]);
     });
     test("Project with special name is set", () {
-      const String taskRaw = "2022-11-01 Call Mom +home-phone+_123";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom +home-phone+_123");
       expect(task.projectTags, ["home-phone+_123"]);
     });
   });
 
   group("get: context", () {
     test("No context is set", () {
-      const String taskRaw = "2022-11-01 Call Mom";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom");
       expect(task.contextTags, []);
     });
     test("Single context is set", () {
-      const String taskRaw = "2022-11-01 Call Mom @home";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom @home");
       expect(task.contextTags, ["home"]);
     });
-    test("Multiple contexts is set", () {
-      const String taskRaw = "2022-11-01 Call Mom @home @phone";
-      final task = Task(taskRaw);
+    test("Multiple contexts are set", () {
+      final task = Task("2022-11-01 Call Mom @home @phone");
       expect(task.contextTags, ["home", "phone"]);
     });
-    test("Multiple contexts is set (not in row)", () {
-      const String taskRaw = "2022-11-01 Call @home Mom @phone";
-      final task = Task(taskRaw);
+    test("Multiple contexts are set (not in row)", () {
+      final task = Task("2022-11-01 Call @home Mom @phone");
       expect(task.contextTags, ["home", "phone"]);
     });
     test("Context with special name is set", () {
-      const String taskRaw = "2022-11-01 Call Mom @home-phone@_123";
-      final task = Task(taskRaw);
+      final task = Task("2022-11-01 Call Mom @home-phone@_123");
       expect(task.contextTags, ["home-phone@_123"]);
+    });
+  });
+
+  group("get: key values", () {
+    test("No key value is set", () {
+      final task = Task("2022-11-01 Call Mom");
+      expect(task.keyValueTags, {});
+    });
+    test("Single key value is set", () {
+      const String taskRaw = "2022-11-01 Call Mom key:value";
+      final task = Task(taskRaw);
+      expect(task.keyValueTags, {"key": "value"});
+    });
+    test("Multiple key values are set", () {
+      const String taskRaw = "2022-11-01 Call Mom key1:value1 key2:value2";
+      final task = Task(taskRaw);
+      expect(task.keyValueTags, {"key1": "value1", "key2": "value2"});
+    });
+    test("Multiple key values are set (not in row)", () {
+      const String taskRaw = "2022-11-01 Call key1:value1 Mom key2:value2";
+      final task = Task(taskRaw);
+      expect(task.keyValueTags, {"key1": "value1", "key2": "value2"});
+    });
+    test("Key value with special name is set", () {
+      const String taskRaw = "2022-11-01 Call Mom key-@_123:value_@123";
+      final task = Task(taskRaw);
+      expect(task.keyValueTags, {"key-@_123": "value_@123"});
+    });
+    test("Invalud key value is set", () {
+      const String taskRaw = "2022-11-01 Call Mom key1:value1:invalid";
+      final task = Task(taskRaw);
+      expect(task.keyValueTags, {});
     });
   });
 }

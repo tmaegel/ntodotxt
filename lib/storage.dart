@@ -65,7 +65,7 @@ class Task {
   }
 
   String get priority {
-    final matches = RegExp(r'^\((?<priority>[A-Z])\) .*$').firstMatch(task);
+    final matches = RegExp(r'^(\((?<priority>[A-Z])\) )?.*$').firstMatch(task);
     return matches?.namedGroup("priority") ?? ""; // Priority is optional.
   }
 
@@ -106,6 +106,26 @@ class Task {
     }
 
     return contexts;
+  }
+
+  void addKeyValueTag() {}
+  void removeKeyValueTag() {}
+  void setKeyValueTags() {}
+
+  Map<String, String> get keyValueTags {
+    Map<String, String> keyValues = {};
+    // Any non-whitespace character is allowed.
+    final matches = RegExp(r'( (?<keyvalue>\S+:\S+))').allMatches(task);
+    for (var keyValue in matches) {
+      final tag = keyValue.namedGroup("keyvalue");
+      if (tag != null) {
+        final splittedTag = tag.split(":");
+        if (splittedTag.length > 2) continue;
+        keyValues[splittedTag[0]] = splittedTag[1];
+      }
+    }
+
+    return keyValues;
   }
 
   DateTime? get completionDate {
@@ -171,11 +191,6 @@ class Task {
 
     return creationDate;
   }
-
-  void addKeyValueTag() {}
-  void removeKeyValueTag() {}
-  void getKeyValueTags() {}
-  void setKeyValueTags() {}
 }
 
 class NotesStorage {
