@@ -26,50 +26,50 @@ void main() {
     });
   });
 
-  // group("set: status", () {
-  //   test("Status of task is set as completed", () {
-  //     const String taskRaw = "Call Mom";
-  //     final task = Task(taskRaw);
-  //     task.status = true;
-  //     expect(task.status, true);
-  //     expect(task.raw, "x Call Mom");
-  //   });
-  //   test("Status of task is set as incompleted", () {
-  //     const String taskRaw = "x Call Mom";
-  //     final task = Task(taskRaw);
-  //     task.status = false;
-  //     expect(task.status, false);
-  //     expect(task.raw, "Call Mom");
-  //   });
-  //   test("Status of task is set as completed when already completed", () {
-  //     const String taskRaw = "x Call Mom";
-  //     final task = Task(taskRaw);
-  //     task.status = true;
-  //     expect(task.status, true);
-  //     expect(task.raw, taskRaw);
-  //   });
-  //   test("Status of task is set as incompleted when already incompleted", () {
-  //     const String taskRaw = "Call Mom";
-  //     final task = Task(taskRaw);
-  //     task.status = false;
-  //     expect(task.status, false);
-  //     expect(task.raw, taskRaw);
-  //   });
-  //   test("Status of task with priority is set as completed", () {
-  //     const String taskRaw = "(A) Call Mom";
-  //     final task = Task(taskRaw);
-  //     task.status = true;
-  //     expect(task.status, true);
-  //     expect(task.raw, "x Call Mom pri:A");
-  //   });
-  //   test("Status of task with priority is set as incompleted", () {
-  //     const String taskRaw = "x Call Mom pri:A";
-  //     final task = Task(taskRaw);
-  //     task.status = false;
-  //     expect(task.status, false);
-  //     expect(task.raw, "(A) Call Mom");
-  //   });
-  // });
+  group("set: status", () {
+    test("Status of task is set as completed", () {
+      const String taskRaw = "Call Mom";
+      final task = Task(taskRaw);
+      task.status = true;
+      expect(task.status, true);
+      expect(task.raw, "x Call Mom");
+    });
+    test("Status of task is set as incompleted", () {
+      const String taskRaw = "x Call Mom";
+      final task = Task(taskRaw);
+      task.status = false;
+      expect(task.status, false);
+      expect(task.raw, "Call Mom");
+    });
+    test("Status of task is set as completed when already completed", () {
+      const String taskRaw = "x Call Mom";
+      final task = Task(taskRaw);
+      task.status = true;
+      expect(task.status, true);
+      expect(task.raw, taskRaw);
+    });
+    test("Status of task is set as incompleted when already incompleted", () {
+      const String taskRaw = "Call Mom";
+      final task = Task(taskRaw);
+      task.status = false;
+      expect(task.status, false);
+      expect(task.raw, taskRaw);
+    });
+    test("Status of task with priority is set as completed", () {
+      const String taskRaw = "(A) Call Mom";
+      final task = Task(taskRaw);
+      task.status = true;
+      expect(task.status, true);
+      expect(task.raw, "x Call Mom pri:A");
+    });
+    test("Status of task with priority is set as incompleted", () {
+      const String taskRaw = "x Call Mom pri:A";
+      final task = Task(taskRaw);
+      task.status = false;
+      expect(task.status, false);
+      expect(task.raw, "(A) Call Mom");
+    });
+  });
 
   group("get: priority", () {
     test("Task with priority", () {
@@ -239,7 +239,7 @@ void main() {
     });
   });
 
-  group("get: key values", () {
+  group("get: key value tags", () {
     test("No key value is set", () {
       final task = Task("2022-11-01 Call Mom");
       expect(task.keyValueTags, {});
@@ -268,6 +268,60 @@ void main() {
       const String taskRaw = "2022-11-01 Call Mom key1:value1:invalid";
       final task = Task(taskRaw);
       expect(task.keyValueTags, {});
+    });
+  });
+
+  group("set: key value tags", () {
+    test("Set key value tags when no tags exist before.", () {
+      final task = Task("Call Mom");
+      task.keyValueTags = {"a": "1", "b": "2"};
+      expect(task.raw, "Call Mom a:1 b:2");
+    });
+    test("Set key value tags when tags exist before.", () {
+      final task = Task("Call Mom c:3");
+      task.keyValueTags = {"a": "1", "b": "2"};
+      expect(task.raw, "Call Mom a:1 b:2");
+    });
+    test("Set key value tags when tags exist before with differ order.", () {
+      final task = Task("Call c:3 Mom");
+      task.keyValueTags = {"a": "1", "b": "2"};
+      expect(task.raw, "Call Mom a:1 b:2");
+    });
+  });
+
+  group("add: key value tags", () {
+    test("Add key value tag.", () {
+      final task = Task("Call Mom");
+      task.addKeyValueTag("a", "1");
+      expect(task.raw, "Call Mom a:1");
+    });
+    test("Add key value tag if some already exist.", () {
+      final task = Task("Call Mom b:2");
+      task.addKeyValueTag("a", "1");
+      expect(task.raw, "Call Mom b:2 a:1");
+    });
+    test("Add key value tag if it already exist.", () {
+      final task = Task("Call Mom a:1 b:2");
+      task.addKeyValueTag("a", "1");
+      expect(task.raw, "Call Mom a:1 b:2");
+    });
+  });
+
+  group("Remove: key value tags", () {
+    test("Remove key value tag.", () {
+      final task = Task("Call Mom a:1");
+      task.removeKeyValueTag("a");
+      expect(task.raw, "Call Mom");
+    });
+    test("Remove non-existing key value tag.", () {
+      final task = Task("Call Mom");
+      task.removeKeyValueTag("a");
+      expect(task.raw, "Call Mom");
+    });
+    test("Remove key value tag if some exist.", () {
+      final task = Task("Call Mom a:1 c:3 b:2");
+      task.removeKeyValueTag("a");
+      expect(task.raw, "Call Mom c:3 b:2");
     });
   });
 }

@@ -31,28 +31,45 @@ class Task {
     return task;
   }
 
+  void trimWhitespaces() {
+    // Trim leading and trailing whitespaces before.
+    task = task.trim().replaceAllMapped(RegExp(r'\b\s{2,}\b'), (match) {
+      return " ";
+    });
+  }
+
   bool get status {
     return RegExp(r'^x .*$').hasMatch(task);
   }
 
-  set status(bool status) {
+  set status(bool newStatus) {
     final matches =
         RegExp(r'^(?<status>x )?(\((?<priority>[A-Z])\) )?(?<rest>.*)$')
             .firstMatch(task);
     final String priority = matches?.namedGroup("priority") ?? "";
     final String rest = matches?.namedGroup("rest") ?? "";
-    if (status) {
+    if (newStatus) {
       // Mark task as completed.
-      // Remove priority here and save as key-value!
       task = "x $rest";
+      // Remove priority here and save as key-value!
       if (priority.isNotEmpty) {
-        task = "$task pri:$priority";
+        addKeyValueTag("pri", priority);
       }
     } else {
       // Mark task as incomplete.
-      // @todo: Restore priority here!
-      task = rest;
+      task = "$rest";
+      // And restore priority if exist!
+      final keyValueTags = this.keyValueTags;
+      removeKeyValueTag("pri");
+      if (keyValueTags.containsKey('pri')) {
+        this.priority = keyValueTags["pri"] ?? "";
+      }
     }
+  }
+
+  String get priority {
+    final matches = RegExp(r'^(\((?<priority>[A-Z])\) )?.*$').firstMatch(task);
+    return matches?.namedGroup("priority") ?? ""; // Priority is optional.
   }
 
   set priority(String priority) {
@@ -64,17 +81,8 @@ class Task {
     task = '$statusMatch($priority) $restMatch';
   }
 
-  String get priority {
-    final matches = RegExp(r'^(\((?<priority>[A-Z])\) )?.*$').firstMatch(task);
-    return matches?.namedGroup("priority") ?? ""; // Priority is optional.
-  }
-
   // void get description() {}
   // void set description(String description) {}
-
-  void addProjectTag() {}
-  void removeProjectTag() {}
-  void setProjectTags() {}
 
   List<String> get projectTags {
     List<String> projects = [];
@@ -90,9 +98,9 @@ class Task {
     return projects;
   }
 
-  void addContextTag() {}
-  void removeContextTag() {}
-  void setContextTags() {}
+  void addProjectTag() {}
+  void removeProjectTag() {}
+  void setProjectTags() {}
 
   List<String> get contextTags {
     List<String> contexts = [];
@@ -108,9 +116,9 @@ class Task {
     return contexts;
   }
 
-  void addKeyValueTag() {}
-  void removeKeyValueTag() {}
-  void setKeyValueTags() {}
+  void addContextTag() {}
+  void removeContextTag() {}
+  void setContextTags() {}
 
   Map<String, String> get keyValueTags {
     Map<String, String> keyValues = {};
@@ -126,6 +134,31 @@ class Task {
     }
 
     return keyValues;
+  }
+
+  set keyValueTags(Map<String, String> newKeyValueTags) {
+    // Remove all key value tags.
+    for (final tag in keyValueTags.entries) {
+      task = task.replaceAll("${tag.key}:${tag.value}", "");
+    }
+    // Set new key value tags.
+    for (final tag in newKeyValueTags.entries) {
+      task = "$task ${tag.key}:${tag.value}";
+    }
+    trimWhitespaces();
+  }
+
+  void addKeyValueTag(String key, String value) {
+    // Add new key value tag if it does not already exist.
+    if (!keyValueTags.containsKey(key)) {
+      task = "$task $key:$value";
+    }
+  }
+
+  void removeKeyValueTag(String key) {
+    final keyValueTags = this.keyValueTags;
+    keyValueTags.remove(key);
+    this.keyValueTags = keyValueTags;
   }
 
   DateTime? get completionDate {
