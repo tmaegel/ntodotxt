@@ -57,7 +57,7 @@ class Task {
       }
     } else {
       // Mark task as incomplete.
-      task = "$rest";
+      task = rest;
       // And restore priority if exist!
       final keyValueTags = this.keyValueTags;
       removeKeyValueTag("pri");
@@ -226,23 +226,25 @@ class Task {
   }
 }
 
-class NotesStorage {
+class TasksFile {
+  String todoFile = "todo.txt";
+
   // Find the path to the documents directory.
-  Future<String> get _localPath async {
+  Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
     return directory.path;
   }
 
   // Create a reference to the file’s full location.
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/counter.txt');
+  Future<File> get localFile async {
+    final path = await localPath;
+    return File('$path/$todoFile');
   }
 
-  Future<int> readCounter() async {
+  Future<int> read() async {
     try {
-      final file = await _localFile;
+      final file = await localFile;
 
       // Read the file
       final contents = await file.readAsString();
@@ -254,10 +256,9 @@ class NotesStorage {
     }
   }
 
-  Future<File> writeCounter(int counter) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString('$counter');
+  // Write task file.
+  void write(List<String> tasks) async {
+    final file = await localFile;
+    file.writeAsStringSync(tasks.join('\n'));
   }
 }
