@@ -226,8 +226,9 @@ class Task {
   }
 }
 
-class TasksFile {
-  String todoFile = "todo.txt";
+class Tasks {
+  String todoFile;
+  Tasks(this.todoFile);
 
   // Find the path to the documents directory.
   Future<String> get localPath async {
@@ -239,21 +240,20 @@ class TasksFile {
   // Create a reference to the file’s full location.
   Future<File> get localFile async {
     final path = await localPath;
+
     return File('$path/$todoFile');
   }
 
-  Future<int> read() async {
-    try {
-      final file = await localFile;
-
-      // Read the file
-      final contents = await file.readAsString();
-
-      return int.parse(contents);
-    } catch (e) {
-      // If encountering an error, return 0
-      return 0;
+  // Read task file.
+  Future<List<Task>> read() async {
+    final List<Task> tasks = [];
+    final file = await localFile;
+    final lines = file.readAsLinesSync();
+    for (var line in lines) {
+      tasks.add(Task(line));
     }
+
+    return tasks;
   }
 
   // Write task file.
