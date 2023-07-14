@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todotxt/presentation/layout/adaptive_layout.dart';
-// import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todotxt/login/login.dart';
+import 'package:todotxt/presentation/router/router.dart';
 
 void main() => runApp(const App());
 
@@ -9,62 +10,22 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // debugPaintSizeEnabled = true;
-    return MaterialApp(
-      title: 'Flutter layout demo',
-      debugShowCheckedModeBanner: false, // Remove the debug banner
-      // Light theme settings.
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      // Dark theme settings.
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-      /*
-       * ThemeMode.system to follow system theme,
-       * ThemeMode.light for light theme,
-       * ThemeMode.dark for dark theme
-       */
-      themeMode: ThemeMode.light,
-      home: const AdaptiveLayoutBuild(),
+    return BlocProvider(
+      create: (context) => LoginCubit(),
+      child: Builder(builder: (context) {
+        return MaterialApp.router(
+          title: 'Flutter layout demo',
+          debugShowCheckedModeBanner: false, // Remove the debug banner
+          // Light theme settings.
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+            brightness: Brightness.light,
+            useMaterial3: true,
+          ),
+          themeMode: ThemeMode.light,
+          routerConfig: AppRouter(context.read<LoginCubit>()).router,
+        );
+      }),
     );
   }
-
-  // Widget _buildList() {
-  //   return ListView(
-  //     children: [
-  //       _todoTile(title: "Call mom", priority: "A"),
-  //       const Divider(),
-  //       _todoTile(title: "Go to school", subtitle: "@school", priority: "A"),
-  //       const Divider(),
-  //       _todoTile(title: "Do nothing", subtitle: "@home +test", priority: "B"),
-  //     ],
-  //   );
-  // }
-  //
-  // ListTile _todoTile(
-  //     {required String title, required String priority, String? subtitle}) {
-  //   return ListTile(
-  //     title: Text(title,
-  //         style: const TextStyle(
-  //           fontWeight: FontWeight.w500,
-  //           fontSize: 20,
-  //         )),
-  //     subtitle: subtitle != null ? Text(subtitle) : null,
-  //     leading: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: <Widget>[
-  //         Text(priority,
-  //             style: const TextStyle(
-  //               fontWeight: FontWeight.w500,
-  //               fontSize: 20,
-  //             )),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

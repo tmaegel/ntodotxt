@@ -1,126 +1,82 @@
 import 'package:flutter/material.dart';
-
-import 'package:todotxt/presentation/widgets/app_bar.dart';
+import 'package:go_router/go_router.dart';
+import 'package:todotxt/constants/screen.dart';
 import 'package:todotxt/presentation/widgets/navigation_rail.dart';
 
-class AdaptiveLayoutBuild extends StatelessWidget {
-  const AdaptiveLayoutBuild({super.key});
+class AdaptiveLayout extends StatelessWidget {
+  // The widget to display in the body of the Scaffold.
+  final Widget child;
+
+  const AdaptiveLayout({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        switch (constraints.maxWidth) {
-          case <= 500:
-            return const MobileLayout();
-          case <= 1100:
-            return const TabletLayout();
-          default:
-            return const DesktopLayout();
-        }
-      },
-    );
+    // final double screenWidth = MediaQuery.of(context).size.width;
+    //
+    // switch (screenWidth) {
+    //   case < maxScreenWidthCompact:
+    //     return MobileLayout(child: child);
+    //   case < maxScreenWidthMedium:
+    //     return TabletLayout(child: child);
+    //   default:
+    //     return DesktopLayout(child: child);
+    // }
+    return MobileLayout(child: child);
   }
 }
 
 class MobileLayout extends StatelessWidget {
-  const MobileLayout({super.key});
+  // The widget to display in the body of the Scaffold.
+  final Widget child;
+
+  const MobileLayout({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
-      body: Column(children: [
-        Expanded(
-          child: Container(
-              color: Colors.blue,
-              margin: const EdgeInsets.all(10),
-              child: const Center(child: Text("test"))),
-        ),
-        Expanded(
-          child: Container(
-              color: Colors.blue,
-              margin: const EdgeInsets.all(10),
-              child: const Center(child: Text("test"))),
-        ),
-        Expanded(
-          child: Container(
-              color: Colors.blue,
-              margin: const EdgeInsets.all(10),
-              child: const Center(child: Text("test"))),
-        ),
-      ]),
-      bottomNavigationBar: _buildBottomAppBar(),
-      floatingActionButton: _buildFloatingActionButton(),
+      body: child,
+      bottomNavigationBar: const BottomAppBar(child: null),
+      floatingActionButton: _buildFloatingActionButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
   }
 
-  Widget _buildFloatingActionButton() {
-    return const FloatingActionButton(
-      onPressed: null,
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        context.push(context.namedLocation('todo-add'));
+      },
       tooltip: 'Add todo',
       elevation: 0.0,
-      child: Icon(Icons.add),
-    );
-  }
-
-  Widget _buildBottomAppBar() {
-    return BottomAppBar(
-      child: Row(
-        children: <Widget>[
-          IconButton(
-            tooltip: 'Settings',
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
-          IconButton(
-            tooltip: 'Favorite',
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () {},
-          ),
-          IconButton(
-            tooltip: 'Search',
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          ),
-        ],
-      ),
+      focusElevation: 0.0,
+      hoverElevation: 0.0,
+      child: const Icon(Icons.add),
     );
   }
 }
 
 class TabletLayout extends StatelessWidget {
-  const TabletLayout({super.key});
+  // The widget to display in the body of the Scaffold.
+  final Widget child;
+
+  const TabletLayout({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
       body: Row(
         children: [
           const MainNavigationRail(),
-          Expanded(
-              child: Row(children: [
-            Expanded(
-              child: Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(10),
-                  child: const Center(child: Text("test"))),
-            ),
-            Expanded(
-              child: Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(10),
-                  child: const Center(child: Text("test"))),
-            ),
-            Expanded(
-              child: Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(10),
-                  child: const Center(child: Text("test"))),
-            ),
-          ])),
+          Expanded(child: child),
         ],
       ),
     );
@@ -128,36 +84,21 @@ class TabletLayout extends StatelessWidget {
 }
 
 class DesktopLayout extends StatelessWidget {
-  const DesktopLayout({super.key});
+  // The widget to display in the body of the Scaffold.
+  final Widget child;
+
+  const DesktopLayout({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
       body: Row(
         children: [
           const MainNavigationRail(),
-          Expanded(
-              child: Row(children: [
-            Expanded(
-              child: Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(10),
-                  child: const Center(child: Text("test"))),
-            ),
-            Expanded(
-              child: Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(10),
-                  child: const Center(child: Text("test"))),
-            ),
-            Expanded(
-              child: Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(10),
-                  child: const Center(child: Text("test"))),
-            ),
-          ])),
+          Expanded(child: child),
         ],
       ),
     );

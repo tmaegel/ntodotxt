@@ -65,8 +65,8 @@ class NavigatorRailFloatingActionButton extends StatelessWidget {
           ),
           child: animation.value == 0
               ? const FloatingActionButton(
-                  onPressed: null,
                   elevation: 0.0,
+                  onPressed: null,
                   child: Icon(Icons.add),
                 )
               : Align(
