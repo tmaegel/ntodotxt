@@ -15,6 +15,7 @@ class NarrowLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const MainAppBar(),
       body: child,
       bottomNavigationBar: const PrimaryBottomAppBar(),
       floatingActionButton: const PrimaryFloatingActionButton(),
@@ -35,7 +36,7 @@ class WideLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(showToolBar: true),
+      appBar: const MainAppBar(),
       body: Row(
         children: [
           const PrimaryNavigationRail(),

@@ -1,24 +1,45 @@
 import 'package:equatable/equatable.dart';
 
-enum TodoStatus { initial, viewing, editing, creating }
-
-class TodoState extends Equatable {
+sealed class TodoState extends Equatable {
   final int? index;
-  final TodoStatus status;
 
-  const TodoState({this.index, this.status = TodoStatus.initial});
-
-  const TodoState.viewing(int index)
-      : this(index: index, status: TodoStatus.viewing);
-
-  const TodoState.editing(int index)
-      : this(index: index, status: TodoStatus.editing);
-
-  const TodoState.creating() : this(status: TodoStatus.creating);
+  const TodoState(this.index);
 
   @override
-  List<Object?> get props => [index, status];
+  List<Object?> get props => [index];
+}
+
+final class TodoInitial extends TodoState {
+  const TodoInitial() : super(null);
 
   @override
-  String toString() => 'TodoState { index: $index, status: $status }';
+  String toString() => 'TodoInitial { index: $index }';
+}
+
+final class TodoViewing extends TodoState {
+  const TodoViewing(super.index);
+
+  @override
+  String toString() => 'TodoViewing { index: $index }';
+}
+
+final class TodoEditing extends TodoState {
+  const TodoEditing(super.index);
+
+  @override
+  String toString() => 'TodoEditing { index: $index }';
+}
+
+final class TodoCreating extends TodoState {
+  const TodoCreating() : super(null);
+
+  @override
+  String toString() => 'TodoCreating { index: $index }';
+}
+
+final class TodoSearching extends TodoState {
+  const TodoSearching() : super(null);
+
+  @override
+  String toString() => 'TodoSearching { index: $index }';
 }

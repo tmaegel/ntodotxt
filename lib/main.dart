@@ -53,6 +53,9 @@ class App extends StatelessWidget {
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
               brightness: Brightness.light,
+              searchBarTheme: SearchBarThemeData(
+                elevation: MaterialStateProperty.all(0.0),
+              ),
               useMaterial3: true,
             ),
             themeMode: ThemeMode.light,

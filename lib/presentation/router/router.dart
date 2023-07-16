@@ -12,6 +12,7 @@ import 'package:todotxt/presentation/pages/todo_view_page.dart';
 import 'package:todotxt/presentation/pages/todo_edit_page.dart';
 import 'package:todotxt/presentation/pages/todo_list_page.dart';
 import 'package:todotxt/presentation/pages/todo_search_page.dart';
+import 'package:todotxt/presentation/widgets/app_bar.dart';
 
 class AppRouter {
   final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -35,17 +36,27 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/',
-        name: 'todo-list',
+        path: '/settings',
+        name: 'settings',
         builder: (BuildContext context, GoRouterState state) {
-          return _redirectNarrowLayout(child: const TodoListPage());
+          return const Scaffold(
+            appBar: MainAppBar(title: 'Settings'),
+            body: SettingsPage(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/',
+        name: 'home',
+        builder: (BuildContext context, GoRouterState state) {
+          return const NarrowLayout(child: TodoListPage());
         },
         routes: [
           GoRoute(
             path: 'view/:todoIndex',
             name: 'todo-view',
             builder: (BuildContext context, GoRouterState state) {
-              return _redirectNarrowLayout(
+              return NarrowLayout(
                 child: TodoViewPage(
                   todoIndex: state.pathParameters['todoIndex'],
                 ),
@@ -56,7 +67,7 @@ class AppRouter {
             path: 'edit/:todoIndex',
             name: 'todo-edit',
             builder: (BuildContext context, GoRouterState state) {
-              return _redirectNarrowLayout(
+              return NarrowLayout(
                 child: TodoEditPage(
                   todoIndex: state.pathParameters['todoIndex'],
                 ),
@@ -67,21 +78,14 @@ class AppRouter {
             path: 'add',
             name: 'todo-add',
             builder: (BuildContext context, GoRouterState state) {
-              return _redirectNarrowLayout(child: const TodoAddPage());
+              return const NarrowLayout(child: TodoAddPage());
             },
           ),
           GoRoute(
             path: 'search',
             name: 'todo-search',
             builder: (BuildContext context, GoRouterState state) {
-              return _redirectNarrowLayout(child: const TodoSearchPage());
-            },
-          ),
-          GoRoute(
-            path: 'settings',
-            name: 'settings',
-            builder: (BuildContext context, GoRouterState state) {
-              return _redirectNarrowLayout(child: const SettingsPage());
+              return const NarrowLayout(child: TodoSearchPage());
             },
           ),
         ],
@@ -102,7 +106,7 @@ class AppRouter {
   );
 
   late final GoRouter routerWideLayout = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: <RouteBase>[
@@ -116,12 +120,12 @@ class AppRouter {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
-          return _redirectWideLayout(child: child);
+          return WideLayout(child: child);
         },
         routes: [
           GoRoute(
             path: '/',
-            name: 'todo-list',
+            name: 'home',
             builder: (BuildContext context, GoRouterState state) {
               return const Card(
                 elevation: 0.0,
@@ -156,6 +160,20 @@ class AppRouter {
                   return const TodoAddPage();
                 },
               ),
+              GoRoute(
+                path: 'search',
+                name: 'todo-search',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const TodoSearchPage();
+                },
+              ),
+              GoRoute(
+                path: 'settings',
+                name: 'settings',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const SettingsPage();
+                },
+              ),
             ],
           ),
         ],
@@ -174,14 +192,6 @@ class AppRouter {
     },
     refreshListenable: GoRouterRefreshStream(loginCubit.stream),
   );
-
-  Widget _redirectNarrowLayout({required Widget child}) {
-    return NarrowLayout(child: child);
-  }
-
-  Widget _redirectWideLayout({required Widget child}) {
-    return WideLayout(child: child);
-  }
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {

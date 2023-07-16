@@ -21,15 +21,14 @@ class PrimaryNavigationRail extends StatelessWidget {
   }
 
   List<NavigationRailDestination> _buildDestinations(TodoState state) {
-    switch (state.status) {
-      case TodoStatus.viewing:
-        return _viewDestinations();
-      case TodoStatus.creating:
-      case TodoStatus.editing:
-        return _addEditDestinations();
-      default:
-        return _listDestinations();
+    if (state is TodoViewing) {
+      return _viewDestinations();
     }
+    if (state is TodoEditing || state is TodoCreating) {
+      return _addEditDestinations();
+    }
+
+    return _listDestinations();
   }
 
   List<NavigationRailDestination> _listDestinations() {
@@ -89,17 +88,14 @@ class PrimaryFloatingActionButton extends StatelessWidget {
           hoverElevation: 0.0,
           tooltip: _tooltip(state),
           onPressed: () {
-            switch (state.status) {
-              case TodoStatus.viewing:
-                _editAction(context, state.index!);
-                break;
-              case TodoStatus.creating:
-              case TodoStatus.editing:
-                _saveAction(context, state.index);
-                break;
-              default:
-                _addAction(context);
-                break;
+            if (state is TodoViewing) {
+              _editAction(context, state.index!);
+            } else if (state is TodoCreating || state is TodoEditing) {
+              _saveAction(context, state.index);
+            } else if (state is TodoSearching) {
+              _favouriteAction(context);
+            } else {
+              _addAction(context);
             }
           },
           child: _icon(state),
@@ -128,28 +124,37 @@ class PrimaryFloatingActionButton extends StatelessWidget {
         pathParameters: {'todoIndex': index.toString()}));
   }
 
+  void _favouriteAction(BuildContext context) {
+    context.read<TodoCubit>().reset();
+    context.pop();
+  }
+
   Icon _icon(TodoState state) {
-    switch (state.status) {
-      case TodoStatus.viewing:
-        return const Icon(Icons.edit);
-      case TodoStatus.creating:
-      case TodoStatus.editing:
-        return const Icon(Icons.check);
-      default:
-        return const Icon(Icons.add);
+    if (state is TodoViewing) {
+      return const Icon(Icons.edit);
     }
+    if (state is TodoEditing || state is TodoCreating) {
+      return const Icon(Icons.check);
+    }
+    if (state is TodoSearching) {
+      return const Icon(Icons.favorite_outline);
+    }
+
+    return const Icon(Icons.add);
   }
 
   String _tooltip(TodoState state) {
-    switch (state.status) {
-      case TodoStatus.viewing:
-        return 'Edit';
-      case TodoStatus.creating:
-      case TodoStatus.editing:
-        return 'Save';
-      default:
-        return 'Add';
+    if (state is TodoViewing) {
+      return 'Edit';
     }
+    if (state is TodoEditing || state is TodoCreating) {
+      return 'Save';
+    }
+    if (state is TodoSearching) {
+      return 'Mark as favourite';
+    }
+
+    return 'Add';
   }
 }
 
@@ -160,20 +165,30 @@ class PrimaryBottomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoCubit, TodoState>(
       builder: (context, state) {
-        switch (state.status) {
-          case TodoStatus.viewing:
-            return _viewBottomAppBar(context);
-          case TodoStatus.creating:
-          case TodoStatus.editing:
-            return _addEditBottomAppBar(context);
-          default:
-            return _listBottomAppBar(context);
+        if (state is TodoViewing) {
+          return _viewBottomAppBar(context);
         }
+        if (state is TodoEditing || state is TodoCreating) {
+          return _addEditBottomAppBar(context);
+        }
+        if (state is TodoSearching) {
+          return _searchBottomAppBar(context);
+        }
+
+        return _listBottomAppBar(context);
       },
     );
   }
 
   Widget _listBottomAppBar(BuildContext context) {
+    return const BottomAppBar(
+      child: Row(
+        children: <Widget>[],
+      ),
+    );
+  }
+
+  Widget _searchBottomAppBar(BuildContext context) {
     return const BottomAppBar(
       child: Row(
         children: <Widget>[],

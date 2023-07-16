@@ -6,13 +6,8 @@ import 'package:todotxt/todo/cubit/todo.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
-  final bool showToolBar;
 
-  const MainAppBar({
-    this.title,
-    required this.showToolBar,
-    super.key,
-  });
+  const MainAppBar({this.title, super.key});
 
   // Scaffold requires as appbar a class that implements PreferredSizeWidget.
   @override
@@ -32,13 +27,14 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: _icon(state),
                   onPressed: () {
                     context.pop();
-                    switch (state.status) {
-                      case TodoStatus.editing:
-                        _cancelAction(context, state);
-                      case TodoStatus.creating:
-                      case TodoStatus.viewing:
-                      default:
-                        _resetAction(context, state);
+                    if (state is TodoEditing) {
+                      _cancelAction(context, state);
+                    } else if (state is TodoCreating ||
+                        state is TodoViewing ||
+                        state is TodoSearching) {
+                      _resetAction(context, state);
+                    } else {
+                      _resetAction(context, state);
                     }
                   },
                 );
@@ -49,9 +45,45 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
           title: Text(title ?? _title(state)),
-          actions: showToolBar ? const <Widget>[AppToolBar()] : null,
+          // title: TextField(
+          //   decoration: InputDecoration(
+          //     filled: true,
+          //     fillColor: const Color(0xfff1f1f1),
+          //     border: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(32),
+          //       borderSide: BorderSide.none,
+          //     ),
+          //     hintText: "Search",
+          //     prefixIcon: const Icon(Icons.search),
+          //   ),
+          // ),
+          actions: state is TodoInitial
+              ? <Widget>[_buildPrimaryToolBar(context)]
+              : null,
         );
       },
+    );
+  }
+
+  Widget _buildPrimaryToolBar(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          tooltip: 'Settings',
+          icon: const Icon(Icons.settings),
+          onPressed: () {
+            context.push(context.namedLocation('settings'));
+          },
+        ),
+        IconButton(
+          tooltip: 'Search',
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            context.read<TodoCubit>().search();
+            context.push(context.namedLocation('todo-search'));
+          },
+        ),
+      ],
     );
   }
 
@@ -64,52 +96,30 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       context.read<TodoCubit>().reset();
 
   Icon _icon(TodoState state) {
-    switch (state.status) {
-      case TodoStatus.creating:
-      case TodoStatus.editing:
-        return const Icon(Icons.close);
-      case TodoStatus.viewing:
-      default:
-        return const Icon(Icons.navigate_before);
+    if (state is TodoViewing || state is TodoSearching) {
+      return const Icon(Icons.navigate_before);
     }
+    if (state is TodoCreating || state is TodoEditing) {
+      return const Icon(Icons.close);
+    }
+
+    return const Icon(Icons.navigate_before);
   }
 
   String _title(TodoState state) {
-    switch (state.status) {
-      case TodoStatus.creating:
-        return 'Add';
-      case TodoStatus.editing:
-        return 'Edit';
-      case TodoStatus.viewing:
-        return 'View';
-      default:
-        return 'List';
+    if (state is TodoViewing) {
+      return 'View';
     }
-  }
-}
+    if (state is TodoCreating) {
+      return 'Add';
+    }
+    if (state is TodoEditing) {
+      return 'Edit';
+    }
+    if (state is TodoSearching) {
+      return 'Search';
+    }
 
-class AppToolBar extends StatelessWidget {
-  const AppToolBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          tooltip: 'Search',
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            context.push(context.namedLocation('todo-search'));
-          },
-        ),
-        IconButton(
-          tooltip: 'Settings',
-          icon: const Icon(Icons.more_vert),
-          onPressed: () {
-            context.push(context.namedLocation('settings'));
-          },
-        ),
-      ],
-    );
+    return 'List';
   }
 }
