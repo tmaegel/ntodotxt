@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:todotxt/constants/screen.dart';
 import 'package:todotxt/presentation/widgets/app_bar.dart';
 
-class TodoAddPage extends StatelessWidget {
-  const TodoAddPage({super.key});
+class TodoViewPage extends StatelessWidget {
+  final String? todoIndex;
+
+  const TodoViewPage({required this.todoIndex, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +18,18 @@ class TodoAddPage extends StatelessWidget {
   }
 
   Widget _buildNarrowLayout(BuildContext context) {
-    return const Scaffold(
-      appBar: MainAppBar(showToolBar: false),
+    return Scaffold(
+      appBar: const MainAppBar(showToolBar: false),
       body: Center(
-        child: Text('Adding todo'),
+        child: Text('Viewing todo $todoIndex'),
       ),
     );
   }
 
   Widget _buildWideLayout(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Adding todo'),
+        child: Text('Viewing todo $todoIndex'),
       ),
     );
   }

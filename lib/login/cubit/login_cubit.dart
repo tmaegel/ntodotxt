@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todotxt/login/login.dart';
+import 'package:todotxt/login/cubit/login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(const LoginState.unauthenticated());
@@ -10,15 +10,5 @@ class LoginCubit extends Cubit<LoginState> {
 
   void logout() {
     emit(const LoginState.unauthenticated());
-  }
-
-  @override
-  void onChange(Change<LoginState> change) {
-    super.onChange(change);
-  }
-
-  @override
-  void onError(Object error, StackTrace stackTrace) {
-    super.onError(error, stackTrace);
   }
 }

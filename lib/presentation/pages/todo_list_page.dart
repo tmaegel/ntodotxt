@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todotxt/constants/screen.dart';
 import 'package:todotxt/presentation/widgets/app_bar.dart';
+import 'package:todotxt/todo/cubit/todo.dart';
 
 class Todo {
   final String title;
@@ -20,43 +22,23 @@ class Todo {
 }
 
 class TodoListPage extends StatelessWidget {
-  final String title = "Todo List";
-
   const TodoListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth < maxScreenWidthCompact) {
-      return _buildCompactPage();
-    } else {
-      return _buildExtendedPage();
-    }
-  }
-
-  Widget _buildCompactPage() {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: MainAppBar(title: title, showToolBar: true),
-      body: ListView(children: [
-        for (var i = 0; i < Todo.todos.length; i++) TodoTile(todoIndex: i)
-      ]),
+      appBar: screenWidth < maxScreenWidthCompact
+          ? const MainAppBar(showToolBar: true)
+          : null,
+      body: _buildList(),
     );
   }
 
-  Widget _buildExtendedPage() {
-    return Row(
+  Widget _buildList() {
+    return ListView(
       children: [
-        Expanded(
-          child: ListView(children: [
-            for (var i = 0; i < Todo.todos.length; i++) TodoTile(todoIndex: i)
-          ]),
-        ),
-        const Expanded(
-          child: Card(
-            shadowColor: Colors.transparent,
-            child: Center(child: Text("Details")),
-          ),
-        ),
+        for (var i = 0; i < Todo.todos.length; i++) TodoTile(todoIndex: i)
       ],
     );
   }
@@ -69,6 +51,7 @@ class TodoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return ListTile(
       title: Text(
         Todo.todos[todoIndex].title,
@@ -92,8 +75,15 @@ class TodoTile extends StatelessWidget {
         ],
       ),
       onTap: () {
-        context.push(context.namedLocation('todo-details',
-            pathParameters: {'todoIndex': todoIndex.toString()}));
+        context.read<TodoCubit>().view(index: todoIndex);
+        // Replace the navigation stack if the wide layout is used.
+        if (screenWidth < maxScreenWidthCompact) {
+          context.push(context.namedLocation('todo-view',
+              pathParameters: {'todoIndex': todoIndex.toString()}));
+        } else {
+          context.go(context.namedLocation('todo-view',
+              pathParameters: {'todoIndex': todoIndex.toString()}));
+        }
       },
     );
   }

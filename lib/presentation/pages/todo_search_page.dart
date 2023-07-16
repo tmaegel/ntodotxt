@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todotxt/constants/screen.dart';
 import 'package:todotxt/presentation/widgets/app_bar.dart';
 
 class TodoSearchPage extends StatelessWidget {
@@ -6,8 +7,11 @@ class TodoSearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: const MainAppBar(title: 'Search', showToolBar: false),
+      appBar: screenWidth < maxScreenWidthCompact
+          ? const MainAppBar(title: 'Search', showToolBar: false)
+          : null,
       body: const Center(
         child: Text('Searching ...'),
       ),
