@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todotxt/login/cubit/login_state.dart';
+import 'package:todotxt/presentation/login/states/login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(const LoginState.unauthenticated());

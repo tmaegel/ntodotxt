@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todotxt/presentation/pages/todo_list_page.dart';
-import 'package:todotxt/presentation/widgets/app_bar.dart';
-import 'package:todotxt/presentation/widgets/navigation_bar.dart';
+import 'package:todotxt/common_widgets/app_bar.dart';
+import 'package:todotxt/common_widgets/navigation_bar.dart';
+import 'package:todotxt/presentation/todo/pages/todo_list_page.dart';
 
 class NarrowLayout extends StatelessWidget {
   // The widget to display in the body of the Scaffold.

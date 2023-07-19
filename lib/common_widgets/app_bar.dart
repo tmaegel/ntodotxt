@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todotxt/constants/screen.dart';
-import 'package:todotxt/todo/cubit/todo.dart';
+import 'package:todotxt/presentation/todo/states/todo.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -24,18 +24,10 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             builder: (BuildContext context) {
               if (context.canPop()) {
                 return IconButton(
-                  icon: _icon(state),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     context.pop();
-                    if (state is TodoEditing) {
-                      _cancelAction(context, state);
-                    } else if (state is TodoCreating ||
-                        state is TodoViewing ||
-                        state is TodoSearching) {
-                      _resetAction(context, state);
-                    } else {
-                      _resetAction(context, state);
-                    }
+                    context.read<TodoCubit>().back();
                   },
                 );
               } else {
@@ -85,25 +77,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
     );
-  }
-
-  /// Cancel action e.g. cancel editing process an go back to the viewing page.
-  void _cancelAction(BuildContext context, TodoState state) =>
-      context.read<TodoCubit>().view(index: state.index!);
-
-  /// Reset action e.g. cancel viewing or adding process an go back to the list page.
-  void _resetAction(BuildContext context, TodoState state) =>
-      context.read<TodoCubit>().reset();
-
-  Icon _icon(TodoState state) {
-    if (state is TodoViewing || state is TodoSearching) {
-      return const Icon(Icons.navigate_before);
-    }
-    if (state is TodoCreating || state is TodoEditing) {
-      return const Icon(Icons.close);
-    }
-
-    return const Icon(Icons.navigate_before);
   }
 
   String _title(TodoState state) {
