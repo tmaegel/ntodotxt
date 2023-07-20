@@ -39,15 +39,12 @@ class AppRouter {
         path: '/settings',
         name: 'settings',
         builder: (BuildContext context, GoRouterState state) {
-          return const Scaffold(
-            appBar: MainAppBar(title: 'Settings'),
-            body: SettingsPage(),
-          );
+          return const SettingsPage();
         },
       ),
       GoRoute(
         path: '/',
-        name: 'home',
+        name: 'todo-list',
         builder: (BuildContext context, GoRouterState state) {
           return const NarrowLayout(child: TodoListPage());
         },
@@ -75,10 +72,10 @@ class AppRouter {
             },
           ),
           GoRoute(
-            path: 'add',
-            name: 'todo-add',
+            path: 'create',
+            name: 'todo-create',
             builder: (BuildContext context, GoRouterState state) {
-              return const NarrowLayout(child: TodoAddPage());
+              return const NarrowLayout(child: TodoCreatePage());
             },
           ),
           GoRoute(
@@ -87,22 +84,6 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const NarrowLayout(child: TodoSearchPage());
             },
-            // pageBuilder: (context, state) {
-            //   return CustomTransitionPage(
-            //     key: state.pageKey,
-            //     child: const NarrowLayout(child: TodoSearchPage()),
-            //     transitionsBuilder:
-            //         (context, animation, secondaryAnimation, child) {
-            //       // Change the opacity of the screen using a Curve based on the the animation's
-            //       // value
-            //       return FadeTransition(
-            //         opacity: CurveTween(curve: Curves.easeInOutCirc)
-            //             .animate(animation),
-            //         child: child,
-            //       );
-            //     },
-            //   );
-            // },
           ),
         ],
       ),
@@ -141,7 +122,7 @@ class AppRouter {
         routes: [
           GoRoute(
             path: '/',
-            name: 'home',
+            name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
               return const Card(
                 elevation: 0.0,
@@ -170,10 +151,10 @@ class AppRouter {
                 },
               ),
               GoRoute(
-                path: 'add',
-                name: 'todo-add',
+                path: 'create',
+                name: 'todo-create',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const TodoAddPage();
+                  return const TodoCreatePage();
                 },
               ),
               GoRoute(

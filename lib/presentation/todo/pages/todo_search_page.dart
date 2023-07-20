@@ -15,8 +15,11 @@ class TodoSearchPage extends StatelessWidget {
         icon: const Icon(Icons.arrow_back),
         action: () => _cancelAction(context),
       ),
-      body: const Center(
-        child: Text('Searching ...'),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Center(
+          child: Text('Searching ...'),
+        ),
       ),
     );
   }

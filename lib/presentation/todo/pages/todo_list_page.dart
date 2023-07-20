@@ -38,7 +38,7 @@ class TodoListPage extends StatelessWidget {
   /// Add new todo
   void _primaryAction(BuildContext context) {
     context.read<TodoCubit>().create();
-    context.push(context.namedLocation('todo-add'));
+    context.push(context.namedLocation('todo-create'));
   }
 
   Widget _buildFloatingActionButton(BuildContext context) {

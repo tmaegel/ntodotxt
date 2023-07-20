@@ -34,9 +34,11 @@ class WideLayout extends StatelessWidget {
       body: Row(
         children: [
           const PrimaryNavigationRail(),
-          const VerticalDivider(thickness: 1, width: 1),
+          const VerticalDivider(
+              thickness: 1, width: 1, color: Color(0xfff1f1f1)),
           const Expanded(child: TodoListPage()),
-          const VerticalDivider(thickness: 1, width: 1),
+          const VerticalDivider(
+              thickness: 1, width: 1, color: Color(0xfff1f1f1)),
           Expanded(child: child),
         ],
       ),

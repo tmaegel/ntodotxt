@@ -68,7 +68,7 @@ class PrimaryNavigationRail extends StatelessWidget {
       action: () {
         // @todo: Check for shortcut or todo mode late.
         context.read<TodoCubit>().create();
-        context.push(context.namedLocation('todo-add'));
+        context.push(context.namedLocation('todo-create'));
       },
     );
   }
@@ -186,6 +186,7 @@ class PrimaryFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: 'tag-$tooltip',
       mini: mini,
       backgroundColor: hideColor ? Colors.white70 : null,
       elevation: 0.0,
