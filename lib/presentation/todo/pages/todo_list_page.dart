@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:todotxt/common_widgets/navigation_bar.dart';
 import 'package:todotxt/constants/screen.dart';
 import 'package:todotxt/presentation/todo/states/todo.dart';
 
@@ -25,16 +26,53 @@ class TodoListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: _buildList(),
+      floatingActionButton: screenWidth < maxScreenWidthCompact
+          ? _buildFloatingActionButton(context)
+          : null,
+    );
+  }
+
+  /// Add new todo
+  void _primaryAction(BuildContext context) {
+    context.read<TodoCubit>().create();
+    context.push(context.namedLocation('todo-add'));
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.add),
+      tooltip: 'Add',
+      action: () => _primaryAction(context),
     );
   }
 
   Widget _buildList() {
     return ListView(
       children: [
+        _buildSearchBar(),
         for (var i = 0; i < Todo.todos.length; i++) TodoTile(todoIndex: i)
       ],
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: TextField(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color(0xfff1f1f1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(32),
+            borderSide: BorderSide.none,
+          ),
+          hintText: "Search",
+          prefixIcon: const Icon(Icons.search),
+        ),
+      ),
     );
   }
 }

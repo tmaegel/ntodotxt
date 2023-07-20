@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todotxt/common_widgets/app_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -6,6 +7,11 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: MainAppBar(
+        title: "Settings",
+        icon: const Icon(Icons.arrow_back),
+        action: () => _cancelAction(context),
+      ),
       body: ListView(
         children: const [
           ListTile(
@@ -42,6 +48,8 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
+
+  void _cancelAction(BuildContext context) {}
 }
 
 class SettingsSwitch extends StatefulWidget {

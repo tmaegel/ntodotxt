@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todotxt/common_widgets/app_bar.dart';
 import 'package:todotxt/common_widgets/navigation_bar.dart';
 import 'package:todotxt/presentation/todo/pages/todo_list_page.dart';
 
@@ -15,11 +14,7 @@ class NarrowLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
       body: child,
-      bottomNavigationBar: const PrimaryBottomAppBar(),
-      floatingActionButton: const PrimaryFloatingActionButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
   }
 }
@@ -36,11 +31,12 @@ class WideLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
       body: Row(
         children: [
           const PrimaryNavigationRail(),
+          const VerticalDivider(thickness: 1, width: 1),
           const Expanded(child: TodoListPage()),
+          const VerticalDivider(thickness: 1, width: 1),
           Expanded(child: child),
         ],
       ),
