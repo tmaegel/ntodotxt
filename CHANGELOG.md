@@ -15,5 +15,5 @@ tbd...
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/next-todo-txt/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/tmaegel/next-todo-txt/releases/tag/v0.0.1
+[unreleased]: https://github.com/tmaegel/ntodo-txt/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/tmaegel/ntodo-txt/releases/tag/v0.0.1

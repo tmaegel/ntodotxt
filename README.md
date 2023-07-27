@@ -1,4 +1,4 @@
-# next-todo-txt
+# ntodo.txt
 
 **This app is still under active development and not released, yet.**
 
