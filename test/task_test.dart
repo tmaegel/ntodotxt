@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:todotxt/storage.dart';
+import 'package:ntodotxt/task.dart';
 
 void main() {
   group("get: completion", () {

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todotxt/presentation/todo/states/todo_state.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoCubit extends Cubit<TodoState> {
   TodoCubit() : super(const TodoInitial());

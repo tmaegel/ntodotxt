@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todotxt/config/router/router.dart';
-import 'package:todotxt/constants/screen.dart';
-import 'package:todotxt/presentation/login/states/login.dart';
-import 'package:todotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/config/router/router.dart';
+import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/presentation/login/states/login.dart';
+import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
@@ -39,6 +40,9 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider<LoginCubit>(
           create: (BuildContext context) => LoginCubit(),
+        ),
+        BlocProvider<TodoListCubit>(
+          create: (BuildContext context) => TodoListCubit(),
         ),
         BlocProvider<TodoCubit>(
           create: (BuildContext context) => TodoCubit(),

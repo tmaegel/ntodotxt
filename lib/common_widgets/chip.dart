@@ -1,5 +1,27 @@
 import 'package:flutter/material.dart';
 
+class BasicChip extends StatelessWidget {
+  final String label;
+  final bool status;
+
+  const BasicChip({required this.label, this.status = false, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: status ? Colors.lime : Colors.grey.shade400,
+        ),
+        child: Text(label),
+      ),
+    );
+  }
+}
+
 class ActionChoiceChip extends StatefulWidget {
   final String label;
 

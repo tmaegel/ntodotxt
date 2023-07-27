@@ -3,16 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todotxt/common_widgets/app_bar.dart';
-import 'package:todotxt/presentation/layout/adaptive_layout.dart';
-import 'package:todotxt/presentation/login/pages/login_page.dart';
-import 'package:todotxt/presentation/login/states/login.dart';
-import 'package:todotxt/presentation/settings/pages/settings_page.dart';
-import 'package:todotxt/presentation/todo/pages/todo_create_page.dart';
-import 'package:todotxt/presentation/todo/pages/todo_edit_page.dart';
-import 'package:todotxt/presentation/todo/pages/todo_list_page.dart';
-import 'package:todotxt/presentation/todo/pages/todo_search_page.dart';
-import 'package:todotxt/presentation/todo/pages/todo_view_page.dart';
+import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
+import 'package:ntodotxt/presentation/login/pages/login_page.dart';
+import 'package:ntodotxt/presentation/login/states/login.dart';
+import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_create_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_view_page.dart';
 
 class AppRouter {
   final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -53,9 +52,10 @@ class AppRouter {
             path: 'view/:todoIndex',
             name: 'todo-view',
             builder: (BuildContext context, GoRouterState state) {
+              // @todo Redirect to error page if todoIndex is null.
               return NarrowLayout(
                 child: TodoViewPage(
-                  todoIndex: state.pathParameters['todoIndex'],
+                  todoIndex: int.parse(state.pathParameters['todoIndex']!),
                 ),
               );
             },
@@ -64,9 +64,10 @@ class AppRouter {
             path: 'edit/:todoIndex',
             name: 'todo-edit',
             builder: (BuildContext context, GoRouterState state) {
+              // @todo Redirect to error page if todoIndex is null.
               return NarrowLayout(
                 child: TodoEditPage(
-                  todoIndex: state.pathParameters['todoIndex'],
+                  todoIndex: int.parse(state.pathParameters['todoIndex']!),
                 ),
               );
             },
@@ -136,8 +137,9 @@ class AppRouter {
                 path: 'view/:todoIndex',
                 name: 'todo-view',
                 builder: (BuildContext context, GoRouterState state) {
+                  // @todo Redirect to error page if todoIndex is null.
                   return TodoViewPage(
-                    todoIndex: state.pathParameters['todoIndex'],
+                    todoIndex: int.parse(state.pathParameters['todoIndex']!),
                   );
                 },
               ),
@@ -145,8 +147,9 @@ class AppRouter {
                 path: 'edit/:todoIndex',
                 name: 'todo-edit',
                 builder: (BuildContext context, GoRouterState state) {
+                  // @todo Redirect to error page if todoIndex is null.
                   return TodoEditPage(
-                    todoIndex: state.pathParameters['todoIndex'],
+                    todoIndex: int.parse(state.pathParameters['todoIndex']!),
                   );
                 },
               ),

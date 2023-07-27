@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 class PrimaryNavigationRail extends StatelessWidget {
   const PrimaryNavigationRail({super.key});
@@ -81,16 +82,14 @@ class PrimaryNavigationRail extends StatelessWidget {
           tooltip: 'Done',
           action: () {
             // @todo: Check for shortcut or todo mode late.
-            context.read<TodoCubit>().reset();
-            context.go(context.namedLocation('todo-list'));
+            final index = state.index!;
+            context.read<TodoListCubit>().toggleCompletion(index: index);
           },
         ),
         const SizedBox(height: 8),
         PrimaryFloatingActionButton(
           icon: const Icon(Icons.edit),
           tooltip: 'Edit',
-          mini: true,
-          hideColor: true,
           action: () {
             final index = state.index!;
             context.read<TodoCubit>().edit(index: index);
@@ -118,8 +117,6 @@ class PrimaryNavigationRail extends StatelessWidget {
         PrimaryFloatingActionButton(
           icon: const Icon(Icons.delete),
           tooltip: 'Delete',
-          mini: true,
-          hideColor: true,
           action: () {
             context.read<TodoCubit>().reset();
             context.go(context.namedLocation('todo-list'));
@@ -129,8 +126,6 @@ class PrimaryNavigationRail extends StatelessWidget {
         PrimaryFloatingActionButton(
           icon: const Icon(Icons.close),
           tooltip: 'Cancel',
-          mini: true,
-          hideColor: true,
           action: () {
             context.read<TodoCubit>().reset();
             context.go(context.namedLocation('todo-list'));
@@ -155,8 +150,6 @@ class PrimaryNavigationRail extends StatelessWidget {
         PrimaryFloatingActionButton(
           icon: const Icon(Icons.close),
           tooltip: 'Cancel',
-          mini: true,
-          hideColor: true,
           action: () {
             context.read<TodoCubit>().reset();
             context.go(context.namedLocation('todo-list'));
@@ -171,24 +164,19 @@ class PrimaryFloatingActionButton extends StatelessWidget {
   final String tooltip;
   final Icon icon;
   final Function action;
-  final bool mini;
-  final bool hideColor;
 
   const PrimaryFloatingActionButton({
     required this.icon,
     required this.tooltip,
     required this.action,
-    this.mini = false,
-    this.hideColor = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      heroTag: 'tag-$tooltip',
-      mini: mini,
-      backgroundColor: hideColor ? Colors.white70 : null,
+      heroTag: 'hero-$tooltip',
+      mini: false,
       elevation: 0.0,
       focusElevation: 0.0,
       hoverElevation: 0.0,

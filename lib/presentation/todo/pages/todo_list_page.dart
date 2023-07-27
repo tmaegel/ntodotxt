@@ -1,25 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:todotxt/common_widgets/navigation_bar.dart';
-import 'package:todotxt/constants/screen.dart';
-import 'package:todotxt/presentation/todo/states/todo.dart';
-
-class Todo {
-  final String title;
-  final String subtitle;
-  final String priority;
-
-  Todo(this.title, this.subtitle, this.priority);
-
-  static List<Todo> todos = [
-    Todo("Call mom", "@smartphone", "A"),
-    Todo("Go to the school", "@school", "A"),
-    Todo("Do nothing", "@home +chill", "B"),
-    Todo("Working on app", "@home", "C"),
-    Todo("Eating something", "@home", "F"),
-  ];
-}
+import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/common_widgets/navigation_bar.dart';
+import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 class TodoListPage extends StatelessWidget {
   const TodoListPage({super.key});
@@ -28,7 +15,11 @@ class TodoListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: _buildList(),
+      body: BlocBuilder<TodoListCubit, List<Todo>>(
+        builder: (BuildContext context, List<Todo> state) {
+          return _buildList(state);
+        },
+      ),
       floatingActionButton: screenWidth < maxScreenWidthCompact
           ? _buildFloatingActionButton(context)
           : null,
@@ -49,11 +40,12 @@ class TodoListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildList() {
+  Widget _buildList(List<Todo> state) {
     return ListView(
       children: [
         _buildSearchBar(),
-        for (var i = 0; i < Todo.todos.length; i++) TodoTile(todoIndex: i)
+        for (var i = 0; i < state.length; i++)
+          TodoTile(todoIndex: i, todo: state[i])
       ],
     );
   }
@@ -79,33 +71,30 @@ class TodoListPage extends StatelessWidget {
 
 class TodoTile extends StatelessWidget {
   final int todoIndex;
+  final Todo todo;
 
-  const TodoTile({required this.todoIndex, super.key});
+  const TodoTile({required this.todoIndex, required this.todo, super.key});
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return ListTile(
-      title: Text(
-        Todo.todos[todoIndex].title,
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 20,
-        ),
-      ),
-      subtitle: Text(Todo.todos[todoIndex].subtitle),
-      leading: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            Todo.todos[todoIndex].priority,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 20,
-            ),
-          ),
+      title: Text(todo.description),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          for (var project in todo.projects)
+            BasicChip(label: project, status: true),
+          for (var context in todo.contexts)
+            BasicChip(label: context, status: true),
         ],
+      ),
+      leading: _buildPriority(todo.priority),
+      trailing: Checkbox(
+        value: todo.completion,
+        onChanged: (bool? value) {
+          context.read<TodoListCubit>().toggleCompletion(index: todoIndex);
+        },
       ),
       onTap: () {
         context.read<TodoCubit>().view(index: todoIndex);
@@ -118,6 +107,37 @@ class TodoTile extends StatelessWidget {
               pathParameters: {'todoIndex': todoIndex.toString()}));
         }
       },
+    );
+  }
+
+  Widget? _buildPriority(String? value) {
+    final Color avatarColor;
+    switch (value) {
+      case 'A':
+        avatarColor = Colors.redAccent.shade100;
+        break;
+      case 'B':
+        avatarColor = Colors.purpleAccent.shade100;
+        break;
+      case 'C':
+        avatarColor = Colors.orangeAccent.shade100;
+        break;
+      case 'D':
+        avatarColor = Colors.blueAccent.shade100;
+        break;
+      case 'E':
+        avatarColor = Colors.greenAccent.shade100;
+        break;
+      case 'F':
+        avatarColor = Colors.grey.shade300;
+        break;
+      default:
+        avatarColor = Colors.transparent;
+    }
+
+    return CircleAvatar(
+      backgroundColor: avatarColor,
+      child: Text(value ?? ""),
     );
   }
 }
