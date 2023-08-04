@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
@@ -49,25 +50,25 @@ class AppRouter {
         },
         routes: [
           GoRoute(
-            path: 'view/:todoIndex',
+            path: 'view/:index',
             name: 'todo-view',
             builder: (BuildContext context, GoRouterState state) {
-              // @todo Redirect to error page if todoIndex is null.
+              // @todo Redirect to error page if index is null.
               return NarrowLayout(
                 child: TodoViewPage(
-                  todoIndex: int.parse(state.pathParameters['todoIndex']!),
+                  index: int.parse(state.pathParameters['index']!),
                 ),
               );
             },
           ),
           GoRoute(
-            path: 'edit/:todoIndex',
+            path: 'edit/:index',
             name: 'todo-edit',
             builder: (BuildContext context, GoRouterState state) {
-              // @todo Redirect to error page if todoIndex is null.
+              // @todo Redirect to error page if index is null.
               return NarrowLayout(
                 child: TodoEditPage(
-                  todoIndex: int.parse(state.pathParameters['todoIndex']!),
+                  index: int.parse(state.pathParameters['index']!),
                 ),
               );
             },
@@ -125,31 +126,26 @@ class AppRouter {
             path: '/',
             name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
-              return const Card(
-                elevation: 0.0,
-                child: Center(
-                  child: Text("Placeholder"),
-                ),
-              );
+              return Container();
             },
             routes: [
               GoRoute(
-                path: 'view/:todoIndex',
+                path: 'view/:index',
                 name: 'todo-view',
                 builder: (BuildContext context, GoRouterState state) {
-                  // @todo Redirect to error page if todoIndex is null.
+                  // @todo Redirect to error page if index is null.
                   return TodoViewPage(
-                    todoIndex: int.parse(state.pathParameters['todoIndex']!),
+                    index: int.parse(state.pathParameters['index']!),
                   );
                 },
               ),
               GoRoute(
-                path: 'edit/:todoIndex',
+                path: 'edit/:index',
                 name: 'todo-edit',
                 builder: (BuildContext context, GoRouterState state) {
-                  // @todo Redirect to error page if todoIndex is null.
+                  // @todo Redirect to error page if index is null.
                   return TodoEditPage(
-                    todoIndex: int.parse(state.pathParameters['todoIndex']!),
+                    index: int.parse(state.pathParameters['index']!),
                   );
                 },
               ),

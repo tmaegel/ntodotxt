@@ -1,45 +1,38 @@
 import 'package:equatable/equatable.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 
-sealed class TodoState extends Equatable {
-  final int? index;
+enum TodoStatus { initial, loading, success, failure }
 
-  const TodoState(this.index);
+final class TodoState extends Equatable {
+  final TodoStatus status;
+  final int index;
+  final Todo todo;
 
-  @override
-  List<Object?> get props => [index];
-}
+  const TodoState({
+    this.status = TodoStatus.initial,
+    required this.index,
+    required this.todo,
+  });
 
-final class TodoInitial extends TodoState {
-  const TodoInitial() : super(null);
-
-  @override
-  String toString() => 'TodoInitial { index: $index }';
-}
-
-final class TodoViewing extends TodoState {
-  const TodoViewing(super.index);
-
-  @override
-  String toString() => 'TodoViewing { index: $index }';
-}
-
-final class TodoEditing extends TodoState {
-  const TodoEditing(super.index);
-
-  @override
-  String toString() => 'TodoEditing { index: $index }';
-}
-
-final class TodoCreating extends TodoState {
-  const TodoCreating() : super(null);
+  TodoState copyWith({
+    TodoStatus? status,
+    int? index,
+    Todo? todo,
+  }) {
+    return TodoState(
+      status: status ?? this.status,
+      index: index ?? this.index,
+      todo: todo ?? this.todo,
+    );
+  }
 
   @override
-  String toString() => 'TodoCreating { index: $index }';
-}
-
-final class TodoSearching extends TodoState {
-  const TodoSearching() : super(null);
+  List<Object?> get props => [
+        status,
+        index,
+        todo,
+      ];
 
   @override
-  String toString() => 'TodoSearching { index: $index }';
+  String toString() => 'TodoState { status: $status index: $index }';
 }

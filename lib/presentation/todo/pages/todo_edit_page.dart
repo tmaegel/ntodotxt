@@ -4,55 +4,87 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/navigation_bar.dart';
-import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 
 class TodoEditPage extends StatelessWidget {
-  final int todoIndex;
+  final int index;
 
-  const TodoEditPage({required this.todoIndex, super.key});
+  const TodoEditPage({
+    required this.index,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final TodoListRepository todoListRepository =
+        context.read<TodoListRepository>();
+    return BlocProvider(
+      create: (context) => TodoBloc(
+        todoListRepository: todoListRepository,
+        index: index,
+        todo: todoListRepository.getTodo(index),
+      ),
+      child: TodoEditView(todoListRepository: todoListRepository),
+    );
+  }
+}
+
+class TodoEditView extends StatelessWidget {
+  final TodoListRepository todoListRepository;
+
+  const TodoEditView({
+    required this.todoListRepository,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: MainAppBar(
-        title: "Edit",
-        icon: const Icon(Icons.close),
-        action: () => _cancelAction(context),
-        toolbar: _buildToolBar(context),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeading("Todo"),
-            TextField(
-              minLines: 3,
-              maxLines: 3,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+    return BlocBuilder<TodoBloc, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        return Scaffold(
+          appBar: MainAppBar(
+            title: "Edit",
+            icon: const Icon(Icons.close),
+            action: () => _cancelAction(context),
+            toolbar: _buildToolBar(context, state),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeading("Todo"),
+                TextField(
+                  minLines: 3,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xfff1f1f1),
+                  ),
+                  controller: TextEditingController()
+                    ..text = state.todo.description,
                 ),
-                filled: true,
-                fillColor: const Color(0xfff1f1f1),
-              ),
+                _buildHeading("Priority"),
+                _buildPriority(context, state),
+                _buildHeading("Projects"),
+                _buildProjects(context, state),
+                _buildHeading("Contexts"),
+                _buildContexts(context, state),
+              ],
             ),
-            _buildHeading("Priority"),
-            _buildPriority(context),
-            _buildHeading("Projects"),
-            _buildProjects(context),
-            _buildHeading("Contexts"),
-            _buildContexts(context),
-          ],
-        ),
-      ),
-      floatingActionButton: screenWidth < maxScreenWidthCompact
-          ? _buildFloatingActionButton(context)
-          : null,
+          ),
+          floatingActionButton: screenWidth < maxScreenWidthCompact
+              ? _buildFloatingActionButton(context)
+              : null,
+        );
+      },
     );
   }
 
@@ -66,27 +98,36 @@ class TodoEditPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPriority(BuildContext context) {
+  Widget _buildPriority(BuildContext context, TodoState state) {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[for (var p in priorities) ActionChoiceChip(label: p)],
+      children: <Widget>[
+        for (var p in todoListRepository.getAllPriorities())
+          BasicChip(label: p, status: p == state.todo.priority),
+      ],
     );
   }
 
-  Widget _buildProjects(BuildContext context) {
+  Widget _buildProjects(BuildContext context, TodoState state) {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[for (var p in projects) ActionChoiceChip(label: p)],
+      children: <Widget>[
+        for (var p in todoListRepository.getAllProjects())
+          BasicChip(label: p, status: state.todo.projects.contains(p)),
+      ],
     );
   }
 
-  Widget _buildContexts(BuildContext context) {
+  Widget _buildContexts(BuildContext context, TodoState state) {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[for (var c in contexts) ActionChoiceChip(label: c)],
+      children: <Widget>[
+        for (var c in todoListRepository.getAllContexts())
+          BasicChip(label: c, status: state.todo.contexts.contains(c)),
+      ],
     );
   }
 
@@ -98,13 +139,13 @@ class TodoEditPage extends StatelessWidget {
     );
   }
 
-  Widget _buildToolBar(BuildContext context) {
+  Widget _buildToolBar(BuildContext context, TodoState state) {
     return Row(
       children: <Widget>[
         IconButton(
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
-          onPressed: () => _deleteAction(context),
+          onPressed: () => _deleteAction(context, state),
         ),
       ],
     );
@@ -112,19 +153,18 @@ class TodoEditPage extends StatelessWidget {
 
   /// Save current todo
   void _primaryAction(BuildContext context) {
-    context.read<TodoCubit>().back();
+    // context.read<TodoBloc>().add(TodoSubmitted(!state.todo.completion));
     context.pop();
   }
 
   /// Delete current todo
-  void _deleteAction(BuildContext context) {
-    context.read<TodoCubit>().reset();
+  void _deleteAction(BuildContext context, TodoState state) {
+    context.read<TodoBloc>().add(TodoDeleted(state.index));
     context.go(context.namedLocation('todo-list'));
   }
 
   /// Cancel current edit process
   void _cancelAction(BuildContext context) {
-    context.read<TodoCubit>().back();
     context.pop();
   }
 }

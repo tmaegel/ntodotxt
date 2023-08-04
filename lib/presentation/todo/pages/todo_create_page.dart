@@ -4,12 +4,27 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/navigation_bar.dart';
-import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 
 class TodoCreatePage extends StatelessWidget {
   const TodoCreatePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TodoListRepository todoListRepository =
+        context.read<TodoListRepository>();
+    return TodoCreateView(todoListRepository: todoListRepository);
+  }
+}
+
+class TodoCreateView extends StatelessWidget {
+  final TodoListRepository todoListRepository;
+
+  const TodoCreateView({
+    required this.todoListRepository,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +82,10 @@ class TodoCreatePage extends StatelessWidget {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[for (var p in priorities) ActionChoiceChip(label: p)],
+      children: <Widget>[
+        for (var p in todoListRepository.getAllPriorities())
+          BasicChip(label: p),
+      ],
     );
   }
 
@@ -75,7 +93,10 @@ class TodoCreatePage extends StatelessWidget {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[for (var p in projects) ActionChoiceChip(label: p)],
+      children: <Widget>[
+        for (var p in todoListRepository.getAllProjects())
+          BasicChip(label: p, status: false),
+      ],
     );
   }
 
@@ -83,7 +104,10 @@ class TodoCreatePage extends StatelessWidget {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[for (var c in contexts) ActionChoiceChip(label: c)],
+      children: <Widget>[
+        for (var c in todoListRepository.getAllContexts())
+          BasicChip(label: c, status: false),
+      ],
     );
   }
 
@@ -97,13 +121,11 @@ class TodoCreatePage extends StatelessWidget {
 
   /// Save new todo
   void _primaryAction(BuildContext context) {
-    context.read<TodoCubit>().reset();
     context.go(context.namedLocation('todo-list'));
   }
 
   /// Cancel current create process
   void _cancelAction(BuildContext context) {
-    context.read<TodoCubit>().back();
     context.pop();
   }
 }

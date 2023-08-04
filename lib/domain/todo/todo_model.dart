@@ -1,53 +1,4 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
-import 'package:path_provider/path_provider.dart';
-
-class TodoList {
-  static const String fileName = "todo.txt";
-
-  static Future<List<Todo>> fromFile(String fileName) async {
-    final List<Todo> todoList = await read();
-
-    return todoList;
-  }
-
-  static List<Todo> fromList(List<String> rawTodoList) {
-    return [for (var todo in rawTodoList) Todo.fromString(todo)];
-  }
-
-  // Find the path to the documents directory.
-  static Future<String> get localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  static Future<File> get localFile async {
-    final directory = await localPath;
-
-    return File('$directory/$fileName');
-  }
-
-  // Read todo file.
-  static Future<List<Todo>> read() async {
-    final List<Todo> todoList = [];
-    final file = await localFile;
-    final lines = file.readAsLinesSync();
-    for (var line in lines) {
-      todoList.add(Todo.fromString(line));
-    }
-
-    return todoList;
-  }
-
-  // Write todo file.
-  static void write(List<String> rawTodoList) async {
-    final file = await localFile;
-    file.writeAsStringSync(rawTodoList.join('\n'));
-  }
-}
 
 class Todo extends Equatable {
   /// Task string format:
@@ -85,14 +36,37 @@ class Todo extends Equatable {
   static const String patternDescription =
       r'^(x\s?)?(\([a-zA-Z]\)\s?)?(\d{4}-\d{2}-\d{2}\s?){0,2}((?<description>.+))?$';
 
+  /// Whether the `todo` is completed.
+  /// Required attribute.
   final bool completion;
+
+  /// The priority of the `todo`.
+  /// Priorities are A, B, C, ...
   final String? priority;
+
+  /// The completion date of the `todo`.
+  /// Defaults to null.
   final DateTime? completionDate;
+
+  /// The creation date of the `todo`.
+  /// Defaults to null.
   final DateTime? creationDate;
-  final List<String> projects;
-  final List<String> contexts;
-  final Map<String, String> keyValues;
+
+  /// The description of the `todo`.
+  /// Required attribute.
   final String description;
+
+  /// The list of projects of the `todo`.
+  /// Defaults to an empty list.
+  final List<String> projects;
+
+  /// The list of contexts of the `todo`.
+  /// Defaults to an empty list.
+  final List<String> contexts;
+
+  /// The list of key value apirs of the `todo`.
+  /// Defaults to an empty map.
+  final Map<String, String> keyValues;
 
   const Todo({
     required this.completion,
@@ -132,39 +106,13 @@ class Todo extends Equatable {
     return Todo(
       completion: completion,
       priority: getPriority(todoStr),
+      completionDate: completionDate,
+      creationDate: creationDate,
       description: getDescription(todoStr),
       projects: getProjects(todoStr),
       contexts: getContexts(todoStr),
       keyValues: getKeyValues(todoStr),
-      completionDate: completionDate,
-      creationDate: creationDate,
     );
-    // completion = getCompletion();
-    // final dates = getDates();
-    // if (dates.isNotEmpty && dates.length < 2) {
-    //   // If status is set there should a completion date too.
-    //   if (completion) {
-    //     throw const FormatException(
-    //         "Completion date is mandatory if status is set.");
-    //   }
-    //   // If one date detected its the creation date.
-    //   creationDate = dates[0];
-    // } else if (dates.length >= 2) {
-    //   // Status is mandatory if the completion date is set.
-    //   if (!completion) {
-    //     throw const FormatException(
-    //         "Status is mandatory if completion date is set.");
-    //   }
-    //   // If two dates detected completion date appears first
-    //   // and creation date must defined.
-    //   completionDate = dates[0];
-    //   creationDate = dates[1];
-    // }
-    // priority = getPriority();
-    // projects = getProjects();
-    // contexts = getContexts();
-    // keyValues = getKeyValues();
-    // description = getDescription();
   }
 
   static String trimWhitespaces(String value) {
@@ -260,13 +208,36 @@ class Todo extends Equatable {
     return keyValues;
   }
 
+  /// Returns a copy of this `todo` with the given values updated.
+  Todo copyWith({
+    bool? completion,
+    String? priority,
+    DateTime? completionDate,
+    DateTime? creationDate,
+    String? description,
+    List<String>? projects,
+    List<String>? contexts,
+    Map<String, String>? keyValues,
+  }) {
+    return Todo(
+      completion: completion ?? this.completion,
+      priority: priority ?? this.priority,
+      completionDate: completionDate ?? this.completionDate,
+      creationDate: creationDate ?? this.creationDate,
+      description: description ?? this.description,
+      projects: projects ?? this.projects,
+      contexts: contexts ?? this.contexts,
+      keyValues: keyValues ?? this.keyValues,
+    );
+  }
+
   @override
   List<Object?> get props => [
         completion,
-        description,
         priority,
         completionDate,
         creationDate,
+        description,
         projects,
         contexts,
         keyValues,

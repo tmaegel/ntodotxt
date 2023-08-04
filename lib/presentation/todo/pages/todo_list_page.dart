@@ -5,8 +5,8 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/navigation_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoListPage extends StatelessWidget {
   const TodoListPage({super.key});
@@ -14,22 +14,23 @@ class TodoListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: BlocBuilder<TodoListCubit, List<Todo>>(
-        builder: (BuildContext context, List<Todo> state) {
-          return _buildList(state);
-        },
-      ),
-      floatingActionButton: screenWidth < maxScreenWidthCompact
-          ? _buildFloatingActionButton(context)
-          : null,
-    );
+    if (screenWidth < maxScreenWidthCompact) {
+      return const TodoListNarrowView();
+    } else {
+      return const TodoListWideView();
+    }
   }
+}
 
-  /// Add new todo
-  void _primaryAction(BuildContext context) {
-    context.read<TodoCubit>().create();
-    context.push(context.namedLocation('todo-create'));
+class TodoListNarrowView extends StatelessWidget {
+  const TodoListNarrowView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: const TodoList(),
+      floatingActionButton: _buildFloatingActionButton(context),
+    );
   }
 
   Widget _buildFloatingActionButton(BuildContext context) {
@@ -40,44 +41,54 @@ class TodoListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildList(List<Todo> state) {
-    return ListView(
-      children: [
-        _buildSearchBar(),
-        for (var i = 0; i < state.length; i++)
-          TodoTile(todoIndex: i, todo: state[i])
-      ],
+  /// Add new todo
+  void _primaryAction(BuildContext context) {
+    context.push(context.namedLocation('todo-create'));
+  }
+}
+
+class TodoListWideView extends StatelessWidget {
+  const TodoListWideView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: TodoList(),
     );
   }
+}
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: TextField(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: const Color(0xfff1f1f1),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32),
-            borderSide: BorderSide.none,
-          ),
-          hintText: "Search",
-          prefixIcon: const Icon(Icons.search),
-        ),
-      ),
+class TodoList extends StatelessWidget {
+  const TodoList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoListBloc, TodoListState>(
+      builder: (BuildContext context, TodoListState state) {
+        return ListView(
+          children: [
+            const SearchBar(),
+            for (var i = 0; i < state.todoList.length; i++)
+              TodoTile(index: i, todo: state.todoList[i])
+          ],
+        );
+      },
     );
   }
 }
 
 class TodoTile extends StatelessWidget {
-  final int todoIndex;
+  final int index;
   final Todo todo;
 
-  const TodoTile({required this.todoIndex, required this.todo, super.key});
+  const TodoTile({
+    required this.index,
+    required this.todo,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     return ListTile(
       title: Text(todo.description),
       subtitle: Row(
@@ -92,22 +103,39 @@ class TodoTile extends StatelessWidget {
       leading: _buildPriority(todo.priority),
       trailing: Checkbox(
         value: todo.completion,
-        onChanged: (bool? value) {
-          context.read<TodoListCubit>().toggleCompletion(index: todoIndex);
+        onChanged: (bool? completion) {
+          context.read<TodoListBloc>().add(
+                TodoListTodoCompletionToggled(
+                  index: index,
+                  completion: completion,
+                ),
+              );
         },
       ),
-      onTap: () {
-        context.read<TodoCubit>().view(index: todoIndex);
-        // Replace the navigation stack if the wide layout is used.
-        if (screenWidth < maxScreenWidthCompact) {
-          context.push(context.namedLocation('todo-view',
-              pathParameters: {'todoIndex': todoIndex.toString()}));
-        } else {
-          context.go(context.namedLocation('todo-view',
-              pathParameters: {'todoIndex': todoIndex.toString()}));
-        }
-      },
+      onTap: () => _onTapAction(context),
     );
+  }
+
+  void _onTapAction(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    context.read<TodoModeCubit>().view(index);
+    // Replace the navigation stack if the wide layout is used.
+    if (screenWidth < maxScreenWidthCompact) {
+      context.push(
+        context.namedLocation(
+          'todo-view',
+          pathParameters: {'index': index.toString()},
+        ),
+      );
+    } else {
+      // @todo: go doesn't work here
+      context.push(
+        context.namedLocation(
+          'todo-view',
+          pathParameters: {'index': index.toString()},
+        ),
+      );
+    }
   }
 
   Widget? _buildPriority(String? value) {
@@ -138,6 +166,29 @@ class TodoTile extends StatelessWidget {
     return CircleAvatar(
       backgroundColor: avatarColor,
       child: Text(value ?? ""),
+    );
+  }
+}
+
+class SearchBar extends StatelessWidget {
+  const SearchBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: TextField(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color(0xfff1f1f1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(32),
+            borderSide: BorderSide.none,
+          ),
+          hintText: "Search",
+          prefixIcon: const Icon(Icons.search),
+        ),
+      ),
     );
   }
 }

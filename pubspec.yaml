@@ -17,6 +17,7 @@ dependencies:
   go_router: ^8.1.0
   path_provider: ^2.0.11
   equatable: ^2.0.5
+  rxdart: ^0.27.7
 
 dev_dependencies:
   flutter_test:

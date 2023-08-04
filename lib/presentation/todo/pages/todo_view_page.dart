@@ -4,31 +4,46 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/navigation_bar.dart';
-import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 class TodoViewPage extends StatelessWidget {
-  final int todoIndex;
+  final int index;
 
-  const TodoViewPage({required this.todoIndex, super.key});
+  const TodoViewPage({
+    required this.index,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final TodoListRepository todoListRepository =
+        context.read<TodoListRepository>();
+    return BlocProvider(
+      create: (context) => TodoBloc(
+        todoListRepository: todoListRepository,
+        index: index,
+        todo: todoListRepository.getTodo(index),
+      ),
+      child: TodoViewView(todoListRepository: todoListRepository),
+    );
+  }
+}
+
+class TodoViewView extends StatelessWidget {
+  final TodoListRepository todoListRepository;
+
+  const TodoViewView({
+    required this.todoListRepository,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return BlocBuilder<TodoListCubit, List<Todo>>(
-      buildWhen: (List<Todo> previousState, List<Todo> state) {
-        // Rebuild if this todo entry is changed only.
-        if (previousState[todoIndex] != state[todoIndex]) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      builder: (BuildContext context, List<Todo> state) {
-        final Todo todo = state[todoIndex];
+    return BlocBuilder<TodoBloc, TodoState>(
+      builder: (BuildContext context, TodoState state) {
         return Scaffold(
           appBar: MainAppBar(
             title: "View",
@@ -41,20 +56,18 @@ class TodoViewPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeading("Todo"),
-                Text(todo.completion
-                    ? '${todo.description} (DONE)'
-                    : todo.description),
+                Text(state.todo.description),
                 _buildHeading("Priority"),
-                _buildPriority(context, todo),
+                _buildPriority(context, state),
                 _buildHeading("Projects"),
-                _buildProjects(context, todo),
+                _buildProjects(context, state),
                 _buildHeading("Contexts"),
-                _buildContexts(context, todo),
+                _buildContexts(context, state),
               ],
             ),
           ),
           floatingActionButton: screenWidth < maxScreenWidthCompact
-              ? _buildFloatingActionButton(context, todo)
+              ? _buildFloatingActionButton(context, state)
               : null,
         );
       },
@@ -71,72 +84,74 @@ class TodoViewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPriority(BuildContext context, Todo todo) {
+  Widget _buildPriority(BuildContext context, TodoState state) {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: <Widget>[
-        for (var p in priorities)
-          BasicChip(label: p, status: todo.priority == p)
+        for (var p in todoListRepository.getAllPriorities())
+          BasicChip(label: p, status: state.todo.priority == p),
       ],
     );
   }
 
-  Widget _buildProjects(BuildContext context, Todo todo) {
+  Widget _buildProjects(BuildContext context, TodoState state) {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: <Widget>[
-        for (var p in todo.projects) BasicChip(label: p, status: true)
+        for (var p in state.todo.projects) BasicChip(label: p, status: true),
       ],
     );
   }
 
-  Widget _buildContexts(BuildContext context, Todo todo) {
+  Widget _buildContexts(BuildContext context, TodoState state) {
     return Wrap(
       spacing: 8.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: <Widget>[
-        for (var c in todo.contexts) BasicChip(label: c, status: true)
+        for (var c in state.todo.contexts) BasicChip(label: c, status: true),
       ],
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context, Todo todo) {
+  Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         PrimaryFloatingActionButton(
-          icon: todo.completion
+          icon: state.todo.completion
               ? const Icon(Icons.remove_done)
               : const Icon(Icons.done),
-          tooltip: todo.completion ? 'Undone' : 'Done',
-          action: () => _secondaryAction(context),
+          tooltip: state.todo.completion ? 'Undone' : 'Done',
+          action: () => _secondaryAction(context, state),
         ),
         const SizedBox(height: 16),
         PrimaryFloatingActionButton(
           icon: const Icon(Icons.edit),
           tooltip: 'Edit',
-          action: () => _primaryAction(context),
+          action: () => _primaryAction(context, state),
         ),
       ],
     );
   }
 
   /// Edit todo
-  void _primaryAction(BuildContext context) {
-    context.read<TodoCubit>().edit(index: todoIndex);
-    context.push(context.namedLocation('todo-edit',
-        pathParameters: {'todoIndex': todoIndex.toString()}));
+  void _primaryAction(BuildContext context, TodoState state) {
+    context.pushNamed(
+      'todo-edit',
+      pathParameters: {'index': state.index.toString()},
+      extra: state.todo,
+    );
   }
 
   /// Toggle completion
-  void _secondaryAction(BuildContext context) =>
-      context.read<TodoListCubit>().toggleCompletion(index: todoIndex);
+  void _secondaryAction(BuildContext context, TodoState state) {
+    context.read<TodoBloc>().add(TodoCompletionChanged(!state.todo.completion));
+  }
 
   /// Cancel current view process
   void _cancelAction(BuildContext context) {
-    context.read<TodoCubit>().back();
     context.pop();
   }
 }

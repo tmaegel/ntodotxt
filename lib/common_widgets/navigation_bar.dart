@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_mode_state.dart';
 
 class PrimaryNavigationRail extends StatelessWidget {
   const PrimaryNavigationRail({super.key});
@@ -12,17 +14,16 @@ class PrimaryNavigationRail extends StatelessWidget {
     return NavigationRail(
       selectedIndex: null,
       extended: false,
-      leading: _buildFloatingActionButton(context),
+      leading: _buildFloatingActionButtons(context),
       groupAlignment: 1.0,
       destinations: _buildDestinations(),
       onDestinationSelected: (int index) {
         switch (index) {
           case 0: // Manage todos
-            context.read<TodoCubit>().reset();
+            context.read<TodoModeCubit>().list();
             context.go(context.namedLocation('todo-list'));
             break;
           case 1: // Manage shortcuts
-            context.read<TodoCubit>().reset();
             // context.push(context.namedLocation('shortcut-list'));
             break;
           default:
@@ -44,118 +45,132 @@ class PrimaryNavigationRail extends StatelessWidget {
     ];
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return BlocBuilder<TodoCubit, TodoState>(
-      builder: (context, state) {
-        if (state is TodoViewing) {
-          return _buildViewActions(context, state);
-        } else if (state is TodoEditing) {
-          return _buildEditActions(context, state);
-        } else if (state is TodoCreating) {
-          return _buildCreateActions(context);
-        } else if (state is TodoInitial) {
-          return _buildListActions(context);
-        } else {
-          return _buildListActions(context);
+  Widget _buildFloatingActionButtons(BuildContext context) {
+    return BlocBuilder<TodoModeCubit, TodoModeState>(
+      builder: (BuildContext context, TodoModeState state) {
+        switch (state.status) {
+          case TodoModeStatus.view:
+            return Column(
+              children: [
+                _buildCreateActionButton(context),
+                const SizedBox(height: 8),
+                _buildEditActionButton(context, state),
+                const SizedBox(height: 8),
+                _buildDoneActionButton(context, state),
+              ],
+            );
+          case TodoModeStatus.create:
+            return Column(
+              children: [
+                _buildSaveActionButton(context, state),
+                const SizedBox(height: 8),
+                _buildCancelActionButton(context, state),
+              ],
+            );
+          case TodoModeStatus.edit:
+            return Column(
+              children: [
+                _buildSaveActionButton(context, state),
+                const SizedBox(height: 8),
+                _buildDeleteActionButton(context),
+                const SizedBox(height: 8),
+                _buildCancelActionButton(context, state),
+              ],
+            );
+          default:
+            return _buildCreateActionButton(context);
         }
       },
     );
   }
 
-  Widget _buildListActions(BuildContext context) {
+  Widget _buildCreateActionButton(BuildContext context) {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.add),
-      tooltip: 'Add',
+      tooltip: 'Create',
       action: () {
-        // @todo: Check for shortcut or todo mode late.
-        context.read<TodoCubit>().create();
+        context.read<TodoModeCubit>().create();
         context.push(context.namedLocation('todo-create'));
       },
     );
   }
 
-  Widget _buildViewActions(BuildContext context, TodoState state) {
-    return Column(
-      children: [
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.done),
-          tooltip: 'Done',
-          action: () {
-            // @todo: Check for shortcut or todo mode late.
-            final index = state.index!;
-            context.read<TodoListCubit>().toggleCompletion(index: index);
-          },
-        ),
-        const SizedBox(height: 8),
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.edit),
-          tooltip: 'Edit',
-          action: () {
-            final index = state.index!;
-            context.read<TodoCubit>().edit(index: index);
-            context.push(context.namedLocation('todo-edit',
-                pathParameters: {'todoIndex': index.toString()}));
-          },
-        ),
-      ],
+  Widget _buildEditActionButton(BuildContext context, TodoModeState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.edit),
+      tooltip: 'Edit',
+      action: () {
+        final index = state.index!;
+        context.read<TodoModeCubit>().edit(index);
+        context.push(
+          context.namedLocation(
+            'todo-edit',
+            pathParameters: {'index': index.toString()},
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildEditActions(BuildContext context, TodoState state) {
-    return Column(
-      children: [
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.save),
-          tooltip: 'Save',
-          action: () {
-            final int index = state.index!;
-            context.read<TodoCubit>().view(index: index);
-            context.pop();
-          },
-        ),
-        const SizedBox(height: 8),
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.delete),
-          tooltip: 'Delete',
-          action: () {
-            context.read<TodoCubit>().reset();
-            context.go(context.namedLocation('todo-list'));
-          },
-        ),
-        const SizedBox(height: 8),
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.close),
-          tooltip: 'Cancel',
-          action: () {
-            context.read<TodoCubit>().reset();
-            context.go(context.namedLocation('todo-list'));
-          },
-        ),
-      ],
+  Widget _buildSaveActionButton(BuildContext context, TodoModeState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.save),
+      tooltip: 'Save',
+      action: () {
+        final index = state.index;
+        if (index == null) {
+          context
+              .read<TodoModeCubit>()
+              .list(); // @todo: Go to view of created todo here.
+          context.go(context.namedLocation('todo-list'));
+        } else {
+          context.read<TodoModeCubit>().view(index);
+          context.pop();
+        }
+      },
     );
   }
 
-  Widget _buildCreateActions(BuildContext context) {
-    return Column(
-      children: [
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.save),
-          tooltip: 'Save',
-          action: () {
-            context.read<TodoCubit>().reset();
-            context.pop();
-          },
-        ),
-        const SizedBox(height: 8),
-        PrimaryFloatingActionButton(
-          icon: const Icon(Icons.close),
-          tooltip: 'Cancel',
-          action: () {
-            context.read<TodoCubit>().reset();
-            context.go(context.namedLocation('todo-list'));
-          },
-        ),
-      ],
+  Widget _buildDeleteActionButton(BuildContext context) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.delete),
+      tooltip: 'Delete',
+      action: () {
+        context.read<TodoModeCubit>().list();
+        context.go(context.namedLocation('todo-list'));
+      },
+    );
+  }
+
+  Widget _buildDoneActionButton(BuildContext context, TodoModeState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.done),
+      tooltip: 'Done',
+      action: () {
+        final index = state.index!;
+        context
+            .read<TodoListBloc>()
+            .add(TodoListTodoCompletionToggled(index: index));
+      },
+    );
+  }
+
+  Widget _buildCancelActionButton(BuildContext context, TodoModeState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.close),
+      tooltip: 'Cancel',
+      action: () {
+        final index = state.index;
+        if (index == null) {
+          context
+              .read<TodoModeCubit>()
+              .list(); // @todo: Go to view of created todo here.
+          context.go(context.namedLocation('todo-list'));
+        } else {
+          context.read<TodoModeCubit>().view(index);
+          context.pop();
+        }
+      },
     );
   }
 }

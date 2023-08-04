@@ -9,16 +9,3 @@ List<String> rawTodoList = [
   "(F) monthly task revisions within Sleek Monthly recurrence",
   "x (A) Find ticket prices",
 ];
-List<String> priorities = ['A', 'B', 'C', 'D', 'E', 'F'];
-List<String> projects = [
-  'Home',
-  'Notebook',
-  'School',
-];
-List<String> contexts = [
-  'asap',
-  'enhancement',
-  'improvement',
-  'someday',
-  'investigation'
-];
