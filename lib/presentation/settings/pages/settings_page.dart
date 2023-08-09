@@ -9,8 +9,10 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: MainAppBar(
         title: "Settings",
-        icon: const Icon(Icons.arrow_back),
-        action: () => _cancelAction(context),
+        leadingAction: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _cancelAction(context),
+        ),
       ),
       body: ListView(
         children: const [

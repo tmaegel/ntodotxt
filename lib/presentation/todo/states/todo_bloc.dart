@@ -20,25 +20,16 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
             todo: todo,
           ),
         ) {
-    on<TodoCompletionChanged>(_onCompletionChanged);
-    on<TodoSubmitted>(_onSubmitted);
+    on<TodoCompletionToggled>(_onCompletionToggled);
     on<TodoDeleted>(_onDeleted);
+    on<TodoSubmitted>(_onSubmitted);
   }
 
-  void _onCompletionChanged(
-    TodoCompletionChanged event,
+  void _onCompletionToggled(
+    TodoCompletionToggled event,
     Emitter<TodoState> emit,
   ) {
     final Todo todo = state.todo.copyWith(completion: event.completion);
-    _todoListRepository.saveTodo(state.index, todo);
-    emit(state.copyWith(todo: todo));
-  }
-
-  void _onSubmitted(
-    TodoSubmitted event,
-    Emitter<TodoState> emit,
-  ) {
-    final Todo todo = event.todo.copyWith();
     _todoListRepository.saveTodo(state.index, todo);
     emit(state.copyWith(todo: todo));
   }
@@ -48,5 +39,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     _todoListRepository.deleteTodo(state.index);
+  }
+
+  void _onSubmitted(
+    TodoSubmitted event,
+    Emitter<TodoState> emit,
+  ) {
+    final Todo todo = event.todo.copyWith();
+    _todoListRepository.saveTodo(state.index, todo);
+    emit(state.copyWith(todo: todo));
   }
 }

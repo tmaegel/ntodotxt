@@ -26,3 +26,16 @@ final class TodoListTodoCompletionToggled extends TodoListEvent {
         completion,
       ];
 }
+
+final class TodoListTodoDeleted extends TodoListEvent {
+  final int index;
+
+  const TodoListTodoDeleted({
+    required this.index,
+  });
+
+  @override
+  List<Object?> get props => [
+        index,
+      ];
+}

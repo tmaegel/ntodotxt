@@ -8,10 +8,10 @@ sealed class TodoEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class TodoCompletionChanged extends TodoEvent {
+final class TodoCompletionToggled extends TodoEvent {
   final bool completion;
 
-  const TodoCompletionChanged(this.completion);
+  const TodoCompletionToggled(this.completion);
 
   @override
   List<Object> get props => [completion];

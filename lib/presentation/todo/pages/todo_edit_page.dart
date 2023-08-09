@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/navigation_bar.dart';
+import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoEditPage extends StatelessWidget {
   final int index;
@@ -47,8 +48,10 @@ class TodoEditView extends StatelessWidget {
         return Scaffold(
           appBar: MainAppBar(
             title: "Edit",
-            icon: const Icon(Icons.close),
-            action: () => _cancelAction(context),
+            leadingAction: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => _cancelAction(context, state),
+            ),
             toolbar: _buildToolBar(context, state),
           ),
           body: Padding(
@@ -164,7 +167,8 @@ class TodoEditView extends StatelessWidget {
   }
 
   /// Cancel current edit process
-  void _cancelAction(BuildContext context) {
+  void _cancelAction(BuildContext context, TodoState state) {
+    context.read<TodoModeCubit>().view(state.index);
     context.pop();
   }
 }

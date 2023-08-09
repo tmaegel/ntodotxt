@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/navigation_bar.dart';
+import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoViewPage extends StatelessWidget {
   final int index;
@@ -47,8 +48,12 @@ class TodoViewView extends StatelessWidget {
         return Scaffold(
           appBar: MainAppBar(
             title: "View",
-            icon: const Icon(Icons.arrow_back),
-            action: () => _cancelAction(context),
+            leadingAction: screenWidth < maxScreenWidthCompact
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => _cancelAction(context),
+                  )
+                : null,
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -147,11 +152,12 @@ class TodoViewView extends StatelessWidget {
 
   /// Toggle completion
   void _secondaryAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoCompletionChanged(!state.todo.completion));
+    context.read<TodoBloc>().add(TodoCompletionToggled(!state.todo.completion));
   }
 
   /// Cancel current view process
   void _cancelAction(BuildContext context) {
-    context.pop();
+    context.read<TodoModeCubit>().list();
+    context.go(context.namedLocation('todo-list'));
   }
 }

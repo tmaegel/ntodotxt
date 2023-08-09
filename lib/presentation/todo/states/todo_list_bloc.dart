@@ -11,11 +11,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     required TodoListRepository todoListRepository,
   })  : _todoListRepository = todoListRepository,
         super(const TodoListState()) {
-    on<TodoListSubscriptionRequested>(_onSubscriptionRequested);
+    on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
+    on<TodoListTodoDeleted>(_onTodoDeleted);
   }
 
-  void _onSubscriptionRequested(
+  void _onTodoListSubscriptionRequested(
     TodoListSubscriptionRequested event,
     Emitter<TodoListState> emit,
   ) async {
@@ -40,5 +41,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       event.index,
       todo.copyWith(completion: event.completion ?? !todo.completion),
     );
+  }
+
+  void _onTodoDeleted(
+    TodoListTodoDeleted event,
+    Emitter<TodoListState> emit,
+  ) {
+    _todoListRepository.deleteTodo(event.index);
   }
 }

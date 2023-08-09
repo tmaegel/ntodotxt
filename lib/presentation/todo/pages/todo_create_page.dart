@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/navigation_bar.dart';
+import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoCreatePage extends StatelessWidget {
   const TodoCreatePage({super.key});
@@ -32,8 +33,10 @@ class TodoCreateView extends StatelessWidget {
     return Scaffold(
       appBar: MainAppBar(
         title: "Create",
-        icon: const Icon(Icons.close),
-        action: () => _cancelAction(context),
+        leadingAction: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => _cancelAction(context),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -126,6 +129,7 @@ class TodoCreateView extends StatelessWidget {
 
   /// Cancel current create process
   void _cancelAction(BuildContext context) {
-    context.pop();
+    context.read<TodoModeCubit>().list();
+    context.go(context.namedLocation('todo-list'));
   }
 }

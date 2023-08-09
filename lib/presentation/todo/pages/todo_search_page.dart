@@ -10,8 +10,10 @@ class TodoSearchPage extends StatelessWidget {
     return Scaffold(
       appBar: MainAppBar(
         title: "Search",
-        icon: const Icon(Icons.arrow_back),
-        action: () => _cancelAction(context),
+        leadingAction: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _cancelAction(context),
+        ),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
