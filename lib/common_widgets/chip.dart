@@ -1,59 +1,62 @@
 import 'package:flutter/material.dart';
 
-class BasicChip extends StatelessWidget {
+class ChipEntity {
   final String label;
-  final bool status;
+  final bool selected;
+  final void Function(bool)? onSelected;
 
-  const BasicChip({required this.label, this.status = false, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-          color: status ? Colors.lime : Colors.grey.shade400,
-        ),
-        child: Text(label),
-      ),
-    );
-  }
+  const ChipEntity({
+    required this.label,
+    this.selected = false,
+    this.onSelected,
+  });
 }
 
-class ActionChoiceChip extends StatefulWidget {
-  final String label;
+class GenericChip extends StatelessWidget {
+  final ChipEntity child;
 
-  const ActionChoiceChip({required this.label, super.key});
-
-  @override
-  State<ActionChoiceChip> createState() => _ActionChoiceChipState();
-}
-
-class _ActionChoiceChipState extends State<ActionChoiceChip> {
-  bool status = false;
+  const GenericChip({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChoiceChip(
-      label: Text(widget.label),
-      selected: status,
-      backgroundColor: const Color(0xfff1f1f1),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      label: Text(child.label),
+      selected: child.selected,
+      backgroundColor: Colors.black12,
+      disabledColor: Colors.black12,
+      selectedColor: Colors.lightBlue[100],
       side: const BorderSide(
         style: BorderStyle.none,
         color: Color(0xfff1f1f1),
       ),
-      onSelected: (bool selected) {
-        setState(
-          () {
-            status = selected;
-          },
-        );
-      },
+      // @todo: Set colore for all states.
+      labelStyle: const TextStyle(color: Colors.black),
+      onSelected: child.onSelected != null
+          ? (bool selected) => child.onSelected!(selected)
+          : null,
+    );
+  }
+}
+
+class GenericChipGroup extends StatelessWidget {
+  final List<ChipEntity> chips;
+
+  const GenericChipGroup({
+    required this.chips,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8.0, // gap between adjacent chips
+      runSpacing: 4.0, // gap between lines
+      children: <Widget>[
+        for (var chip in chips) GenericChip(child: chip),
+      ],
     );
   }
 }

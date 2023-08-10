@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
+import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
@@ -60,14 +61,29 @@ class TodoViewView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeading("Todo"),
+                const Subheader(title: "Todo"),
                 Text(state.todo.description),
-                _buildHeading("Priority"),
-                _buildPriority(context, state),
-                _buildHeading("Projects"),
-                _buildProjects(context, state),
-                _buildHeading("Contexts"),
-                _buildContexts(context, state),
+                const Subheader(title: "Priority"),
+                GenericChipGroup(
+                  chips: [
+                    for (var p in todoListRepository.getAllPriorities())
+                      ChipEntity(label: p, selected: state.todo.priority == p),
+                  ],
+                ),
+                const Subheader(title: "Projects"),
+                GenericChipGroup(
+                  chips: [
+                    for (var p in state.todo.projects)
+                      ChipEntity(label: p, selected: true),
+                  ],
+                ),
+                const Subheader(title: "Contexts"),
+                GenericChipGroup(
+                  chips: [
+                    for (var c in state.todo.contexts)
+                      ChipEntity(label: c, selected: true),
+                  ],
+                ),
               ],
             ),
           ),
@@ -76,47 +92,6 @@ class TodoViewView extends StatelessWidget {
               : null,
         );
       },
-    );
-  }
-
-  Widget _buildHeading(String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Text(
-        value,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildPriority(BuildContext context, TodoState state) {
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0, // gap between lines
-      children: <Widget>[
-        for (var p in todoListRepository.getAllPriorities())
-          BasicChip(label: p, status: state.todo.priority == p),
-      ],
-    );
-  }
-
-  Widget _buildProjects(BuildContext context, TodoState state) {
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0, // gap between lines
-      children: <Widget>[
-        for (var p in state.todo.projects) BasicChip(label: p, status: true),
-      ],
-    );
-  }
-
-  Widget _buildContexts(BuildContext context, TodoState state) {
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0, // gap between lines
-      children: <Widget>[
-        for (var c in state.todo.contexts) BasicChip(label: c, status: true),
-      ],
     );
   }
 

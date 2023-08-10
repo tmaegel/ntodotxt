@@ -95,9 +95,9 @@ class TodoTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           for (var project in todo.projects)
-            BasicChip(label: project, status: true),
+            GenericChip(child: ChipEntity(label: project, selected: true)),
           for (var context in todo.contexts)
-            BasicChip(label: context, status: true),
+            GenericChip(child: ChipEntity(label: context, selected: true)),
         ],
       ),
       leading: _buildPriority(todo.priority),
