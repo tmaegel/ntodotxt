@@ -17,13 +17,22 @@ final class TodoCompletionToggled extends TodoEvent {
   List<Object> get props => [completion];
 }
 
-final class TodoSubmitted extends TodoEvent {
-  final Todo todo;
+final class TodoDescriptionChanged extends TodoEvent {
+  const TodoDescriptionChanged(this.description);
 
-  const TodoSubmitted(this.todo);
+  final String description;
 
   @override
-  List<Object> get props => [todo];
+  List<Object> get props => [description];
+}
+
+final class TodoSubmitted extends TodoEvent {
+  final int index;
+
+  const TodoSubmitted(this.index);
+
+  @override
+  List<Object> get props => [index];
 }
 
 final class TodoDeleted extends TodoEvent {

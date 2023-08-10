@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -80,14 +79,6 @@ class TodoCreateView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return PrimaryFloatingActionButton(
-      icon: const Icon(Icons.save),
-      tooltip: 'Save',
-      action: () => _saveAction(context),
     );
   }
 

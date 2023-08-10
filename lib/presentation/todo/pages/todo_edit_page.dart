@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -60,20 +59,7 @@ class TodoEditView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Subheader(title: "Todo"),
-                TextField(
-                  minLines: 3,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                  controller: TextEditingController()
-                    ..text = state.todo.description,
-                ),
+                _buildTodoTextField(context, state),
                 const Subheader(title: "Priority"),
                 GenericChipGroup(
                   chips: [
@@ -105,11 +91,23 @@ class TodoEditView extends StatelessWidget {
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
-    return PrimaryFloatingActionButton(
-      icon: const Icon(Icons.save),
-      tooltip: 'Save',
-      action: () => _saveAction(context, state),
+  Widget _buildTodoTextField(BuildContext context, TodoState state) {
+    return TextFormField(
+      key: const Key('editTodoView_textFormField'),
+      initialValue: state.todo.description,
+      minLines: 3,
+      maxLines: 3,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+      onChanged: (value) {
+        context.read<TodoBloc>().add(TodoDescriptionChanged(value));
+      },
     );
   }
 
@@ -132,6 +130,7 @@ class TodoEditView extends StatelessWidget {
 
   /// Save current todo
   void _saveAction(BuildContext context, TodoState state) {
+    context.read<TodoBloc>().add(TodoSubmitted(state.index));
     context.pop();
   }
 
