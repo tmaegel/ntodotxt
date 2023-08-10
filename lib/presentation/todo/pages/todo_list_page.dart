@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/common_widgets/search_bar.dart';
@@ -9,7 +8,6 @@ import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoListPage extends StatelessWidget {
   const TodoListPage({super.key});
@@ -151,24 +149,13 @@ class TodoTile extends StatelessWidget {
   }
 
   void _onTapAction(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    context.read<TodoModeCubit>().view(index);
-    // Replace the navigation stack if the wide layout is used.
-    if (screenWidth < maxScreenWidthCompact) {
-      context.push(
-        context.namedLocation(
-          'todo-view',
-          pathParameters: {'index': index.toString()},
-        ),
-      );
-    } else {
-      // @todo: go doesn't work here
-      context.push(
-        context.namedLocation(
-          'todo-view',
-          pathParameters: {'index': index.toString()},
-        ),
-      );
-    }
+    context.go(
+      context.namedLocation(
+        'todo-view',
+        pathParameters: {
+          'index': index.toString(),
+        },
+      ),
+    );
   }
 }

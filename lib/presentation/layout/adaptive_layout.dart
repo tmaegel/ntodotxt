@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/navigation_bar.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
 
 class NarrowLayout extends StatelessWidget {
   // The widget to display in the body of the Scaffold.
@@ -30,12 +29,13 @@ class WideLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Row(
         children: [
-          PrimaryNavigationRail(),
-          VerticalDivider(thickness: 1, width: 1, color: Color(0xfff1f1f1)),
-          Expanded(child: TodoListPage()),
+          const PrimaryNavigationRail(),
+          const VerticalDivider(
+              thickness: 1, width: 1, color: Color(0xfff1f1f1)),
+          Expanded(child: child),
         ],
       ),
     );

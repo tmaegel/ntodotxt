@@ -7,7 +7,6 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
@@ -50,9 +49,6 @@ class App extends StatelessWidget {
         providers: [
           BlocProvider<LoginCubit>(
             create: (BuildContext context) => LoginCubit(),
-          ),
-          BlocProvider<TodoModeCubit>(
-            create: (BuildContext context) => TodoModeCubit(),
           ),
           BlocProvider<TodoListBloc>(
             create: (context) => TodoListBloc(

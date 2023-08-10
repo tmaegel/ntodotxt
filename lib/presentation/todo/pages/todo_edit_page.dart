@@ -5,11 +5,9 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
-import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoEditPage extends StatelessWidget {
   final int index;
@@ -44,7 +42,6 @@ class TodoEditView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
@@ -103,9 +100,6 @@ class TodoEditView extends StatelessWidget {
               ],
             ),
           ),
-          floatingActionButton: screenWidth < maxScreenWidthCompact
-              ? _buildFloatingActionButton(context, state)
-              : null,
         );
       },
     );
@@ -149,7 +143,6 @@ class TodoEditView extends StatelessWidget {
 
   /// Cancel current edit process
   void _cancelAction(BuildContext context, TodoState state) {
-    context.read<TodoModeCubit>().view(state.index);
     context.pop();
   }
 }

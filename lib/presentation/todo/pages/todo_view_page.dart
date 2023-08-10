@@ -5,11 +5,9 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
-import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoViewPage extends StatelessWidget {
   final int index;
@@ -44,7 +42,6 @@ class TodoViewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
@@ -88,9 +85,6 @@ class TodoViewView extends StatelessWidget {
               ],
             ),
           ),
-          floatingActionButton: screenWidth < maxScreenWidthCompact
-              ? _buildFloatingActionButton(context, state)
-              : null,
         );
       },
     );
@@ -131,10 +125,13 @@ class TodoViewView extends StatelessWidget {
 
   /// Edit current todo
   void _editAction(BuildContext context, TodoState state) {
-    context.pushNamed(
-      'todo-edit',
-      pathParameters: {'index': state.index.toString()},
-      extra: state.todo,
+    context.go(
+      context.namedLocation(
+        'todo-edit',
+        pathParameters: {
+          'index': state.index.toString(),
+        },
+      ),
     );
   }
 
@@ -145,7 +142,6 @@ class TodoViewView extends StatelessWidget {
 
   /// Cancel current view process
   void _cancelAction(BuildContext context) {
-    context.read<TodoModeCubit>().list();
     context.go(context.namedLocation('todo-list'));
   }
 }

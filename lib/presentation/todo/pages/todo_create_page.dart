@@ -5,10 +5,8 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
-import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
 
 class TodoCreatePage extends StatelessWidget {
   const TodoCreatePage({super.key});
@@ -31,7 +29,6 @@ class TodoCreateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: MainAppBar(
@@ -83,9 +80,6 @@ class TodoCreateView extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: screenWidth < maxScreenWidthCompact
-          ? _buildFloatingActionButton(context)
-          : null,
     );
   }
 
@@ -116,7 +110,6 @@ class TodoCreateView extends StatelessWidget {
 
   /// Cancel current create process
   void _cancelAction(BuildContext context) {
-    context.read<TodoModeCubit>().list();
     context.go(context.namedLocation('todo-list'));
   }
 }
