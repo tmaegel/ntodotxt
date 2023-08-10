@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/common_widgets/bottom_sheet.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
@@ -25,7 +25,7 @@ class AppRouter {
   AppRouter(this.loginCubit);
 
   late final GoRouter routerNarrowLayout = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/todo',
     debugLogDiagnostics: true,
     routes: <RouteBase>[
       GoRoute(
@@ -43,14 +43,21 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/',
+        path: '/todo',
         name: 'todo-list',
         builder: (BuildContext context, GoRouterState state) {
           return const NarrowLayout(child: TodoListPage());
         },
         routes: [
           GoRoute(
-            path: 'view/:index',
+            path: 'todo/create',
+            name: 'todo-create',
+            builder: (BuildContext context, GoRouterState state) {
+              return const NarrowLayout(child: TodoCreatePage());
+            },
+          ),
+          GoRoute(
+            path: 'todo/view/:index',
             name: 'todo-view',
             builder: (BuildContext context, GoRouterState state) {
               // @todo Redirect to error page if index is null.
@@ -62,7 +69,7 @@ class AppRouter {
             },
           ),
           GoRoute(
-            path: 'edit/:index',
+            path: 'todo/edit/:index',
             name: 'todo-edit',
             builder: (BuildContext context, GoRouterState state) {
               // @todo Redirect to error page if index is null.
@@ -71,13 +78,6 @@ class AppRouter {
                   index: int.parse(state.pathParameters['index']!),
                 ),
               );
-            },
-          ),
-          GoRoute(
-            path: 'create',
-            name: 'todo-create',
-            builder: (BuildContext context, GoRouterState state) {
-              return const NarrowLayout(child: TodoCreatePage());
             },
           ),
           GoRoute(
@@ -97,7 +97,7 @@ class AppRouter {
         return onLoginPage ? null : '/login';
       }
       if (onLoginPage) {
-        return '/';
+        return '/todo';
       }
       return null;
     },
@@ -105,7 +105,7 @@ class AppRouter {
   );
 
   late final GoRouter routerWideLayout = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/todo',
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     routes: <RouteBase>[
@@ -123,51 +123,60 @@ class AppRouter {
         },
         routes: [
           GoRoute(
-            path: '/',
+            path: '/todo',
             name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
               return Container();
             },
             routes: [
               GoRoute(
-                path: 'view/:index',
-                name: 'todo-view',
-                builder: (BuildContext context, GoRouterState state) {
-                  // @todo Redirect to error page if index is null.
-                  return TodoViewPage(
-                    index: int.parse(state.pathParameters['index']!),
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'edit/:index',
-                name: 'todo-edit',
-                builder: (BuildContext context, GoRouterState state) {
-                  // @todo Redirect to error page if index is null.
-                  return TodoEditPage(
-                    index: int.parse(state.pathParameters['index']!),
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'create',
+                parentNavigatorKey: _rootNavigatorKey,
+                path: 'todo/create',
                 name: 'todo-create',
-                builder: (BuildContext context, GoRouterState state) {
-                  return const TodoCreatePage();
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return DialogPage(
+                    key: state.pageKey,
+                    child: const TodoCreatePage(),
+                  );
                 },
               ),
               GoRoute(
-                path: 'search',
-                name: 'todo-search',
-                builder: (BuildContext context, GoRouterState state) {
-                  return const TodoSearchPage();
+                parentNavigatorKey: _rootNavigatorKey,
+                path: 'todo/view/:index',
+                name: 'todo-view',
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return DialogPage(
+                    key: state.pageKey,
+                    // @todo Redirect to error page if index is null.
+                    child: TodoViewPage(
+                      index: int.parse(state.pathParameters['index']!),
+                    ),
+                  );
                 },
               ),
               GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: 'todo/edit/:index',
+                name: 'todo-edit',
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return DialogPage(
+                    key: state.pageKey,
+                    // @todo Redirect to error page if index is null.
+                    child: TodoEditPage(
+                      index: int.parse(state.pathParameters['index']!),
+                    ),
+                  );
+                },
+              ),
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
                 path: 'settings',
                 name: 'settings',
-                builder: (BuildContext context, GoRouterState state) {
-                  return const SettingsPage();
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return DialogPage(
+                    key: state.pageKey,
+                    child: const SettingsPage(),
+                  );
                 },
               ),
             ],
@@ -182,7 +191,7 @@ class AppRouter {
         return onLoginPage ? null : '/login';
       }
       if (onLoginPage) {
-        return '/';
+        return '/todo';
       }
       return null;
     },

@@ -115,10 +115,18 @@ class LocalStorageTodoListApi extends TodoListApi {
     _streamController.add(todoList);
   }
 
-  /// Returns a list of possible priorities.
+  /// Returns a list of all priorities of all todos.
   @override
   List<String> getAllPriorities() {
-    return const ['A', 'B', 'C', 'D', 'E', 'F'];
+    List<String> priorities = [];
+    for (var todo in _streamController.value) {
+      if (todo.priority != null) {
+        if (!priorities.contains(todo.priority)) {
+          priorities.add(todo.priority!);
+        }
+      }
+    }
+    return priorities.toSet().toList();
   }
 
   /// Returns a list with all projects of all todos.

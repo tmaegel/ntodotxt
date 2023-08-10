@@ -73,6 +73,11 @@ class App extends StatelessWidget {
                 brightness: Brightness.light,
                 searchBarTheme: SearchBarThemeData(
                   elevation: MaterialStateProperty.all(0.0),
+                  backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                ),
+                dialogBackgroundColor: Colors.white,
+                bottomSheetTheme: const BottomSheetThemeData(
+                  backgroundColor: Colors.white,
                 ),
                 useMaterial3: true,
               ),

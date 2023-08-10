@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
+import 'package:ntodotxt/common_widgets/header.dart';
+import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
@@ -13,22 +16,29 @@ class TodoListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TodoListRepository todoListRepository =
+        context.read<TodoListRepository>();
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth < maxScreenWidthCompact) {
-      return const TodoListNarrowView();
+      return TodoListNarrowView(todoListRepository: todoListRepository);
     } else {
-      return const TodoListWideView();
+      return TodoListWideView(todoListRepository: todoListRepository);
     }
   }
 }
 
 class TodoListNarrowView extends StatelessWidget {
-  const TodoListNarrowView({super.key});
+  final TodoListRepository todoListRepository;
+
+  const TodoListNarrowView({
+    required this.todoListRepository,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const TodoList(),
+      body: TodoList(todoListRepository: todoListRepository),
       floatingActionButton: _buildFloatingActionButton(context),
     );
   }
@@ -37,42 +47,76 @@ class TodoListNarrowView extends StatelessWidget {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.add),
       tooltip: 'Add',
-      action: () => _primaryAction(context),
+      action: () => _createAction(context),
     );
   }
 
   /// Add new todo
-  void _primaryAction(BuildContext context) {
+  void _createAction(BuildContext context) {
     context.push(context.namedLocation('todo-create'));
   }
 }
 
 class TodoListWideView extends StatelessWidget {
-  const TodoListWideView({super.key});
+  final TodoListRepository todoListRepository;
+
+  const TodoListWideView({
+    required this.todoListRepository,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: TodoList(),
+    return Scaffold(
+      body: TodoList(todoListRepository: todoListRepository),
     );
   }
 }
 
 class TodoList extends StatelessWidget {
-  const TodoList({super.key});
+  final TodoListRepository todoListRepository;
+
+  const TodoList({
+    required this.todoListRepository,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       builder: (BuildContext context, TodoListState state) {
-        return ListView(
+        return Column(
           children: [
-            const SearchBar(),
-            for (var i = 0; i < state.todoList.length; i++)
-              TodoTile(index: i, todo: state.todoList[i])
+            const GenericSearchBar(),
+            _buildListViewSortedByPriority(state),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildListViewSortedByPriority(TodoListState state) {
+    List<Widget> items = [];
+    for (var p in todoListRepository.getAllPriorities()) {
+      items.add(ListSection(title: p));
+      for (var i = 0; i < state.todoList.length; i++) {
+        if (state.todoList[i].priority == p) {
+          items.add(TodoTile(index: i, todo: state.todoList[i]));
+        }
+      }
+    }
+    // Add todos without priority.
+    items.add(ListSection(title: ""));
+    for (var i = 0; i < state.todoList.length; i++) {
+      if (state.todoList[i].priority == null) {
+        items.add(TodoTile(index: i, todo: state.todoList[i]));
+      }
+    }
+
+    return Expanded(
+      child: ListView(
+        children: items,
+      ),
     );
   }
 }
@@ -90,18 +134,7 @@ class TodoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(todo.description),
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          for (var project in todo.projects)
-            GenericChip(child: ChipEntity(label: project, selected: true)),
-          for (var context in todo.contexts)
-            GenericChip(child: ChipEntity(label: context, selected: true)),
-        ],
-      ),
-      leading: _buildPriority(todo.priority),
-      trailing: Checkbox(
+      leading: Checkbox(
         value: todo.completion,
         onChanged: (bool? completion) {
           context.read<TodoListBloc>().add(
@@ -112,6 +145,7 @@ class TodoTile extends StatelessWidget {
               );
         },
       ),
+      title: Text(todo.description),
       onTap: () => _onTapAction(context),
     );
   }
@@ -136,59 +170,5 @@ class TodoTile extends StatelessWidget {
         ),
       );
     }
-  }
-
-  Widget? _buildPriority(String? value) {
-    final Color avatarColor;
-    switch (value) {
-      case 'A':
-        avatarColor = Colors.redAccent.shade100;
-        break;
-      case 'B':
-        avatarColor = Colors.purpleAccent.shade100;
-        break;
-      case 'C':
-        avatarColor = Colors.orangeAccent.shade100;
-        break;
-      case 'D':
-        avatarColor = Colors.blueAccent.shade100;
-        break;
-      case 'E':
-        avatarColor = Colors.greenAccent.shade100;
-        break;
-      case 'F':
-        avatarColor = Colors.grey.shade300;
-        break;
-      default:
-        avatarColor = Colors.transparent;
-    }
-
-    return CircleAvatar(
-      backgroundColor: avatarColor,
-      child: Text(value ?? ""),
-    );
-  }
-}
-
-class SearchBar extends StatelessWidget {
-  const SearchBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: TextField(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: const Color(0xfff1f1f1),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32),
-            borderSide: BorderSide.none,
-          ),
-          hintText: "Search",
-          prefixIcon: const Icon(Icons.search),
-        ),
-      ),
-    );
   }
 }

@@ -15,7 +15,7 @@ class PrimaryNavigationRail extends StatelessWidget {
     return NavigationRail(
       selectedIndex: null,
       extended: false,
-      leading: _buildActionButtons(context),
+      leading: _buildCreateActionButton(context),
       groupAlignment: 1.0,
       destinations: _buildDestinations(),
       onDestinationSelected: (int index) {
@@ -26,6 +26,9 @@ class PrimaryNavigationRail extends StatelessWidget {
             break;
           case 1: // Manage shortcuts
             // context.push(context.namedLocation('shortcut-list'));
+            break;
+          case 2: // Settings
+            context.push(context.namedLocation('settings'));
             break;
           default:
         }
@@ -43,43 +46,47 @@ class PrimaryNavigationRail extends StatelessWidget {
         label: Text('Manage shortcuts'),
         icon: Icon(Icons.auto_awesome),
       ),
+      const NavigationRailDestination(
+        label: Text('Settings'),
+        icon: Icon(Icons.settings),
+      ),
     ];
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    return BlocBuilder<TodoModeCubit, TodoModeState>(
-      builder: (BuildContext context, TodoModeState state) {
-        switch (state.status) {
-          case TodoModeStatus.view:
-            return Column(
-              children: [
-                _buildCreateActionButton(context),
-                const SizedBox(height: 8),
-                _buildEditActionButton(context, state),
-              ],
-            );
-          case TodoModeStatus.create:
-            return Column(
-              children: [
-                _buildSaveActionButton(context, state),
-              ],
-            );
-          case TodoModeStatus.edit:
-            return Column(
-              children: [
-                _buildSaveActionButton(context, state),
-                const SizedBox(height: 8),
-                _buildDoneActionButton(context, state),
-                const SizedBox(height: 8),
-                _buildDeleteActionButton(context, state),
-              ],
-            );
-          default:
-            return _buildCreateActionButton(context);
-        }
-      },
-    );
-  }
+  // Widget _buildActionButtons(BuildContext context) {
+  //   return BlocBuilder<TodoModeCubit, TodoModeState>(
+  //     builder: (BuildContext context, TodoModeState state) {
+  //       switch (state.status) {
+  //         case TodoModeStatus.view:
+  //           return Column(
+  //             children: [
+  //               _buildCreateActionButton(context),
+  //               const SizedBox(height: 8),
+  //               _buildEditActionButton(context, state),
+  //             ],
+  //           );
+  //         case TodoModeStatus.create:
+  //           return Column(
+  //             children: [
+  //               _buildSaveActionButton(context, state),
+  //             ],
+  //           );
+  //         case TodoModeStatus.edit:
+  //           return Column(
+  //             children: [
+  //               _buildSaveActionButton(context, state),
+  //               const SizedBox(height: 8),
+  //               _buildDoneActionButton(context, state),
+  //               const SizedBox(height: 8),
+  //               _buildDeleteActionButton(context, state),
+  //             ],
+  //           );
+  //         default:
+  //           return _buildCreateActionButton(context);
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _buildCreateActionButton(BuildContext context) {
     return PrimaryFloatingActionButton(

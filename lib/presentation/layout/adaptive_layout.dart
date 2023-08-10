@@ -30,16 +30,12 @@ class WideLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Row(
         children: [
-          const Expanded(child: TodoListPage()),
-          const VerticalDivider(
-              thickness: 1, width: 1, color: Color(0xfff1f1f1)),
-          Expanded(child: child),
-          const VerticalDivider(
-              thickness: 1, width: 1, color: Color(0xfff1f1f1)),
-          const PrimaryNavigationRail(),
+          PrimaryNavigationRail(),
+          VerticalDivider(thickness: 1, width: 1, color: Color(0xfff1f1f1)),
+          Expanded(child: TodoListPage()),
         ],
       ),
     );

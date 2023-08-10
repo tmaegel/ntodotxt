@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/constants/screen.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -15,14 +14,12 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return AppBar(
       automaticallyImplyLeading: leadingAction != null,
       leading: leadingAction,
       title: Text(title),
-      actions: (screenWidth < maxScreenWidthCompact && toolbar != null)
-          ? <Widget>[_buildToolBar(context)]
-          : null,
+      backgroundColor: Colors.transparent,
+      actions: toolbar != null ? <Widget>[_buildToolBar(context)] : null,
     );
   }
 

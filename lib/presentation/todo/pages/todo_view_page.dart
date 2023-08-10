@@ -6,6 +6,7 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
@@ -47,14 +48,14 @@ class TodoViewView extends StatelessWidget {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "View",
-            leadingAction: screenWidth < maxScreenWidthCompact
-                ? IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => _cancelAction(context),
-                  )
-                : null,
+            leadingAction: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => _cancelAction(context),
+            ),
+            toolbar: _buildToolBar(context, state),
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -66,7 +67,7 @@ class TodoViewView extends StatelessWidget {
                 const Subheader(title: "Priority"),
                 GenericChipGroup(
                   chips: [
-                    for (var p in todoListRepository.getAllPriorities())
+                    for (var p in priorities)
                       ChipEntity(label: p, selected: state.todo.priority == p),
                   ],
                 ),
@@ -104,20 +105,32 @@ class TodoViewView extends StatelessWidget {
               ? const Icon(Icons.remove_done)
               : const Icon(Icons.done),
           tooltip: state.todo.completion ? 'Undone' : 'Done',
-          action: () => _secondaryAction(context, state),
+          action: () => _toggleAction(context, state),
         ),
         const SizedBox(height: 16),
         PrimaryFloatingActionButton(
           icon: const Icon(Icons.edit),
           tooltip: 'Edit',
-          action: () => _primaryAction(context, state),
+          action: () => _editAction(context, state),
         ),
       ],
     );
   }
 
-  /// Edit todo
-  void _primaryAction(BuildContext context, TodoState state) {
+  Widget _buildToolBar(BuildContext context, TodoState state) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          tooltip: 'Edit',
+          icon: const Icon(Icons.edit),
+          onPressed: () => _editAction(context, state),
+        ),
+      ],
+    );
+  }
+
+  /// Edit current todo
+  void _editAction(BuildContext context, TodoState state) {
     context.pushNamed(
       'todo-edit',
       pathParameters: {'index': state.index.toString()},
@@ -126,7 +139,7 @@ class TodoViewView extends StatelessWidget {
   }
 
   /// Toggle completion
-  void _secondaryAction(BuildContext context, TodoState state) {
+  void _toggleAction(BuildContext context, TodoState state) {
     context.read<TodoBloc>().add(TodoCompletionToggled(!state.todo.completion));
   }
 

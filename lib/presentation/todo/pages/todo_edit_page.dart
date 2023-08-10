@@ -6,6 +6,7 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_mode_cubit.dart';
@@ -47,6 +48,7 @@ class TodoEditView extends StatelessWidget {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "Edit",
             leadingAction: IconButton(
@@ -70,7 +72,7 @@ class TodoEditView extends StatelessWidget {
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: const Color(0xfff1f1f1),
+                    fillColor: Colors.grey[200],
                   ),
                   controller: TextEditingController()
                     ..text = state.todo.description,
@@ -78,7 +80,7 @@ class TodoEditView extends StatelessWidget {
                 const Subheader(title: "Priority"),
                 GenericChipGroup(
                   chips: [
-                    for (var p in todoListRepository.getAllPriorities())
+                    for (var p in priorities)
                       ChipEntity(label: p, selected: p == state.todo.priority),
                   ],
                 ),
@@ -102,18 +104,18 @@ class TodoEditView extends StatelessWidget {
             ),
           ),
           floatingActionButton: screenWidth < maxScreenWidthCompact
-              ? _buildFloatingActionButton(context)
+              ? _buildFloatingActionButton(context, state)
               : null,
         );
       },
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
+  Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.save),
       tooltip: 'Save',
-      action: () => _primaryAction(context),
+      action: () => _saveAction(context, state),
     );
   }
 
@@ -125,13 +127,17 @@ class TodoEditView extends StatelessWidget {
           icon: const Icon(Icons.delete),
           onPressed: () => _deleteAction(context, state),
         ),
+        IconButton(
+          tooltip: 'Save',
+          icon: const Icon(Icons.save),
+          onPressed: () => _saveAction(context, state),
+        ),
       ],
     );
   }
 
   /// Save current todo
-  void _primaryAction(BuildContext context) {
-    // context.read<TodoBloc>().add(TodoSubmitted(!state.todo.completion));
+  void _saveAction(BuildContext context, TodoState state) {
     context.pop();
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -7,6 +8,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: MainAppBar(
         title: "Settings",
         leadingAction: IconButton(
@@ -14,44 +16,55 @@ class SettingsPage extends StatelessWidget {
           onPressed: () => _cancelAction(context),
         ),
       ),
-      body: ListView(
-        children: const [
-          ListTile(
-            title: Text("Option 1"),
-            subtitle: Text("Option description"),
-            trailing: SettingsSwitch(),
-          ),
-          ListTile(
-            title: Text("Option 2"),
-            subtitle: Text("Option description"),
-            trailing: SettingsSwitch(),
-          ),
-          ListTile(
-            title: Text("Option 3"),
-            subtitle: Text("Option description"),
-            trailing: SettingsSwitch(),
-          ),
-          ListTile(
-            title: Text("Option 4"),
-            subtitle: Text("Option description"),
-            trailing: SettingsSwitch(),
-          ),
-          ListTile(
-            title: Text("Option 5"),
-            subtitle: Text("Option description"),
-            trailing: SettingsSwitch(),
-          ),
-          ListTile(
-            title: Text("Option 6"),
-            subtitle: Text("Option description"),
-            trailing: SettingsSwitch(),
-          ),
-        ],
-      ),
+      body: const SettingsView(),
     );
   }
 
-  void _cancelAction(BuildContext context) {}
+  void _cancelAction(BuildContext context) {
+    context.pop();
+  }
+}
+
+class SettingsView extends StatelessWidget {
+  const SettingsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: const [
+        ListTile(
+          title: Text("Option 1"),
+          subtitle: Text("Option description"),
+          trailing: SettingsSwitch(),
+        ),
+        ListTile(
+          title: Text("Option 2"),
+          subtitle: Text("Option description"),
+          trailing: SettingsSwitch(),
+        ),
+        ListTile(
+          title: Text("Option 3"),
+          subtitle: Text("Option description"),
+          trailing: SettingsSwitch(),
+        ),
+        ListTile(
+          title: Text("Option 4"),
+          subtitle: Text("Option description"),
+          trailing: SettingsSwitch(),
+        ),
+        ListTile(
+          title: Text("Option 5"),
+          subtitle: Text("Option description"),
+          trailing: SettingsSwitch(),
+        ),
+        ListTile(
+          title: Text("Option 6"),
+          subtitle: Text("Option description"),
+          trailing: SettingsSwitch(),
+        ),
+      ],
+    );
+  }
 }
 
 class SettingsSwitch extends StatefulWidget {
