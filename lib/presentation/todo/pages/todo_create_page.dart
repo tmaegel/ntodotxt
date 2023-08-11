@@ -59,21 +59,31 @@ class TodoCreateView extends StatelessWidget {
             const Subheader(title: "Priority"),
             GenericChipGroup(
               chips: [
-                for (var p in priorities) ChipEntity(label: p),
+                for (var p in priorities)
+                  ChipEntity(
+                    label: p,
+                    color: priorityChipColor[p],
+                  ),
               ],
             ),
             const Subheader(title: "Projects"),
             GenericChipGroup(
               chips: [
                 for (var p in todoListRepository.getAllProjects())
-                  ChipEntity(label: p),
+                  ChipEntity(
+                    label: p,
+                    color: projectChipColor,
+                  ),
               ],
             ),
             const Subheader(title: "Contexts"),
             GenericChipGroup(
               chips: [
                 for (var p in todoListRepository.getAllContexts())
-                  ChipEntity(label: p),
+                  ChipEntity(
+                    label: p,
+                    color: contextChipColor,
+                  ),
               ],
             ),
           ],

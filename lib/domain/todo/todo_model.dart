@@ -38,37 +38,37 @@ class Todo extends Equatable {
 
   /// Whether the `todo` is completed.
   /// Required attribute.
-  final bool completion;
+  bool completion;
 
   /// The priority of the `todo`.
   /// Priorities are A, B, C, ...
-  final String? priority;
+  String? priority;
 
   /// The completion date of the `todo`.
   /// Defaults to null.
-  final DateTime? completionDate;
+  DateTime? completionDate;
 
   /// The creation date of the `todo`.
   /// Defaults to null.
-  final DateTime? creationDate;
+  DateTime? creationDate;
 
   /// The description of the `todo`.
   /// Required attribute.
-  final String description;
+  String description;
 
   /// The list of projects of the `todo`.
   /// Defaults to an empty list.
-  final List<String> projects;
+  List<String> projects;
 
   /// The list of contexts of the `todo`.
   /// Defaults to an empty list.
-  final List<String> contexts;
+  List<String> contexts;
 
   /// The list of key value apirs of the `todo`.
   /// Defaults to an empty map.
-  final Map<String, String> keyValues;
+  Map<String, String> keyValues;
 
-  const Todo({
+  Todo({
     required this.completion,
     required this.description,
     this.priority,

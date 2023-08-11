@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
@@ -96,18 +98,11 @@ class TodoList extends StatelessWidget {
   Widget _buildListViewSortedByPriority(TodoListState state) {
     List<Widget> items = [];
     for (var p in todoListRepository.getAllPriorities()) {
-      items.add(ListSection(title: p));
+      items.add(ListSection(title: p ?? ""));
       for (var i = 0; i < state.todoList.length; i++) {
         if (state.todoList[i].priority == p) {
           items.add(TodoTile(index: i, todo: state.todoList[i]));
         }
-      }
-    }
-    // Add todos without priority.
-    items.add(ListSection(title: ""));
-    for (var i = 0; i < state.todoList.length; i++) {
-      if (state.todoList[i].priority == null) {
-        items.add(TodoTile(index: i, todo: state.todoList[i]));
       }
     }
 
@@ -143,8 +138,25 @@ class TodoTile extends StatelessWidget {
               );
         },
       ),
-      title: Text(todo.description),
+      title: _buildDesription(),
       onTap: () => _onTapAction(context),
+    );
+  }
+
+  Widget _buildDesription() {
+    return Wrap(
+      spacing: 4.0, // gap between adjacent chips
+      runSpacing: 4.0, // gap between lines
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2.0),
+          child: Text(todo.description),
+        ),
+        for (var p in todo.projects)
+          InlineChipReadOnly(label: p, color: projectChipColor),
+        for (var c in todo.contexts)
+          InlineChipReadOnly(label: c, color: contextChipColor),
+      ],
     );
   }
 

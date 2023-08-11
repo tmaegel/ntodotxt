@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ntodotxt/constants/todo.dart';
 
 class Subheader extends StatelessWidget {
   final String title;
@@ -55,7 +56,7 @@ class ListSection extends StatelessWidget {
         height: 35,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: getColor(title),
+          color: priorityChipColor[title] ?? noPriorityColor,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

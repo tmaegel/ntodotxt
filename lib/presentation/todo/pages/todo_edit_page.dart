@@ -64,7 +64,13 @@ class TodoEditView extends StatelessWidget {
                 GenericChipGroup(
                   chips: [
                     for (var p in priorities)
-                      ChipEntity(label: p, selected: p == state.todo.priority),
+                      ChipEntity(
+                        label: p,
+                        selected: p == state.todo.priority,
+                        color: priorityChipColor[p],
+                        onSelected: (bool selected) =>
+                            _changePriorityAction(context, p, selected),
+                      ),
                   ],
                 ),
                 const Subheader(title: "Projects"),
@@ -72,7 +78,12 @@ class TodoEditView extends StatelessWidget {
                   chips: [
                     for (var p in todoListRepository.getAllProjects())
                       ChipEntity(
-                          label: p, selected: state.todo.projects.contains(p)),
+                        label: p,
+                        selected: state.todo.projects.contains(p),
+                        color: projectChipColor,
+                        onSelected: (bool selected) =>
+                            _changeProjectsAction(context, p, selected),
+                      ),
                   ],
                 ),
                 const Subheader(title: "Contexts"),
@@ -80,7 +91,12 @@ class TodoEditView extends StatelessWidget {
                   chips: [
                     for (var c in todoListRepository.getAllContexts())
                       ChipEntity(
-                          label: c, selected: state.todo.contexts.contains(c)),
+                        label: c,
+                        selected: state.todo.contexts.contains(c),
+                        color: contextChipColor,
+                        onSelected: (bool selected) =>
+                            _changeContextsAction(context, c, selected),
+                      ),
                   ],
                 ),
               ],
@@ -143,5 +159,35 @@ class TodoEditView extends StatelessWidget {
   /// Cancel current edit process
   void _cancelAction(BuildContext context, TodoState state) {
     context.pop();
+  }
+
+  /// Change priority
+  void _changePriorityAction(
+      BuildContext context, String value, bool selected) {
+    if (selected) {
+      context.read<TodoBloc>().add(TodoPriorityAdded(value));
+    } else {
+      context.read<TodoBloc>().add(const TodoPriorityRemoved());
+    }
+  }
+
+  /// Change projects
+  void _changeProjectsAction(
+      BuildContext context, String value, bool selected) {
+    if (selected) {
+      context.read<TodoBloc>().add(TodoProjectAdded(value));
+    } else {
+      context.read<TodoBloc>().add(TodoProjectRemoved(value));
+    }
+  }
+
+  /// Change contexts
+  void _changeContextsAction(
+      BuildContext context, String value, bool selected) {
+    if (selected) {
+      context.read<TodoBloc>().add(TodoContextAdded(value));
+    } else {
+      context.read<TodoBloc>().add(TodoContextRemoved(value));
+    }
   }
 }

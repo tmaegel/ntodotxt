@@ -31,7 +31,7 @@ abstract class TodoListApi {
   /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
   void deleteTodo(int index);
 
-  List<String> getAllPriorities();
+  List<String?> getAllPriorities();
 
   List<String> getAllProjects();
 
@@ -95,10 +95,8 @@ class LocalStorageTodoListApi extends TodoListApi {
       throw TodoNotFoundException();
     }
     if (index == null) {
-      debugPrint("Adding todo");
       todoList.add(todo);
     } else {
-      debugPrint("Updating todo with index $index");
       todoList[index] = todo;
     }
     _streamController.add(todoList);
@@ -110,23 +108,31 @@ class LocalStorageTodoListApi extends TodoListApi {
     if (index > todoList.length) {
       throw TodoNotFoundException();
     }
-    debugPrint("Deleting todo with index $index");
     todoList.removeAt(index);
     _streamController.add(todoList);
   }
 
   /// Returns a list of all priorities of all todos.
   @override
-  List<String> getAllPriorities() {
-    List<String> priorities = [];
+  List<String?> getAllPriorities() {
+    bool containsNullPriority = false;
+    List<String?> priorities = [];
     for (var todo in _streamController.value) {
-      if (todo.priority != null) {
+      if (todo.priority == null) {
+        containsNullPriority = true;
+      } else {
         if (!priorities.contains(todo.priority)) {
           priorities.add(todo.priority!);
         }
       }
     }
-    return priorities.toSet().toList();
+    priorities = priorities.toSet().toList();
+    priorities.sort();
+    // Consider the zero priorities
+    if (containsNullPriority) {
+      priorities.add(null);
+    }
+    return priorities;
   }
 
   /// Returns a list with all projects of all todos.
@@ -136,7 +142,9 @@ class LocalStorageTodoListApi extends TodoListApi {
     for (var todo in _streamController.value) {
       projects = projects + todo.projects;
     }
-    return projects.toSet().toList();
+    projects = projects.toSet().toList();
+    projects.sort();
+    return projects;
   }
 
   /// Returns a list with all contexts of all todos.
@@ -146,7 +154,9 @@ class LocalStorageTodoListApi extends TodoListApi {
     for (var todo in _streamController.value) {
       contexts = contexts + todo.contexts;
     }
-    return contexts.toSet().toList();
+    contexts = contexts.toSet().toList();
+    contexts.sort();
+    return contexts;
   }
 
   static Future<String> get localPath async {
