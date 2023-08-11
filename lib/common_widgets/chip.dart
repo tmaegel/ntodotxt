@@ -35,6 +35,9 @@ class GenericChip extends StatelessWidget {
         style: BorderStyle.none,
         color: Color(0xfff1f1f1),
       ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
       // @todo: Set colore for all states.
       labelStyle: const TextStyle(color: Colors.black),
       onSelected: child.onSelected != null
@@ -79,7 +82,7 @@ class InlineChipReadOnly extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(borderRadius),
         color: color ?? defaultChipColor,
       ),
       child: Text(label),

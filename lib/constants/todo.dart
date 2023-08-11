@@ -14,3 +14,5 @@ const Color noPriorityColor = Colors.black12;
 const Color defaultChipColor = Colors.purple;
 const Color projectChipColor = Colors.lime;
 final Color contextChipColor = Colors.pinkAccent.shade100;
+
+const double borderRadius = 12.0;

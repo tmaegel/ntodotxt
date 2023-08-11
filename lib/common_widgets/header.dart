@@ -55,7 +55,7 @@ class ListSection extends StatelessWidget {
         width: 35,
         height: 35,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadius),
           color: priorityChipColor[title] ?? noPriorityColor,
         ),
         child: Column(

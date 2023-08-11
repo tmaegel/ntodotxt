@@ -115,7 +115,7 @@ class TodoEditView extends StatelessWidget {
       maxLines: 3,
       decoration: InputDecoration(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide.none,
         ),
         filled: true,
