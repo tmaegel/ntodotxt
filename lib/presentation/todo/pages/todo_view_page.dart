@@ -62,9 +62,9 @@ class TodoViewView extends StatelessWidget {
                 Text(state.todo.description),
                 const Subheader(title: "Priority"),
                 GenericChipGroup(
-                  chips: [
+                  children: [
                     for (var p in priorities)
-                      ChipEntity(
+                      GenericChip(
                         label: p,
                         selected: state.todo.priority == p,
                         color: priorityChipColor[p],
@@ -73,9 +73,9 @@ class TodoViewView extends StatelessWidget {
                 ),
                 const Subheader(title: "Projects"),
                 GenericChipGroup(
-                  chips: [
+                  children: [
                     for (var p in state.todo.projects)
-                      ChipEntity(
+                      GenericChip(
                         label: p,
                         selected: true,
                         color: projectChipColor,
@@ -84,9 +84,9 @@ class TodoViewView extends StatelessWidget {
                 ),
                 const Subheader(title: "Contexts"),
                 GenericChipGroup(
-                  chips: [
+                  children: [
                     for (var c in state.todo.contexts)
-                      ChipEntity(
+                      GenericChip(
                         label: c,
                         selected: true,
                         color: contextChipColor,

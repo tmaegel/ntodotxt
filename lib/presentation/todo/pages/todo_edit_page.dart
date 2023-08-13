@@ -62,9 +62,9 @@ class TodoEditView extends StatelessWidget {
                 _buildTodoTextField(context, state),
                 const Subheader(title: "Priority"),
                 GenericChipGroup(
-                  chips: [
+                  children: [
                     for (var p in priorities)
-                      ChipEntity(
+                      GenericChip(
                         label: p,
                         selected: p == state.todo.priority,
                         color: priorityChipColor[p],
@@ -75,9 +75,9 @@ class TodoEditView extends StatelessWidget {
                 ),
                 const Subheader(title: "Projects"),
                 GenericChipGroup(
-                  chips: [
+                  children: [
                     for (var p in todoListRepository.getAllProjects())
-                      ChipEntity(
+                      GenericChip(
                         label: p,
                         selected: state.todo.projects.contains(p),
                         color: projectChipColor,
@@ -88,9 +88,9 @@ class TodoEditView extends StatelessWidget {
                 ),
                 const Subheader(title: "Contexts"),
                 GenericChipGroup(
-                  chips: [
+                  children: [
                     for (var c in todoListRepository.getAllContexts())
-                      ChipEntity(
+                      GenericChip(
                         label: c,
                         selected: state.todo.contexts.contains(c),
                         color: contextChipColor,

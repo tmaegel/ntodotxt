@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/constants/todo.dart';
 
-class ChipEntity {
+class GenericChip extends StatelessWidget {
   final String label;
   final bool selected;
   final void Function(bool)? onSelected;
   final Color? color;
 
-  const ChipEntity({
+  const GenericChip({
     required this.label,
     this.selected = false,
     this.onSelected,
     this.color,
-  });
-}
-
-class GenericChip extends StatelessWidget {
-  final ChipEntity child;
-
-  const GenericChip({
-    required this.child,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return ChoiceChip(
-      label: Text(child.label),
-      selected: child.selected,
+      label: Text(label),
+      selected: selected,
       backgroundColor: Colors.black12,
       disabledColor: Colors.black12,
-      selectedColor: child.color ?? defaultChipColor,
+      selectedColor: color ?? defaultChipColor,
       side: const BorderSide(
         style: BorderStyle.none,
         color: Color(0xfff1f1f1),
@@ -40,18 +32,17 @@ class GenericChip extends StatelessWidget {
       ),
       // @todo: Set colore for all states.
       labelStyle: const TextStyle(color: Colors.black),
-      onSelected: child.onSelected != null
-          ? (bool selected) => child.onSelected!(selected)
-          : null,
+      onSelected:
+          onSelected != null ? (bool selected) => onSelected!(selected) : null,
     );
   }
 }
 
 class GenericChipGroup extends StatelessWidget {
-  final List<ChipEntity> chips;
+  final List<Widget> children;
 
   const GenericChipGroup({
-    required this.chips,
+    required this.children,
     super.key,
   });
 
@@ -60,9 +51,7 @@ class GenericChipGroup extends StatelessWidget {
     return Wrap(
       spacing: 4.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: <Widget>[
-        for (var chip in chips) GenericChip(child: chip),
-      ],
+      children: children,
     );
   }
 }
