@@ -1,23 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/constants/todo.dart';
 
-class GenericChip extends StatelessWidget {
+abstract class GenericChip extends StatelessWidget {
   final String label;
   final bool selected;
-  final void Function(bool)? onSelected;
   final Color? color;
 
   const GenericChip({
     required this.label,
     this.selected = false,
-    this.onSelected,
     this.color,
+    super.key,
+  });
+}
+
+class GenericChoiceChip extends GenericChip {
+  final void Function(bool)? onSelected;
+
+  const GenericChoiceChip({
+    required super.label,
+    super.selected,
+    super.color,
+    this.onSelected,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ChoiceChip(
+    return RawChip(
+      showCheckmark: false,
+      label: Text(label),
+      selected: selected,
+      backgroundColor: Colors.black12,
+      disabledColor: Colors.black12,
+      selectedColor: color ?? defaultChipColor,
+      side: const BorderSide(
+        style: BorderStyle.none,
+        color: Color(0xfff1f1f1),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      labelStyle: const TextStyle(color: Colors.black),
+      onSelected:
+          onSelected != null ? (bool selected) => onSelected!(selected) : null,
+    );
+  }
+}
+
+class GenericInputChip extends GenericChip {
+  final void Function(bool)? onSelected;
+  final void Function()? onDeleted;
+
+  const GenericInputChip({
+    required super.label,
+    super.selected,
+    super.color,
+    this.onSelected,
+    this.onDeleted,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InputChip(
+      showCheckmark: false,
       label: Text(label),
       selected: selected,
       backgroundColor: Colors.black12,
@@ -34,6 +81,35 @@ class GenericChip extends StatelessWidget {
       labelStyle: const TextStyle(color: Colors.black),
       onSelected:
           onSelected != null ? (bool selected) => onSelected!(selected) : null,
+      onDeleted: () {},
+    );
+  }
+}
+
+class GenericActionChip extends StatelessWidget {
+  final String label;
+  final void Function() onPressed;
+
+  const GenericActionChip({
+    required this.label,
+    required this.onPressed,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      label: Text(label),
+      backgroundColor: Colors.blue,
+      side: const BorderSide(
+        style: BorderStyle.none,
+        color: Color(0xfff1f1f1),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      labelStyle: const TextStyle(color: Colors.black),
+      onPressed: onPressed,
     );
   }
 }

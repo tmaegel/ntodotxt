@@ -34,3 +34,21 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+class PrimaryBottomAppBar extends StatelessWidget {
+  final List<Widget> children;
+
+  const PrimaryBottomAppBar({
+    required this.children,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      child: Row(
+        children: children,
+      ),
+    );
+  }
+}

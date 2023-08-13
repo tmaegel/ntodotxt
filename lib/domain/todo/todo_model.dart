@@ -208,6 +208,18 @@ class Todo extends Equatable {
     return keyValues;
   }
 
+  List<String> get formattedProjects {
+    return [for (var p in projects) "+$p"];
+  }
+
+  List<String> get formattedContexts {
+    return [for (var c in contexts) "+$c"];
+  }
+
+  List<String> get formattedKeyValues {
+    return [for (var k in keyValues.keys) "$k:${keyValues[k]}"];
+  }
+
   /// Returns a copy of this `todo` with the given values updated.
   Todo copyWith({
     bool? completion,

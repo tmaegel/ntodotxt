@@ -47,19 +47,17 @@ class AppRouter {
           GoRoute(
             path: 'todo/create',
             name: 'todo-create',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return BottomSheetPage(
-                key: state.pageKey,
-                child: const TodoCreatePage(),
+            builder: (BuildContext context, GoRouterState state) {
+              return const NarrowLayout(
+                child: TodoCreatePage(),
               );
             },
           ),
           GoRoute(
             path: 'todo/view/:index',
             name: 'todo-view',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return BottomSheetPage(
-                key: state.pageKey,
+            builder: (BuildContext context, GoRouterState state) {
+              return NarrowLayout(
                 // @todo Redirect to error page if index is null.
                 child: TodoViewPage(
                   index: int.parse(state.pathParameters['index']!),
@@ -70,9 +68,8 @@ class AppRouter {
           GoRoute(
             path: 'todo/edit/:index',
             name: 'todo-edit',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return BottomSheetPage(
-                key: state.pageKey,
+            builder: (BuildContext context, GoRouterState state) {
+              return NarrowLayout(
                 // @todo Redirect to error page if index is null.
                 child: TodoEditPage(
                   index: int.parse(state.pathParameters['index']!),

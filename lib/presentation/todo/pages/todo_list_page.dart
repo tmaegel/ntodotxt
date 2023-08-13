@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
@@ -27,11 +28,23 @@ class TodoListPage extends StatelessWidget {
   }
 }
 
-class TodoListNarrowView extends StatelessWidget {
+abstract class TodoListView extends StatelessWidget {
   final TodoListRepository todoListRepository;
 
-  const TodoListNarrowView({
+  const TodoListView({
     required this.todoListRepository,
+    super.key,
+  });
+
+  /// Add new todo
+  void _createAction(BuildContext context) {
+    context.push(context.namedLocation('todo-create'));
+  }
+}
+
+class TodoListNarrowView extends TodoListView {
+  const TodoListNarrowView({
+    required super.todoListRepository,
     super.key,
   });
 
@@ -39,7 +52,27 @@ class TodoListNarrowView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: TodoList(todoListRepository: todoListRepository),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: _buildFloatingActionButton(context),
+      bottomNavigationBar: PrimaryBottomAppBar(
+        children: [
+          IconButton(
+            tooltip: 'Sort',
+            icon: const Icon(Icons.sort),
+            onPressed: () {},
+          ),
+          IconButton(
+            tooltip: 'Filter',
+            icon: const Icon(Icons.filter_alt_outlined),
+            onPressed: () {},
+          ),
+          IconButton(
+            tooltip: 'Search',
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
     );
   }
 
@@ -50,18 +83,11 @@ class TodoListNarrowView extends StatelessWidget {
       action: () => _createAction(context),
     );
   }
-
-  /// Add new todo
-  void _createAction(BuildContext context) {
-    context.push(context.namedLocation('todo-create'));
-  }
 }
 
-class TodoListWideView extends StatelessWidget {
-  final TodoListRepository todoListRepository;
-
+class TodoListWideView extends TodoListView {
   const TodoListWideView({
-    required this.todoListRepository,
+    required super.todoListRepository,
     super.key,
   });
 
@@ -156,6 +182,8 @@ class TodoTile extends StatelessWidget {
           InlineChipReadOnly(label: p, color: projectChipColor),
         for (var c in todo.contexts)
           InlineChipReadOnly(label: c, color: contextChipColor),
+        for (var kv in todo.formattedKeyValues)
+          InlineChipReadOnly(label: kv, color: keyValueChipColor),
       ],
     );
   }

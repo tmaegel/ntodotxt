@@ -1,5 +1,5 @@
 List<String> rawTodoList = [
-  "(A) Thank Mom for the meatballs @food",
+  "(A) Thank Mom for the meatballs @food due:2023-06-31",
   "2011-03-03 Call Mom @phone",
   "(B) Schedule Goodwill pickup Eskimo pies +home",
   "(b) Get back to the boss due:2023-06-10 +GarageSale @phone @GroceryStore",
