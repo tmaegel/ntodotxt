@@ -31,12 +31,12 @@ class GenericChoiceChip extends GenericChip {
       showCheckmark: false,
       label: Text(label),
       selected: selected,
-      backgroundColor: Colors.black12,
-      disabledColor: Colors.black12,
+      backgroundColor: colorLightGrey,
+      disabledColor: colorLightGrey,
       selectedColor: color ?? defaultChipColor,
       side: const BorderSide(
         style: BorderStyle.none,
-        color: Color(0xfff1f1f1),
+        color: colorLightGrey,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
@@ -67,12 +67,12 @@ class GenericInputChip extends GenericChip {
       showCheckmark: false,
       label: Text(label),
       selected: selected,
-      backgroundColor: Colors.black12,
-      disabledColor: Colors.black12,
+      backgroundColor: colorLightGrey,
+      disabledColor: colorLightGrey,
       selectedColor: color ?? defaultChipColor,
       side: const BorderSide(
         style: BorderStyle.none,
-        color: Color(0xfff1f1f1),
+        color: colorLightGrey,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
@@ -100,10 +100,10 @@ class GenericActionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return ActionChip(
       label: Text(label),
-      backgroundColor: Colors.blue,
+      backgroundColor: colorBlue,
       side: const BorderSide(
         style: BorderStyle.none,
-        color: Color(0xfff1f1f1),
+        color: colorLightGrey,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),

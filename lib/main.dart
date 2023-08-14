@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
@@ -69,7 +70,7 @@ class App extends StatelessWidget {
                 brightness: Brightness.light,
                 searchBarTheme: SearchBarThemeData(
                   elevation: MaterialStateProperty.all(0.0),
-                  backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                  backgroundColor: MaterialStateProperty.all(textFieldColor),
                 ),
                 dialogBackgroundColor: Colors.white,
                 bottomSheetTheme: const BottomSheetThemeData(

@@ -50,7 +50,7 @@ abstract class TodoEditView extends StatelessWidget {
         GenericChoiceChip(
           label: p,
           selected: p == state.todo.priority,
-          color: priorityChipColor[p],
+          color: priorityChipColor,
           onSelected: (bool selected) =>
               _changePriorityAction(context, p, selected),
         ),
@@ -154,7 +154,7 @@ abstract class TodoEditView extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         filled: true,
-        fillColor: Colors.grey[200],
+        fillColor: colorLightGrey,
       ),
       onChanged: (value) {
         context.read<TodoBloc>().add(TodoDescriptionChanged(value));

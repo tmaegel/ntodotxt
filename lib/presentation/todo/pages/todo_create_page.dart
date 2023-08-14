@@ -38,7 +38,7 @@ abstract class TodoCreateView extends StatelessWidget {
       for (var p in priorities)
         GenericChoiceChip(
           label: p,
-          color: priorityChipColor[p],
+          color: priorityChipColor,
         ),
     ];
   }
@@ -106,7 +106,7 @@ class TodoCreateNarrowView extends TodoCreateView {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: Colors.grey[200],
+                fillColor: colorLightGrey,
               ),
             ),
             const Subheader(title: "Priority"),

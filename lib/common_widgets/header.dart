@@ -29,25 +29,6 @@ class ListSection extends StatelessWidget {
     super.key,
   }) : title = title.toUpperCase();
 
-  Color getColor(String value) {
-    switch (value) {
-      case 'A':
-        return Colors.redAccent.shade100;
-      case 'B':
-        return Colors.purpleAccent.shade100;
-      case 'C':
-        return Colors.orangeAccent.shade100;
-      case 'D':
-        return Colors.blueAccent.shade100;
-      case 'E':
-        return Colors.tealAccent.shade100;
-      case 'F':
-        return Colors.greenAccent.shade100;
-      default:
-        return Colors.grey.shade300;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -56,7 +37,7 @@ class ListSection extends StatelessWidget {
         height: 35,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          color: priorityChipColor[title] ?? noPriorityColor,
+          color: title != "" ? priorityChipColor : noPriorityColor,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -50,7 +50,7 @@ abstract class TodoViewView extends StatelessWidget {
         GenericChoiceChip(
           label: p,
           selected: state.todo.priority == p,
-          color: priorityChipColor[p],
+          color: priorityChipColor,
         ),
     ];
   }
