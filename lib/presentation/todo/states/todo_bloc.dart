@@ -10,13 +10,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   TodoBloc({
     TodoStatus status = TodoStatus.initial,
     required TodoListRepository todoListRepository,
-    required int index,
     required Todo todo,
   })  : _todoListRepository = todoListRepository,
         super(
           TodoState(
             status: status,
-            index: index,
             todo: todo,
           ),
         ) {
@@ -37,7 +35,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     final Todo todo = state.todo.copyWith(completion: event.completion);
-    _todoListRepository.saveTodo(state.index, todo);
+    _todoListRepository.saveTodo(state.todo.id, todo);
     emit(state.copyWith(todo: todo));
   }
 
@@ -110,7 +108,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoDeleted event,
     Emitter<TodoState> emit,
   ) {
-    _todoListRepository.deleteTodo(state.index);
+    _todoListRepository.deleteTodo(state.todo.id);
   }
 
   void _onSubmitted(
@@ -118,7 +116,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     final Todo todo = state.todo.copyWith();
-    _todoListRepository.saveTodo(state.index, todo);
+    _todoListRepository.saveTodo(state.todo.id, todo);
     emit(state.copyWith(todo: todo));
   }
 }

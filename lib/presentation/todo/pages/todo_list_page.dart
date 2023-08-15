@@ -99,12 +99,13 @@ class TodoListWideView extends TodoListView {
 }
 
 class TodoList extends StatelessWidget {
+  final List<String?> sections;
   final TodoListRepository todoListRepository;
 
-  const TodoList({
+  TodoList({
     required this.todoListRepository,
     super.key,
-  });
+  }) : sections = todoListRepository.getAllPriorities();
 
   @override
   Widget build(BuildContext context) {
@@ -122,11 +123,11 @@ class TodoList extends StatelessWidget {
 
   Widget _buildExpandedListView(TodoListState state) {
     List<TodoListSection> items = [];
-    for (var p in todoListRepository.getAllPriorities()) {
+    for (var p in sections) {
       List<Widget> todoItems = [];
-      for (var i = 0; i < state.todoList.length; i++) {
-        if (state.todoList[i].priority == p) {
-          todoItems.add(TodoTile(index: i, todo: state.todoList[i]));
+      for (var todo in state.filteredTodoList) {
+        if (todo.priority == p) {
+          todoItems.add(TodoTile(todo: todo));
         }
       }
       items.add(
@@ -152,12 +153,14 @@ class TodoListSection extends StatelessWidget {
   TodoListSection({
     required String title,
     required this.children,
-    super.key,
-  }) : title = title.toUpperCase();
+    Key? key,
+  })  : title = title.toUpperCase(),
+        super(key: PageStorageKey<String>(title));
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      key: key,
       initiallyExpanded: true,
       shape: const Border.fromBorderSide(BorderSide.none),
       leading: Container(
@@ -187,24 +190,23 @@ class TodoListSection extends StatelessWidget {
 }
 
 class TodoTile extends StatelessWidget {
-  final int index;
   final Todo todo;
 
-  const TodoTile({
-    required this.index,
+  TodoTile({
     required this.todo,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: PageStorageKey<int>(todo.id));
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      key: key,
       leading: Checkbox(
         value: todo.completion,
         onChanged: (bool? completion) {
           context.read<TodoListBloc>().add(
                 TodoListTodoCompletionToggled(
-                  index: index,
+                  id: todo.id,
                   completion: completion,
                 ),
               );
@@ -239,7 +241,7 @@ class TodoTile extends StatelessWidget {
       context.namedLocation(
         'todo-view',
         pathParameters: {
-          'index': index.toString(),
+          'id': todo.id.toString(),
         },
       ),
     );

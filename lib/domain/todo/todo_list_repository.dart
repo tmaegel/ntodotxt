@@ -12,20 +12,41 @@ class TodoListRepository {
   /// Provides a [Stream] of all todos.
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
 
-  /// Get a single [todo] by index.
-  Todo getTodo(int index) => _todoListApi.getTodo(index);
+  /// Get a single [todo] by id.
+  Todo getTodo(int id) => _todoListApi.getTodo(id);
 
   /// Saves a [todo].
-  /// If a [todo] with the same index already exists, it will be replaced.
-  void saveTodo(int? index, Todo todo) => _todoListApi.saveTodo(index, todo);
+  /// If a [todo] with the same id already exists, it will be replaced.
+  void saveTodo(int? id, Todo todo) => _todoListApi.saveTodo(id, todo);
 
-  /// Deletes the `todo` with the given index.
+  /// Deletes the `todo` with the given id.
   /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
-  void deleteTodo(int index) => _todoListApi.deleteTodo(index);
+  void deleteTodo(int id) => _todoListApi.deleteTodo(id);
 
   List<String?> getAllPriorities() => _todoListApi.getAllPriorities();
 
   List<String> getAllProjects() => _todoListApi.getAllProjects();
 
   List<String> getAllContexts() => _todoListApi.getAllContexts();
+}
+
+enum TodoFilter { all, activeOnly, completedOnly }
+
+extension TodosListFilter on TodoFilter {
+  bool apply(Todo todo) {
+    switch (this) {
+      case TodoFilter.all:
+        return true;
+      case TodoFilter.activeOnly:
+        return !todo.completion;
+      case TodoFilter.completedOnly:
+        return todo.completion;
+      default:
+        return true;
+    }
+  }
+
+  Iterable<Todo> applyAll(Iterable<Todo> todoList) {
+    return todoList.where(apply);
+  }
 }

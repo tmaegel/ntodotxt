@@ -12,30 +12,30 @@ final class TodoListSubscriptionRequested extends TodoListEvent {
 }
 
 final class TodoListTodoCompletionToggled extends TodoListEvent {
-  final int index;
+  final int id;
   final bool? completion;
 
   const TodoListTodoCompletionToggled({
-    required this.index,
+    required this.id,
     this.completion,
   });
 
   @override
   List<Object?> get props => [
-        index,
+        id,
         completion,
       ];
 }
 
 final class TodoListTodoDeleted extends TodoListEvent {
-  final int index;
+  final int id;
 
   const TodoListTodoDeleted({
-    required this.index,
+    required this.id,
   });
 
   @override
   List<Object?> get props => [
-        index,
+        id,
       ];
 }

@@ -11,10 +11,10 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 
 class TodoViewPage extends StatelessWidget {
-  final int index;
+  final int id;
 
   const TodoViewPage({
-    required this.index,
+    required this.id,
     super.key,
   });
 
@@ -26,8 +26,7 @@ class TodoViewPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TodoBloc(
         todoListRepository: todoListRepository,
-        index: index,
-        todo: todoListRepository.getTodo(index),
+        todo: todoListRepository.getTodo(id),
       ),
       child: screenWidth < maxScreenWidthCompact
           ? TodoViewNarrowView(todoListRepository: todoListRepository)
@@ -94,7 +93,7 @@ abstract class TodoViewView extends StatelessWidget {
       context.namedLocation(
         'todo-edit',
         pathParameters: {
-          'index': state.index.toString(),
+          'id': state.todo.id.toString(),
         },
       ),
     );

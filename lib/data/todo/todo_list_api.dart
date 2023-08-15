@@ -5,7 +5,6 @@ import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
 
 abstract class TodoListApi {
@@ -20,16 +19,16 @@ abstract class TodoListApi {
   /// Write [todoList]
   // void writeTodoList(List<Todo> todoList);
 
-  /// Get a single [todo] by index.
-  Todo getTodo(int index);
+  /// Get a single [todo] by id.
+  Todo getTodo(int id);
 
   /// Saves a [todo].
-  /// If a [todo] with the same index already exists, it will be replaced.
-  void saveTodo(int? index, Todo todo);
+  /// If a [todo] with the same id already exists, it will be replaced.
+  void saveTodo(int? id, Todo todo);
 
-  /// Deletes the `todo` with the given index.
+  /// Deletes the `todo` with the given id.
   /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
-  void deleteTodo(int index);
+  void deleteTodo(int id);
 
   List<String?> getAllPriorities();
 
@@ -51,7 +50,11 @@ class LocalStorageTodoListApi extends TodoListApi {
   }
 
   List<Todo> _fromList(List<String> rawTodoList) {
-    return [for (var todo in rawTodoList) Todo.fromString(todo)];
+    // Index the todo objecte to get a unique id.
+    return [
+      for (var i = 0; i < rawTodoList.length; i++)
+        Todo.fromString(id: i, todoStr: rawTodoList[i])
+    ];
   }
 
   Future<List<Todo>> _fromFile(String fileName) async {
@@ -66,8 +69,8 @@ class LocalStorageTodoListApi extends TodoListApi {
     final List<Todo> todoList = [];
     final file = await localFile;
     final lines = file.readAsLinesSync();
-    for (var line in lines) {
-      todoList.add(Todo.fromString(line));
+    for (var i = 0; i < lines.length; i++) {
+      todoList.add(Todo.fromString(id: i, todoStr: lines[i]));
     }
 
     return todoList;
@@ -80,35 +83,36 @@ class LocalStorageTodoListApi extends TodoListApi {
   // }
 
   @override
-  Todo getTodo(int index) {
+  Todo getTodo(int id) {
     final todoList = [..._streamController.value];
-    if (index > todoList.length) {
+    int index = todoList.indexWhere((todo) => todo.id == id);
+    if (index == -1) {
       throw TodoNotFoundException();
     }
     return todoList[index];
   }
 
   @override
-  void saveTodo(int? index, Todo todo) {
+  void saveTodo(int? id, Todo todo) {
     final todoList = [..._streamController.value];
-    if (index != null && index > todoList.length) {
-      throw TodoNotFoundException();
-    }
-    if (index == null) {
+    if (id == null) {
       todoList.add(todo);
     } else {
-      todoList[index] = todo;
+      int index = todoList.indexWhere((todo) => todo.id == id);
+      if (index == -1) {
+        throw TodoNotFoundException();
+      } else {
+        todoList[index] = todo;
+      }
     }
+
     _streamController.add(todoList);
   }
 
   @override
-  void deleteTodo(int index) {
+  void deleteTodo(int id) {
     final todoList = [..._streamController.value];
-    if (index > todoList.length) {
-      throw TodoNotFoundException();
-    }
-    todoList.removeAt(index);
+    todoList.removeWhere((todo) => todo.id == id);
     _streamController.add(todoList);
   }
 

@@ -36,6 +36,10 @@ class Todo extends Equatable {
   static const String patternDescription =
       r'^(x\s?)?(\([a-zA-Z]\)\s?)?(\d{4}-\d{2}-\d{2}\s?){0,2}((?<description>.+))?$';
 
+  /// Unique identifier.
+  /// Required attribute.
+  int id;
+
   /// Whether the `todo` is completed.
   /// Required attribute.
   bool completion;
@@ -69,6 +73,7 @@ class Todo extends Equatable {
   Map<String, String> keyValues;
 
   Todo({
+    required this.id,
     required this.completion,
     required this.description,
     this.priority,
@@ -79,7 +84,7 @@ class Todo extends Equatable {
     this.keyValues = const {},
   });
 
-  factory Todo.fromString(String todoStr) {
+  factory Todo.fromString({required int id, required String todoStr}) {
     final bool completion = getCompletion(todoStr);
     final dates = getDates(todoStr);
     DateTime? completionDate;
@@ -104,6 +109,7 @@ class Todo extends Equatable {
       creationDate = dates[1];
     }
     return Todo(
+      id: id,
       completion: completion,
       priority: getPriority(todoStr),
       completionDate: completionDate,
@@ -222,6 +228,7 @@ class Todo extends Equatable {
 
   /// Returns a copy of this `todo` with the given values updated.
   Todo copyWith({
+    int? id,
     bool? completion,
     String? priority,
     DateTime? completionDate,
@@ -232,6 +239,7 @@ class Todo extends Equatable {
     Map<String, String>? keyValues,
   }) {
     return Todo(
+      id: id ?? this.id,
       completion: completion ?? this.completion,
       priority: priority ?? this.priority,
       completionDate: completionDate ?? this.completionDate,
@@ -245,6 +253,7 @@ class Todo extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         completion,
         priority,
         completionDate,

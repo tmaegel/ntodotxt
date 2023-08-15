@@ -76,19 +76,19 @@ final class TodoContextRemoved extends TodoEvent {
 }
 
 final class TodoSubmitted extends TodoEvent {
-  final int index;
+  final int id;
 
-  const TodoSubmitted(this.index);
+  const TodoSubmitted(this.id);
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [id];
 }
 
 final class TodoDeleted extends TodoEvent {
-  final int index;
+  final int id;
 
-  const TodoDeleted(this.index);
+  const TodoDeleted(this.id);
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [id];
 }

@@ -11,10 +11,10 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 
 class TodoEditPage extends StatelessWidget {
-  final int index;
+  final int id;
 
   const TodoEditPage({
-    required this.index,
+    required this.id,
     super.key,
   });
 
@@ -26,8 +26,7 @@ class TodoEditPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TodoBloc(
         todoListRepository: todoListRepository,
-        index: index,
-        todo: todoListRepository.getTodo(index),
+        todo: todoListRepository.getTodo(id),
       ),
       child: screenWidth < maxScreenWidthCompact
           ? TodoEditNarrowView(todoListRepository: todoListRepository)
@@ -97,13 +96,13 @@ abstract class TodoEditView extends StatelessWidget {
 
   /// Save current todo
   void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoSubmitted(state.index));
+    context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
     context.pop();
   }
 
   /// Delete current todo
   void _deleteAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoDeleted(state.index));
+    context.read<TodoBloc>().add(TodoDeleted(state.todo.id));
     context.go(context.namedLocation('todo-list'));
   }
 
