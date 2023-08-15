@@ -34,7 +34,7 @@ class WideLayout extends StatelessWidget {
       body: Row(
         children: [
           const PrimaryNavigationRail(),
-          const VerticalDivider(thickness: 1, width: 1, color: colorLightGrey),
+          const VerticalDivider(thickness: 1, width: 1),
           Expanded(child: child),
         ],
       ),

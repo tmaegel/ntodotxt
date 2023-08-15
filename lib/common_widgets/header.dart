@@ -20,38 +20,3 @@ class Subheader extends StatelessWidget {
     );
   }
 }
-
-class ListSection extends StatelessWidget {
-  final String title;
-
-  ListSection({
-    required String title,
-    super.key,
-  }) : title = title.toUpperCase();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 35,
-        height: 35,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          color: title != "" ? priorityChipColor : noPriorityColor,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

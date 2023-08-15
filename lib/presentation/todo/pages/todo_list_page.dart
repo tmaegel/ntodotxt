@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
-import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
@@ -114,28 +113,75 @@ class TodoList extends StatelessWidget {
         return Column(
           children: [
             const GenericSearchBar(),
-            _buildListViewSortedByPriority(state),
+            _buildExpandedListView(state),
           ],
         );
       },
     );
   }
 
-  Widget _buildListViewSortedByPriority(TodoListState state) {
-    List<Widget> items = [];
+  Widget _buildExpandedListView(TodoListState state) {
+    List<TodoListSection> items = [];
     for (var p in todoListRepository.getAllPriorities()) {
-      items.add(ListSection(title: p ?? ""));
+      List<Widget> todoItems = [];
       for (var i = 0; i < state.todoList.length; i++) {
         if (state.todoList[i].priority == p) {
-          items.add(TodoTile(index: i, todo: state.todoList[i]));
+          todoItems.add(TodoTile(index: i, todo: state.todoList[i]));
         }
       }
+      items.add(
+        TodoListSection(
+          title: p ?? "",
+          children: todoItems,
+        ),
+      );
     }
 
     return Expanded(
       child: ListView(
         children: items,
       ),
+    );
+  }
+}
+
+class TodoListSection extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  TodoListSection({
+    required String title,
+    required this.children,
+    super.key,
+  }) : title = title.toUpperCase();
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      initiallyExpanded: true,
+      shape: const Border.fromBorderSide(BorderSide.none),
+      leading: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: title != "" ? priorityChipColor : noPriorityColor,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+      title: Container(),
+      children: children,
     );
   }
 }

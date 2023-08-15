@@ -76,6 +76,10 @@ class App extends StatelessWidget {
                 bottomSheetTheme: const BottomSheetThemeData(
                   backgroundColor: Colors.white,
                 ),
+                dividerTheme: const DividerThemeData(
+                  color: colorLightGrey,
+                ),
+                dividerColor: colorLightGrey,
                 useMaterial3: true,
               ),
               themeMode: ThemeMode.light,
