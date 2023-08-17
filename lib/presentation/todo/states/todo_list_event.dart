@@ -22,10 +22,7 @@ final class TodoListTodoCompletionToggled extends TodoListEvent {
   });
 
   @override
-  List<Object?> get props => [
-        id,
-        completion,
-      ];
+  List<Object?> get props => [id, completion];
 }
 
 final class TodoListTodoDeleted extends TodoListEvent {
@@ -36,11 +33,27 @@ final class TodoListTodoDeleted extends TodoListEvent {
   });
 
   @override
-  List<Object?> get props => [
-        id,
-      ];
+  List<Object> get props => [id];
 }
 
 final class TodoListOrderChanged extends TodoListEvent {
-  const TodoListOrderChanged();
+  final TodoListOrder order;
+
+  const TodoListOrderChanged({
+    required this.order,
+  });
+
+  @override
+  List<Object> get props => [order];
+}
+
+final class TodoListFilterChanged extends TodoListEvent {
+  final TodoListFilter filter;
+
+  const TodoListFilterChanged({
+    required this.filter,
+  });
+
+  @override
+  List<Object> get props => [filter];
 }

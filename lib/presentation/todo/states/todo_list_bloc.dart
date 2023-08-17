@@ -15,6 +15,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
     on<TodoListTodoDeleted>(_onTodoDeleted);
     on<TodoListOrderChanged>(_onTodoListOrderChanged);
+    on<TodoListFilterChanged>(_onTodoListFilterChanged);
   }
 
   void _onTodoListSubscriptionRequested(
@@ -55,9 +56,13 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListOrderChanged event,
     Emitter<TodoListState> emit,
   ) {
-    emit(state.copyWith(
-        order: state.order == TodoListOrder.ascending
-            ? TodoListOrder.descending
-            : TodoListOrder.ascending));
+    emit(state.copyWith(order: event.order));
+  }
+
+  void _onTodoListFilterChanged(
+    TodoListFilterChanged event,
+    Emitter<TodoListState> emit,
+  ) {
+    emit(state.copyWith(filter: event.filter));
   }
 }

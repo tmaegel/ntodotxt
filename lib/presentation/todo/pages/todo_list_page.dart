@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
+import 'package:ntodotxt/common_widgets/filter_dialog.dart';
+import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
@@ -34,7 +36,22 @@ abstract class TodoListView extends StatelessWidget {
 
   /// Switch todo list ordering.
   void _orderAction(BuildContext context) {
-    context.read<TodoListBloc>().add(const TodoListOrderChanged());
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return const OrderDialog();
+      },
+    );
+  }
+
+  /// Switch todo list filter.
+  void _filterAction(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return const FilterDialog();
+      },
+    );
   }
 
   List<Widget> _buildToolBarActions(BuildContext context) {
@@ -52,7 +69,7 @@ abstract class TodoListView extends StatelessWidget {
       IconButton(
         tooltip: 'Filter',
         icon: const Icon(Icons.filter_alt_outlined),
-        onPressed: () {},
+        onPressed: () => _filterAction(context),
       ),
     ];
   }
