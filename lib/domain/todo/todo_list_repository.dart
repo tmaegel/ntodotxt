@@ -22,10 +22,4 @@ class TodoListRepository {
   /// Deletes the `todo` with the given id.
   /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
   void deleteTodo(int id) => _todoListApi.deleteTodo(id);
-
-  List<String?> getAllPriorities() => _todoListApi.getAllPriorities();
-
-  List<String> getAllProjects() => _todoListApi.getAllProjects();
-
-  List<String> getAllContexts() => _todoListApi.getAllContexts();
 }

@@ -29,12 +29,6 @@ abstract class TodoListApi {
   /// Deletes the `todo` with the given id.
   /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
   void deleteTodo(int id);
-
-  List<String?> getAllPriorities();
-
-  List<String> getAllProjects();
-
-  List<String> getAllContexts();
 }
 
 class LocalStorageTodoListApi extends TodoListApi {
@@ -110,53 +104,6 @@ class LocalStorageTodoListApi extends TodoListApi {
     final todoList = [..._streamController.value];
     todoList.removeWhere((todo) => todo.id == id);
     _streamController.add(todoList);
-  }
-
-  /// Returns a list of all priorities of all todos.
-  @override
-  List<String?> getAllPriorities() {
-    bool containsNullPriority = false;
-    List<String?> priorities = [];
-    for (var todo in _streamController.value) {
-      if (todo.priority == null) {
-        containsNullPriority = true;
-      } else {
-        if (!priorities.contains(todo.priority)) {
-          priorities.add(todo.priority!);
-        }
-      }
-    }
-    priorities = priorities.toSet().toList();
-    priorities.sort();
-    // Consider the zero priorities
-    if (containsNullPriority) {
-      priorities.add(null);
-    }
-    return priorities;
-  }
-
-  /// Returns a list with all projects of all todos.
-  @override
-  List<String> getAllProjects() {
-    List<String> projects = [];
-    for (var todo in _streamController.value) {
-      projects = projects + todo.projects;
-    }
-    projects = projects.toSet().toList();
-    projects.sort();
-    return projects;
-  }
-
-  /// Returns a list with all contexts of all todos.
-  @override
-  List<String> getAllContexts() {
-    List<String> contexts = [];
-    for (var todo in _streamController.value) {
-      contexts = contexts + todo.contexts;
-    }
-    contexts = contexts.toSet().toList();
-    contexts.sort();
-    return contexts;
   }
 
   static Future<String> get localPath async {

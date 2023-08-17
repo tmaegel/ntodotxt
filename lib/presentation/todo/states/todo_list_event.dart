@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 sealed class TodoListEvent extends Equatable {
   const TodoListEvent();
@@ -38,4 +39,8 @@ final class TodoListTodoDeleted extends TodoListEvent {
   List<Object?> get props => [
         id,
       ];
+}
+
+final class TodoListOrderChanged extends TodoListEvent {
+  const TodoListOrderChanged();
 }

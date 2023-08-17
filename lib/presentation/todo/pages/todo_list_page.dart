@@ -7,7 +7,6 @@ import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
@@ -16,36 +15,51 @@ class TodoListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TodoListRepository todoListRepository =
-        context.read<TodoListRepository>();
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth < maxScreenWidthCompact) {
-      return TodoListNarrowView(todoListRepository: todoListRepository);
+      return const TodoListNarrowView();
     } else {
-      return TodoListWideView(todoListRepository: todoListRepository);
+      return const TodoListWideView();
     }
   }
 }
 
 abstract class TodoListView extends StatelessWidget {
-  final TodoListRepository todoListRepository;
-
-  const TodoListView({
-    required this.todoListRepository,
-    super.key,
-  });
+  const TodoListView({super.key});
 
   /// Add new todo
   void _createAction(BuildContext context) {
     context.push(context.namedLocation('todo-create'));
   }
+
+  /// Switch todo list ordering.
+  void _orderAction(BuildContext context) {
+    context.read<TodoListBloc>().add(const TodoListOrderChanged());
+  }
+
+  List<Widget> _buildToolBarActions(BuildContext context) {
+    return [
+      IconButton(
+        tooltip: 'Visibility',
+        icon: const Icon(Icons.visibility_outlined),
+        onPressed: () {},
+      ),
+      IconButton(
+        tooltip: 'Sort',
+        icon: const Icon(Icons.sort),
+        onPressed: () => _orderAction(context),
+      ),
+      IconButton(
+        tooltip: 'Filter',
+        icon: const Icon(Icons.filter_alt_outlined),
+        onPressed: () {},
+      ),
+    ];
+  }
 }
 
 class TodoListNarrowView extends TodoListView {
-  const TodoListNarrowView({
-    required super.todoListRepository,
-    super.key,
-  });
+  const TodoListNarrowView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,27 +68,11 @@ class TodoListNarrowView extends TodoListView {
         toolbarHeight: 72.0, // Height (56) + Padding (16))
         title: const GenericSearchBar(),
       ),
-      body: TodoList(todoListRepository: todoListRepository),
+      body: const TodoList(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: _buildFloatingActionButton(context),
       bottomNavigationBar: PrimaryBottomAppBar(
-        children: [
-          IconButton(
-            tooltip: 'Sort',
-            icon: const Icon(Icons.sort),
-            onPressed: () {},
-          ),
-          IconButton(
-            tooltip: 'Filter',
-            icon: const Icon(Icons.filter_alt_outlined),
-            onPressed: () {},
-          ),
-          IconButton(
-            tooltip: 'Search',
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          ),
-        ],
+        children: _buildToolBarActions(context),
       ),
     );
   }
@@ -89,26 +87,25 @@ class TodoListNarrowView extends TodoListView {
 }
 
 class TodoListWideView extends TodoListView {
-  const TodoListWideView({
-    required super.todoListRepository,
-    super.key,
-  });
+  const TodoListWideView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TodoList(todoListRepository: todoListRepository),
+      appBar: AppBar(
+          toolbarHeight: 72.0, // Height (56) + Padding (16))
+          title: const GenericSearchBar(),
+          actions: [
+            ..._buildToolBarActions(context),
+            const SizedBox(width: 16.0),
+          ]),
+      body: const TodoList(),
     );
   }
 }
 
 class TodoList extends StatelessWidget {
-  final TodoListRepository todoListRepository;
-
-  const TodoList({
-    required this.todoListRepository,
-    super.key,
-  });
+  const TodoList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +118,7 @@ class TodoList extends StatelessWidget {
               child: ListView(
                 children: _buildExpandedListViewByFilter(
                   state: state,
-                  sections: todoListRepository.getAllPriorities(),
+                  sections: state.priorities,
                   filterCallback: (priority) => state.filteredByPriority(
                     priority: priority,
                     excludeCompleted: true,

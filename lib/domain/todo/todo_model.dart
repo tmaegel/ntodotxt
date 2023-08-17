@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 class Todo extends Equatable {
   /// Task string format:
@@ -38,11 +39,11 @@ class Todo extends Equatable {
 
   /// Unique identifier.
   /// Required attribute.
-  int id;
+  final int id;
 
   /// Whether the `todo` is completed.
   /// Required attribute.
-  bool completion;
+  final bool completion;
 
   /// The priority of the `todo`.
   /// Priorities are A, B, C, ...
@@ -226,6 +227,13 @@ class Todo extends Equatable {
     return [for (var k in keyValues.keys) "$k:${keyValues[k]}"];
   }
 
+  String? formattedDate(DateTime? date) {
+    if (date == null) {
+      return null;
+    }
+    return DateFormat.yMd().format(date);
+  }
+
   /// Returns a copy of this `todo` with the given values updated.
   Todo copyWith({
     int? id,
@@ -265,5 +273,18 @@ class Todo extends Equatable {
       ];
 
   @override
-  String toString() => 'Todo { $completion }';
+  String toString() {
+    final List<String?> items = [
+      completion ? 'x' : '',
+      '($priority)',
+      formattedDate(completionDate) ?? '',
+      formattedDate(creationDate) ?? '',
+      description,
+      formattedProjects.join(' '),
+      formattedContexts.join(' '),
+      formattedKeyValues.join(' '),
+    ];
+
+    return items.join(' ');
+  }
 }

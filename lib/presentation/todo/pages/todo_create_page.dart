@@ -7,31 +7,24 @@ import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 class TodoCreatePage extends StatelessWidget {
   const TodoCreatePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TodoListRepository todoListRepository =
-        context.read<TodoListRepository>();
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth < maxScreenWidthCompact) {
-      return TodoCreateNarrowView(todoListRepository: todoListRepository);
+      return const TodoCreateNarrowView();
     } else {
-      return TodoCreateWideView(todoListRepository: todoListRepository);
+      return const TodoCreateWideView();
     }
   }
 }
 
 abstract class TodoCreateView extends StatelessWidget {
-  final TodoListRepository todoListRepository;
-
-  const TodoCreateView({
-    required this.todoListRepository,
-    super.key,
-  });
+  const TodoCreateView({super.key});
 
   List<Widget> priorityChips() {
     return [
@@ -43,9 +36,9 @@ abstract class TodoCreateView extends StatelessWidget {
     ];
   }
 
-  List<Widget> projectChips() {
+  List<Widget> projectChips(TodoListState state) {
     return [
-      for (var p in todoListRepository.getAllProjects())
+      for (var p in state.projects)
         GenericChoiceChip(
           label: p,
           color: projectChipColor,
@@ -53,9 +46,9 @@ abstract class TodoCreateView extends StatelessWidget {
     ];
   }
 
-  List<Widget> contextChips() {
+  List<Widget> contextChips(TodoListState state) {
     return [
-      for (var c in todoListRepository.getAllContexts())
+      for (var c in state.contexts)
         GenericChoiceChip(
           label: c,
           color: contextChipColor,
@@ -75,10 +68,7 @@ abstract class TodoCreateView extends StatelessWidget {
 }
 
 class TodoCreateNarrowView extends TodoCreateView {
-  const TodoCreateNarrowView({
-    required super.todoListRepository,
-    super.key,
-  });
+  const TodoCreateNarrowView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,29 +83,33 @@ class TodoCreateNarrowView extends TodoCreateView {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Subheader(title: "Todo"),
-            TextField(
-              minLines: 3,
-              maxLines: 3,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  borderSide: BorderSide.none,
+        child: BlocBuilder<TodoListBloc, TodoListState>(
+          builder: (BuildContext context, TodoListState state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Subheader(title: "Todo"),
+                TextField(
+                  minLines: 3,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: colorLightGrey,
+                  ),
                 ),
-                filled: true,
-                fillColor: colorLightGrey,
-              ),
-            ),
-            const Subheader(title: "Priority"),
-            GenericChipGroup(children: priorityChips()),
-            const Subheader(title: "Projects"),
-            GenericChipGroup(children: projectChips()),
-            const Subheader(title: "Contexts"),
-            GenericChipGroup(children: contextChips()),
-          ],
+                const Subheader(title: "Priority"),
+                GenericChipGroup(children: priorityChips()),
+                const Subheader(title: "Projects"),
+                GenericChipGroup(children: projectChips(state)),
+                const Subheader(title: "Contexts"),
+                GenericChipGroup(children: contextChips(state)),
+              ],
+            );
+          },
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
@@ -148,10 +142,7 @@ class TodoCreateNarrowView extends TodoCreateView {
 }
 
 class TodoCreateWideView extends TodoCreateView {
-  const TodoCreateWideView({
-    required super.todoListRepository,
-    super.key,
-  });
+  const TodoCreateWideView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -167,53 +158,57 @@ class TodoCreateWideView extends TodoCreateView {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Subheader(title: "Todo"),
-            TextField(
-              minLines: 3,
-              maxLines: 3,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  borderSide: BorderSide.none,
+        child: BlocBuilder<TodoListBloc, TodoListState>(
+          builder: (BuildContext context, TodoListState state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Subheader(title: "Todo"),
+                TextField(
+                  minLines: 3,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
                 ),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-            ),
-            const Subheader(title: "Priority"),
-            GenericChipGroup(
-              children: [
-                ...priorityChips(),
-                GenericActionChip(
-                  label: "+",
-                  onPressed: () {},
-                )
+                const Subheader(title: "Priority"),
+                GenericChipGroup(
+                  children: [
+                    ...priorityChips(),
+                    GenericActionChip(
+                      label: "+",
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+                const Subheader(title: "Projects"),
+                GenericChipGroup(
+                  children: [
+                    ...projectChips(state),
+                    GenericActionChip(
+                      label: "+",
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+                const Subheader(title: "Contexts"),
+                GenericChipGroup(
+                  children: [
+                    ...contextChips(state),
+                    GenericActionChip(
+                      label: "+",
+                      onPressed: () {},
+                    )
+                  ],
+                ),
               ],
-            ),
-            const Subheader(title: "Projects"),
-            GenericChipGroup(
-              children: [
-                ...projectChips(),
-                GenericActionChip(
-                  label: "+",
-                  onPressed: () {},
-                )
-              ],
-            ),
-            const Subheader(title: "Contexts"),
-            GenericChipGroup(
-              children: [
-                ...contextChips(),
-                GenericActionChip(
-                  label: "+",
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

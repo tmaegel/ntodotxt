@@ -29,19 +29,14 @@ class TodoEditPage extends StatelessWidget {
         todo: todoListRepository.getTodo(id),
       ),
       child: screenWidth < maxScreenWidthCompact
-          ? TodoEditNarrowView(todoListRepository: todoListRepository)
-          : TodoEditWideView(todoListRepository: todoListRepository),
+          ? const TodoEditNarrowView()
+          : const TodoEditWideView(),
     );
   }
 }
 
 abstract class TodoEditView extends StatelessWidget {
-  final TodoListRepository todoListRepository;
-
-  const TodoEditView({
-    required this.todoListRepository,
-    super.key,
-  });
+  const TodoEditView({super.key});
 
   List<Widget> priorityChips(BuildContext context, TodoState state) {
     return [
@@ -163,10 +158,7 @@ abstract class TodoEditView extends StatelessWidget {
 }
 
 class TodoEditNarrowView extends TodoEditView {
-  const TodoEditNarrowView({
-    required super.todoListRepository,
-    super.key,
-  });
+  const TodoEditNarrowView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -232,10 +224,7 @@ class TodoEditNarrowView extends TodoEditView {
 }
 
 class TodoEditWideView extends TodoEditView {
-  const TodoEditWideView({
-    required super.todoListRepository,
-    super.key,
-  });
+  const TodoEditWideView({super.key});
 
   @override
   Widget build(BuildContext context) {
