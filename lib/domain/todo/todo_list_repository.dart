@@ -29,24 +29,3 @@ class TodoListRepository {
 
   List<String> getAllContexts() => _todoListApi.getAllContexts();
 }
-
-enum TodoFilter { all, activeOnly, completedOnly }
-
-extension TodosListFilter on TodoFilter {
-  bool apply(Todo todo) {
-    switch (this) {
-      case TodoFilter.all:
-        return true;
-      case TodoFilter.activeOnly:
-        return !todo.completion;
-      case TodoFilter.completedOnly:
-        return todo.completion;
-      default:
-        return true;
-    }
-  }
-
-  Iterable<Todo> applyAll(Iterable<Todo> todoList) {
-    return todoList.where(apply);
-  }
-}

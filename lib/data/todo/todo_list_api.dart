@@ -51,6 +51,7 @@ class LocalStorageTodoListApi extends TodoListApi {
 
   List<Todo> _fromList(List<String> rawTodoList) {
     // Index the todo objecte to get a unique id.
+    rawTodoList.sort();
     return [
       for (var i = 0; i < rawTodoList.length; i++)
         Todo.fromString(id: i, todoStr: rawTodoList[i])
@@ -66,14 +67,9 @@ class LocalStorageTodoListApi extends TodoListApi {
 
   @override
   Future<List<Todo>> readTodoList() async {
-    final List<Todo> todoList = [];
     final file = await localFile;
     final lines = file.readAsLinesSync();
-    for (var i = 0; i < lines.length; i++) {
-      todoList.add(Todo.fromString(id: i, todoStr: lines[i]));
-    }
-
-    return todoList;
+    return _fromList(lines);
   }
 
   // @override

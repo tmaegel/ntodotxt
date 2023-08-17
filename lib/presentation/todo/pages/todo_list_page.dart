@@ -50,6 +50,10 @@ class TodoListNarrowView extends TodoListView {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 72.0, // Height (56) + Padding (16))
+        title: const GenericSearchBar(),
+      ),
       body: TodoList(todoListRepository: todoListRepository),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: _buildFloatingActionButton(context),
@@ -99,50 +103,78 @@ class TodoListWideView extends TodoListView {
 }
 
 class TodoList extends StatelessWidget {
-  final List<String?> sections;
   final TodoListRepository todoListRepository;
 
-  TodoList({
+  const TodoList({
     required this.todoListRepository,
     super.key,
-  }) : sections = todoListRepository.getAllPriorities();
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       builder: (BuildContext context, TodoListState state) {
+        // @todo: SingleChildScrollView
         return Column(
           children: [
-            const GenericSearchBar(),
-            _buildExpandedListView(state),
+            Expanded(
+              child: ListView(
+                children: _buildExpandedListViewByFilter(
+                  state: state,
+                  sections: todoListRepository.getAllPriorities(),
+                  filterCallback: (priority) => state.filteredByPriority(
+                    priority: priority,
+                    excludeCompleted: true,
+                  ),
+                ),
+              ),
+            ),
           ],
         );
       },
     );
   }
 
-  Widget _buildExpandedListView(TodoListState state) {
+  List<TodoListSection> _buildExpandedListViewByFilter({
+    required TodoListState state,
+    required List<String?> sections,
+    required Function filterCallback,
+  }) {
     List<TodoListSection> items = [];
     for (var p in sections) {
-      List<Widget> todoItems = [];
-      for (var todo in state.filteredTodoList) {
-        if (todo.priority == p) {
-          todoItems.add(TodoTile(todo: todo));
-        }
+      final Iterable<Todo> filteredList = filterCallback(p);
+      // Hide sections with only completed todos inside.
+      if (filteredList.isNotEmpty) {
+        items.add(
+          TodoListSection(
+            title: p ?? "No priority",
+            children: [
+              for (var todo in filteredList) TodoTile(todo: todo),
+            ],
+          ),
+        );
       }
+    }
+
+    return _appendCompleted(state, items);
+  }
+
+  List<TodoListSection> _appendCompleted(
+      TodoListState state, List<TodoListSection> items) {
+    final Iterable<Todo> filteredList = state.filteredByCompleted;
+    // Hide sections if no completed todos inside.
+    if (filteredList.isNotEmpty) {
       items.add(
         TodoListSection(
-          title: p ?? "",
-          children: todoItems,
+          title: "Done",
+          children: [
+            for (var todo in filteredList) TodoTile(todo: todo),
+          ],
         ),
       );
     }
 
-    return Expanded(
-      child: ListView(
-        children: items,
-      ),
-    );
+    return items;
   }
 }
 
@@ -151,11 +183,10 @@ class TodoListSection extends StatelessWidget {
   final List<Widget> children;
 
   TodoListSection({
-    required String title,
+    required this.title,
     required this.children,
     Key? key,
-  })  : title = title.toUpperCase(),
-        super(key: PageStorageKey<String>(title));
+  }) : super(key: PageStorageKey<String>(title));
 
   @override
   Widget build(BuildContext context) {
@@ -163,27 +194,20 @@ class TodoListSection extends StatelessWidget {
       key: key,
       initiallyExpanded: true,
       shape: const Border.fromBorderSide(BorderSide.none),
-      leading: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          color: title != "" ? priorityChipColor : noPriorityColor,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+      title: Row(
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(borderRadius),
+              color: priorityChipColor,
             ),
-          ],
-        ),
+            child: Text(title),
+          ),
+          Expanded(child: Container())
+        ],
       ),
-      title: Container(),
       children: children,
     );
   }

@@ -25,7 +25,7 @@ class Todo extends Equatable {
   /// Only one colon separates the key and value.
 
   static const String patternCompletion = r'^x\s+';
-  static const String patternPriority = r'\((?<priority>[a-zA-Z])\)\s+';
+  static const String patternPriority = r'\((?<priority>[A-Z])\)\s+';
   static const String patternDates = r'((?<date>\d{4}-\d{2}-\d{2}))\s+';
   static const String patternProjects =
       r'(\s+(?<project>\+\S+))'; // Any non-whitespace character is allowed.
@@ -34,7 +34,7 @@ class Todo extends Equatable {
   static const String patternKeyValues =
       r'(\s+(?<keyvalue>\S+:\S+))'; // Any non-whitespace character is allowed.
   static const String patternDescription =
-      r'^(x\s?)?(\([a-zA-Z]\)\s?)?(\d{4}-\d{2}-\d{2}\s?){0,2}((?<description>.+))?$';
+      r'^(x\s?)?(\([A-Z]\)\s?)?(\d{4}-\d{2}-\d{2}\s?){0,2}((?<description>.+))?$';
 
   /// Unique identifier.
   /// Required attribute.
