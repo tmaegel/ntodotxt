@@ -81,7 +81,7 @@ class GenericInputChip extends GenericChip {
       labelStyle: const TextStyle(color: Colors.black),
       onSelected:
           onSelected != null ? (bool selected) => onSelected!(selected) : null,
-      onDeleted: () {},
+      onDeleted: onDeleted != null ? () => onDeleted!() : null,
     );
   }
 }

@@ -215,11 +215,11 @@ class TodoListSection extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              color: priorityChipColor,
+              color: colorLightGrey,
             ),
             child: Text(title),
           ),
-          Expanded(child: Container())
+          const Expanded(child: SizedBox()),
         ],
       ),
       children: children,
@@ -233,7 +233,7 @@ class TodoTile extends StatelessWidget {
   TodoTile({
     required this.todo,
     Key? key,
-  }) : super(key: PageStorageKey<int>(todo.id));
+  }) : super(key: PageStorageKey<int>(todo.id!));
 
   @override
   Widget build(BuildContext context) {
@@ -275,13 +275,6 @@ class TodoTile extends StatelessWidget {
   }
 
   void _onTapAction(BuildContext context) {
-    context.go(
-      context.namedLocation(
-        'todo-view',
-        pathParameters: {
-          'id': todo.id.toString(),
-        },
-      ),
-    );
+    context.goNamed("todo-view", extra: todo);
   }
 }

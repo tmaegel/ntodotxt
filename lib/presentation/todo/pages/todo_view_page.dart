@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
-import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_tag.dart';
 
 class TodoViewPage extends StatelessWidget {
-  final int id;
+  final Todo todo;
 
   const TodoViewPage({
-    required this.id,
+    required this.todo,
     super.key,
   });
 
@@ -26,7 +25,7 @@ class TodoViewPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TodoBloc(
         todoListRepository: todoListRepository,
-        todo: todoListRepository.getTodo(id),
+        todo: todo,
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoViewNarrowView()
@@ -38,65 +37,47 @@ class TodoViewPage extends StatelessWidget {
 abstract class TodoViewView extends StatelessWidget {
   const TodoViewView({super.key});
 
-  List<Widget> priorityChips(BuildContext context, TodoState state) {
-    return [
-      for (var p in priorities)
-        GenericChoiceChip(
-          label: p,
-          selected: state.todo.priority == p,
-          color: priorityChipColor,
-        ),
-    ];
-  }
-
-  List<Widget> projectChips(BuildContext context, TodoState state) {
-    return [
-      for (var p in state.todo.projects)
-        GenericChoiceChip(
-          label: p,
-          selected: true,
-          color: projectChipColor,
-        ),
-    ];
-  }
-
-  List<Widget> contextChips(BuildContext context, TodoState state) {
-    return [
-      for (var c in state.todo.contexts)
-        GenericChoiceChip(
-          label: c,
-          selected: true,
-          color: contextChipColor,
-        ),
-    ];
-  }
-
-  List<Widget> keyValueChips(BuildContext context, TodoState state) {
-    return [
-      for (var kv in state.todo.formattedKeyValues)
-        GenericChoiceChip(
-          label: kv,
-          selected: true,
-          color: keyValueChipColor,
-        ),
-    ];
-  }
-
   /// Edit current todo
   void _editAction(BuildContext context, TodoState state) {
-    context.go(
-      context.namedLocation(
-        'todo-edit',
-        pathParameters: {
-          'id': state.todo.id.toString(),
-        },
-      ),
-    );
+    context.goNamed("todo-edit", extra: state.todo);
   }
 
   /// Cancel current view process
   void _cancelAction(BuildContext context) {
-    context.go(context.namedLocation('todo-list'));
+    context.pop();
+  }
+
+  Widget _buildBody({
+    required BuildContext context,
+    required TodoState state,
+    bool transparentDivider = false,
+  }) {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            children: [
+              ListTile(
+                key: key,
+                minLeadingWidth: 40.0,
+                leading: const Icon(Icons.edit_outlined),
+                title: Text(state.todo.description),
+                trailing: const SizedBox(),
+              ),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              const TodoPriorityTags(readOnly: true),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              TodoProjectTags(items: state.todo.projects, readOnly: true),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              TodoContextTags(items: state.todo.contexts, readOnly: true),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              TodoKeyValueTags(
+                  items: state.todo.formattedKeyValues, readOnly: true),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -116,23 +97,9 @@ class TodoViewNarrowView extends TodoViewView {
               onPressed: () => _cancelAction(context),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Subheader(title: "Todo"),
-                Text(state.todo.description),
-                const Subheader(title: "Priority"),
-                GenericChipGroup(children: priorityChips(context, state)),
-                const Subheader(title: "Projects"),
-                GenericChipGroup(children: projectChips(context, state)),
-                const Subheader(title: "Contexts"),
-                GenericChipGroup(children: contextChips(context, state)),
-                const Subheader(title: "Key-Values"),
-                GenericChipGroup(children: keyValueChips(context, state)),
-              ],
-            ),
+          body: _buildBody(
+            context: context,
+            state: state,
           ),
           floatingActionButton: PrimaryFloatingActionButton(
             icon: const Icon(Icons.edit),
@@ -162,23 +129,10 @@ class TodoViewWideView extends TodoViewView {
             ),
             toolbar: _buildToolBar(context, state),
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Subheader(title: "Todo"),
-                Text(state.todo.description),
-                const Subheader(title: "Priority"),
-                GenericChipGroup(children: priorityChips(context, state)),
-                const Subheader(title: "Projects"),
-                GenericChipGroup(children: projectChips(context, state)),
-                const Subheader(title: "Contexts"),
-                GenericChipGroup(children: contextChips(context, state)),
-                const Subheader(title: "Key-Values"),
-                GenericChipGroup(children: keyValueChips(context, state)),
-              ],
-            ),
+          body: _buildBody(
+            context: context,
+            state: state,
+            transparentDivider: true,
           ),
         );
       },

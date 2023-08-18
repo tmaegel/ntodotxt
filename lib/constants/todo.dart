@@ -16,7 +16,7 @@ const Color colorCyan = Color(0xFF56B6C2);
 
 /// Chip colors
 const Color defaultChipColor = colorGrey;
-const Color priorityChipColor = colorLightGrey;
+const Color priorityChipColor = colorYellow;
 const Color projectChipColor = colorGreen;
 const Color contextChipColor = colorBlue;
 const Color keyValueChipColor = colorMagenta;

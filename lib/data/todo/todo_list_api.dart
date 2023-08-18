@@ -20,15 +20,15 @@ abstract class TodoListApi {
   // void writeTodoList(List<Todo> todoList);
 
   /// Get a single [todo] by id.
-  Todo getTodo(int id);
+  Todo getTodo(int? id);
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
-  void saveTodo(int? id, Todo todo);
+  Todo saveTodo(int? id, Todo todo);
 
   /// Deletes the `todo` with the given id.
   /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
-  void deleteTodo(int id);
+  void deleteTodo(int? id);
 }
 
 class LocalStorageTodoListApi extends TodoListApi {
@@ -72,9 +72,21 @@ class LocalStorageTodoListApi extends TodoListApi {
   //   file.writeAsStringSync(rawTodoList.join('\n'));
   // }
 
+  int get newId {
+    final List<Todo> todoList = [..._streamController.value];
+    int maxId = 0;
+    for (var todo in todoList) {
+      if (todo.id != null) {
+        if (todo.id! > maxId) maxId = todo.id!;
+      }
+    }
+
+    return (maxId + 1);
+  }
+
   @override
-  Todo getTodo(int id) {
-    final todoList = [..._streamController.value];
+  Todo getTodo(int? id) {
+    final List<Todo> todoList = [..._streamController.value];
     int index = todoList.indexWhere((todo) => todo.id == id);
     if (index == -1) {
       throw TodoNotFoundException();
@@ -83,9 +95,10 @@ class LocalStorageTodoListApi extends TodoListApi {
   }
 
   @override
-  void saveTodo(int? id, Todo todo) {
-    final todoList = [..._streamController.value];
+  Todo saveTodo(int? id, Todo todo) {
+    final List<Todo> todoList = [..._streamController.value];
     if (id == null) {
+      todo = todo.copyWith(id: newId); // Overwrite todo with id.
       todoList.add(todo);
     } else {
       int index = todoList.indexWhere((todo) => todo.id == id);
@@ -95,13 +108,14 @@ class LocalStorageTodoListApi extends TodoListApi {
         todoList[index] = todo;
       }
     }
-
     _streamController.add(todoList);
+
+    return todo;
   }
 
   @override
-  void deleteTodo(int id) {
-    final todoList = [..._streamController.value];
+  void deleteTodo(int? id) {
+    final List<Todo> todoList = [..._streamController.value];
     todoList.removeWhere((todo) => todo.id == id);
     _streamController.add(todoList);
   }

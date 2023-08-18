@@ -38,52 +38,53 @@ class Todo extends Equatable {
       r'^(x\s?)?(\([A-Z]\)\s?)?(\d{4}-\d{2}-\d{2}\s?){0,2}((?<description>.+))?$';
 
   /// Unique identifier.
-  /// Required attribute.
-  final int id;
+  /// Defaults to null (if unsaved todo).
+  final int? id;
 
   /// Whether the `todo` is completed.
-  /// Required attribute.
+  /// Defaults to false.
   final bool completion;
 
   /// The priority of the `todo`.
   /// Priorities are A, B, C, ...
-  String? priority;
+  final String? priority;
 
   /// The completion date of the `todo`.
   /// Defaults to null.
-  DateTime? completionDate;
+  final DateTime? completionDate;
 
   /// The creation date of the `todo`.
   /// Defaults to null.
-  DateTime? creationDate;
+  final DateTime? creationDate;
 
   /// The description of the `todo`.
-  /// Required attribute.
-  String description;
+  /// Defaults to empty string.
+  final String description;
 
   /// The list of projects of the `todo`.
   /// Defaults to an empty list.
-  List<String> projects;
+  final List<String> projects;
 
   /// The list of contexts of the `todo`.
   /// Defaults to an empty list.
-  List<String> contexts;
+  final List<String> contexts;
 
   /// The list of key value apirs of the `todo`.
   /// Defaults to an empty map.
-  Map<String, String> keyValues;
+  final Map<String, String> keyValues;
 
-  Todo({
-    required this.id,
-    required this.completion,
-    required this.description,
-    this.priority,
+  const Todo({
+    this.id,
+    this.completion = false,
+    this.priority = '',
     this.completionDate,
     this.creationDate,
+    this.description = '',
     this.projects = const [],
     this.contexts = const [],
     this.keyValues = const {},
   });
+  const Todo.empty() : this();
 
   factory Todo.fromString({required int id, required String todoStr}) {
     final bool completion = getCompletion(todoStr);
@@ -249,7 +250,7 @@ class Todo extends Equatable {
     return Todo(
       id: id ?? this.id,
       completion: completion ?? this.completion,
-      priority: priority ?? this.priority,
+      priority: priority != '' ? priority ?? this.priority : null,
       completionDate: completionDate ?? this.completionDate,
       creationDate: creationDate ?? this.creationDate,
       description: description ?? this.description,
@@ -276,7 +277,7 @@ class Todo extends Equatable {
   String toString() {
     final List<String?> items = [
       completion ? 'x' : '',
-      '($priority)',
+      priority != '' ? '($priority)' : '',
       formattedDate(completionDate) ?? '',
       formattedDate(creationDate) ?? '',
       description,

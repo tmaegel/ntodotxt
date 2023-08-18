@@ -59,8 +59,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoPriorityRemoved event,
     Emitter<TodoState> emit,
   ) {
-    Todo todo = state.todo.copyWith();
-    todo.priority = null;
+    final Todo todo = state.todo.copyWith(priority: '');
     emit(state.copyWith(todo: todo));
   }
 
@@ -116,7 +115,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     final Todo todo = state.todo.copyWith();
-    _todoListRepository.saveTodo(state.todo.id, todo);
-    emit(state.copyWith(todo: todo));
+    emit(
+      state.copyWith(
+        todo: _todoListRepository.saveTodo(todo.id, todo),
+      ),
+    );
   }
 }

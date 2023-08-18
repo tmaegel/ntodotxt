@@ -13,11 +13,11 @@ final class TodoListSubscriptionRequested extends TodoListEvent {
 }
 
 final class TodoListTodoCompletionToggled extends TodoListEvent {
-  final int id;
+  final int? id;
   final bool? completion;
 
   const TodoListTodoCompletionToggled({
-    required this.id,
+    this.id,
     this.completion,
   });
 
@@ -26,14 +26,14 @@ final class TodoListTodoCompletionToggled extends TodoListEvent {
 }
 
 final class TodoListTodoDeleted extends TodoListEvent {
-  final int id;
+  final int? id;
 
   const TodoListTodoDeleted({
     required this.id,
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object?> get props => [id];
 }
 
 final class TodoListOrderChanged extends TodoListEvent {

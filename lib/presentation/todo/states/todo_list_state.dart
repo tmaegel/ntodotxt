@@ -138,6 +138,16 @@ final class TodoListState extends Equatable {
     return order.sort(contexts.toSet().toList()).toList();
   }
 
+  /// Returns a list with all key values of all todos.
+  List<String> get keyValues {
+    List<String> keyValues = [];
+    for (var todo in filteredTodoList) {
+      keyValues = keyValues + todo.formattedKeyValues;
+    }
+
+    return order.sort(keyValues.toSet().toList()).toList();
+  }
+
   Iterable<Todo> get filteredTodoList => order.sort(filter.apply(todoList));
 
   /// Return todo list filtered by completion state.

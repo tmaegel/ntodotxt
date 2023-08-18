@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
-import 'package:ntodotxt/common_widgets/header.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_tag.dart';
 
 class TodoEditPage extends StatelessWidget {
-  final int id;
+  final Todo todo;
 
   const TodoEditPage({
-    required this.id,
+    required this.todo,
     super.key,
   });
 
@@ -26,7 +26,7 @@ class TodoEditPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TodoBloc(
         todoListRepository: todoListRepository,
-        todo: todoListRepository.getTodo(id),
+        todo: todo,
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoEditNarrowView()
@@ -38,61 +38,10 @@ class TodoEditPage extends StatelessWidget {
 abstract class TodoEditView extends StatelessWidget {
   const TodoEditView({super.key});
 
-  List<Widget> priorityChips(BuildContext context, TodoState state) {
-    return [
-      for (var p in priorities)
-        GenericChoiceChip(
-          label: p,
-          selected: p == state.todo.priority,
-          color: priorityChipColor,
-          onSelected: (bool selected) =>
-              _changePriorityAction(context, p, selected),
-        ),
-    ];
-  }
-
-  List<Widget> projectChips(BuildContext context, TodoState state) {
-    return [
-      for (var p in state.todo.projects)
-        GenericChoiceChip(
-          label: p,
-          selected: state.todo.projects.contains(p),
-          color: projectChipColor,
-          onSelected: (bool selected) =>
-              _changeProjectsAction(context, p, selected),
-        ),
-    ];
-  }
-
-  List<Widget> contextChips(BuildContext context, TodoState state) {
-    return [
-      for (var c in state.todo.contexts)
-        GenericChoiceChip(
-          label: c,
-          selected: state.todo.contexts.contains(c),
-          color: contextChipColor,
-          onSelected: (bool selected) =>
-              _changeContextsAction(context, c, selected),
-        ),
-    ];
-  }
-
-  List<Widget> keyValueChips(BuildContext context, TodoState state) {
-    return [
-      for (var kv in state.todo.formattedKeyValues)
-        GenericInputChip(
-          label: kv,
-          selected: true,
-          color: keyValueChipColor,
-          onDeleted: () {},
-        ),
-    ];
-  }
-
   /// Save current todo
   void _saveAction(BuildContext context, TodoState state) {
     context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
-    context.pop();
+    context.goNamed("todo-view", extra: state.todo);
   }
 
   /// Delete current todo
@@ -104,36 +53,6 @@ abstract class TodoEditView extends StatelessWidget {
   /// Cancel current edit process
   void _cancelAction(BuildContext context, TodoState state) {
     context.pop();
-  }
-
-  /// Change priority
-  void _changePriorityAction(
-      BuildContext context, String value, bool selected) {
-    if (selected) {
-      context.read<TodoBloc>().add(TodoPriorityAdded(value));
-    } else {
-      context.read<TodoBloc>().add(const TodoPriorityRemoved());
-    }
-  }
-
-  /// Change projects
-  void _changeProjectsAction(
-      BuildContext context, String value, bool selected) {
-    if (selected) {
-      context.read<TodoBloc>().add(TodoProjectAdded(value));
-    } else {
-      context.read<TodoBloc>().add(TodoProjectRemoved(value));
-    }
-  }
-
-  /// Change contexts
-  void _changeContextsAction(
-      BuildContext context, String value, bool selected) {
-    if (selected) {
-      context.read<TodoBloc>().add(TodoContextAdded(value));
-    } else {
-      context.read<TodoBloc>().add(TodoContextRemoved(value));
-    }
   }
 
   Widget _buildTodoTextField(BuildContext context, TodoState state) {
@@ -155,6 +74,38 @@ abstract class TodoEditView extends StatelessWidget {
       },
     );
   }
+
+  Widget _buildBody({
+    required BuildContext context,
+    required TodoState state,
+    bool transparentDivider = false,
+  }) {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            children: [
+              ListTile(
+                key: key,
+                minLeadingWidth: 40.0,
+                leading: const Icon(Icons.edit_outlined),
+                title: _buildTodoTextField(context, state),
+                trailing: const SizedBox(),
+              ),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              const TodoPriorityTags(),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              const TodoProjectTags(),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              const TodoContextTags(),
+              Divider(color: transparentDivider ? Colors.transparent : null),
+              TodoKeyValueTags(items: state.todo.formattedKeyValues),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class TodoEditNarrowView extends TodoEditView {
@@ -173,49 +124,14 @@ class TodoEditNarrowView extends TodoEditView {
               onPressed: () => _cancelAction(context, state),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Subheader(title: "Todo"),
-                _buildTodoTextField(context, state),
-                const Subheader(title: "Priority"),
-                GenericChipGroup(children: priorityChips(context, state)),
-                const Subheader(title: "Projects"),
-                GenericChipGroup(children: projectChips(context, state)),
-                const Subheader(title: "Contexts"),
-                GenericChipGroup(children: contextChips(context, state)),
-                const Subheader(title: "Key-Values"),
-                GenericChipGroup(children: keyValueChips(context, state)),
-              ],
-            ),
+          body: _buildBody(
+            context: context,
+            state: state,
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.endContained,
           floatingActionButton: PrimaryFloatingActionButton(
             icon: const Icon(Icons.save),
             tooltip: 'Save',
             action: () => _saveAction(context, state),
-          ),
-          bottomNavigationBar: PrimaryBottomAppBar(
-            children: [
-              IconButton(
-                tooltip: 'Add key value tag',
-                icon: const Icon(Icons.join_inner_outlined),
-                onPressed: () {},
-              ),
-              IconButton(
-                tooltip: 'Add context tag',
-                icon: const Icon(Icons.sell_outlined),
-                onPressed: () {},
-              ),
-              IconButton(
-                tooltip: 'Add project tag',
-                icon: const Icon(Icons.rocket_launch_outlined),
-                onPressed: () {},
-              ),
-            ],
           ),
         );
       },
@@ -240,55 +156,10 @@ class TodoEditWideView extends TodoEditView {
             ),
             toolbar: _buildToolBar(context, state),
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Subheader(title: "Todo"),
-                _buildTodoTextField(context, state),
-                const Subheader(title: "Priority"),
-                GenericChipGroup(
-                  children: [
-                    ...priorityChips(context, state),
-                    GenericActionChip(
-                      label: "+",
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-                const Subheader(title: "Projects"),
-                GenericChipGroup(
-                  children: [
-                    ...projectChips(context, state),
-                    GenericActionChip(
-                      label: "+",
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-                const Subheader(title: "Contexts"),
-                GenericChipGroup(
-                  children: [
-                    ...contextChips(context, state),
-                    GenericActionChip(
-                      label: "+",
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-                const Subheader(title: "Key-Values"),
-                GenericChipGroup(
-                  children: [
-                    ...keyValueChips(context, state),
-                    GenericActionChip(
-                      label: "+",
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ],
-            ),
+          body: _buildBody(
+            context: context,
+            state: state,
+            transparentDivider: true,
           ),
         );
       },
