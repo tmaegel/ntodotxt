@@ -80,6 +80,9 @@ class App extends StatelessWidget {
                   color: colorLightGrey,
                 ),
                 dividerColor: colorLightGrey,
+                textSelectionTheme: const TextSelectionThemeData(
+                  cursorColor: colorBlack,
+                ),
                 useMaterial3: true,
               ),
               themeMode: ThemeMode.light,

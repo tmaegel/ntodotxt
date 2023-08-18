@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 const List<String> priorities = ["A", "B", "C", "D", "E", "F"];
 
 /// Colors
-const Color colorBlack = Color(0xFFFFFFFF);
-const Color colorWhite = Color(0xFF1e222a);
+const Color colorBlack = Color(0xFF1e222a);
+const Color colorWhite = Color(0xFFFFFFFF);
 const Color colorGrey = Color(0xFFABB2BF);
 const Color colorLightGrey = Color(0x44ABB2BF);
 const Color colorRed = Color(0xFFE06C75);

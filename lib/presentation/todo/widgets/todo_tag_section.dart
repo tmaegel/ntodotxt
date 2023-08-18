@@ -5,18 +5,41 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
-class TodoPriorityTags extends StatelessWidget {
+abstract class TodoTagSection extends StatelessWidget {
+  final Icon leadingIcon;
+  final List<String>? items;
   final bool readOnly;
 
-  const TodoPriorityTags({
+  const TodoTagSection({
+    required this.leadingIcon,
+    this.items,
     this.readOnly = false,
     super.key,
   });
 
-  /// Change priority
-  void _changePriorityAction(
-      BuildContext context, String value, bool selected) {
+  void _showDialog({
+    required BuildContext context,
+    required Widget child,
+  }) {
+    showModalBottomSheet<void>(
+      useRootNavigator: true,
+      context: context,
+      builder: (BuildContext context) => child,
+    );
+  }
+}
+
+class TodoPriorityTags extends TodoTagSection {
+  const TodoPriorityTags({
+    super.leadingIcon = const Icon(Icons.outlined_flag),
+    super.items,
+    super.readOnly,
+    super.key,
+  });
+
+  void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
       context.read<TodoBloc>().add(TodoPriorityAdded(value));
     } else {
@@ -42,8 +65,7 @@ class TodoPriorityTags extends StatelessWidget {
                 selected: p == state.todo.priority,
                 color: priorityChipColor,
                 onSelected: !readOnly
-                    ? (bool selected) =>
-                        _changePriorityAction(context, p, selected)
+                    ? (bool selected) => _onSelected(context, p, selected)
                     : null,
               ),
           ],
@@ -57,30 +79,35 @@ class TodoPriorityTags extends StatelessWidget {
     return ListTile(
       key: key,
       minLeadingWidth: 40.0,
-      leading: const Icon(Icons.outlined_flag),
+      leading: leadingIcon,
       title: _buildPriorityChips(priorities),
     );
   }
 }
 
-class TodoProjectTags extends StatelessWidget {
-  final List<String>? items;
-  final bool readOnly;
-
+class TodoProjectTags extends TodoTagSection {
   const TodoProjectTags({
-    this.items,
-    this.readOnly = false,
+    super.leadingIcon = const Icon(Icons.rocket_launch_outlined),
+    super.items,
+    super.readOnly,
     super.key,
   });
 
-  /// Change projects
-  void _changeProjectsAction(
-      BuildContext context, String value, bool selected) {
+  void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
       context.read<TodoBloc>().add(TodoProjectAdded(value));
     } else {
       context.read<TodoBloc>().add(TodoProjectRemoved(value));
     }
+  }
+
+  void _openDialog(BuildContext context) {
+    _showDialog(
+      context: context,
+      child: TodoProjectTagDialog(
+        onPressed: () {},
+      ),
+    );
   }
 
   Widget _buildProjectChips(List<String> projects) {
@@ -102,8 +129,7 @@ class TodoProjectTags extends StatelessWidget {
                 selected: state.todo.projects.contains(p),
                 color: projectChipColor,
                 onSelected: !readOnly
-                    ? (bool selected) =>
-                        _changeProjectsAction(context, p, selected)
+                    ? (bool selected) => _onSelected(context, p, selected)
                     : null,
               ),
           ],
@@ -127,13 +153,13 @@ class TodoProjectTags extends StatelessWidget {
         return ListTile(
           key: key,
           minLeadingWidth: 40.0,
-          leading: const Icon(Icons.rocket_outlined),
+          leading: leadingIcon,
           title: _buildProjectChips(items ?? state.projects),
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
                   tooltip: 'Add new project tag',
-                  onPressed: () {},
+                  onPressed: () => _openDialog(context),
                 )
               : null,
         );
@@ -142,24 +168,29 @@ class TodoProjectTags extends StatelessWidget {
   }
 }
 
-class TodoContextTags extends StatelessWidget {
-  final List<String>? items;
-  final bool readOnly;
-
+class TodoContextTags extends TodoTagSection {
   const TodoContextTags({
-    this.items,
-    this.readOnly = false,
+    super.leadingIcon = const Icon(Icons.sell_outlined),
+    super.items,
+    super.readOnly,
     super.key,
   });
 
-  /// Change contexts
-  void _changeContextsAction(
-      BuildContext context, String value, bool selected) {
+  void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
       context.read<TodoBloc>().add(TodoContextAdded(value));
     } else {
       context.read<TodoBloc>().add(TodoContextRemoved(value));
     }
+  }
+
+  void _openDialog(BuildContext context) {
+    _showDialog(
+      context: context,
+      child: TodoContextTagDialog(
+        onPressed: () {},
+      ),
+    );
   }
 
   Widget _buildContextChips(List<String> contexts) {
@@ -181,8 +212,7 @@ class TodoContextTags extends StatelessWidget {
                 selected: state.todo.contexts.contains(c),
                 color: contextChipColor,
                 onSelected: !readOnly
-                    ? (bool selected) =>
-                        _changeContextsAction(context, c, selected)
+                    ? (bool selected) => _onSelected(context, c, selected)
                     : null,
               ),
           ],
@@ -206,13 +236,13 @@ class TodoContextTags extends StatelessWidget {
         return ListTile(
           key: key,
           minLeadingWidth: 40.0,
-          leading: const Icon(Icons.sell_outlined),
+          leading: leadingIcon,
           title: _buildContextChips(items ?? state.contexts),
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
                   tooltip: 'Add new context tag',
-                  onPressed: () {},
+                  onPressed: () => _openDialog(context),
                 )
               : null,
         );
@@ -221,18 +251,24 @@ class TodoContextTags extends StatelessWidget {
   }
 }
 
-class TodoKeyValueTags extends StatelessWidget {
-  final List<String>? items;
-  final bool readOnly;
-
+class TodoKeyValueTags extends TodoTagSection {
   const TodoKeyValueTags({
-    this.items,
-    this.readOnly = false,
+    super.leadingIcon = const Icon(Icons.join_inner_outlined),
+    super.items,
+    super.readOnly,
     super.key,
   });
 
-  /// Delete context
-  void _deleteContextAction(BuildContext context, String value) {}
+  void _onDeleted(BuildContext context, String value) {}
+
+  void _openDialog(BuildContext context) {
+    _showDialog(
+      context: context,
+      child: TodoKeyValueTagDialog(
+        onPressed: () {},
+      ),
+    );
+  }
 
   Widget _buildKeyValueChips(List<String> keyValues) {
     return BlocBuilder<TodoBloc, TodoState>(
@@ -252,8 +288,7 @@ class TodoKeyValueTags extends StatelessWidget {
                 label: kv,
                 color: keyValueChipColor,
                 onSelected: null,
-                onDeleted:
-                    !readOnly ? () => _deleteContextAction(context, kv) : null,
+                onDeleted: !readOnly ? () => _onDeleted(context, kv) : null,
               ),
           ],
         );
@@ -276,13 +311,13 @@ class TodoKeyValueTags extends StatelessWidget {
         return ListTile(
           key: key,
           minLeadingWidth: 40.0,
-          leading: const Icon(Icons.join_inner_outlined),
+          leading: leadingIcon,
           title: _buildKeyValueChips(items ?? state.keyValues),
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
-                  tooltip: 'Add new key-value pair',
-                  onPressed: () {},
+                  tooltip: 'Add new key:value tag',
+                  onPressed: () => _openDialog(context),
                 )
               : null,
         );

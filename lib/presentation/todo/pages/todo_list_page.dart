@@ -36,31 +36,24 @@ abstract class TodoListView extends StatelessWidget {
 
   /// Switch todo list ordering.
   void _orderAction(BuildContext context) {
-    showDialog<void>(
+    showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
-      builder: (BuildContext context) {
-        return const OrderDialog();
-      },
+      builder: (BuildContext context) => const OrderDialog(),
     );
   }
 
   /// Switch todo list filter.
   void _filterAction(BuildContext context) {
-    showDialog<void>(
+    showModalBottomSheet<void>(
+      useRootNavigator: true,
       context: context,
-      builder: (BuildContext context) {
-        return const FilterDialog();
-      },
+      builder: (BuildContext context) => const FilterDialog(),
     );
   }
 
   List<Widget> _buildToolBarActions(BuildContext context) {
     return [
-      IconButton(
-        tooltip: 'Visibility',
-        icon: const Icon(Icons.visibility_outlined),
-        onPressed: () {},
-      ),
       IconButton(
         tooltip: 'Sort',
         icon: const Icon(Icons.sort),

@@ -7,7 +7,7 @@ import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_tag.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoViewPage extends StatelessWidget {
   final Todo todo;

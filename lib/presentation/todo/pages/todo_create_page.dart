@@ -8,7 +8,7 @@ import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_tag.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoCreatePage extends StatelessWidget {
   const TodoCreatePage({super.key});
@@ -36,8 +36,7 @@ abstract class TodoCreateView extends StatelessWidget {
   /// Save new todo
   void _saveAction(BuildContext context, TodoState state) {
     context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
-    // context.goNamed("todo-view", extra: state.todo);
-    context.go(context.namedLocation('todo-list'));
+    context.goNamed("todo-view", extra: state.todo);
   }
 
   /// Cancel current create process

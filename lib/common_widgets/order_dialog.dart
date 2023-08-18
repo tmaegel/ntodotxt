@@ -13,26 +13,40 @@ class OrderDialog extends StatelessWidget {
         return previousState.order != state.order;
       },
       builder: (BuildContext context, TodoListState state) {
-        return SimpleDialog(
-          title: const Text('Select order'),
-          children: [
-            ListTile(
-              title: const Text('Ascending'),
-              leading: Radio<TodoListOrder>(
-                value: TodoListOrder.ascending,
-                groupValue: state.order,
-                onChanged: (TodoListOrder? value) => _setState(context, value),
+        return BottomSheet(
+          enableDrag: false,
+          showDragHandle: false,
+          onClosing: () {},
+          builder: (context) {
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ListTile(
+                    title: const Text('Ascending'),
+                    leading: Radio<TodoListOrder>(
+                      value: TodoListOrder.ascending,
+                      groupValue: state.order,
+                      onChanged: (TodoListOrder? value) =>
+                          _setState(context, value),
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('Descending'),
+                    leading: Radio<TodoListOrder>(
+                      value: TodoListOrder.descending,
+                      groupValue: state.order,
+                      onChanged: (TodoListOrder? value) =>
+                          _setState(context, value),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            ListTile(
-              title: const Text('Descending'),
-              leading: Radio<TodoListOrder>(
-                value: TodoListOrder.descending,
-                groupValue: state.order,
-                onChanged: (TodoListOrder? value) => _setState(context, value),
-              ),
-            ),
-          ],
+            );
+          },
         );
       },
     );
