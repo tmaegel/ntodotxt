@@ -70,7 +70,15 @@ class App extends StatelessWidget {
                 brightness: Brightness.light,
                 searchBarTheme: SearchBarThemeData(
                   elevation: MaterialStateProperty.all(0.0),
-                  backgroundColor: MaterialStateProperty.all(textFieldColor),
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      side: const BorderSide(width: 1, color: colorLightGrey),
+                    ),
+                  ),
                 ),
                 dialogBackgroundColor: Colors.white,
                 bottomSheetTheme: const BottomSheetThemeData(
@@ -78,6 +86,7 @@ class App extends StatelessWidget {
                 ),
                 dividerTheme: const DividerThemeData(
                   color: colorLightGrey,
+                  thickness: 1,
                 ),
                 dividerColor: colorLightGrey,
                 textSelectionTheme: const TextSelectionThemeData(

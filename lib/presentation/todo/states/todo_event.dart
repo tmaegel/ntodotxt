@@ -74,6 +74,24 @@ final class TodoContextRemoved extends TodoEvent {
   List<Object> get props => [context];
 }
 
+final class TodoKeyValueAdded extends TodoEvent {
+  final String keyValue;
+
+  const TodoKeyValueAdded(this.keyValue);
+
+  @override
+  List<Object> get props => [keyValue];
+}
+
+final class TodoKeyValueRemoved extends TodoEvent {
+  final String keyValue;
+
+  const TodoKeyValueRemoved(this.keyValue);
+
+  @override
+  List<Object> get props => [keyValue];
+}
+
 final class TodoSubmitted extends TodoEvent {
   final int? id;
 

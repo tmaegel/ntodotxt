@@ -26,6 +26,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoProjectRemoved>(_onProjectRemoved);
     on<TodoContextAdded>(_onContextAdded);
     on<TodoContextRemoved>(_onContextRemoved);
+    on<TodoKeyValueAdded>(_onKeyValueAdded);
+    on<TodoKeyValueRemoved>(_onKeyValueRemoved);
     on<TodoDeleted>(_onDeleted);
     on<TodoSubmitted>(_onSubmitted);
   }
@@ -100,6 +102,32 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     List<String> contexts = [...state.todo.contexts];
     contexts.remove(event.context);
     final Todo todo = state.todo.copyWith(contexts: contexts);
+    emit(state.copyWith(todo: todo));
+  }
+
+  void _onKeyValueAdded(
+    TodoKeyValueAdded event,
+    Emitter<TodoState> emit,
+  ) {
+    Map<String, String> keyValues = {...state.todo.keyValues};
+    final List<String> splittedKeyValue = event.keyValue.split(":");
+    if (splittedKeyValue.length == 2) {
+      keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
+    }
+    final Todo todo = state.todo.copyWith(keyValues: keyValues);
+    emit(state.copyWith(todo: todo));
+  }
+
+  void _onKeyValueRemoved(
+    TodoKeyValueRemoved event,
+    Emitter<TodoState> emit,
+  ) {
+    Map<String, String> keyValues = {...state.todo.keyValues};
+    final List<String> splittedKeyValue = event.keyValue.split(":");
+    if (splittedKeyValue.length == 2) {
+      keyValues.remove(splittedKeyValue[0]);
+    }
+    final Todo todo = state.todo.copyWith(keyValues: keyValues);
     emit(state.copyWith(todo: todo));
   }
 

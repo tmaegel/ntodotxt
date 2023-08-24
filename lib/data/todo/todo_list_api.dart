@@ -27,7 +27,7 @@ abstract class TodoListApi {
   Todo saveTodo(int? id, Todo todo);
 
   /// Deletes the `todo` with the given id.
-  /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
+  /// If no `todo` with the given id exists, a [TodoNotFound] error is thrown.
   void deleteTodo(int? id);
 }
 
@@ -89,7 +89,7 @@ class LocalStorageTodoListApi extends TodoListApi {
     final List<Todo> todoList = [..._streamController.value];
     int index = todoList.indexWhere((todo) => todo.id == id);
     if (index == -1) {
-      throw TodoNotFoundException();
+      throw TodoNotFound();
     }
     return todoList[index];
   }
@@ -103,7 +103,7 @@ class LocalStorageTodoListApi extends TodoListApi {
     } else {
       int index = todoList.indexWhere((todo) => todo.id == id);
       if (index == -1) {
-        throw TodoNotFoundException();
+        throw TodoNotFound();
       } else {
         todoList[index] = todo;
       }

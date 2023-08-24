@@ -20,6 +20,6 @@ class TodoListRepository {
   Todo saveTodo(int? id, Todo todo) => _todoListApi.saveTodo(id, todo);
 
   /// Deletes the `todo` with the given id.
-  /// If no `todo` with the given id exists, a [TodoNotFoundException] error is thrown.
+  /// If no `todo` with the given id exists, a [TodoNotFound] error is thrown.
   void deleteTodo(int? id) => _todoListApi.deleteTodo(id);
 }

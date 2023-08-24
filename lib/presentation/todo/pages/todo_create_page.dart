@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
@@ -48,15 +47,24 @@ abstract class TodoCreateView extends StatelessWidget {
     return TextFormField(
       key: const Key('createTodoView_textFormField'),
       initialValue: state.todo.description,
-      minLines: 3,
-      maxLines: 3,
-      decoration: InputDecoration(
+      minLines: 1,
+      maxLines: 5,
+      decoration: const InputDecoration(
+        hintText: 'Enter your todo description here ...',
+        contentPadding: EdgeInsets.all(18.0), // 16px + 2px
+        isDense: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide.none,
         ),
-        filled: true,
-        fillColor: colorLightGrey,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
       ),
       onChanged: (value) {
         context.read<TodoBloc>().add(TodoDescriptionChanged(value));
@@ -76,13 +84,7 @@ abstract class TodoCreateView extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  ListTile(
-                    key: key,
-                    minLeadingWidth: 40.0,
-                    leading: const Icon(Icons.edit_outlined),
-                    title: _buildTodoTextField(context, state),
-                    trailing: const SizedBox(),
-                  ),
+                  _buildTodoTextField(context, state),
                   Divider(
                       color: transparentDivider ? Colors.transparent : null),
                   const TodoPriorityTags(),
@@ -94,7 +96,7 @@ abstract class TodoCreateView extends StatelessWidget {
                   const TodoContextTags(),
                   Divider(
                       color: transparentDivider ? Colors.transparent : null),
-                  TodoKeyValueTags(items: state.todo.formattedKeyValues),
+                  const TodoKeyValueTags(),
                 ],
               ),
             ),

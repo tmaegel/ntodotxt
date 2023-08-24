@@ -5,9 +5,11 @@ abstract class GenericChip extends StatelessWidget {
   final String label;
   final bool selected;
   final Color? color;
+  final void Function(bool)? onSelected;
 
   const GenericChip({
     required this.label,
+    this.onSelected,
     this.selected = false,
     this.color,
     super.key,
@@ -15,13 +17,11 @@ abstract class GenericChip extends StatelessWidget {
 }
 
 class GenericChoiceChip extends GenericChip {
-  final void Function(bool)? onSelected;
-
   const GenericChoiceChip({
     required super.label,
+    super.onSelected,
     super.selected,
     super.color,
-    this.onSelected,
     super.key,
   });
 
@@ -44,72 +44,6 @@ class GenericChoiceChip extends GenericChip {
       labelStyle: const TextStyle(color: Colors.black),
       onSelected:
           onSelected != null ? (bool selected) => onSelected!(selected) : null,
-    );
-  }
-}
-
-class GenericInputChip extends GenericChip {
-  final void Function(bool)? onSelected;
-  final void Function()? onDeleted;
-
-  const GenericInputChip({
-    required super.label,
-    super.selected,
-    super.color,
-    this.onSelected,
-    this.onDeleted,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InputChip(
-      showCheckmark: false,
-      label: Text(label),
-      selected: selected,
-      backgroundColor: colorLightGrey,
-      disabledColor: colorLightGrey,
-      selectedColor: color ?? defaultChipColor,
-      side: const BorderSide(
-        style: BorderStyle.none,
-        color: colorLightGrey,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      // @todo: Set colore for all states.
-      labelStyle: const TextStyle(color: Colors.black),
-      onSelected:
-          onSelected != null ? (bool selected) => onSelected!(selected) : null,
-      onDeleted: onDeleted != null ? () => onDeleted!() : null,
-    );
-  }
-}
-
-class GenericActionChip extends StatelessWidget {
-  final String label;
-  final void Function() onPressed;
-
-  const GenericActionChip({
-    required this.label,
-    required this.onPressed,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ActionChip(
-      label: Text(label),
-      backgroundColor: colorBlue,
-      side: const BorderSide(
-        style: BorderStyle.none,
-        color: colorLightGrey,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      labelStyle: const TextStyle(color: Colors.black),
-      onPressed: onPressed,
     );
   }
 }

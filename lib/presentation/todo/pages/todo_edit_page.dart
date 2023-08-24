@@ -59,15 +59,24 @@ abstract class TodoEditView extends StatelessWidget {
     return TextFormField(
       key: const Key('editTodoView_textFormField'),
       initialValue: state.todo.description,
-      minLines: 3,
-      maxLines: 3,
-      decoration: InputDecoration(
+      minLines: 1,
+      maxLines: 5,
+      decoration: const InputDecoration(
+        hintText: 'Enter your todo description here ...',
+        contentPadding: EdgeInsets.all(18.0), // 16px + 2px
+        isDense: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide.none,
         ),
-        filled: true,
-        fillColor: colorLightGrey,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
       ),
       onChanged: (value) {
         context.read<TodoBloc>().add(TodoDescriptionChanged(value));
@@ -85,13 +94,7 @@ abstract class TodoEditView extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-              ListTile(
-                key: key,
-                minLeadingWidth: 40.0,
-                leading: const Icon(Icons.edit_outlined),
-                title: _buildTodoTextField(context, state),
-                trailing: const SizedBox(),
-              ),
+              _buildTodoTextField(context, state),
               Divider(color: transparentDivider ? Colors.transparent : null),
               const TodoPriorityTags(),
               Divider(color: transparentDivider ? Colors.transparent : null),
@@ -99,7 +102,7 @@ abstract class TodoEditView extends StatelessWidget {
               Divider(color: transparentDivider ? Colors.transparent : null),
               const TodoContextTags(),
               Divider(color: transparentDivider ? Colors.transparent : null),
-              TodoKeyValueTags(items: state.todo.formattedKeyValues),
+              const TodoKeyValueTags(),
             ],
           ),
         ),

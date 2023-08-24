@@ -4,17 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
 abstract class TodoTagSection extends StatelessWidget {
   final Icon leadingIcon;
-  final List<String>? items;
+  final Color tagColor;
   final bool readOnly;
 
   const TodoTagSection({
     required this.leadingIcon,
-    this.items,
+    this.tagColor = defaultChipColor,
     this.readOnly = false,
     super.key,
   });
@@ -29,16 +28,39 @@ abstract class TodoTagSection extends StatelessWidget {
       builder: (BuildContext context) => child,
     );
   }
+
+  void _onSelected(BuildContext context, String value, bool selected);
+
+  Widget _buildChips({
+    required BuildContext context,
+    required List<String> tags,
+    required List<String?> selectedTags,
+  }) {
+    return GenericChipGroup(
+      children: [
+        for (var t in tags)
+          GenericChoiceChip(
+            label: t,
+            selected: selectedTags.contains(t),
+            color: tagColor,
+            onSelected: !readOnly
+                ? (bool selected) => _onSelected(context, t, selected)
+                : null,
+          ),
+      ],
+    );
+  }
 }
 
 class TodoPriorityTags extends TodoTagSection {
   const TodoPriorityTags({
     super.leadingIcon = const Icon(Icons.outlined_flag),
-    super.items,
+    super.tagColor = priorityChipColor,
     super.readOnly,
     super.key,
   });
 
+  @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
       context.read<TodoBloc>().add(TodoPriorityAdded(value));
@@ -47,7 +69,8 @@ class TodoPriorityTags extends TodoTagSection {
     }
   }
 
-  Widget _buildPriorityChips(List<String> priorities) {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         if (previousState.todo.priority == state.todo.priority) {
@@ -57,30 +80,17 @@ class TodoPriorityTags extends TodoTagSection {
         }
       },
       builder: (BuildContext context, TodoState state) {
-        return GenericChipGroup(
-          children: [
-            for (var p in priorities)
-              GenericChoiceChip(
-                label: p,
-                selected: p == state.todo.priority,
-                color: priorityChipColor,
-                onSelected: !readOnly
-                    ? (bool selected) => _onSelected(context, p, selected)
-                    : null,
-              ),
-          ],
+        return ListTile(
+          key: key,
+          minLeadingWidth: 40.0,
+          leading: leadingIcon,
+          title: _buildChips(
+            context: context,
+            tags: priorities,
+            selectedTags: [state.todo.priority],
+          ),
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      key: key,
-      minLeadingWidth: 40.0,
-      leading: leadingIcon,
-      title: _buildPriorityChips(priorities),
     );
   }
 }
@@ -88,11 +98,12 @@ class TodoPriorityTags extends TodoTagSection {
 class TodoProjectTags extends TodoTagSection {
   const TodoProjectTags({
     super.leadingIcon = const Icon(Icons.rocket_launch_outlined),
-    super.items,
+    super.tagColor = projectChipColor,
     super.readOnly,
     super.key,
   });
 
+  @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
       context.read<TodoBloc>().add(TodoProjectAdded(value));
@@ -104,13 +115,15 @@ class TodoProjectTags extends TodoTagSection {
   void _openDialog(BuildContext context) {
     _showDialog(
       context: context,
-      child: TodoProjectTagDialog(
-        onPressed: () {},
+      child: BlocProvider.value(
+        value: BlocProvider.of<TodoBloc>(context),
+        child: const TodoProjectTagDialog(),
       ),
     );
   }
 
-  Widget _buildProjectChips(List<String> projects) {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         if (const IterableEquality()
@@ -121,40 +134,15 @@ class TodoProjectTags extends TodoTagSection {
         }
       },
       builder: (BuildContext context, TodoState state) {
-        return GenericChipGroup(
-          children: [
-            for (var p in projects)
-              GenericChoiceChip(
-                label: p,
-                selected: state.todo.projects.contains(p),
-                color: projectChipColor,
-                onSelected: !readOnly
-                    ? (bool selected) => _onSelected(context, p, selected)
-                    : null,
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoListBloc, TodoListState>(
-      buildWhen: (TodoListState previousState, TodoListState state) {
-        if (const IterableEquality()
-            .equals(previousState.projects, state.projects)) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      builder: (BuildContext context, TodoListState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40.0,
           leading: leadingIcon,
-          title: _buildProjectChips(items ?? state.projects),
+          title: _buildChips(
+            context: context,
+            tags: state.todo.projects,
+            selectedTags: state.todo.projects,
+          ),
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
@@ -171,11 +159,12 @@ class TodoProjectTags extends TodoTagSection {
 class TodoContextTags extends TodoTagSection {
   const TodoContextTags({
     super.leadingIcon = const Icon(Icons.sell_outlined),
-    super.items,
+    super.tagColor = keyValueChipColor,
     super.readOnly,
     super.key,
   });
 
+  @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
       context.read<TodoBloc>().add(TodoContextAdded(value));
@@ -187,13 +176,15 @@ class TodoContextTags extends TodoTagSection {
   void _openDialog(BuildContext context) {
     _showDialog(
       context: context,
-      child: TodoContextTagDialog(
-        onPressed: () {},
+      child: BlocProvider.value(
+        value: BlocProvider.of<TodoBloc>(context),
+        child: const TodoContextTagDialog(),
       ),
     );
   }
 
-  Widget _buildContextChips(List<String> contexts) {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         if (const IterableEquality()
@@ -204,40 +195,15 @@ class TodoContextTags extends TodoTagSection {
         }
       },
       builder: (BuildContext context, TodoState state) {
-        return GenericChipGroup(
-          children: [
-            for (var c in contexts)
-              GenericChoiceChip(
-                label: c,
-                selected: state.todo.contexts.contains(c),
-                color: contextChipColor,
-                onSelected: !readOnly
-                    ? (bool selected) => _onSelected(context, c, selected)
-                    : null,
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoListBloc, TodoListState>(
-      buildWhen: (TodoListState previousState, TodoListState state) {
-        if (const IterableEquality()
-            .equals(previousState.contexts, state.contexts)) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      builder: (BuildContext context, TodoListState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40.0,
           leading: leadingIcon,
-          title: _buildContextChips(items ?? state.contexts),
+          title: _buildChips(
+            context: context,
+            tags: state.todo.contexts,
+            selectedTags: state.todo.contexts,
+          ),
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
@@ -254,65 +220,50 @@ class TodoContextTags extends TodoTagSection {
 class TodoKeyValueTags extends TodoTagSection {
   const TodoKeyValueTags({
     super.leadingIcon = const Icon(Icons.join_inner_outlined),
-    super.items,
     super.readOnly,
     super.key,
   });
 
-  void _onDeleted(BuildContext context, String value) {}
+  @override
+  void _onSelected(BuildContext context, String value, bool selected) {
+    if (selected) {
+      context.read<TodoBloc>().add(TodoKeyValueAdded(value));
+    } else {
+      context.read<TodoBloc>().add(TodoKeyValueRemoved(value));
+    }
+  }
 
   void _openDialog(BuildContext context) {
     _showDialog(
       context: context,
-      child: TodoKeyValueTagDialog(
-        onPressed: () {},
+      child: BlocProvider.value(
+        value: BlocProvider.of<TodoBloc>(context),
+        child: const TodoKeyValueTagDialog(),
       ),
     );
   }
 
-  Widget _buildKeyValueChips(List<String> keyValues) {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        if (const IterableEquality()
-            .equals(previousState.todo.contexts, state.todo.contexts)) {
+        if (const DeepCollectionEquality()
+            .equals(previousState.todo.keyValues, state.todo.keyValues)) {
           return false;
         } else {
           return true;
         }
       },
       builder: (BuildContext context, TodoState state) {
-        return GenericChipGroup(
-          children: [
-            for (var kv in keyValues)
-              GenericInputChip(
-                label: kv,
-                color: keyValueChipColor,
-                onSelected: null,
-                onDeleted: !readOnly ? () => _onDeleted(context, kv) : null,
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoListBloc, TodoListState>(
-      buildWhen: (TodoListState previousState, TodoListState state) {
-        if (const IterableEquality()
-            .equals(previousState.contexts, state.contexts)) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      builder: (BuildContext context, TodoListState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40.0,
           leading: leadingIcon,
-          title: _buildKeyValueChips(items ?? state.keyValues),
+          title: _buildChips(
+            context: context,
+            tags: state.todo.formattedKeyValues,
+            selectedTags: state.todo.formattedKeyValues,
+          ),
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),

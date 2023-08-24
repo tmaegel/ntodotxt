@@ -57,22 +57,18 @@ abstract class TodoViewView extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-              ListTile(
-                key: key,
-                minLeadingWidth: 40.0,
-                leading: const Icon(Icons.edit_outlined),
-                title: Text(state.todo.description),
-                trailing: const SizedBox(),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Text(state.todo.description),
               ),
               Divider(color: transparentDivider ? Colors.transparent : null),
               const TodoPriorityTags(readOnly: true),
               Divider(color: transparentDivider ? Colors.transparent : null),
-              TodoProjectTags(items: state.todo.projects, readOnly: true),
+              const TodoProjectTags(readOnly: true),
               Divider(color: transparentDivider ? Colors.transparent : null),
-              TodoContextTags(items: state.todo.contexts, readOnly: true),
+              const TodoContextTags(readOnly: true),
               Divider(color: transparentDivider ? Colors.transparent : null),
-              TodoKeyValueTags(
-                  items: state.todo.formattedKeyValues, readOnly: true),
+              const TodoKeyValueTags(readOnly: true),
             ],
           ),
         ),
