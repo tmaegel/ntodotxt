@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
 

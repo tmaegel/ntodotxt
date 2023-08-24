@@ -49,22 +49,12 @@ abstract class TodoCreateView extends StatelessWidget {
       initialValue: state.todo.description,
       minLines: 1,
       maxLines: 5,
+      style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5),
       decoration: const InputDecoration(
         hintText: 'Enter your todo description here ...',
-        contentPadding: EdgeInsets.all(18.0), // 16px + 2px
         isDense: true,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide.none,
-        ),
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none,
       ),
       onChanged: (value) {
         context.read<TodoBloc>().add(TodoDescriptionChanged(value));
@@ -84,7 +74,11 @@ abstract class TodoCreateView extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  _buildTodoTextField(context, state),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 18.0, right: 18.0, top: 20, bottom: 24),
+                    child: _buildTodoTextField(context, state),
+                  ),
                   Divider(
                       color: transparentDivider ? Colors.transparent : null),
                   const TodoPriorityTags(),

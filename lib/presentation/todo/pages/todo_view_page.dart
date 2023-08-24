@@ -59,7 +59,12 @@ abstract class TodoViewView extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(18.0),
-                child: Text(state.todo.description),
+                child: Text(
+                  state.todo.description,
+                  style: DefaultTextStyle.of(context)
+                      .style
+                      .apply(fontSizeFactor: 1.5),
+                ),
               ),
               Divider(color: transparentDivider ? Colors.transparent : null),
               const TodoPriorityTags(readOnly: true),
