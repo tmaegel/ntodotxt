@@ -5,7 +5,7 @@ List<String> rawTodoList = [
   "(B) Get back to the boss key:value +GarageSale @phone @GroceryStore",
   "(B) Submit TPS report +tps @report",
   "(E) xylophone lesson this +learn",
-  "x (C) Make resolutions",
+  "x (C) 2022-11-01 Make resolutions",
   "(F) monthly task revisions within Sleek Monthly recurrence",
-  "x (C) Find ticket prices",
+  "x (C) 2022-11-01 Find ticket prices",
 ];

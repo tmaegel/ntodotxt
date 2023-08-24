@@ -1,41 +1,45 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
+import 'package:ntodotxt/exceptions/exceptions.dart';
 
 class Todo extends Equatable {
-  /// Task string format:
-  /// completion (priority) [completion_date] [creation_date] description [+project] [@context] [key:val]
+  /// Structure of a valid todoStr
+  /// with some modification (https://github.com/todotxt/todo.txt/discussions/52)
+  ///
+  /// [completion]      (optional)
+  /// [priority]        (optional)
+  /// [completionDate]  (forbidden if incompleted, mandatory if completed)
+  /// [creationDate]    (optional)
+  /// [
+  ///
+  ///   [fullDescription] (description + tags: projects, context, keyValues
+  ///                      can be placed anywhere here)
+  ///   [description]     (mandatory)
+  ///   [projects]        (optional: preceded by a single space and a '+',
+  ///                      contains any non-whitespace character)
+  ///   [contexts]        (optional: preceded by a single space and a '@',
+  ///                      contains any non-whitespace character)
+  ///   [keyValues]       (optional: separated by a single colon,
+  ///                      key value contains any non-whitespace character which are not colons)
+  /// ]
 
-  /// General:
-  /// A context is preceded by a single space and an at-sign (@).
-  /// A project is preceded by a single space and a plus-sign (+).
-  /// A project or context contains any non-whitespace character.
-  /// A task may have zero, one, or more than one projects and contexts included in it.
+  /// VALID examples:
+  ///
+  /// Write some tests                        (When incomplete, no date is required)
+  /// 2019-07-01 Write some tests             (The provided date is the creation date)
+  /// x 2019-07-03 Write some test            (The provided date is the completion date)
+  /// x 2019-07-03 2019-07-01 Write some test (The provided dates are, in order, completion then creation)
 
-  /// Incomplete Tasks: Format rules
-  /// 1) If priority exists, it ALWAYS appears first. Discard priority on task completion.
-  /// 2) A task's creation date may optionally appear directly after priority and a space.
-  /// 3) Contexts and Projects may appear anywhere in the line after priority/prepended date.
+  /// INVALID examples:
+  ///
+  /// 2019-07-03 2019-07-01 Write some tests  (The task is incomplete, so can't have a completion date)
+  /// x Write some tests                      (A completed task needs at least a completion date)
 
-  /// Complete Tasks: Format rules
-  /// 1) A completed task starts with an lowercase x character followed directly by a space character.
-  /// 2) The date of completion appears directly after the x, separated by a space.
-
-  /// Additional File Format Definitions
-  /// Developers should use the format key:value to define additional metadata (e.g. due:2010-01-02 as a due date).
-  /// Both key and value must consist of non-whitespace characters, which are not colons.
-  /// Only one colon separates the key and value.
-
-  static const String patternCompletion = r'^x\s+';
-  static const String patternPriority = r'\((?<priority>[A-Z])\)\s+';
-  static const String patternDates = r'((?<date>\d{4}-\d{2}-\d{2}))\s+';
-  static const String patternProjects =
-      r'(\s+(?<project>\+\S+))'; // Any non-whitespace character is allowed.
-  static const String patternContexts =
-      r'(\s+(?<context>\@\S+))'; // Any non-whitespace character is allowed.
-  static const String patternKeyValues =
-      r'(\s+(?<keyvalue>\S+:\S+))'; // Any non-whitespace character is allowed.
-  static const String patternDescription =
-      r'^(x\s?)?(\([A-Z]\)\s?)?(\d{4}-\d{2}-\d{2}\s?){0,2}((?<description>.+))?$';
+  static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-Z])\)$');
+  static final RegExp patternDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+  static final RegExp patternProject = RegExp(r'^\+\S+$');
+  static final RegExp patternContext = RegExp(r'^\@\S+$');
+  static final RegExp patternKeyValue = RegExp(r'^\S+:\S+$');
 
   /// Unique identifier.
   /// Defaults to null (if unsaved todo).
@@ -87,127 +91,160 @@ class Todo extends Equatable {
   const Todo.empty() : this();
 
   factory Todo.fromString({required int id, required String todoStr}) {
-    final bool completion = getCompletion(todoStr);
-    final dates = getDates(todoStr);
+    final List<String> todoSplitted = _trim(todoStr).split(' ');
+    bool completion;
+    String? priority;
     DateTime? completionDate;
     DateTime? creationDate;
-    if (dates.isNotEmpty && dates.length < 2) {
-      // If status is set there should a completion date too.
-      if (completion) {
-        throw const FormatException(
-            "Completion date is mandatory if status is set.");
+
+    int descriptionIndex = 0;
+    List<String>? fullDescriptionList;
+
+    // Get completion
+    completion = _completion(_strElement(todoSplitted, 0));
+    if (completion) {
+      descriptionIndex += 1;
+      priority = _priority(_strElement(todoSplitted, 1));
+      if (priority == null) {
+        // x [completionDate] [fullDescription]
+        // x [completionDate] [creationDate] [fullDescription]
+        completionDate = _date(_strElement(todoSplitted, 1));
+        creationDate = _date(_strElement(todoSplitted, 2));
+      } else {
+        descriptionIndex += 1;
+        // x [priority] [completionDate] [fullDescription]
+        // x [priority] [completionDate] [creationDate] [fullDescription]
+        completionDate = _date(_strElement(todoSplitted, 2));
+        creationDate = _date(_strElement(todoSplitted, 3));
       }
-      // If one date detected its the creation date.
-      creationDate = dates[0];
-    } else if (dates.length >= 2) {
-      // Status is mandatory if the completion date is set.
-      if (!completion) {
-        throw const FormatException(
-            "Status is mandatory if completion date is set.");
+      // A completed task needs at least a completion date.
+      if (completionDate == null) {
+        throw MissingTodoCompletionDate();
       }
-      // If two dates detected completion date appears first
-      // and creation date must defined.
-      completionDate = dates[0];
-      creationDate = dates[1];
+      if (creationDate != null) {
+        descriptionIndex += 1;
+      }
+      fullDescriptionList = _fullDescriptionList(todoSplitted,
+          descriptionIndex + 1); // +1 for completion date (mandatory)
+    } else {
+      priority = _priority(_strElement(todoSplitted, 0));
+      if (priority == null) {
+        // [creationDate] [fullDescription]
+        // The provided date is the creation date (todo incompleted).
+        creationDate = _date(_strElement(todoSplitted, 0));
+        // The todo is not completed so two dates are forbidden.
+        if (_date(_strElement(todoSplitted, 1)) != null) {
+          throw ForbiddenTodoCompletionDate();
+        }
+      } else {
+        descriptionIndex += 1;
+        // [priority] [creationDate] [fullDescription]
+        // The provided date is the creation date (todo incompleted).
+        creationDate = _date(_strElement(todoSplitted, 1));
+        // The todo is not completed so two dates are forbidden.
+        if (_date(_strElement(todoSplitted, 2)) != null) {
+          throw ForbiddenTodoCompletionDate();
+        }
+      }
+      if (creationDate != null) {
+        descriptionIndex += 1;
+      }
+      fullDescriptionList =
+          _fullDescriptionList(todoSplitted, descriptionIndex);
     }
+
     return Todo(
       id: id,
       completion: completion,
-      priority: getPriority(todoStr),
+      priority: priority,
       completionDate: completionDate,
       creationDate: creationDate,
-      description: getDescription(todoStr),
-      projects: getProjects(todoStr),
-      contexts: getContexts(todoStr),
-      keyValues: getKeyValues(todoStr),
+      description: fullDescriptionList.join(' '),
+      projects: _projects(fullDescriptionList),
+      contexts: _contexts(fullDescriptionList),
+      keyValues: _keyValues(fullDescriptionList),
     );
   }
 
-  static String trimWhitespaces(String value) {
+  static String _trim(String value) {
     // Trim leading, trailing and duplicate whitespaces.
     return value.trim().replaceAllMapped(RegExp(r'\s+'), (match) {
       return ' ';
     });
   }
 
-  static bool getCompletion(String todoStr) {
-    return RegExp(patternCompletion).hasMatch(todoStr);
+  static String _strElement(List<String> splitted, int index) {
+    try {
+      return splitted[index];
+    } on RangeError {
+      throw InvalidTodoString();
+    }
   }
 
-  static String? getPriority(String todoStr) {
-    final match = RegExp(patternPriority).firstMatch(todoStr);
-    final String? priority = match?.namedGroup("priority");
-    // Priority is optional.
-    if (priority == null) {
+  static bool _completion(String value) {
+    // A completed task starts with an lowercase x character.
+    return value == 'x';
+  }
+
+  static String? _priority(String value) {
+    RegExpMatch? match = patternPriority.firstMatch(value);
+    if (match != null) {
+      return match.namedGroup("priority");
+    } else {
+      // Priority is optional.
       return null;
     }
-
-    return priority.toUpperCase();
   }
 
-  static String getDescription(String todoStr) {
-    final match = RegExp(patternDescription).firstMatch(todoStr);
-    String? description = match?.namedGroup("description");
-    if (description == null) {
-      throw const FormatException("Description is mandatory.");
+  static DateTime? _date(String value) {
+    if (patternDate.hasMatch(value)) {
+      return DateTime.parse(value);
+    } else {
+      return null;
     }
-
-    // Trim projects from description value
-    description = description.replaceAll(RegExp(r'\+\S+'), "");
-    // Trim contexts from description value
-    description = description.replaceAll(RegExp(r'\@\S+'), "");
-    // Trim key-values from description value
-    description = description.replaceAll(RegExp(r'\S+:\S+'), "");
-
-    return trimWhitespaces(description);
   }
 
-  static List<DateTime> getDates(String todoStr) {
-    List<DateTime> dates = [];
-    final matches = RegExp(patternDates).allMatches(todoStr);
-    for (var match in matches) {
-      final date = match.namedGroup("date");
-      if (date != null) {
-        dates.add(DateTime.parse(date));
+  static List<String> _fullDescriptionList(List<String> splitted, int index) {
+    try {
+      final List<String> fullDescriptionList = splitted.sublist(index);
+      if (fullDescriptionList.isNotEmpty) {
+        return fullDescriptionList;
+      } else {
+        throw InvalidTodoString();
       }
+    } on RangeError {
+      throw InvalidTodoString();
     }
-
-    return dates;
   }
 
-  static List<String> getProjects(String todoStr) {
+  static List<String> _projects(List<String> fullDescriptionList) {
     List<String> projects = [];
-    final matches = RegExp(patternProjects).allMatches(todoStr);
-    for (var match in matches) {
-      final project = match.namedGroup("project");
-      if (project != null) {
-        projects.add(project.replaceFirst("+", ""));
+    for (var project in fullDescriptionList) {
+      if (patternProject.hasMatch(project)) {
+        projects.add(project.substring(1)); // strip the leading '+'
       }
     }
 
     return projects;
   }
 
-  static List<String> getContexts(String todoStr) {
+  static List<String> _contexts(List<String> fullDescriptionList) {
     List<String> contexts = [];
-    final matches = RegExp(patternContexts).allMatches(todoStr);
-    for (var match in matches) {
-      final context = match.namedGroup("context");
-      if (context != null) {
-        contexts.add(context.replaceFirst("@", ""));
+    for (var context in fullDescriptionList) {
+      if (patternContext.hasMatch(context)) {
+        contexts.add(context.substring(1)); // strip the leading '@'
       }
     }
 
     return contexts;
   }
 
-  static Map<String, String> getKeyValues(String todoStr) {
+  static Map<String, String> _keyValues(List<String> fullDescriptionList) {
     Map<String, String> keyValues = {};
-    final matches = RegExp(patternKeyValues).allMatches(todoStr);
-    for (var match in matches) {
-      final keyValue = match.namedGroup("keyvalue");
-      if (keyValue != null) {
-        final splittedKeyValue = keyValue.split(":");
+
+    for (var keyValue in fullDescriptionList) {
+      if (patternKeyValue.hasMatch(keyValue)) {
+        final List<String> splittedKeyValue = keyValue.split(":");
         if (splittedKeyValue.length > 2) continue;
         keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
       }
@@ -232,7 +269,7 @@ class Todo extends Equatable {
     if (date == null) {
       return null;
     }
-    return DateFormat.yMd().format(date);
+    return DateFormat('yyyy-MM-dd').format(date);
   }
 
   /// Returns a copy of this `todo` with the given values updated.
@@ -281,9 +318,6 @@ class Todo extends Equatable {
       formattedDate(completionDate) ?? '',
       formattedDate(creationDate) ?? '',
       description,
-      formattedProjects.join(' '),
-      formattedContexts.join(' '),
-      formattedKeyValues.join(' '),
     ];
 
     return items.join(' ');

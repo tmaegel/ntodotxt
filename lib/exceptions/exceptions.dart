@@ -1,2 +1,7 @@
-/// Error thrown when a [Todo] with a given id is not found.
-class TodoNotFoundException implements Exception {}
+class TodoNotFound implements Exception {}
+
+class InvalidTodoString implements Exception {}
+
+class MissingTodoCompletionDate implements Exception {}
+
+class ForbiddenTodoCompletionDate implements Exception {}
