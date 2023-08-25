@@ -3,7 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 class FilterDialog extends StatelessWidget {
-  const FilterDialog({super.key});
+  final Map<String, TodoListFilter> items;
+
+  const FilterDialog({super.key})
+      : items = const {
+          'All': TodoListFilter.all,
+          'Completed only': TodoListFilter.completedOnly,
+          'Incompleted only': TodoListFilter.incompletedOnly,
+        };
 
   @override
   Widget build(BuildContext context) {
@@ -18,42 +25,23 @@ class FilterDialog extends StatelessWidget {
           showDragHandle: false,
           onClosing: () {},
           builder: (context) {
-            return Padding(
+            return ListView.builder(
+              shrinkWrap: true,
               padding:
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ListTile(
-                    title: const Text('All'),
-                    leading: Radio<TodoListFilter>(
-                      value: TodoListFilter.all,
-                      groupValue: state.filter,
-                      onChanged: (TodoListFilter? value) =>
-                          _setState(context, value),
-                    ),
+              itemCount: items.length,
+              itemBuilder: (BuildContext context, int index) {
+                String key = items.keys.elementAt(index);
+                return ListTile(
+                  title: Text(key),
+                  leading: Radio<TodoListFilter>(
+                    value: items[key]!,
+                    groupValue: state.filter,
+                    onChanged: (TodoListFilter? value) =>
+                        _setState(context, value),
                   ),
-                  ListTile(
-                    title: const Text('Completed only'),
-                    leading: Radio<TodoListFilter>(
-                      value: TodoListFilter.completedOnly,
-                      groupValue: state.filter,
-                      onChanged: (TodoListFilter? value) =>
-                          _setState(context, value),
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text('Incompleted only'),
-                    leading: Radio<TodoListFilter>(
-                      value: TodoListFilter.incompletedOnly,
-                      groupValue: state.filter,
-                      onChanged: (TodoListFilter? value) =>
-                          _setState(context, value),
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             );
           },
         );

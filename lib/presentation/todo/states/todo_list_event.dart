@@ -57,3 +57,14 @@ final class TodoListFilterChanged extends TodoListEvent {
   @override
   List<Object> get props => [filter];
 }
+
+final class TodoListGroupByChanged extends TodoListEvent {
+  final TodoListGroupBy groupBy;
+
+  const TodoListGroupByChanged({
+    required this.groupBy,
+  });
+
+  @override
+  List<Object> get props => [groupBy];
+}

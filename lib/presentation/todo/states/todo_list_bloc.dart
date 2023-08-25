@@ -16,6 +16,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListTodoDeleted>(_onTodoDeleted);
     on<TodoListOrderChanged>(_onTodoListOrderChanged);
     on<TodoListFilterChanged>(_onTodoListFilterChanged);
+    on<TodoListGroupByChanged>(_onTodoListGroupByChanged);
   }
 
   void _onTodoListSubscriptionRequested(
@@ -64,5 +65,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) {
     emit(state.copyWith(filter: event.filter));
+  }
+
+  void _onTodoListGroupByChanged(
+    TodoListGroupByChanged event,
+    Emitter<TodoListState> emit,
+  ) {
+    emit(state.copyWith(groupBy: event.groupBy));
   }
 }

@@ -5,6 +5,7 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
+import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
@@ -51,21 +52,35 @@ abstract class TodoListView extends StatelessWidget {
     );
   }
 
+  /// Switch todo group by view.
+  void _groupByAction(BuildContext context) {
+    showModalBottomSheet<void>(
+      useRootNavigator: true,
+      context: context,
+      builder: (BuildContext context) => const GroupByDialog(),
+    );
+  }
+
   List<Widget> _buildToolBarActions(BuildContext context) {
     return [
       IconButton(
+        tooltip: 'Group by',
+        icon: const Icon(Icons.view_list),
+        onPressed: () => _groupByAction(context),
+      ),
+      IconButton(
         tooltip: 'Sort',
-        icon: const Icon(Icons.sort),
+        icon: const Icon(Icons.sort_by_alpha),
         onPressed: () => _orderAction(context),
       ),
       IconButton(
         tooltip: 'Filter',
-        icon: const Icon(Icons.filter_alt_outlined),
+        icon: const Icon(Icons.filter_alt),
         onPressed: () => _filterAction(context),
       ),
       IconButton(
         tooltip: 'Search',
-        icon: const Icon(Icons.search_outlined),
+        icon: const Icon(Icons.search),
         onPressed: () {
           showSearch(
             context: context,
@@ -135,14 +150,7 @@ class TodoList extends StatelessWidget {
           children: [
             Expanded(
               child: ListView(
-                children: _buildExpandedListViewByFilter(
-                  state: state,
-                  sections: state.priorities,
-                  filterCallback: (priority) => state.filteredByPriority(
-                    priority: priority,
-                    excludeCompleted: true,
-                  ),
-                ),
+                children: _buildExpandedListViewByFilter(state: state),
               ),
             ),
           ],
@@ -153,41 +161,20 @@ class TodoList extends StatelessWidget {
 
   List<TodoListSection> _buildExpandedListViewByFilter({
     required TodoListState state,
-    required List<String?> sections,
-    required Function filterCallback,
   }) {
     List<TodoListSection> items = [];
-    for (var p in sections) {
-      final Iterable<Todo> filteredList = filterCallback(p);
-      // Hide sections with only completed todos inside.
-      if (filteredList.isNotEmpty) {
+    for (var section in state.groupedByTodoList.keys) {
+      final Iterable<Todo>? todoList = state.groupedByTodoList[section];
+      if (todoList != null) {
         items.add(
           TodoListSection(
-            title: p ?? "No priority",
+            title: section,
             children: [
-              for (var todo in filteredList) TodoTile(todo: todo),
+              for (var todo in todoList) TodoTile(todo: todo),
             ],
           ),
         );
       }
-    }
-
-    return _appendCompleted(state, items);
-  }
-
-  List<TodoListSection> _appendCompleted(
-      TodoListState state, List<TodoListSection> items) {
-    final Iterable<Todo> filteredList = state.filteredByCompleted;
-    // Hide sections if no completed todos inside.
-    if (filteredList.isNotEmpty) {
-      items.add(
-        TodoListSection(
-          title: "Done",
-          children: [
-            for (var todo in filteredList) TodoTile(todo: todo),
-          ],
-        ),
-      );
     }
 
     return items;
@@ -210,7 +197,7 @@ class TodoListSection extends StatelessWidget {
       key: key,
       initiallyExpanded: true,
       shape: Border(
-        top: BorderSide(
+        bottom: BorderSide(
           color: DividerTheme.of(context).color!,
         ),
       ),

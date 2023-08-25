@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
-class OrderDialog extends StatelessWidget {
-  final Map<String, TodoListOrder> items;
+class GroupByDialog extends StatelessWidget {
+  final Map<String, TodoListGroupBy> items;
 
-  const OrderDialog({super.key})
+  const GroupByDialog({super.key})
       : items = const {
-          'Ascending': TodoListOrder.ascending,
-          'Descending': TodoListOrder.descending,
+          'Upcoming': TodoListGroupBy.upcoming,
+          'Priority': TodoListGroupBy.priority,
+          'Project': TodoListGroupBy.project,
+          'Context': TodoListGroupBy.context,
         };
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       buildWhen: (TodoListState previousState, TodoListState state) {
-        // Rebuild if order is changed only.
-        return previousState.order != state.order;
+        // Rebuild if groupBy is changed only.
+        return previousState.groupBy != state.groupBy;
       },
       builder: (BuildContext context, TodoListState state) {
         return BottomSheet(
@@ -33,10 +35,10 @@ class OrderDialog extends StatelessWidget {
                 String key = items.keys.elementAt(index);
                 return ListTile(
                   title: Text(key),
-                  leading: Radio<TodoListOrder>(
+                  leading: Radio<TodoListGroupBy>(
                     value: items[key]!,
-                    groupValue: state.order,
-                    onChanged: (TodoListOrder? value) =>
+                    groupValue: state.groupBy,
+                    onChanged: (TodoListGroupBy? value) =>
                         _setState(context, value),
                   ),
                 );
@@ -48,9 +50,11 @@ class OrderDialog extends StatelessWidget {
     );
   }
 
-  void _setState(BuildContext context, TodoListOrder? order) {
-    if (order != null) {
-      context.read<TodoListBloc>().add(TodoListOrderChanged(order: order));
+  void _setState(BuildContext context, TodoListGroupBy? groupBy) {
+    if (groupBy != null) {
+      context
+          .read<TodoListBloc>()
+          .add(TodoListGroupByChanged(groupBy: groupBy));
     }
     Navigator.pop(context);
   }

@@ -19,6 +19,13 @@ enum TodoListOrder {
   descending,
 }
 
+enum TodoListGroupBy {
+  upcoming,
+  priority,
+  project,
+  context,
+}
+
 extension TodoFilter on TodoListFilter {
   bool _apply(Todo todo) {
     switch (this) {
@@ -95,16 +102,98 @@ extension TodoOrder on TodoListOrder {
   Iterable<T> sort<T>(Iterable<T> todoList) => todoList.toList()..sort(_sort);
 }
 
+extension TodoGroupBy on TodoListGroupBy {
+  // Map<String, Iterable<Todo>> _groupByUpcoming(Iterable<Todo> todoList) {}
+
+  Map<String, Iterable<Todo>?> priority({
+    required Iterable<Todo> todoList,
+    required List<String?> sections,
+  }) {
+    Map<String, Iterable<Todo>> groupBy = {};
+    for (var p in sections) {
+      final Iterable<Todo> items =
+          todoList.where((todo) => todo.priority == p && !todo.completion);
+      if (items.isNotEmpty) {
+        groupBy[p ?? 'No priority'] = items;
+      }
+    }
+
+    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+  }
+
+  Map<String, Iterable<Todo>> project({
+    required Iterable<Todo> todoList,
+    required List<String?> sections,
+  }) {
+    Map<String, Iterable<Todo>> groupBy = {};
+    // Consider also todos without projects.
+    for (var p in [...sections, null]) {
+      Iterable<Todo> items;
+      if (p == null) {
+        items =
+            todoList.where((todo) => todo.projects.isEmpty && !todo.completion);
+      } else {
+        items = todoList
+            .where((todo) => todo.projects.contains(p) && !todo.completion);
+      }
+      if (items.isNotEmpty) {
+        groupBy[p ?? 'No project'] = items;
+      }
+    }
+
+    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+  }
+
+  Map<String, Iterable<Todo>> context({
+    required Iterable<Todo> todoList,
+    required List<String?> sections,
+  }) {
+    Map<String, Iterable<Todo>> groupBy = {};
+    // Consider also todos without projects.
+    for (var c in [...sections, null]) {
+      Iterable<Todo> items;
+      if (c == null) {
+        items =
+            todoList.where((todo) => todo.contexts.isEmpty && !todo.completion);
+      } else {
+        items = todoList
+            .where((todo) => todo.contexts.contains(c) && !todo.completion);
+      }
+      if (items.isNotEmpty) {
+        groupBy[c ?? 'No context'] = items;
+      }
+    }
+
+    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+  }
+
+  Map<String, Iterable<Todo>> _appendCompleted({
+    required Map<String, Iterable<Todo>> groupBy,
+    required Iterable<Todo> todoList,
+  }) {
+    // Add completed items last.
+    final Iterable<Todo> completedItems =
+        todoList.where((todo) => todo.completion);
+    if (completedItems.isNotEmpty) {
+      groupBy['Done'] = completedItems;
+    }
+
+    return groupBy;
+  }
+}
+
 final class TodoListState extends Equatable {
   final TodoListStatus status;
   final TodoListFilter filter;
   final TodoListOrder order;
+  final TodoListGroupBy groupBy;
   final List<Todo> todoList;
 
   const TodoListState({
     this.status = TodoListStatus.initial,
     this.filter = TodoListFilter.all,
     this.order = TodoListOrder.ascending,
+    this.groupBy = TodoListGroupBy.priority,
     this.todoList = const [],
   });
 
@@ -150,6 +239,34 @@ final class TodoListState extends Equatable {
 
   Iterable<Todo> get filteredTodoList => order.sort(filter.apply(todoList));
 
+  Map<String, Iterable<Todo>?> get groupedByTodoList {
+    switch (groupBy) {
+      // case TodoListGroupBy.upcoming:
+      // return groupBy.priority(filteredTodoList);
+      case TodoListGroupBy.priority:
+        return groupBy.priority(
+          todoList: filteredTodoList,
+          sections: priorities,
+        );
+      case TodoListGroupBy.project:
+        return groupBy.project(
+          todoList: filteredTodoList,
+          sections: projects,
+        );
+      case TodoListGroupBy.context:
+        return groupBy.context(
+          todoList: filteredTodoList,
+          sections: contexts,
+        );
+      default:
+        // Default is priority.
+        return groupBy.priority(
+          todoList: filteredTodoList,
+          sections: priorities,
+        );
+    }
+  }
+
   /// Return todo list filtered by completion state.
   Iterable<Todo> get filteredByCompleted =>
       filter.applyCompletion(filteredTodoList, true);
@@ -170,12 +287,14 @@ final class TodoListState extends Equatable {
     TodoListStatus? status,
     TodoListFilter? filter,
     TodoListOrder? order,
+    TodoListGroupBy? groupBy,
     List<Todo>? todoList,
   }) {
     return TodoListState(
       status: status ?? this.status,
       filter: filter ?? this.filter,
       order: order ?? this.order,
+      groupBy: groupBy ?? this.groupBy,
       todoList: todoList ?? this.todoList,
     );
   }
@@ -186,9 +305,10 @@ final class TodoListState extends Equatable {
         todoList,
         filter,
         order,
+        groupBy,
       ];
 
   @override
   String toString() =>
-      'TodoListState { status: $status filter: $filter order: $order }';
+      'TodoListState { status: $status filter: $filter order: $order groupBy: $groupBy }';
 }
