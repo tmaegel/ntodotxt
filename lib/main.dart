@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
+import 'package:ntodotxt/data/theme.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
@@ -64,37 +65,11 @@ class App extends StatelessWidget {
             return MaterialApp.router(
               title: 'Flutter layout demo',
               debugShowCheckedModeBanner: false, // Remove the debug banner
-              // Light theme settings.
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-                brightness: Brightness.light,
-                searchBarTheme: SearchBarThemeData(
-                  elevation: MaterialStateProperty.all(0.0),
-                  backgroundColor:
-                      MaterialStateProperty.all(Colors.transparent),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(borderRadius),
-                      side: const BorderSide(width: 1, color: colorLightGrey),
-                    ),
-                  ),
-                ),
-                dialogBackgroundColor: Colors.white,
-                bottomSheetTheme: const BottomSheetThemeData(
-                  backgroundColor: Colors.white,
-                ),
-                dividerTheme: const DividerThemeData(
-                  color: colorLightGrey,
-                  thickness: 1,
-                ),
-                dividerColor: colorLightGrey,
-                textSelectionTheme: const TextSelectionThemeData(
-                  cursorColor: colorBlack,
-                ),
-                useMaterial3: true,
-              ),
-              themeMode: ThemeMode.light,
+              theme: CustomTheme.light,
+              darkTheme: CustomTheme.dark,
+              // If you do not have a themeMode switch, uncomment this line
+              // to let the device system mode control the theme mode:
+              themeMode: ThemeMode.system,
               routerConfig: _isNarrowLayout(context)
                   ? AppRouter(context.read<LoginCubit>()).routerNarrowLayout
                   : AppRouter(context.read<LoginCubit>()).routerWideLayout,

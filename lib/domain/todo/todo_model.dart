@@ -253,12 +253,22 @@ class Todo extends Equatable {
     return keyValues;
   }
 
+  /// Trim projects, contexts and key-values from description.
+  String get strippedDescription {
+    String strippedDescription = description
+        .replaceAll(RegExp(r'\+\S+'), "")
+        .replaceAll(RegExp(r'\@\S+'), "")
+        .replaceAll(RegExp(r'\S+:\S+'), "");
+
+    return _trim(strippedDescription);
+  }
+
   List<String> get formattedProjects {
     return [for (var p in projects) "+$p"];
   }
 
   List<String> get formattedContexts {
-    return [for (var c in contexts) "+$c"];
+    return [for (var c in contexts) "@$c"];
   }
 
   List<String> get formattedKeyValues {

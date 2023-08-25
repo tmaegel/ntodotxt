@@ -39,7 +39,7 @@ abstract class TodoViewView extends StatelessWidget {
 
   /// Edit current todo
   void _editAction(BuildContext context, TodoState state) {
-    context.goNamed("todo-edit", extra: state.todo);
+    context.pushNamed("todo-edit", extra: state.todo);
   }
 
   /// Cancel current view process
@@ -61,9 +61,7 @@ abstract class TodoViewView extends StatelessWidget {
                 padding: const EdgeInsets.all(18.0),
                 child: Text(
                   state.todo.description,
-                  style: DefaultTextStyle.of(context)
-                      .style
-                      .apply(fontSizeFactor: 1.5),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
               Divider(color: transparentDivider ? Colors.transparent : null),

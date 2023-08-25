@@ -8,12 +8,10 @@ import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
 abstract class TodoTagSection extends StatelessWidget {
   final Icon leadingIcon;
-  final Color tagColor;
   final bool readOnly;
 
   const TodoTagSection({
     required this.leadingIcon,
-    this.tagColor = defaultChipColor,
     this.readOnly = false,
     super.key,
   });
@@ -40,9 +38,9 @@ abstract class TodoTagSection extends StatelessWidget {
       children: [
         for (var t in tags)
           GenericChoiceChip(
-            label: t,
+            label: Text(t),
             selected: selectedTags.contains(t),
-            color: tagColor,
+            overwriteEnabled: readOnly,
             onSelected: !readOnly
                 ? (bool selected) => _onSelected(context, t, selected)
                 : null,
@@ -55,7 +53,6 @@ abstract class TodoTagSection extends StatelessWidget {
 class TodoPriorityTags extends TodoTagSection {
   const TodoPriorityTags({
     super.leadingIcon = const Icon(Icons.outlined_flag),
-    super.tagColor = priorityChipColor,
     super.readOnly,
     super.key,
   });
@@ -82,7 +79,6 @@ class TodoPriorityTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40.0,
           leading: leadingIcon,
           title: _buildChips(
             context: context,
@@ -98,7 +94,6 @@ class TodoPriorityTags extends TodoTagSection {
 class TodoProjectTags extends TodoTagSection {
   const TodoProjectTags({
     super.leadingIcon = const Icon(Icons.rocket_launch_outlined),
-    super.tagColor = projectChipColor,
     super.readOnly,
     super.key,
   });
@@ -136,7 +131,6 @@ class TodoProjectTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40.0,
           leading: leadingIcon,
           title: _buildChips(
             context: context,
@@ -159,7 +153,6 @@ class TodoProjectTags extends TodoTagSection {
 class TodoContextTags extends TodoTagSection {
   const TodoContextTags({
     super.leadingIcon = const Icon(Icons.sell_outlined),
-    super.tagColor = keyValueChipColor,
     super.readOnly,
     super.key,
   });
@@ -197,7 +190,6 @@ class TodoContextTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40.0,
           leading: leadingIcon,
           title: _buildChips(
             context: context,
@@ -257,7 +249,6 @@ class TodoKeyValueTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40.0,
           leading: leadingIcon,
           title: _buildChips(
             context: context,

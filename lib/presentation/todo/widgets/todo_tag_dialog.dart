@@ -41,18 +41,22 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListTile(
-            minLeadingWidth: 40.0,
             leading: widget.leadingIcon,
             title: TextField(
               controller: _controller,
               decoration: InputDecoration(
                 hintText: 'Enter your <${widget.tagName}> tag here ...',
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                ),
+                isDense: true,
+                filled: false,
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
               ),
             ),
-            trailing: IconButton.filledTonal(
+            trailing: IconButton.filled(
               icon: const Icon(Icons.done),
               tooltip: 'Add new ${widget.tagName} tag',
               onPressed: () {

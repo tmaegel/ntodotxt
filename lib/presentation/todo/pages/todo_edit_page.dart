@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
@@ -41,7 +40,7 @@ abstract class TodoEditView extends StatelessWidget {
   /// Save current todo
   void _saveAction(BuildContext context, TodoState state) {
     context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
-    context.goNamed("todo-view", extra: state.todo);
+    context.pushNamed("todo-view", extra: state.todo);
   }
 
   /// Delete current todo
@@ -61,12 +60,17 @@ abstract class TodoEditView extends StatelessWidget {
       initialValue: state.todo.description,
       minLines: 1,
       maxLines: 5,
-      style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5),
+      style: Theme.of(context).textTheme.titleLarge,
       decoration: const InputDecoration(
         hintText: 'Enter your todo description here ...',
         isDense: true,
+        filled: false,
         contentPadding: EdgeInsets.zero,
         border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
       ),
       onChanged: (value) {
         context.read<TodoBloc>().add(TodoDescriptionChanged(value));

@@ -35,7 +35,7 @@ abstract class TodoCreateView extends StatelessWidget {
   /// Save new todo
   void _saveAction(BuildContext context, TodoState state) {
     context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
-    context.goNamed("todo-view", extra: state.todo);
+    context.pushNamed("todo-view", extra: state.todo);
   }
 
   /// Cancel current create process
@@ -49,12 +49,17 @@ abstract class TodoCreateView extends StatelessWidget {
       initialValue: state.todo.description,
       minLines: 1,
       maxLines: 5,
-      style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5),
+      style: Theme.of(context).textTheme.titleLarge,
       decoration: const InputDecoration(
         hintText: 'Enter your todo description here ...',
         isDense: true,
+        filled: false,
         contentPadding: EdgeInsets.zero,
         border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
       ),
       onChanged: (value) {
         context.read<TodoBloc>().add(TodoDescriptionChanged(value));

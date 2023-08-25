@@ -1,51 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/constants/todo.dart';
 
-abstract class GenericChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final Color? color;
-  final void Function(bool)? onSelected;
+class GenericChoiceChip extends ChoiceChip {
+  final bool overwriteEnabled;
 
-  const GenericChip({
-    required this.label,
-    this.onSelected,
-    this.selected = false,
-    this.color,
-    super.key,
-  });
-}
-
-class GenericChoiceChip extends GenericChip {
   const GenericChoiceChip({
     required super.label,
+    super.selected = false,
+    super.showCheckmark = false,
     super.onSelected,
-    super.selected,
-    super.color,
+    this.overwriteEnabled = false,
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return RawChip(
-      showCheckmark: false,
-      label: Text(label),
-      selected: selected,
-      backgroundColor: colorLightGrey,
-      disabledColor: colorLightGrey,
-      selectedColor: color ?? defaultChipColor,
-      side: const BorderSide(
-        style: BorderStyle.none,
-        color: colorLightGrey,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      labelStyle: const TextStyle(color: Colors.black),
-      onSelected:
-          onSelected != null ? (bool selected) => onSelected!(selected) : null,
-    );
-  }
+  bool get isEnabled => !overwriteEnabled ? onSelected != null : true;
 }
 
 class GenericChipGroup extends StatelessWidget {
@@ -62,32 +30,6 @@ class GenericChipGroup extends StatelessWidget {
       spacing: 4.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: children,
-    );
-  }
-}
-
-class InlineChipReadOnly extends StatelessWidget {
-  final String label;
-  final Color? color;
-
-  const InlineChipReadOnly({
-    required this.label,
-    this.color,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-        color: color ?? defaultChipColor,
-      ),
-      child: Text(
-        label,
-        style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 0.8),
-      ),
     );
   }
 }

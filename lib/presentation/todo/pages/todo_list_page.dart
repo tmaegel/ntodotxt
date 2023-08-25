@@ -6,9 +6,7 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
-import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
@@ -116,13 +114,10 @@ class TodoListWideView extends TodoListView {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          toolbarHeight: 72.0, // Height (56) + Padding (16))
-          title: const GenericSearchBar(),
-          actions: [
-            ..._buildToolBarActions(context),
-            const SizedBox(width: 16.0),
-          ]),
+      appBar: AppBar(actions: [
+        ..._buildToolBarActions(context),
+        const SizedBox(width: 16.0),
+      ]),
       body: const TodoList(),
     );
   }
@@ -214,20 +209,17 @@ class TodoListSection extends StatelessWidget {
     return ExpansionTile(
       key: key,
       initiallyExpanded: true,
-      shape: const Border.fromBorderSide(BorderSide.none),
-      title: Row(
-        children: [
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
-              color: colorLightGrey,
-            ),
-            child: Text(title),
-          ),
-          const Expanded(child: SizedBox()),
-        ],
+      shape: Border(
+        top: BorderSide(
+          color: DividerTheme.of(context).color!,
+        ),
+      ),
+      title: Padding(
+        padding: const EdgeInsets.only(left: 10.0),
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       children: children,
     );
@@ -257,7 +249,7 @@ class TodoTile extends StatelessWidget {
               );
         },
       ),
-      title: Text(todo.description),
+      title: Text(todo.strippedDescription),
       subtitle: _buildSubtitle(),
       onTap: () => _onTapAction(context),
     );
@@ -272,17 +264,14 @@ class TodoTile extends StatelessWidget {
 
     return GenericChipGroup(
       children: <Widget>[
-        for (var p in todo.projects)
-          InlineChipReadOnly(label: p, color: projectChipColor),
-        for (var c in todo.contexts)
-          InlineChipReadOnly(label: c, color: contextChipColor),
-        for (var kv in todo.formattedKeyValues)
-          InlineChipReadOnly(label: kv, color: keyValueChipColor),
+        for (var p in todo.formattedProjects) Text(p),
+        for (var c in todo.formattedContexts) Text(c),
+        for (var kv in todo.formattedKeyValues) Text(kv),
       ],
     );
   }
 
   void _onTapAction(BuildContext context) {
-    context.goNamed("todo-view", extra: todo);
+    context.pushNamed("todo-view", extra: todo);
   }
 }

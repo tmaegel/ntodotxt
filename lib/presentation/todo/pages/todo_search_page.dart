@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -48,6 +47,9 @@ class TodoSearchPage extends SearchDelegate {
   }
 
   @override
+  String get searchFieldLabel => 'Search ...';
+
+  @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
@@ -74,27 +76,13 @@ class TodoSearchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       key: key,
-      leading: _buildLeading(),
-      title: Text(todo.description),
+      leading: Text(
+        todo.priority ?? '',
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      title: Text(todo.strippedDescription),
       subtitle: _buildSubtitle(),
       onTap: () => _onTapAction(context),
-    );
-  }
-
-  Widget _buildLeading() {
-    return Container(
-      height: 35,
-      width: 35,
-      decoration: const BoxDecoration(
-        color: colorLightGrey,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          todo.priority ?? '',
-          style: const TextStyle(color: colorBlack),
-        ),
-      ),
     );
   }
 
@@ -107,17 +95,14 @@ class TodoSearchTile extends StatelessWidget {
 
     return GenericChipGroup(
       children: <Widget>[
-        for (var p in todo.projects)
-          InlineChipReadOnly(label: p, color: projectChipColor),
-        for (var c in todo.contexts)
-          InlineChipReadOnly(label: c, color: contextChipColor),
-        for (var kv in todo.formattedKeyValues)
-          InlineChipReadOnly(label: kv, color: keyValueChipColor),
+        for (var p in todo.formattedProjects) Text(p),
+        for (var c in todo.formattedContexts) Text(c),
+        for (var kv in todo.formattedKeyValues) Text(kv),
       ],
     );
   }
 
   void _onTapAction(BuildContext context) {
-    context.goNamed("todo-view", extra: todo);
+    context.pushNamed("todo-view", extra: todo);
   }
 }

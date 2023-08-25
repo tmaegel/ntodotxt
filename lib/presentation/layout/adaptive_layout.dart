@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/navigation_bar.dart';
-import 'package:ntodotxt/constants/todo.dart';
 
 class NarrowLayout extends StatelessWidget {
   // The widget to display in the body of the Scaffold.
@@ -34,7 +33,7 @@ class WideLayout extends StatelessWidget {
       body: Row(
         children: [
           const PrimaryNavigationRail(),
-          const VerticalDivider(thickness: 1, width: 1),
+          const VerticalDivider(width: 1),
           Expanded(child: child),
         ],
       ),
