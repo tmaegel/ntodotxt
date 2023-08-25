@@ -10,6 +10,7 @@ import 'package:ntodotxt/common_widgets/search_bar.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 class TodoListPage extends StatelessWidget {
@@ -64,6 +65,16 @@ abstract class TodoListView extends StatelessWidget {
         icon: const Icon(Icons.filter_alt_outlined),
         onPressed: () => _filterAction(context),
       ),
+      IconButton(
+        tooltip: 'Search',
+        icon: const Icon(Icons.search_outlined),
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: TodoSearchPage(),
+          );
+        },
+      ),
     ];
   }
 }
@@ -74,9 +85,12 @@ class TodoListNarrowView extends TodoListView {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 72.0, // Height (56) + Padding (16))
-        title: const GenericSearchBar(),
+      appBar: MainAppBar(
+        title: "All todos",
+        leadingAction: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {},
+        ),
       ),
       body: const TodoList(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
@@ -243,20 +257,21 @@ class TodoTile extends StatelessWidget {
               );
         },
       ),
-      title: _buildDesription(),
+      title: Text(todo.description),
+      subtitle: _buildSubtitle(),
       onTap: () => _onTapAction(context),
     );
   }
 
-  Widget _buildDesription() {
-    return Wrap(
-      spacing: 4.0, // gap between adjacent chips
-      runSpacing: 4.0, // gap between lines
+  Widget? _buildSubtitle() {
+    if (todo.projects.isEmpty &&
+        todo.contexts.isEmpty &&
+        todo.keyValues.isEmpty) {
+      return null;
+    }
+
+    return GenericChipGroup(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 2.0),
-          child: Text(todo.description),
-        ),
         for (var p in todo.projects)
           InlineChipReadOnly(label: p, color: projectChipColor),
         for (var c in todo.contexts)

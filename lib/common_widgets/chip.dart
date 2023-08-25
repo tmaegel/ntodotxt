@@ -79,12 +79,15 @@ class InlineChipReadOnly extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(5.0),
         color: color ?? defaultChipColor,
       ),
-      child: Text(label),
+      child: Text(
+        label,
+        style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 0.8),
+      ),
     );
   }
 }

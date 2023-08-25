@@ -12,7 +12,6 @@ import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_view_page.dart';
 
 class AppRouter {
@@ -74,13 +73,6 @@ class AppRouter {
                 // @todo Redirect to error page if id is null.
                 child: TodoEditPage(todo: todo),
               );
-            },
-          ),
-          GoRoute(
-            path: 'todo/search',
-            name: 'todo-search',
-            builder: (BuildContext context, GoRouterState state) {
-              return const NarrowLayout(child: TodoSearchPage());
             },
           ),
         ],
