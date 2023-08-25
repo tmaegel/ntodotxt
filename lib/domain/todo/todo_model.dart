@@ -117,9 +117,9 @@ class Todo extends Equatable {
         completionDate = _date(_strElement(todoSplitted, 2));
         creationDate = _date(_strElement(todoSplitted, 3));
       }
-      // A completed task needs at least a completion date.
+      // A completed todo needs at least a completion date.
       if (completionDate == null) {
-        throw MissingTodoCompletionDate();
+        throw const TodoStringMissingCompletionDate();
       }
       if (creationDate != null) {
         descriptionIndex += 1;
@@ -134,7 +134,7 @@ class Todo extends Equatable {
         creationDate = _date(_strElement(todoSplitted, 0));
         // The todo is not completed so two dates are forbidden.
         if (_date(_strElement(todoSplitted, 1)) != null) {
-          throw ForbiddenTodoCompletionDate();
+          throw const TodoStringForbiddenCompletionDate();
         }
       } else {
         descriptionIndex += 1;
@@ -143,7 +143,7 @@ class Todo extends Equatable {
         creationDate = _date(_strElement(todoSplitted, 1));
         // The todo is not completed so two dates are forbidden.
         if (_date(_strElement(todoSplitted, 2)) != null) {
-          throw ForbiddenTodoCompletionDate();
+          throw const TodoStringForbiddenCompletionDate();
         }
       }
       if (creationDate != null) {
@@ -177,7 +177,7 @@ class Todo extends Equatable {
     try {
       return splitted[index];
     } on RangeError {
-      throw InvalidTodoString();
+      throw const TodoStringMalformed();
     }
   }
 
@@ -210,10 +210,10 @@ class Todo extends Equatable {
       if (fullDescriptionList.isNotEmpty) {
         return fullDescriptionList;
       } else {
-        throw InvalidTodoString();
+        throw const TodoStringMalformed();
       }
     } on RangeError {
-      throw InvalidTodoString();
+      throw const TodoStringMalformed();
     }
   }
 

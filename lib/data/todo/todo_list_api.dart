@@ -89,7 +89,7 @@ class LocalStorageTodoListApi extends TodoListApi {
     final List<Todo> todoList = [..._streamController.value];
     int index = todoList.indexWhere((todo) => todo.id == id);
     if (index == -1) {
-      throw TodoNotFound();
+      throw TodoNotFound(id: id);
     }
     return todoList[index];
   }
@@ -103,7 +103,7 @@ class LocalStorageTodoListApi extends TodoListApi {
     } else {
       int index = todoList.indexWhere((todo) => todo.id == id);
       if (index == -1) {
-        throw TodoNotFound();
+        throw TodoNotFound(id: id);
       } else {
         todoList[index] = todo;
       }

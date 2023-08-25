@@ -44,7 +44,7 @@ abstract class TodoViewView extends StatelessWidget {
 
   /// Cancel current view process
   void _cancelAction(BuildContext context) {
-    context.pop();
+    context.goNamed("todo-list");
   }
 
   Widget _buildBody({

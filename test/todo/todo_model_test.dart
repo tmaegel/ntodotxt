@@ -64,7 +64,7 @@ void main() {
             todoStr: "x Write some tests",
           ),
           throwsA(
-            isA<MissingTodoCompletionDate>(),
+            isA<TodoStringMissingCompletionDate>(),
           ),
         );
       });
@@ -317,7 +317,7 @@ void main() {
             todoStr: "2022-11-16 2022-11-01 Write some tests",
           ),
           throwsA(
-            isA<ForbiddenTodoCompletionDate>(),
+            isA<TodoStringForbiddenCompletionDate>(),
           ),
         );
       });
@@ -328,7 +328,7 @@ void main() {
             todoStr: "(A) 2022-11-16 2022-11-01 Write some tests",
           ),
           throwsA(
-            isA<ForbiddenTodoCompletionDate>(),
+            isA<TodoStringForbiddenCompletionDate>(),
           ),
         );
       });
@@ -339,7 +339,7 @@ void main() {
             todoStr: "x Write some tests",
           ),
           throwsA(
-            isA<MissingTodoCompletionDate>(),
+            isA<TodoStringMissingCompletionDate>(),
           ),
         );
       });
@@ -350,7 +350,7 @@ void main() {
             todoStr: "x (A) Write some tests",
           ),
           throwsA(
-            isA<MissingTodoCompletionDate>(),
+            isA<TodoStringMissingCompletionDate>(),
           ),
         );
       });
@@ -629,7 +629,7 @@ void main() {
             todoStr: "x 2022-11-16",
           ),
           throwsA(
-            isA<InvalidTodoString>(),
+            isA<TodoStringMalformed>(),
           ),
         );
       });
@@ -640,7 +640,7 @@ void main() {
             todoStr: "x (A) 2022-11-16",
           ),
           throwsA(
-            isA<InvalidTodoString>(),
+            isA<TodoStringMalformed>(),
           ),
         );
       });
@@ -651,7 +651,7 @@ void main() {
             todoStr: "x (A) 2022-11-16 2022-11-01",
           ),
           throwsA(
-            isA<InvalidTodoString>(),
+            isA<TodoStringMalformed>(),
           ),
         );
       });
@@ -662,7 +662,7 @@ void main() {
             todoStr: "",
           ),
           throwsA(
-            isA<InvalidTodoString>(),
+            isA<TodoStringMalformed>(),
           ),
         );
       });
@@ -673,7 +673,7 @@ void main() {
             todoStr: "(A)",
           ),
           throwsA(
-            isA<InvalidTodoString>(),
+            isA<TodoStringMalformed>(),
           ),
         );
       });
@@ -684,7 +684,7 @@ void main() {
             todoStr: "(A) 2022-11-01",
           ),
           throwsA(
-            isA<InvalidTodoString>(),
+            isA<TodoStringMalformed>(),
           ),
         );
       });
