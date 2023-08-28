@@ -21,7 +21,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           todoStr:
-              "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+              "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
         expect(todo.completion, true);
       });
@@ -91,7 +91,7 @@ void main() {
       test("completed simple example", () {
         final todo = Todo.fromString(
           id: id,
-          todoStr: "x (A) 2022-11-16 Write some tests",
+          todoStr: "x 2022-11-16 (A) Write some tests",
         );
         expect(todo.priority, "A");
       });
@@ -99,7 +99,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           todoStr:
-              "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+              "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
         expect(todo.priority, "A");
       });
@@ -200,7 +200,7 @@ void main() {
       test("completed and with priority simple example", () {
         final todo = Todo.fromString(
           id: 0,
-          todoStr: "x (A) 2022-11-16 2022-11-01 Write some tests",
+          todoStr: "x 2022-11-16 (A) 2022-11-01 Write some tests",
         );
         expect(todo.creationDate, DateTime.parse("2022-11-01"));
       });
@@ -208,7 +208,7 @@ void main() {
         final todo = Todo.fromString(
           id: 0,
           todoStr:
-              "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+              "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
         expect(todo.creationDate, DateTime.parse("2022-11-01"));
       });
@@ -245,7 +245,7 @@ void main() {
       test("completed and with priority simple example", () {
         final todo = Todo.fromString(
           id: id,
-          todoStr: "x (A) 2022-11-16 Write some tests",
+          todoStr: "x 2022-11-16 (A) Write some tests",
         );
         expect(todo.creationDate, null);
       });
@@ -253,7 +253,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           todoStr:
-              "x (A) 2022-11-16 Write some tests +project @context due:2022-12-31",
+              "x 2022-11-16 (A) Write some tests +project @context due:2022-12-31",
         );
         expect(todo.creationDate, null);
       });
@@ -272,7 +272,7 @@ void main() {
       test("completed and with priority simple example", () {
         final todo = Todo.fromString(
           id: 0,
-          todoStr: "x (A) 2022-11-16 Write some tests",
+          todoStr: "x 2022-11-16 (A) Write some tests",
         );
         expect(todo.completionDate, DateTime.parse("2022-11-16"));
       });
@@ -280,7 +280,7 @@ void main() {
         final todo = Todo.fromString(
           id: 0,
           todoStr:
-              "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+              "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
         expect(todo.completionDate, DateTime.parse("2022-11-16"));
       });
@@ -420,7 +420,7 @@ void main() {
       final todo = Todo.fromString(
         id: 0,
         todoStr:
-            "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+            "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
       );
       expect(todo.projects, ["project"]);
     });
@@ -489,7 +489,7 @@ void main() {
       final todo = Todo.fromString(
         id: 0,
         todoStr:
-            "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+            "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
       );
       expect(todo.contexts, ["context"]);
     });
@@ -565,7 +565,7 @@ void main() {
       final todo = Todo.fromString(
         id: 0,
         todoStr:
-            "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+            "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
       );
       expect(todo.keyValues, {"due": "2022-12-31"});
     });
@@ -606,7 +606,7 @@ void main() {
       test("completed with description and priority", () {
         final todo = Todo.fromString(
           id: id,
-          todoStr: "x (A) 2022-11-16 Write some tests",
+          todoStr: "x 2022-11-16 (A) Write some tests",
         );
         expect(todo.description, "Write some tests");
       });
@@ -614,7 +614,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           todoStr:
-              "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
+              "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
         expect(todo.description,
             "Write some tests +project @context due:2022-12-31");
@@ -637,7 +637,7 @@ void main() {
         expect(
           () => Todo.fromString(
             id: id,
-            todoStr: "x (A) 2022-11-16",
+            todoStr: "x 2022-11-16 (A)",
           ),
           throwsA(
             isA<TodoStringMalformed>(),
@@ -648,7 +648,7 @@ void main() {
         expect(
           () => Todo.fromString(
             id: id,
-            todoStr: "x (A) 2022-11-16 2022-11-01",
+            todoStr: "x 2022-11-16 (A) 2022-11-01",
           ),
           throwsA(
             isA<TodoStringMalformed>(),
@@ -694,7 +694,7 @@ void main() {
   group("todo toString", () {
     test("full example", () {
       const String todoStr =
-          "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31";
+          "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31";
       final todo = Todo.fromString(
         id: id,
         todoStr: todoStr,
@@ -705,10 +705,10 @@ void main() {
       final todo = Todo.fromString(
         id: id,
         todoStr:
-            "x  (A)  2022-11-16  2022-11-01  Write some tests +project @context due:2022-12-31",
+            "x  2022-11-16  (A)  2022-11-01  Write some tests +project @context due:2022-12-31",
       );
       expect(todo.toString(),
-          "x (A) 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31");
+          "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31");
     });
   });
 }

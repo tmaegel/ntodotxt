@@ -7,8 +7,8 @@ class Todo extends Equatable {
   /// with some modification (https://github.com/todotxt/todo.txt/discussions/52)
   ///
   /// [completion]      (optional)
-  /// [priority]        (optional)
   /// [completionDate]  (forbidden if incompleted, mandatory if completed)
+  /// [priority]        (optional)
   /// [creationDate]    (optional)
   /// [
   ///
@@ -96,36 +96,27 @@ class Todo extends Equatable {
     String? priority;
     DateTime? completionDate;
     DateTime? creationDate;
-
-    int descriptionIndex = 0;
     List<String>? fullDescriptionList;
 
     // Get completion
     completion = _completion(_strElement(todoSplitted, 0));
     if (completion) {
-      descriptionIndex += 1;
-      priority = _priority(_strElement(todoSplitted, 1));
-      if (priority == null) {
-        // x [completionDate] [fullDescription]
-        // x [completionDate] [creationDate] [fullDescription]
-        completionDate = _date(_strElement(todoSplitted, 1));
-        creationDate = _date(_strElement(todoSplitted, 2));
-      } else {
-        descriptionIndex += 1;
-        // x [priority] [completionDate] [fullDescription]
-        // x [priority] [completionDate] [creationDate] [fullDescription]
-        completionDate = _date(_strElement(todoSplitted, 2));
-        creationDate = _date(_strElement(todoSplitted, 3));
-      }
+      completionDate = _date(_strElement(todoSplitted, 1));
       // A completed todo needs at least a completion date.
       if (completionDate == null) {
         throw const TodoStringMissingCompletionDate();
       }
-      if (creationDate != null) {
-        descriptionIndex += 1;
+
+      priority = _priority(_strElement(todoSplitted, 2));
+      if (priority == null) {
+        // x [completionDate] [fullDescription]
+        // x [completionDate] [creationDate] [fullDescription]
+        creationDate = _date(_strElement(todoSplitted, 2));
+      } else {
+        // x [completionDate] [priority] [fullDescription]
+        // x [completionDate] [priority] [creationDate] [fullDescription]
+        creationDate = _date(_strElement(todoSplitted, 3));
       }
-      fullDescriptionList = _fullDescriptionList(todoSplitted,
-          descriptionIndex + 1); // +1 for completion date (mandatory)
     } else {
       priority = _priority(_strElement(todoSplitted, 0));
       if (priority == null) {
@@ -137,7 +128,6 @@ class Todo extends Equatable {
           throw const TodoStringForbiddenCompletionDate();
         }
       } else {
-        descriptionIndex += 1;
         // [priority] [creationDate] [fullDescription]
         // The provided date is the creation date (todo incompleted).
         creationDate = _date(_strElement(todoSplitted, 1));
@@ -146,12 +136,16 @@ class Todo extends Equatable {
           throw const TodoStringForbiddenCompletionDate();
         }
       }
-      if (creationDate != null) {
+    }
+
+    // Get beginning of description.
+    int descriptionIndex = 0;
+    for (var prop in [completion, completionDate, priority, creationDate]) {
+      if (prop != null && prop != false) {
         descriptionIndex += 1;
       }
-      fullDescriptionList =
-          _fullDescriptionList(todoSplitted, descriptionIndex);
     }
+    fullDescriptionList = _fullDescriptionList(todoSplitted, descriptionIndex);
 
     return Todo(
       id: id,
@@ -311,8 +305,8 @@ class Todo extends Equatable {
   List<Object?> get props => [
         id,
         completion,
-        priority,
         completionDate,
+        priority,
         creationDate,
         description,
         projects,
@@ -324,8 +318,8 @@ class Todo extends Equatable {
   String toString() {
     final List<String?> items = [
       completion ? 'x' : '',
-      priority != '' ? '($priority)' : '',
       formattedDate(completionDate) ?? '',
+      priority != '' ? '($priority)' : '',
       formattedDate(creationDate) ?? '',
       description,
     ];
