@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 sealed class TodoListEvent extends Equatable {
@@ -13,27 +14,27 @@ final class TodoListSubscriptionRequested extends TodoListEvent {
 }
 
 final class TodoListTodoCompletionToggled extends TodoListEvent {
-  final int? id;
-  final bool? completion;
+  final Todo todo;
+  final bool completion;
 
   const TodoListTodoCompletionToggled({
-    this.id,
-    this.completion,
+    required this.todo,
+    required this.completion,
   });
 
   @override
-  List<Object?> get props => [id, completion];
+  List<Object?> get props => [todo, completion];
 }
 
 final class TodoListTodoDeleted extends TodoListEvent {
-  final int? id;
+  final Todo todo;
 
   const TodoListTodoDeleted({
-    required this.id,
+    required this.todo,
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [todo];
 }
 
 final class TodoListOrderChanged extends TodoListEvent {

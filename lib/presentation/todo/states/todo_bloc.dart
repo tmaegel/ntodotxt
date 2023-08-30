@@ -36,8 +36,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoCompletionToggled event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith(completion: event.completion);
-    _todoListRepository.saveTodo(state.todo.id, todo);
+    final Todo todo = state.todo.copyWith(
+      completion: event.completion,
+      completionDate: event.completion ? DateTime.now() : null,
+      unsetCompletionDate: !event.completion,
+    );
     emit(state.copyWith(todo: todo));
   }
 
@@ -61,7 +64,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoPriorityRemoved event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith(priority: '');
+    final Todo todo = state.todo.copyWith(unsetPriority: true);
     emit(state.copyWith(todo: todo));
   }
 
@@ -70,7 +73,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     List<String> projects = [...state.todo.projects];
-    projects.add(event.project);
+    if (!projects.contains(event.project)) {
+      projects.add(event.project);
+    }
     final Todo todo = state.todo.copyWith(projects: projects);
     emit(state.copyWith(todo: todo));
   }
@@ -90,7 +95,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     List<String> contexts = [...state.todo.contexts];
-    contexts.add(event.context);
+    if (!contexts.contains(event.context)) {
+      contexts.add(event.context);
+    }
     final Todo todo = state.todo.copyWith(contexts: contexts);
     emit(state.copyWith(todo: todo));
   }
@@ -135,17 +142,17 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoDeleted event,
     Emitter<TodoState> emit,
   ) {
-    _todoListRepository.deleteTodo(state.todo.id);
+    _todoListRepository.deleteTodo(state.todo);
   }
 
   void _onSubmitted(
     TodoSubmitted event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith();
+    final Todo todo = event.todo.copyWith();
     emit(
       state.copyWith(
-        todo: _todoListRepository.saveTodo(todo.id, todo),
+        todo: _todoListRepository.saveTodo(todo),
       ),
     );
   }

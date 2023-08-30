@@ -12,14 +12,12 @@ class TodoListRepository {
   /// Provides a [Stream] of all todos.
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
 
-  /// Get a single [todo] by id.
-  Todo getTodo(int? id) => _todoListApi.getTodo(id);
-
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
-  Todo saveTodo(int? id, Todo todo) => _todoListApi.saveTodo(id, todo);
+  /// If the id of [todo] is null, it will be created.
+  Todo saveTodo(Todo todo) => _todoListApi.saveTodo(todo);
 
-  /// Deletes the `todo` with the given id.
-  /// If no `todo` with the given id exists, a [TodoNotFound] error is thrown.
-  void deleteTodo(int? id) => _todoListApi.deleteTodo(id);
+  /// Deletes the given [todo].
+  /// If the [todo] not exists, a [TodoNotFound] error is thrown.
+  void deleteTodo(Todo todo) => _todoListApi.deleteTodo(todo);
 }

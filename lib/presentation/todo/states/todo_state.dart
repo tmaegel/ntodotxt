@@ -29,5 +29,5 @@ final class TodoState extends Equatable {
       ];
 
   @override
-  String toString() => 'TodoState { status: $status id: ${todo.id} }';
+  String toString() => 'TodoState { status: $status todo: "$todo" }';
 }

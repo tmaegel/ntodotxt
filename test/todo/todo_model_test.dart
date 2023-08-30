@@ -593,8 +593,7 @@ void main() {
           todoStr:
               "(A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
-        expect(todo.description,
-            "Write some tests +project @context due:2022-12-31");
+        expect(todo.description, "Write some tests");
       });
       test("completed with description", () {
         final todo = Todo.fromString(
@@ -616,8 +615,7 @@ void main() {
           todoStr:
               "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
-        expect(todo.description,
-            "Write some tests +project @context due:2022-12-31");
+        expect(todo.description, "Write some tests");
       });
     });
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
@@ -19,16 +18,14 @@ abstract class TodoListApi {
   /// Write [todoList]
   // void writeTodoList(List<Todo> todoList);
 
-  /// Get a single [todo] by id.
-  Todo getTodo(int? id);
-
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
-  Todo saveTodo(int? id, Todo todo);
+  /// If the id of [todo] is null, it will be created.
+  Todo saveTodo(Todo todo);
 
-  /// Deletes the `todo` with the given id.
-  /// If no `todo` with the given id exists, a [TodoNotFound] error is thrown.
-  void deleteTodo(int? id);
+  /// Deletes the given [todo].
+  /// If the [todo] not exists, a [TodoNotFound] error is thrown.
+  void deleteTodo(Todo todo);
 }
 
 class LocalStorageTodoListApi extends TodoListApi {
@@ -39,11 +36,15 @@ class LocalStorageTodoListApi extends TodoListApi {
   // added to the controller, and emits that as the first item to any new listener.
   final _streamController = BehaviorSubject<List<Todo>>.seeded(const []);
 
-  LocalStorageTodoListApi() {
-    _streamController.add(_fromList(rawTodoList));
+  LocalStorageTodoListApi(List<Todo> todoList) {
+    _streamController.add(todoList);
   }
 
-  List<Todo> _fromList(List<String> rawTodoList) {
+  factory LocalStorageTodoListApi.fromList(List<String> rawTodoList) {
+    return LocalStorageTodoListApi(_fromList(rawTodoList));
+  }
+
+  static List<Todo> _fromList(List<String> rawTodoList) {
     // Index the todo objecte to get a unique id.
     rawTodoList.sort();
     return [
@@ -85,25 +86,15 @@ class LocalStorageTodoListApi extends TodoListApi {
   }
 
   @override
-  Todo getTodo(int? id) {
+  Todo saveTodo(Todo todo) {
     final List<Todo> todoList = [..._streamController.value];
-    int index = todoList.indexWhere((todo) => todo.id == id);
-    if (index == -1) {
-      throw TodoNotFound(id: id);
-    }
-    return todoList[index];
-  }
-
-  @override
-  Todo saveTodo(int? id, Todo todo) {
-    final List<Todo> todoList = [..._streamController.value];
-    if (id == null) {
+    if (todo.id == null) {
       todo = todo.copyWith(id: newId); // Overwrite todo with id.
       todoList.add(todo);
     } else {
-      int index = todoList.indexWhere((todo) => todo.id == id);
+      int index = todoList.indexWhere((t) => t.id == todo.id);
       if (index == -1) {
-        throw TodoNotFound(id: id);
+        throw TodoNotFound(id: todo.id);
       } else {
         todoList[index] = todo;
       }
@@ -114,9 +105,9 @@ class LocalStorageTodoListApi extends TodoListApi {
   }
 
   @override
-  void deleteTodo(int? id) {
+  void deleteTodo(Todo todo) {
     final List<Todo> todoList = [..._streamController.value];
-    todoList.removeWhere((todo) => todo.id == id);
+    todoList.removeWhere((t) => t.id == todo.id);
     _streamController.add(todoList);
   }
 

@@ -39,18 +39,19 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListTodoCompletionToggled event,
     Emitter<TodoListState> emit,
   ) {
-    final todo = _todoListRepository.getTodo(event.id);
-    _todoListRepository.saveTodo(
-      event.id,
-      todo.copyWith(completion: event.completion ?? !todo.completion),
+    final Todo todo = event.todo.copyWith(
+      completion: event.completion,
+      completionDate: event.completion ? DateTime.now() : null,
+      unsetCompletionDate: !event.completion,
     );
+    _todoListRepository.saveTodo(todo);
   }
 
   void _onTodoDeleted(
     TodoListTodoDeleted event,
     Emitter<TodoListState> emit,
   ) {
-    _todoListRepository.deleteTodo(event.id);
+    _todoListRepository.deleteTodo(event.todo);
   }
 
   void _onTodoListOrderChanged(

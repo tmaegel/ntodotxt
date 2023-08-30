@@ -20,7 +20,7 @@ class TodoCreatePage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TodoBloc(
         todoListRepository: todoListRepository,
-        todo: const Todo.empty(),
+        todo: Todo.empty(),
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoCreateNarrowView()
@@ -34,7 +34,7 @@ abstract class TodoCreateView extends StatelessWidget {
 
   /// Save new todo
   void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
+    context.read<TodoBloc>().add(TodoSubmitted(state.todo));
     context.pushNamed("todo-view", extra: state.todo);
   }
 

@@ -39,13 +39,13 @@ abstract class TodoEditView extends StatelessWidget {
 
   /// Save current todo
   void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoSubmitted(state.todo.id));
+    context.read<TodoBloc>().add(TodoSubmitted(state.todo));
     context.pushNamed("todo-view", extra: state.todo);
   }
 
   /// Delete current todo
   void _deleteAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoDeleted(state.todo.id));
+    context.read<TodoBloc>().add(TodoDeleted(state.todo));
     context.go(context.namedLocation('todo-list'));
   }
 

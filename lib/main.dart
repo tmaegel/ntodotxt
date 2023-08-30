@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/config/router/router.dart';
+import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/data/theme.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -12,7 +12,8 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
-  final LocalStorageTodoListApi todoListApi = LocalStorageTodoListApi();
+  final LocalStorageTodoListApi todoListApi =
+      LocalStorageTodoListApi.fromList(rawTodoList);
   final TodoListRepository todoListRepository =
       TodoListRepository(todoListApi: todoListApi);
   runApp(App(todoListRepository: todoListRepository));

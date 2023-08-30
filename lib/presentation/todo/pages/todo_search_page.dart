@@ -80,7 +80,7 @@ class TodoSearchTile extends StatelessWidget {
         todo.priority ?? '',
         style: Theme.of(context).textTheme.titleLarge,
       ),
-      title: Text(todo.strippedDescription),
+      title: Text(todo.description),
       subtitle: _buildSubtitle(),
       onTap: () => _onTapAction(context),
     );

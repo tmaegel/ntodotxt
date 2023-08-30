@@ -77,18 +77,43 @@ class Todo extends Equatable {
   /// Defaults to an empty map.
   final Map<String, String> keyValues;
 
-  const Todo({
+  Todo({
     this.id,
     this.completion = false,
     this.priority,
-    this.completionDate,
-    this.creationDate,
+    DateTime? completionDate,
+    DateTime? creationDate,
     this.description = '',
     this.projects = const [],
     this.contexts = const [],
     this.keyValues = const {},
-  });
-  const Todo.empty() : this();
+  })  : completionDate = completionDate == null
+            ? null
+            : DateTime(
+                completionDate.year,
+                completionDate.month,
+                completionDate.day,
+              ),
+        creationDate = creationDate == null
+            ? null
+            : DateTime(
+                creationDate.year,
+                creationDate.month,
+                creationDate.day,
+              ) {
+    if (completion) {
+      if (completionDate == null) {
+        // A completed todo needs at least a completion date.
+        throw const TodoStringMissingCompletionDate();
+      }
+    } else {
+      if (completionDate != null) {
+        throw const TodoStringForbiddenCompletionDate();
+      }
+    }
+  }
+
+  Todo.empty() : this();
 
   factory Todo.fromString({required int id, required String todoStr}) {
     final List<String> todoSplitted = _trim(todoStr).split(' ');
@@ -102,11 +127,6 @@ class Todo extends Equatable {
     completion = _completion(_strElement(todoSplitted, 0));
     if (completion) {
       completionDate = _date(_strElement(todoSplitted, 1));
-      // A completed todo needs at least a completion date.
-      if (completionDate == null) {
-        throw const TodoStringMissingCompletionDate();
-      }
-
       priority = _priority(_strElement(todoSplitted, 2));
       if (priority == null) {
         // x [completionDate] [fullDescription]
@@ -153,7 +173,7 @@ class Todo extends Equatable {
       priority: priority,
       completionDate: completionDate,
       creationDate: creationDate,
-      description: fullDescriptionList.join(' '),
+      description: _description(fullDescriptionList),
       projects: _projects(fullDescriptionList),
       contexts: _contexts(fullDescriptionList),
       keyValues: _keyValues(fullDescriptionList),
@@ -211,6 +231,17 @@ class Todo extends Equatable {
     }
   }
 
+  /// Trim projects, contexts and key-values from description.
+  static String _description(List<String> descriptionList) {
+    return _trim(
+      descriptionList
+          .join(' ')
+          .replaceAll(RegExp(r'\+\S+'), '')
+          .replaceAll(RegExp(r'\@\S+'), '')
+          .replaceAll(RegExp(r'\S+:\S+'), ''),
+    );
+  }
+
   static List<String> _projects(List<String> fullDescriptionList) {
     List<String> projects = [];
     for (var project in fullDescriptionList) {
@@ -247,16 +278,6 @@ class Todo extends Equatable {
     return keyValues;
   }
 
-  /// Trim projects, contexts and key-values from description.
-  String get strippedDescription {
-    String strippedDescription = description
-        .replaceAll(RegExp(r'\+\S+'), "")
-        .replaceAll(RegExp(r'\@\S+'), "")
-        .replaceAll(RegExp(r'\S+:\S+'), "");
-
-    return _trim(strippedDescription);
-  }
-
   List<String> get formattedProjects {
     return [for (var p in projects) "+$p"];
   }
@@ -287,13 +308,19 @@ class Todo extends Equatable {
     List<String>? projects,
     List<String>? contexts,
     Map<String, String>? keyValues,
+    bool unsetId = false,
+    bool unsetPriority = false,
+    bool unsetCompletionDate = false,
+    bool unsetCreationDate = false,
   }) {
     return Todo(
-      id: id ?? this.id,
+      id: id ?? (unsetId ? null : this.id),
       completion: completion ?? this.completion,
-      priority: priority != '' ? priority ?? this.priority : null,
-      completionDate: completionDate ?? this.completionDate,
-      creationDate: creationDate ?? this.creationDate,
+      priority: priority ?? (unsetPriority ? null : this.priority),
+      completionDate:
+          completionDate ?? (unsetCompletionDate ? null : this.completionDate),
+      creationDate:
+          creationDate ?? (unsetCreationDate ? null : this.creationDate),
       description: description ?? this.description,
       projects: projects ?? this.projects,
       contexts: contexts ?? this.contexts,
@@ -317,12 +344,15 @@ class Todo extends Equatable {
   @override
   String toString() {
     final List<String?> items = [
-      completion ? 'x' : '',
-      formattedDate(completionDate) ?? '',
-      priority != '' ? '($priority)' : '',
-      formattedDate(creationDate) ?? '',
+      completion ? 'x' : null,
+      formattedDate(completionDate),
+      priority != '' ? '($priority)' : null,
+      formattedDate(creationDate),
       description,
-    ];
+      formattedProjects.join(' '),
+      formattedContexts.join(' '),
+      formattedKeyValues.join(' '),
+    ]..removeWhere((value) => value == null);
 
     return items.join(' ');
   }

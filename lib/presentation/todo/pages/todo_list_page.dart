@@ -202,7 +202,7 @@ class TodoListSection extends StatelessWidget {
         ),
       ),
       title: Padding(
-        padding: const EdgeInsets.only(left: 10.0),
+        padding: const EdgeInsets.only(left: 5.0),
         child: Text(
           title,
           style: Theme.of(context).textTheme.titleLarge,
@@ -230,13 +230,13 @@ class TodoTile extends StatelessWidget {
         onChanged: (bool? completion) {
           context.read<TodoListBloc>().add(
                 TodoListTodoCompletionToggled(
-                  id: todo.id,
-                  completion: completion,
+                  todo: todo,
+                  completion: completion ?? false,
                 ),
               );
         },
       ),
-      title: Text(todo.strippedDescription),
+      title: Text(todo.description),
       subtitle: _buildSubtitle(),
       onTap: () => _onTapAction(context),
     );
