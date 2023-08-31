@@ -77,6 +77,11 @@ class Todo extends Equatable {
   /// Defaults to an empty map.
   final Map<String, String> keyValues;
 
+  /// Flag that indicates whether the todo
+  /// was selected in the list.
+  /// Defaults to false.
+  final bool selected;
+
   Todo({
     this.id,
     this.completion = false,
@@ -87,6 +92,7 @@ class Todo extends Equatable {
     Set<String> projects = const {},
     Set<String> contexts = const {},
     Map<String, String> keyValues = const {},
+    this.selected = false,
   })  : completionDate = completionDate == null
             ? null
             : DateTime(
@@ -314,6 +320,7 @@ class Todo extends Equatable {
     Set<String>? projects,
     Set<String>? contexts,
     Map<String, String>? keyValues,
+    bool? selected,
     bool unsetId = false,
     bool unsetPriority = false,
     bool unsetCompletionDate = false,
@@ -331,6 +338,7 @@ class Todo extends Equatable {
       projects: projects ?? this.projects,
       contexts: contexts ?? this.contexts,
       keyValues: keyValues ?? this.keyValues,
+      selected: selected ?? this.selected,
     );
   }
 
@@ -345,6 +353,7 @@ class Todo extends Equatable {
         projects,
         contexts,
         keyValues,
+        selected,
       ];
 
   @override

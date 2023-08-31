@@ -46,6 +46,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData lightTheme = CustomTheme.light;
+    final ThemeData darkTheme = CustomTheme.dark;
     return RepositoryProvider.value(
       value: todoListRepository,
       child: MultiBlocProvider(
@@ -66,8 +68,18 @@ class App extends StatelessWidget {
             return MaterialApp.router(
               title: 'Flutter layout demo',
               debugShowCheckedModeBanner: false, // Remove the debug banner
-              theme: CustomTheme.light,
-              darkTheme: CustomTheme.dark,
+              theme: lightTheme.copyWith(
+                listTileTheme: lightTheme.listTileTheme.copyWith(
+                  selectedColor: lightTheme.textTheme.bodySmall?.color,
+                  selectedTileColor: lightTheme.hoverColor,
+                ),
+              ),
+              darkTheme: darkTheme.copyWith(
+                listTileTheme: darkTheme.listTileTheme.copyWith(
+                  selectedColor: darkTheme.textTheme.bodySmall?.color,
+                  selectedTileColor: darkTheme.hoverColor,
+                ),
+              ),
               // If you do not have a themeMode switch, uncomment this line
               // to let the device system mode control the theme mode:
               themeMode: ThemeMode.system,

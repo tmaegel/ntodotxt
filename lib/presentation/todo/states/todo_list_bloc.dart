@@ -13,6 +13,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         super(const TodoListState()) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
+    on<TodoListTodoSelectedToggled>(_onTodoSelectedToggled);
+    on<TodoListSelectedAll>(_onTodoListSelectedAll);
+    on<TodoListUnselectedAll>(_onTodoListUnselectedAll);
+    on<TodoListSelectionCompleted>(_onTodoListSelectionCompleted);
+    on<TodoListSelectionIncompleted>(_onTodoListSelectionIncompleted);
+    on<TodoListSelectionDeleted>(_onTodoListSelectionDeleted);
     on<TodoListTodoDeleted>(_onTodoDeleted);
     on<TodoListTodoSubmitted>(_onTodoSubmitted);
     on<TodoListOrderChanged>(_onTodoListOrderChanged);
@@ -45,6 +51,83 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       unsetCompletionDate: !event.completion,
     );
     _todoListRepository.saveTodo(todo);
+  }
+
+  void _onTodoSelectedToggled(
+    TodoListTodoSelectedToggled event,
+    Emitter<TodoListState> emit,
+  ) {
+    final Todo todo = event.todo.copyWith(
+      selected: event.selected,
+    );
+    _todoListRepository.saveTodo(todo);
+  }
+
+  void _onTodoListSelectedAll(
+    TodoListSelectedAll event,
+    Emitter<TodoListState> emit,
+  ) {
+    _todoListRepository.saveMultipleTodos(
+      [
+        for (var t in state.todoList)
+          t.copyWith(
+            selected: true,
+          ),
+      ],
+    );
+  }
+
+  void _onTodoListUnselectedAll(
+    TodoListUnselectedAll event,
+    Emitter<TodoListState> emit,
+  ) {
+    _todoListRepository.saveMultipleTodos(
+      [
+        for (var t in state.todoList)
+          t.copyWith(
+            selected: false,
+          ),
+      ],
+    );
+  }
+
+  void _onTodoListSelectionCompleted(
+    TodoListSelectionCompleted event,
+    Emitter<TodoListState> emit,
+  ) {
+    _todoListRepository.saveMultipleTodos(
+      [
+        for (var t in state.selectedTodos)
+          t.copyWith(
+            selected: false,
+            completion: true,
+            completionDate: DateTime.now(),
+          )
+      ],
+    );
+  }
+
+  void _onTodoListSelectionIncompleted(
+    TodoListSelectionIncompleted event,
+    Emitter<TodoListState> emit,
+  ) {
+    _todoListRepository.saveMultipleTodos(
+      [
+        for (var t in state.selectedTodos)
+          t.copyWith(
+            selected: false,
+            completion: false,
+            unsetCompletionDate: true,
+          )
+      ],
+    );
+  }
+
+  void _onTodoListSelectionDeleted(
+    TodoListSelectionDeleted event,
+    Emitter<TodoListState> emit,
+  ) {
+    _todoListRepository.deleteMultipleTodos(state.selectedTodos.toList());
   }
 
   void _onTodoDeleted(

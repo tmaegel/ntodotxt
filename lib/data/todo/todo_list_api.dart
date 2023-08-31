@@ -21,11 +21,17 @@ abstract class TodoListApi {
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
   /// If the id of [todo] is null, it will be created.
-  Todo saveTodo(Todo todo);
+  void saveTodo(Todo todo);
+
+  /// Saves multiple [todos] at once.
+  void saveMultipleTodos(List<Todo> todos);
 
   /// Deletes the given [todo].
   /// If the [todo] not exists, a [TodoNotFound] error is thrown.
   void deleteTodo(Todo todo);
+
+  /// Deletes multiple [todos] at once.
+  void deleteMultipleTodos(List<Todo> todos);
 }
 
 class LocalStorageTodoListApi extends TodoListApi {
@@ -85,9 +91,7 @@ class LocalStorageTodoListApi extends TodoListApi {
     return (maxId + 1);
   }
 
-  @override
-  Todo saveTodo(Todo todo) {
-    final List<Todo> todoList = [..._streamController.value];
+  List<Todo> _save(List<Todo> todoList, Todo todo) {
     if (todo.id == null) {
       todo = todo.copyWith(id: newId); // Overwrite todo with id.
       todoList.add(todo);
@@ -99,15 +103,42 @@ class LocalStorageTodoListApi extends TodoListApi {
         todoList[index] = todo;
       }
     }
-    _streamController.add(todoList);
 
-    return todo;
+    return todoList;
+  }
+
+  List<Todo> _delete(List<Todo> todoList, Todo todo) {
+    todoList.removeWhere((t) => t.id == todo.id);
+    return todoList;
+  }
+
+  @override
+  void saveTodo(Todo todo) {
+    List<Todo> todoList = [..._streamController.value];
+    _streamController.add(_save(todoList, todo));
+  }
+
+  @override
+  void saveMultipleTodos(List<Todo> todos) {
+    List<Todo> todoList = [..._streamController.value];
+    for (var todo in todos) {
+      todoList = _save(todoList, todo);
+    }
+    _streamController.add(todoList);
   }
 
   @override
   void deleteTodo(Todo todo) {
     final List<Todo> todoList = [..._streamController.value];
-    todoList.removeWhere((t) => t.id == todo.id);
+    _streamController.add(_delete(todoList, todo));
+  }
+
+  @override
+  void deleteMultipleTodos(List<Todo> todos) {
+    List<Todo> todoList = [..._streamController.value];
+    for (var todo in todos) {
+      todoList = _delete(todoList, todo);
+    }
     _streamController.add(todoList);
   }
 

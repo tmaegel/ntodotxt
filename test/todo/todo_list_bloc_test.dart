@@ -83,6 +83,68 @@ void main() {
     );
   });
 
+  group('TodoListTodoSelectedToggled', () {
+    blocTest(
+      'emits the todo list state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called',
+      build: () => TodoListBloc(
+        todoListRepository: todoListRepository,
+      )..add(const TodoListSubscriptionRequested()),
+      act: (bloc) => bloc.add(TodoListTodoSelectedToggled(
+        todo: todo.copyWith(),
+        selected: true,
+      )),
+      expect: () => [
+        TodoListState(
+          todoList: [todo],
+        ),
+        TodoListState(
+          todoList: [todo.copyWith(selected: true)],
+        ),
+      ],
+    );
+  });
+
+  group('TodoListSelectedAll', () {
+    blocTest(
+      'emits the todo list state with updated selected state when TodoListSelectedAll() is called',
+      build: () => TodoListBloc(
+        todoListRepository: todoListRepository,
+      )..add(const TodoListSubscriptionRequested()),
+      act: (bloc) => bloc.add(const TodoListSelectedAll()),
+      expect: () => [
+        TodoListState(
+          todoList: [todo],
+        ),
+        TodoListState(
+          todoList: [todo.copyWith(selected: true)],
+        ),
+      ],
+    );
+  });
+
+  group('TodoListUnselectedAll', () {
+    blocTest(
+      'emits the todo list state with updated selected state when TodoListUnselectedAll() is called',
+      build: () => TodoListBloc(
+        todoListRepository: todoListRepository,
+      )..add(const TodoListSubscriptionRequested()),
+      act: (bloc) => bloc
+        ..add(const TodoListSelectedAll())
+        ..add(const TodoListUnselectedAll()),
+      expect: () => [
+        TodoListState(
+          todoList: [todo],
+        ),
+        TodoListState(
+          todoList: [todo.copyWith(selected: true)],
+        ),
+        TodoListState(
+          todoList: [todo.copyWith(selected: false)],
+        ),
+      ],
+    );
+  });
+
   group('TodoListTodoDeleted', () {
     blocTest(
       'emits the todo list state with updated completion state when TodoListTodoDeleted(<todo>) is called',

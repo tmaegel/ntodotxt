@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
@@ -237,6 +238,22 @@ final class TodoListState extends Equatable {
     return order.sort(keyValues).toSet();
   }
 
+  /// Returns true if at least one todo is selected, otherwise false.
+  bool get isSelected =>
+      todoList.firstWhereOrNull((todo) => todo.selected) != null;
+
+  /// Returns true if selected todos are completed only.
+  bool get isSelectedCompleted =>
+      selectedTodos.firstWhereOrNull((todo) => !todo.completion) == null;
+
+  /// Returns true if selected todos are incompleted only.
+  bool get isSelectedIncompleted =>
+      selectedTodos.firstWhereOrNull((todo) => todo.completion) == null;
+
+  Iterable<Todo> get selectedTodos => todoList.where((t) => t.selected);
+
+  Iterable<Todo> get unselectedTodos => todoList.where((t) => !t.selected);
+
   Iterable<Todo> get filteredTodoList => order.sort(filter.apply(todoList));
 
   Map<String, Iterable<Todo>?> get groupedByTodoList {
@@ -265,22 +282,6 @@ final class TodoListState extends Equatable {
           sections: priorities,
         );
     }
-  }
-
-  /// Return todo list filtered by completion state.
-  Iterable<Todo> get filteredByCompleted =>
-      filter.applyCompletion(filteredTodoList, true);
-  Iterable<Todo> get filteredByIncompleted =>
-      filter.applyCompletion(filteredTodoList, false);
-
-  /// Return todo list filtered by priority.
-  Iterable<Todo> filteredByPriority({
-    required String? priority,
-    bool excludeCompleted = true,
-  }) {
-    return excludeCompleted
-        ? filter.applyPriorityExcludeCompleted(filteredTodoList, priority)
-        : filter.applyPriority(filteredTodoList, priority);
   }
 
   TodoListState copyWith({
