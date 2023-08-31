@@ -1,18 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final TodoListRepository _todoListRepository;
-
   TodoBloc({
     TodoStatus status = TodoStatus.initial,
-    required TodoListRepository todoListRepository,
     required Todo todo,
-  })  : _todoListRepository = todoListRepository,
-        super(
+  }) : super(
           TodoState(
             status: status,
             todo: todo,
@@ -28,8 +23,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoContextRemoved>(_onContextRemoved);
     on<TodoKeyValueAdded>(_onKeyValueAdded);
     on<TodoKeyValueRemoved>(_onKeyValueRemoved);
-    on<TodoDeleted>(_onDeleted);
-    on<TodoSubmitted>(_onSubmitted);
   }
 
   void _onCompletionToggled(
@@ -136,24 +129,5 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
     final Todo todo = state.todo.copyWith(keyValues: keyValues);
     emit(state.copyWith(todo: todo));
-  }
-
-  void _onDeleted(
-    TodoDeleted event,
-    Emitter<TodoState> emit,
-  ) {
-    _todoListRepository.deleteTodo(state.todo);
-  }
-
-  void _onSubmitted(
-    TodoSubmitted event,
-    Emitter<TodoState> emit,
-  ) {
-    final Todo todo = event.todo.copyWith();
-    emit(
-      state.copyWith(
-        todo: _todoListRepository.saveTodo(todo),
-      ),
-    );
   }
 }

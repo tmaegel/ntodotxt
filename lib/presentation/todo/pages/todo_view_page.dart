@@ -4,28 +4,24 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoViewPage extends StatelessWidget {
-  final Todo todo;
+  final Todo _todo;
 
   const TodoViewPage({
-    required this.todo,
+    required Todo todo,
     super.key,
-  });
+  }) : _todo = todo;
 
   @override
   Widget build(BuildContext context) {
-    final TodoListRepository todoListRepository =
-        context.read<TodoListRepository>();
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        todoListRepository: todoListRepository,
-        todo: todo,
+        todo: _todo,
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoViewNarrowView()
@@ -90,7 +86,7 @@ class TodoViewNarrowView extends TodoViewView {
         return Scaffold(
           backgroundColor: Colors.transparent,
           appBar: MainAppBar(
-            title: "View",
+            title: "View ${state.todo.id}",
             leadingAction: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => _cancelAction(context),

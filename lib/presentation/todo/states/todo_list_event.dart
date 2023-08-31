@@ -37,6 +37,17 @@ final class TodoListTodoDeleted extends TodoListEvent {
   List<Object?> get props => [todo];
 }
 
+final class TodoListTodoSubmitted extends TodoListEvent {
+  final Todo todo;
+
+  const TodoListTodoSubmitted({
+    required this.todo,
+  });
+
+  @override
+  List<Object?> get props => [todo];
+}
+
 final class TodoListOrderChanged extends TodoListEvent {
   final TodoListOrder order;
 

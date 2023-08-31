@@ -310,5 +310,7 @@ final class TodoListState extends Equatable {
 
   @override
   String toString() =>
-      'TodoListState { status: $status filter: $filter order: $order groupBy: $groupBy }';
+      'TodoListState { status: $status filter: $filter order: $order groupBy: $groupBy ids ${[
+        for (var t in todoList) t.id
+      ]}';
 }

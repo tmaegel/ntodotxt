@@ -4,22 +4,21 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoCreatePage extends StatelessWidget {
-  const TodoCreatePage({super.key});
+  const TodoCreatePage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final TodoListRepository todoListRepository =
-        context.read<TodoListRepository>();
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        todoListRepository: todoListRepository,
         todo: Todo.empty(),
       ),
       child: screenWidth < maxScreenWidthCompact
@@ -34,8 +33,8 @@ abstract class TodoCreateView extends StatelessWidget {
 
   /// Save new todo
   void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoSubmitted(state.todo));
-    context.pushNamed("todo-view", extra: state.todo);
+    context.read<TodoListBloc>().add(TodoListTodoSubmitted(todo: state.todo));
+    context.pushNamed("todo-list");
   }
 
   /// Cancel current create process
@@ -116,7 +115,7 @@ class TodoCreateNarrowView extends TodoCreateView {
         return Scaffold(
           backgroundColor: Colors.transparent,
           appBar: MainAppBar(
-            title: "Create",
+            title: "Create ${state.todo.id}",
             leadingAction: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => _cancelAction(context),

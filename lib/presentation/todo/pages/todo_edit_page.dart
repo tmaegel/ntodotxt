@@ -4,28 +4,25 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoEditPage extends StatelessWidget {
-  final Todo todo;
+  final Todo _todo;
 
   const TodoEditPage({
-    required this.todo,
+    required Todo todo,
     super.key,
-  });
+  }) : _todo = todo;
 
   @override
   Widget build(BuildContext context) {
-    final TodoListRepository todoListRepository =
-        context.read<TodoListRepository>();
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        todoListRepository: todoListRepository,
-        todo: todo,
+        todo: _todo,
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoEditNarrowView()
@@ -39,13 +36,13 @@ abstract class TodoEditView extends StatelessWidget {
 
   /// Save current todo
   void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoSubmitted(state.todo));
+    context.read<TodoListBloc>().add(TodoListTodoSubmitted(todo: state.todo));
     context.pushNamed("todo-view", extra: state.todo);
   }
 
   /// Delete current todo
   void _deleteAction(BuildContext context, TodoState state) {
-    context.read<TodoBloc>().add(TodoDeleted(state.todo));
+    context.read<TodoListBloc>().add(TodoListTodoDeleted(todo: state.todo));
     context.go(context.namedLocation('todo-list'));
   }
 
@@ -119,7 +116,7 @@ class TodoEditNarrowView extends TodoEditView {
         return Scaffold(
           backgroundColor: Colors.transparent,
           appBar: MainAppBar(
-            title: "Edit",
+            title: "Edit ${state.todo.id}",
             leadingAction: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => _cancelAction(context, state),

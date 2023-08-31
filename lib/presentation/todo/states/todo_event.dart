@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart';
 
 sealed class TodoEvent extends Equatable {
   const TodoEvent();
@@ -91,22 +90,4 @@ final class TodoKeyValueRemoved extends TodoEvent {
 
   @override
   List<Object> get props => [keyValue];
-}
-
-final class TodoSubmitted extends TodoEvent {
-  final Todo todo;
-
-  const TodoSubmitted(this.todo);
-
-  @override
-  List<Object?> get props => [todo];
-}
-
-final class TodoDeleted extends TodoEvent {
-  final Todo todo;
-
-  const TodoDeleted(this.todo);
-
-  @override
-  List<Object?> get props => [todo];
 }
