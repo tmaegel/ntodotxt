@@ -9,8 +9,8 @@ void main() {
     priority: 'A',
     creationDate: DateTime(2022, 11, 1),
     description: 'Write some tests',
-    projects: const ['project1'],
-    contexts: const ['context1'],
+    projects: const {'project1'},
+    contexts: const {'context1'},
     keyValues: const {'foo': 'bar'},
   );
   final DateTime now = DateTime.now();
@@ -106,7 +106,7 @@ void main() {
       act: (bloc) => bloc.add(const TodoProjectAdded('project2')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(projects: ['project1', 'project2']),
+          todo: todo.copyWith(projects: {'project1', 'project2'}),
         ),
       ],
     );
@@ -118,7 +118,19 @@ void main() {
       act: (bloc) => bloc.add(const TodoProjectAdded('project1')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(projects: ['project1']),
+          todo: todo.copyWith(projects: {'project1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectAdded(<project>) is called (duplication, case sensitive)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoProjectAdded('Project1')),
+      expect: () => [
+        TodoState(
+          todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
     );
@@ -133,7 +145,7 @@ void main() {
       act: (bloc) => bloc.add(const TodoProjectRemoved('project1')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(projects: []),
+          todo: todo.copyWith(projects: {}),
         ),
       ],
     );
@@ -145,7 +157,7 @@ void main() {
       act: (bloc) => bloc.add(const TodoProjectRemoved('project2')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(projects: ['project1']),
+          todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
     );
@@ -160,7 +172,7 @@ void main() {
       act: (bloc) => bloc.add(const TodoContextAdded('context2')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(contexts: ['context1', 'context2']),
+          todo: todo.copyWith(contexts: {'context1', 'context2'}),
         ),
       ],
     );
@@ -172,7 +184,19 @@ void main() {
       act: (bloc) => bloc.add(const TodoContextAdded('context1')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(contexts: ['context1']),
+          todo: todo.copyWith(contexts: {'context1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextAdded(<context>) is called (duplication, case sensitive)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoContextAdded('Context1')),
+      expect: () => [
+        TodoState(
+          todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
     );
@@ -187,7 +211,7 @@ void main() {
       act: (bloc) => bloc.add(const TodoContextRemoved('context1')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(contexts: []),
+          todo: todo.copyWith(contexts: {}),
         ),
       ],
     );
@@ -199,7 +223,7 @@ void main() {
       act: (bloc) => bloc.add(const TodoContextRemoved('context2')),
       expect: () => [
         TodoState(
-          todo: todo.copyWith(contexts: ['context1']),
+          todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
     );
@@ -236,6 +260,18 @@ void main() {
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValueAdded('foo:bar')),
+      expect: () => [
+        TodoState(
+          todo: todo.copyWith(keyValues: {'foo': 'bar'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValueAdded(<key:val>) is called (duplication, case sensitive)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoKeyValueAdded('Foo:bar')),
       expect: () => [
         TodoState(
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),

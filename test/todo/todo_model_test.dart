@@ -393,6 +393,20 @@ void main() {
       );
       expect(todo.projects, ["n-todo.txt+_123"]);
     });
+    test("project tag with a name in capital letters", () {
+      final todo = Todo.fromString(
+        id: id,
+        todoStr: "Write some tests +NTodoTXT",
+      );
+      expect(todo.projects, ["ntodotxt"]);
+    });
+    test("project tag with project duplication", () {
+      final todo = Todo.fromString(
+        id: id,
+        todoStr: "Write some tests +ntodotxt +ntodotxt",
+      );
+      expect(todo.projects, ["ntodotxt"]);
+    });
     test("incompleted full example", () {
       final todo = Todo.fromString(
         id: 0,
@@ -462,6 +476,20 @@ void main() {
       );
       expect(todo.contexts, ["n-todo.txt+_123"]);
     });
+    test("context tag with a name in capital letters", () {
+      final todo = Todo.fromString(
+        id: id,
+        todoStr: "Write some tests @NTodoTXT",
+      );
+      expect(todo.contexts, ["ntodotxt"]);
+    });
+    test("context tag with context duplication", () {
+      final todo = Todo.fromString(
+        id: id,
+        todoStr: "Write some tests @ntodotxt @ntodotxt",
+      );
+      expect(todo.contexts, ["ntodotxt"]);
+    });
     test("incompleted full example", () {
       final todo = Todo.fromString(
         id: 0,
@@ -530,6 +558,20 @@ void main() {
         todoStr: "Write some tests key-@_123:value_@123",
       );
       expect(todo.keyValues, {"key-@_123": "value_@123"});
+    });
+    test("key value tag with a name in capital letters", () {
+      final todo = Todo.fromString(
+        id: id,
+        todoStr: "Write some tests Key:Value",
+      );
+      expect(todo.keyValues, {"key": "value"});
+    });
+    test("key value tag with key value duplication", () {
+      final todo = Todo.fromString(
+        id: id,
+        todoStr: "Write some tests key:value key:value",
+      );
+      expect(todo.keyValues, {"key": "value"});
     });
     test("invalid key value tag", () {
       final todo = Todo.fromString(

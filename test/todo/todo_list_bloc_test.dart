@@ -13,8 +13,8 @@ void main() {
     priority: 'A',
     creationDate: DateTime(2022, 11, 1),
     description: 'Write some tests',
-    projects: const ['project1'],
-    contexts: const ['context1'],
+    projects: const {'project1'},
+    contexts: const {'context1'},
     keyValues: const {'foo': 'bar'},
   );
   final DateTime now = DateTime.now();

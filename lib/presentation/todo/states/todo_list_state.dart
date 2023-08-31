@@ -107,7 +107,7 @@ extension TodoGroupBy on TodoListGroupBy {
 
   Map<String, Iterable<Todo>?> priority({
     required Iterable<Todo> todoList,
-    required List<String?> sections,
+    required Set<String?> sections,
   }) {
     Map<String, Iterable<Todo>> groupBy = {};
     for (var p in sections) {
@@ -123,7 +123,7 @@ extension TodoGroupBy on TodoListGroupBy {
 
   Map<String, Iterable<Todo>> project({
     required Iterable<Todo> todoList,
-    required List<String?> sections,
+    required Set<String?> sections,
   }) {
     Map<String, Iterable<Todo>> groupBy = {};
     // Consider also todos without projects.
@@ -146,7 +146,7 @@ extension TodoGroupBy on TodoListGroupBy {
 
   Map<String, Iterable<Todo>> context({
     required Iterable<Todo> todoList,
-    required List<String?> sections,
+    required Set<String?> sections,
   }) {
     Map<String, Iterable<Todo>> groupBy = {};
     // Consider also todos without projects.
@@ -198,43 +198,43 @@ final class TodoListState extends Equatable {
   });
 
   /// Returns a list with all priorities including 'no priority' of all todos.
-  List<String?> get priorities {
-    List<String?> priorities = [];
+  Set<String?> get priorities {
+    Set<String?> priorities = {};
     for (var todo in filteredTodoList) {
       priorities.add(todo.priority);
     }
 
-    return order.sort(priorities.toSet().toList()).toList();
+    return order.sort(priorities).toSet();
   }
 
   /// Returns a list with all projects of all todos.
-  List<String> get projects {
-    List<String> projects = [];
+  Set<String> get projects {
+    Set<String> projects = {};
     for (var todo in filteredTodoList) {
-      projects = projects + todo.projects;
+      projects.addAll(todo.projects);
     }
 
-    return order.sort(projects.toSet().toList()).toList();
+    return order.sort(projects).toSet();
   }
 
   /// Returns a list with all contexts of all todos.
-  List<String> get contexts {
-    List<String> contexts = [];
+  Set<String> get contexts {
+    Set<String> contexts = {};
     for (var todo in filteredTodoList) {
-      contexts = contexts + todo.contexts;
+      contexts.addAll(todo.contexts);
     }
 
-    return order.sort(contexts.toSet().toList()).toList();
+    return order.sort(contexts).toSet();
   }
 
   /// Returns a list with all key values of all todos.
-  List<String> get keyValues {
-    List<String> keyValues = [];
+  Set<String> get keyValues {
+    Set<String> keyValues = {};
     for (var todo in filteredTodoList) {
-      keyValues = keyValues + todo.formattedKeyValues;
+      keyValues.addAll(todo.formattedKeyValues);
     }
 
-    return order.sort(keyValues.toSet().toList()).toList();
+    return order.sort(keyValues).toSet();
   }
 
   Iterable<Todo> get filteredTodoList => order.sort(filter.apply(todoList));

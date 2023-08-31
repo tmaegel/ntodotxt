@@ -31,8 +31,8 @@ abstract class TodoTagSection extends StatelessWidget {
 
   Widget _buildChips({
     required BuildContext context,
-    required List<String> tags,
-    required List<String?> selectedTags,
+    required Set<String> tags,
+    required Set<String?> selectedTags,
   }) {
     return GenericChipGroup(
       children: [
@@ -83,7 +83,7 @@ class TodoPriorityTags extends TodoTagSection {
           title: _buildChips(
             context: context,
             tags: priorities,
-            selectedTags: [state.todo.priority],
+            selectedTags: {state.todo.priority},
           ),
         );
       },

@@ -67,11 +67,11 @@ class Todo extends Equatable {
 
   /// The list of projects of the `todo`.
   /// Defaults to an empty list.
-  final List<String> projects;
+  final Set<String> projects;
 
   /// The list of contexts of the `todo`.
   /// Defaults to an empty list.
-  final List<String> contexts;
+  final Set<String> contexts;
 
   /// The list of key value apirs of the `todo`.
   /// Defaults to an empty map.
@@ -84,9 +84,9 @@ class Todo extends Equatable {
     DateTime? completionDate,
     DateTime? creationDate,
     this.description = '',
-    this.projects = const [],
-    this.contexts = const [],
-    this.keyValues = const {},
+    Set<String> projects = const {},
+    Set<String> contexts = const {},
+    Map<String, String> keyValues = const {},
   })  : completionDate = completionDate == null
             ? null
             : DateTime(
@@ -100,7 +100,13 @@ class Todo extends Equatable {
                 creationDate.year,
                 creationDate.month,
                 creationDate.day,
-              ) {
+              ),
+        projects = {for (var p in projects) p.toLowerCase()},
+        contexts = {for (var c in contexts) c.toLowerCase()},
+        keyValues = {
+          for (MapEntry<String, String> kv in keyValues.entries)
+            kv.key.toLowerCase(): kv.value.toLowerCase()
+        } {
     if (completion) {
       if (completionDate == null) {
         // A completed todo needs at least a completion date.
@@ -242,8 +248,8 @@ class Todo extends Equatable {
     );
   }
 
-  static List<String> _projects(List<String> fullDescriptionList) {
-    List<String> projects = [];
+  static Set<String> _projects(List<String> fullDescriptionList) {
+    Set<String> projects = {};
     for (var project in fullDescriptionList) {
       if (patternProject.hasMatch(project)) {
         projects.add(project.substring(1)); // strip the leading '+'
@@ -253,8 +259,8 @@ class Todo extends Equatable {
     return projects;
   }
 
-  static List<String> _contexts(List<String> fullDescriptionList) {
-    List<String> contexts = [];
+  static Set<String> _contexts(List<String> fullDescriptionList) {
+    Set<String> contexts = {};
     for (var context in fullDescriptionList) {
       if (patternContext.hasMatch(context)) {
         contexts.add(context.substring(1)); // strip the leading '@'
@@ -278,16 +284,16 @@ class Todo extends Equatable {
     return keyValues;
   }
 
-  List<String> get formattedProjects {
-    return [for (var p in projects) "+$p"];
+  Set<String> get formattedProjects {
+    return {for (var p in projects) "+$p"};
   }
 
-  List<String> get formattedContexts {
-    return [for (var c in contexts) "@$c"];
+  Set<String> get formattedContexts {
+    return {for (var c in contexts) "@$c"};
   }
 
-  List<String> get formattedKeyValues {
-    return [for (var k in keyValues.keys) "$k:${keyValues[k]}"];
+  Set<String> get formattedKeyValues {
+    return {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
   }
 
   String? formattedDate(DateTime? date) {
@@ -305,8 +311,8 @@ class Todo extends Equatable {
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
-    List<String>? projects,
-    List<String>? contexts,
+    Set<String>? projects,
+    Set<String>? contexts,
     Map<String, String>? keyValues,
     bool unsetId = false,
     bool unsetPriority = false,
@@ -344,7 +350,7 @@ class Todo extends Equatable {
   @override
   String toString() {
     final List<String?> items = [
-      completion ? 'x' : null,
+      if (completion) 'x' else null,
       formattedDate(completionDate),
       priority != '' ? '($priority)' : null,
       formattedDate(creationDate),

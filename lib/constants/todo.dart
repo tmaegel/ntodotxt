@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const List<String> priorities = ["A", "B", "C", "D", "E", "F"];
+const Set<String> priorities = {"A", "B", "C", "D", "E", "F"};
 
 /// Colors
 const Color colorBlack = Color(0xFF1e222a);

@@ -65,10 +65,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoProjectAdded event,
     Emitter<TodoState> emit,
   ) {
-    List<String> projects = [...state.todo.projects];
-    if (!projects.contains(event.project)) {
-      projects.add(event.project);
-    }
+    Set<String> projects = {...state.todo.projects};
+    projects.add(event.project);
     final Todo todo = state.todo.copyWith(projects: projects);
     emit(state.copyWith(todo: todo));
   }
@@ -77,7 +75,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoProjectRemoved event,
     Emitter<TodoState> emit,
   ) {
-    List<String> projects = [...state.todo.projects];
+    Set<String> projects = {...state.todo.projects};
     projects.remove(event.project);
     final Todo todo = state.todo.copyWith(projects: projects);
     emit(state.copyWith(todo: todo));
@@ -87,10 +85,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoContextAdded event,
     Emitter<TodoState> emit,
   ) {
-    List<String> contexts = [...state.todo.contexts];
-    if (!contexts.contains(event.context)) {
-      contexts.add(event.context);
-    }
+    Set<String> contexts = {...state.todo.contexts};
+    contexts.add(event.context);
     final Todo todo = state.todo.copyWith(contexts: contexts);
     emit(state.copyWith(todo: todo));
   }
@@ -99,7 +95,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoContextRemoved event,
     Emitter<TodoState> emit,
   ) {
-    List<String> contexts = [...state.todo.contexts];
+    Set<String> contexts = {...state.todo.contexts};
     contexts.remove(event.context);
     final Todo todo = state.todo.copyWith(contexts: contexts);
     emit(state.copyWith(todo: todo));
