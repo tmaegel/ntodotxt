@@ -15,7 +15,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: leadingAction != null,
       titleSpacing: 10.0,
       leading: leadingAction,
       title: Text(title),

@@ -60,7 +60,7 @@ abstract class TodoListView extends StatelessWidget {
       children: [
         IconButton(
           tooltip: 'Group by',
-          icon: const Icon(Icons.view_list),
+          icon: const Icon(Icons.widgets),
           onPressed: () => _groupByAction(context),
         ),
         IconButton(
@@ -125,20 +125,93 @@ abstract class TodoListView extends StatelessWidget {
   }
 }
 
+class DrawerDestination {
+  final String label;
+  final Widget icon;
+  final Widget? selectedIcon;
+
+  const DrawerDestination({
+    required this.label,
+    required this.icon,
+    this.selectedIcon,
+  });
+}
+
+const List<DrawerDestination> primaryDestinations = <DrawerDestination>[
+  DrawerDestination(
+    label: 'Todos',
+    icon: Icon(Icons.rule_outlined),
+    selectedIcon: Icon(Icons.rule),
+  ),
+  DrawerDestination(
+    label: 'Views',
+    icon: Icon(Icons.favorite_outline),
+    selectedIcon: Icon(Icons.favorite),
+  ),
+];
+
+const List<DrawerDestination> secondaryDestinations = <DrawerDestination>[
+  DrawerDestination(
+    label: 'Settings',
+    icon: Icon(Icons.settings),
+  ),
+];
+
 class TodoListNarrowView extends TodoListView {
   const TodoListNarrowView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(
-        title: "All todos",
-        leadingAction: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
-        ),
-      ),
+      appBar: const MainAppBar(title: "All todos"),
       body: const TodoList(),
+      drawer: NavigationDrawer(
+        selectedIndex: 0, // First destination is selected.
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
+            child: SizedBox(),
+          ),
+          ...primaryDestinations.map(
+            (DrawerDestination destination) {
+              return NavigationDrawerDestination(
+                label: Text(destination.label),
+                icon: destination.icon,
+                selectedIcon: destination.selectedIcon,
+              );
+            },
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
+            child: Divider(),
+          ),
+          ...secondaryDestinations.map(
+            (DrawerDestination destination) {
+              return NavigationDrawerDestination(
+                label: Text(destination.label),
+                icon: destination.icon,
+              );
+            },
+          ),
+        ],
+        onDestinationSelected: (int index) {
+          switch (index) {
+            case 0: // Manage todos
+              context.go(context.namedLocation('todo-list'));
+              Navigator.pop(context); // Close drawer.
+              break;
+            case 1: // Manage shortcuts
+              // context.push(context.namedLocation('shortcut-list'));
+              Navigator.pop(context); // Close drawer.
+              break;
+            case 2: // Settings
+              context.push(context.namedLocation('settings'));
+              Navigator.pop(context); // Close drawer.
+              break;
+            default:
+          }
+        },
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: _buildFloatingActionButton(context),
       bottomNavigationBar: PrimaryBottomAppBar(

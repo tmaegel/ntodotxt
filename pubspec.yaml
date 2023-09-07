@@ -1,7 +1,7 @@
 ---
 
 name: ntodotxt
-description: A new Flutter project.
+description: Todo.txt app for managing your todo.txt file stored in Nextcloud.
 
 publish_to: 'none'  # Remove this line if you wish to publish to pub.dev
 
@@ -21,6 +21,7 @@ dependencies:
   intl: ^0.18.1
   collection: ^1.17.2
   flex_color_scheme: ^7.3.1
+  shared_preferences: ^2.2.1
 
 dev_dependencies:
   flutter_test:

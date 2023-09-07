@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/config/router/router.dart';
+import 'package:ntodotxt/config/theme/theme.dart';
 import 'package:ntodotxt/constants/placeholder.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/data/theme.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
-import 'package:ntodotxt/presentation/login/states/login.dart';
+import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
+import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
   Bloc.observer = SimpleBlocObserver();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
   final LocalStorageTodoListApi todoListApi =
       LocalStorageTodoListApi.fromList(rawTodoList);
   final TodoListRepository todoListRepository =
       TodoListRepository(todoListApi: todoListApi);
-  runApp(App(todoListRepository: todoListRepository));
+  runApp(
+    App(
+      todoListRepository: todoListRepository,
+      prefs: prefs,
+    ),
+  );
 }
 
 class SimpleBlocObserver extends BlocObserver {
@@ -41,8 +49,13 @@ class SimpleBlocObserver extends BlocObserver {
 
 class App extends StatelessWidget {
   final TodoListRepository todoListRepository;
+  final SharedPreferences prefs;
 
-  const App({required this.todoListRepository, super.key});
+  const App({
+    required this.todoListRepository,
+    required this.prefs,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +67,9 @@ class App extends StatelessWidget {
         providers: [
           BlocProvider<LoginCubit>(
             create: (BuildContext context) => LoginCubit(),
+          ),
+          BlocProvider<SettingsCubit>(
+            create: (BuildContext context) => SettingsCubit(prefs: prefs),
           ),
           BlocProvider<TodoListBloc>(
             create: (context) => TodoListBloc(
