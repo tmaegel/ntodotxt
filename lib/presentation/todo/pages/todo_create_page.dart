@@ -37,11 +37,6 @@ abstract class TodoCreateView extends StatelessWidget {
     context.pushNamed("todo-list");
   }
 
-  /// Cancel current create process
-  void _cancelAction(BuildContext context) {
-    context.pop();
-  }
-
   Widget _buildTodoTextField(BuildContext context, TodoState state) {
     return TextFormField(
       key: const Key('createTodoView_textFormField'),
@@ -66,10 +61,17 @@ abstract class TodoCreateView extends StatelessWidget {
     );
   }
 
+  Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.save),
+      tooltip: 'Save',
+      action: () => _saveAction(context, state),
+    );
+  }
+
   Widget _buildBody({
     required BuildContext context,
     required TodoState state,
-    bool transparentDivider = false,
   }) {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
@@ -83,17 +85,13 @@ abstract class TodoCreateView extends StatelessWidget {
                         left: 18.0, right: 18.0, top: 20, bottom: 24),
                     child: _buildTodoTextField(context, state),
                   ),
-                  Divider(
-                      color: transparentDivider ? Colors.transparent : null),
+                  const Divider(),
                   const TodoPriorityTags(),
-                  Divider(
-                      color: transparentDivider ? Colors.transparent : null),
+                  const Divider(),
                   const TodoProjectTags(),
-                  Divider(
-                      color: transparentDivider ? Colors.transparent : null),
+                  const Divider(),
                   const TodoContextTags(),
-                  Divider(
-                      color: transparentDivider ? Colors.transparent : null),
+                  const Divider(),
                   const TodoKeyValueTags(),
                 ],
               ),
@@ -113,23 +111,17 @@ class TodoCreateNarrowView extends TodoCreateView {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "Create ${state.todo.id}",
-            leadingAction: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _cancelAction(context),
-            ),
           ),
           body: _buildBody(
             context: context,
             state: state,
           ),
-          floatingActionButton: PrimaryFloatingActionButton(
-            icon: const Icon(Icons.save),
-            tooltip: 'Save',
-            action: () => _saveAction(context, state),
-          ),
+          floatingActionButton: _buildFloatingActionButton(context, state),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.endContained,
+          bottomNavigationBar: const PrimaryBottomAppBar(children: []),
         );
       },
     );
@@ -144,34 +136,16 @@ class TodoCreateWideView extends TodoCreateView {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: MainAppBar(
+          appBar: const MainAppBar(
             title: "Create",
-            leadingAction: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _cancelAction(context),
-            ),
-            toolbar: _buildToolBar(context, state),
           ),
           body: _buildBody(
             context: context,
             state: state,
-            transparentDivider: true,
           ),
+          floatingActionButton: _buildFloatingActionButton(context, state),
         );
       },
-    );
-  }
-
-  Widget _buildToolBar(BuildContext context, TodoState state) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          tooltip: 'Save',
-          icon: const Icon(Icons.save),
-          onPressed: () => _saveAction(context, state),
-        ),
-      ],
     );
   }
 }

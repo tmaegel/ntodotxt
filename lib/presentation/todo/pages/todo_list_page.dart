@@ -5,6 +5,7 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
+import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
@@ -52,6 +53,16 @@ abstract class TodoListView extends StatelessWidget {
       useRootNavigator: true,
       context: context,
       builder: (BuildContext context) => const GroupByDialog(),
+    );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.add),
+      tooltip: 'Add',
+      action: () => context.push(
+        context.namedLocation('todo-create'),
+      ),
     );
   }
 
@@ -125,93 +136,17 @@ abstract class TodoListView extends StatelessWidget {
   }
 }
 
-class DrawerDestination {
-  final String label;
-  final Widget icon;
-  final Widget? selectedIcon;
-
-  const DrawerDestination({
-    required this.label,
-    required this.icon,
-    this.selectedIcon,
-  });
-}
-
-const List<DrawerDestination> primaryDestinations = <DrawerDestination>[
-  DrawerDestination(
-    label: 'Todos',
-    icon: Icon(Icons.rule_outlined),
-    selectedIcon: Icon(Icons.rule),
-  ),
-  DrawerDestination(
-    label: 'Views',
-    icon: Icon(Icons.favorite_outline),
-    selectedIcon: Icon(Icons.favorite),
-  ),
-];
-
-const List<DrawerDestination> secondaryDestinations = <DrawerDestination>[
-  DrawerDestination(
-    label: 'Settings',
-    icon: Icon(Icons.settings),
-  ),
-];
-
 class TodoListNarrowView extends TodoListView {
   const TodoListNarrowView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(title: "All todos"),
-      body: const TodoList(),
-      drawer: NavigationDrawer(
-        selectedIndex: 0, // First destination is selected.
-        children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
-            child: SizedBox(),
-          ),
-          ...primaryDestinations.map(
-            (DrawerDestination destination) {
-              return NavigationDrawerDestination(
-                label: Text(destination.label),
-                icon: destination.icon,
-                selectedIcon: destination.selectedIcon,
-              );
-            },
-          ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
-            child: Divider(),
-          ),
-          ...secondaryDestinations.map(
-            (DrawerDestination destination) {
-              return NavigationDrawerDestination(
-                label: Text(destination.label),
-                icon: destination.icon,
-              );
-            },
-          ),
-        ],
-        onDestinationSelected: (int index) {
-          switch (index) {
-            case 0: // Manage todos
-              context.go(context.namedLocation('todo-list'));
-              Navigator.pop(context); // Close drawer.
-              break;
-            case 1: // Manage shortcuts
-              // context.push(context.namedLocation('shortcut-list'));
-              Navigator.pop(context); // Close drawer.
-              break;
-            case 2: // Settings
-              context.push(context.namedLocation('settings'));
-              Navigator.pop(context); // Close drawer.
-              break;
-            default:
-          }
-        },
+      appBar: const MainAppBar(
+        title: "Todos",
       ),
+      body: const TodoList(),
+      drawer: const ResponsiveNavigationDrawer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: _buildFloatingActionButton(context),
       bottomNavigationBar: PrimaryBottomAppBar(
@@ -233,16 +168,6 @@ class TodoListNarrowView extends TodoListView {
       ),
     );
   }
-
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return PrimaryFloatingActionButton(
-      icon: const Icon(Icons.add),
-      tooltip: 'Add',
-      action: () => context.push(
-        context.namedLocation('todo-create'),
-      ),
-    );
-  }
 }
 
 class TodoListWideView extends TodoListView {
@@ -251,24 +176,23 @@ class TodoListWideView extends TodoListView {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          BlocBuilder<TodoListBloc, TodoListState>(
-            buildWhen: (TodoListState previousState, TodoListState state) {
-              // Rebuild if selection has changed only.
-              return previousState.isSelected != state.isSelected;
-            },
-            builder: (BuildContext context, TodoListState state) {
-              if (state.isSelected) {
-                return _buildSecondaryToolBarActions(context, state);
-              } else {
-                return _buildPrimaryToolBarActions(context);
-              }
-            },
-          ),
-          const SizedBox(width: 16.0),
-        ],
+      appBar: MainAppBar(
+        title: "Todos",
+        toolbar: BlocBuilder<TodoListBloc, TodoListState>(
+          buildWhen: (TodoListState previousState, TodoListState state) {
+            // Rebuild if selection has changed only.
+            return previousState.isSelected != state.isSelected;
+          },
+          builder: (BuildContext context, TodoListState state) {
+            if (state.isSelected) {
+              return _buildSecondaryToolBarActions(context, state);
+            } else {
+              return _buildPrimaryToolBarActions(context);
+            }
+          },
+        ),
       ),
+      floatingActionButton: _buildFloatingActionButton(context),
       body: const TodoList(),
     );
   }

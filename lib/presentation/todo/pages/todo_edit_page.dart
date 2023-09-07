@@ -46,11 +46,6 @@ abstract class TodoEditView extends StatelessWidget {
     context.go(context.namedLocation('todo-list'));
   }
 
-  /// Cancel current edit process
-  void _cancelAction(BuildContext context, TodoState state) {
-    context.pop();
-  }
-
   Widget _buildTodoTextField(BuildContext context, TodoState state) {
     return TextFormField(
       key: const Key('editTodoView_textFormField'),
@@ -75,10 +70,29 @@ abstract class TodoEditView extends StatelessWidget {
     );
   }
 
+  Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.save),
+      tooltip: 'Save',
+      action: () => _saveAction(context, state),
+    );
+  }
+
+  Widget _buildToolBar(BuildContext context, TodoState state) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          tooltip: 'Delete',
+          icon: const Icon(Icons.delete),
+          onPressed: () => _deleteAction(context, state),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBody({
     required BuildContext context,
     required TodoState state,
-    bool transparentDivider = false,
   }) {
     return Column(
       children: [
@@ -90,13 +104,13 @@ abstract class TodoEditView extends StatelessWidget {
                     left: 18.0, right: 18.0, top: 20, bottom: 24),
                 child: _buildTodoTextField(context, state),
               ),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoPriorityTags(),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoProjectTags(),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoContextTags(),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoKeyValueTags(),
             ],
           ),
@@ -114,22 +128,20 @@ class TodoEditNarrowView extends TodoEditView {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "Edit ${state.todo.id}",
-            leadingAction: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _cancelAction(context, state),
-            ),
           ),
           body: _buildBody(
             context: context,
             state: state,
           ),
-          floatingActionButton: PrimaryFloatingActionButton(
-            icon: const Icon(Icons.save),
-            tooltip: 'Save',
-            action: () => _saveAction(context, state),
+          floatingActionButton: _buildFloatingActionButton(context, state),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.endContained,
+          bottomNavigationBar: PrimaryBottomAppBar(
+            children: [
+              _buildToolBar(context, state),
+            ],
           ),
         );
       },
@@ -145,39 +157,17 @@ class TodoEditWideView extends TodoEditView {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "Edit",
-            leadingAction: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _cancelAction(context, state),
-            ),
             toolbar: _buildToolBar(context, state),
           ),
           body: _buildBody(
             context: context,
             state: state,
-            transparentDivider: true,
           ),
+          floatingActionButton: _buildFloatingActionButton(context, state),
         );
       },
-    );
-  }
-
-  Widget _buildToolBar(BuildContext context, TodoState state) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          tooltip: 'Delete',
-          icon: const Icon(Icons.delete),
-          onPressed: () => _deleteAction(context, state),
-        ),
-        IconButton(
-          tooltip: 'Save',
-          icon: const Icon(Icons.save),
-          onPressed: () => _saveAction(context, state),
-        ),
-      ],
     );
   }
 }

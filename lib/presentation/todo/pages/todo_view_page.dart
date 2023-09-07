@@ -38,15 +38,29 @@ abstract class TodoViewView extends StatelessWidget {
     context.pushNamed("todo-edit", extra: state.todo);
   }
 
-  /// Cancel current view process
-  void _cancelAction(BuildContext context) {
-    context.goNamed("todo-list");
+  Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
+    return PrimaryFloatingActionButton(
+      icon: const Icon(Icons.edit),
+      tooltip: 'Edit',
+      action: () => _editAction(context, state),
+    );
+  }
+
+  Widget _buildToolBar(BuildContext context, TodoState state) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          tooltip: 'Delete',
+          icon: const Icon(Icons.delete),
+          onPressed: () {},
+        ),
+      ],
+    );
   }
 
   Widget _buildBody({
     required BuildContext context,
     required TodoState state,
-    bool transparentDivider = false,
   }) {
     return Column(
       children: [
@@ -60,13 +74,13 @@ abstract class TodoViewView extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoPriorityTags(readOnly: true),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoProjectTags(readOnly: true),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoContextTags(readOnly: true),
-              Divider(color: transparentDivider ? Colors.transparent : null),
+              const Divider(),
               const TodoKeyValueTags(readOnly: true),
             ],
           ),
@@ -84,22 +98,20 @@ class TodoViewNarrowView extends TodoViewView {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "View ${state.todo.id}",
-            leadingAction: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _cancelAction(context),
-            ),
           ),
           body: _buildBody(
             context: context,
             state: state,
           ),
-          floatingActionButton: PrimaryFloatingActionButton(
-            icon: const Icon(Icons.edit),
-            tooltip: 'Edit',
-            action: () => _editAction(context, state),
+          floatingActionButton: _buildFloatingActionButton(context, state),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.endContained,
+          bottomNavigationBar: PrimaryBottomAppBar(
+            children: [
+              _buildToolBar(context, state),
+            ],
           ),
         );
       },
@@ -115,34 +127,17 @@ class TodoViewWideView extends TodoViewView {
     return BlocBuilder<TodoBloc, TodoState>(
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
           appBar: MainAppBar(
             title: "View",
-            leadingAction: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _cancelAction(context),
-            ),
             toolbar: _buildToolBar(context, state),
           ),
           body: _buildBody(
             context: context,
             state: state,
-            transparentDivider: true,
           ),
+          floatingActionButton: _buildFloatingActionButton(context, state),
         );
       },
-    );
-  }
-
-  Widget _buildToolBar(BuildContext context, TodoState state) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          tooltip: 'Edit',
-          icon: const Icon(Icons.edit),
-          onPressed: () => _editAction(context, state),
-        ),
-      ],
     );
   }
 }

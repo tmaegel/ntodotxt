@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/common_widgets/bottom_sheet.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
@@ -15,6 +14,10 @@ import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_view_page.dart';
 
 class AppRouter {
+  final GlobalKey<NavigatorState> _rootNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'root');
+  final GlobalKey<NavigatorState> _shellNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'shell');
   final LoginCubit loginCubit;
 
   AppRouter(this.loginCubit);
@@ -41,7 +44,9 @@ class AppRouter {
         path: '/todo',
         name: 'todo-list',
         builder: (BuildContext context, GoRouterState state) {
-          return const NarrowLayout(child: TodoListPage());
+          return const NarrowLayout(
+            child: TodoListPage(),
+          );
         },
         routes: [
           GoRoute(
@@ -59,7 +64,6 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               Todo todo = state.extra as Todo;
               return NarrowLayout(
-                // @todo Redirect to error page if id is null.
                 child: TodoViewPage(todo: todo),
               );
             },
@@ -70,7 +74,6 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               Todo todo = state.extra as Todo;
               return NarrowLayout(
-                // @todo Redirect to error page if id is null.
                 child: TodoEditPage(todo: todo),
               );
             },
@@ -93,6 +96,7 @@ class AppRouter {
   );
 
   late final GoRouter routerWideLayout = GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/todo',
     debugLogDiagnostics: true,
     routes: <RouteBase>[
@@ -103,56 +107,50 @@ class AppRouter {
           return const LoginPage();
         },
       ),
-      GoRoute(
-        path: '/settings',
-        name: 'settings',
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          return BottomSheetPage(
-            key: state.pageKey,
-            child: const SettingsPage(),
-          );
-        },
-      ),
-      GoRoute(
-        path: '/todo',
-        name: 'todo-list',
-        builder: (BuildContext context, GoRouterState state) {
-          return const WideLayout(child: TodoListPage());
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) {
+          return WideLayout(child: child);
         },
         routes: [
           GoRoute(
-            path: 'todo/create',
-            name: 'todo-create',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return BottomSheetPage(
-                key: state.pageKey,
-                child: const TodoCreatePage(),
-              );
+            path: '/settings',
+            name: 'settings',
+            builder: (BuildContext context, GoRouterState state) {
+              return const SettingsPage();
             },
           ),
           GoRoute(
-            path: 'todo/view',
-            name: 'todo-view',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              Todo todo = state.extra as Todo;
-              return BottomSheetPage(
-                key: state.pageKey,
-                // @todo Redirect to error page if id is null.
-                child: TodoViewPage(todo: todo),
-              );
+            path: '/todo',
+            name: 'todo-list',
+            builder: (BuildContext context, GoRouterState state) {
+              return const TodoListPage();
             },
-          ),
-          GoRoute(
-            path: 'todo/edit',
-            name: 'todo-edit',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              Todo todo = state.extra as Todo;
-              return BottomSheetPage(
-                key: state.pageKey,
-                // @todo Redirect to error page if id is null.
-                child: TodoEditPage(todo: todo),
-              );
-            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'todo/create',
+                name: 'todo-create',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const TodoCreatePage();
+                },
+              ),
+              GoRoute(
+                path: 'todo/view',
+                name: 'todo-view',
+                builder: (BuildContext context, GoRouterState state) {
+                  Todo todo = state.extra as Todo;
+                  return TodoViewPage(todo: todo);
+                },
+              ),
+              GoRoute(
+                path: 'todo/edit',
+                name: 'todo-edit',
+                builder: (BuildContext context, GoRouterState state) {
+                  Todo todo = state.extra as Todo;
+                  return TodoEditPage(todo: todo);
+                },
+              ),
+            ],
           ),
         ],
       ),
