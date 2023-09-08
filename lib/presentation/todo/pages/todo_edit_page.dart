@@ -125,7 +125,17 @@ class TodoEditNarrowView extends TodoEditView {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocConsumer<TodoBloc, TodoState>(
+      listener: (BuildContext context, TodoState state) {
+        if (state is TodoError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(state.error),
+            ),
+          );
+        }
+      },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
           appBar: MainAppBar(
@@ -154,7 +164,17 @@ class TodoEditWideView extends TodoEditView {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocConsumer<TodoBloc, TodoState>(
+      listener: (BuildContext context, TodoState state) {
+        if (state is TodoError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(state.error),
+            ),
+          );
+        }
+      },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
           appBar: MainAppBar(

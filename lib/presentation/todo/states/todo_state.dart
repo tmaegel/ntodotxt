@@ -1,34 +1,67 @@
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
-enum TodoStatus { initial, loading, success, failure }
-
-final class TodoState extends Equatable {
-  final TodoStatus status;
+sealed class TodoState extends Equatable {
   final Todo todo;
 
   const TodoState({
-    this.status = TodoStatus.initial,
     required this.todo,
   });
 
   TodoState copyWith({
-    TodoStatus? status,
+    String? error,
     Todo? todo,
   }) {
-    return TodoState(
-      status: status ?? this.status,
-      todo: todo ?? this.todo,
-    );
+    if (error == null) {
+      return TodoSuccess(
+        todo: todo ?? this.todo,
+      );
+    } else {
+      return TodoError(
+        error: error,
+        todo: todo ?? this.todo,
+      );
+    }
   }
 
   @override
   List<Object?> get props => [
-        status,
+        todo,
+      ];
+
+  @override
+  String toString() => 'TodoState { id: ${todo.id} todo: "$todo" }';
+}
+
+final class TodoSuccess extends TodoState {
+  const TodoSuccess({
+    required super.todo,
+  });
+
+  @override
+  List<Object?> get props => [
+        todo,
+      ];
+
+  @override
+  String toString() => 'TodoSuccess { id: ${todo.id} todo: "$todo" }';
+}
+
+final class TodoError extends TodoState {
+  final String error;
+
+  const TodoError({
+    required this.error,
+    required super.todo,
+  });
+
+  @override
+  List<Object?> get props => [
+        error,
         todo,
       ];
 
   @override
   String toString() =>
-      'TodoState { status: $status id: ${todo.id} todo: "$todo" }';
+      'TodoError { error: $error id: ${todo.id} todo: "$todo" }';
 }

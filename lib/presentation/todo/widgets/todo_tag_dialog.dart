@@ -80,7 +80,6 @@ class TodoProjectTagDialog extends TodoTagDialog {
 
   @override
   void onSubmit(BuildContext context, String value) {
-    // @todo: Check validity
     context.read<TodoBloc>().add(TodoProjectAdded(value));
   }
 
@@ -100,7 +99,6 @@ class TodoContextTagDialog extends TodoTagDialog {
 
   @override
   void onSubmit(BuildContext context, String value) {
-    // @todo: Check validity
     context.read<TodoBloc>().add(TodoContextAdded(value));
   }
 
@@ -120,7 +118,6 @@ class TodoKeyValueTagDialog extends TodoTagDialog {
 
   @override
   void onSubmit(BuildContext context, String value) {
-    // @todo: Check validity
     context.read<TodoBloc>().add(TodoKeyValueAdded(value));
   }
 

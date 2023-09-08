@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/common_widgets/navigation_bar.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 
 class NarrowLayout extends StatelessWidget {

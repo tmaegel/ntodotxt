@@ -5,14 +5,8 @@ import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
   TodoBloc({
-    TodoStatus status = TodoStatus.initial,
     required Todo todo,
-  }) : super(
-          TodoState(
-            status: status,
-            todo: todo,
-          ),
-        ) {
+  }) : super(TodoSuccess(todo: todo)) {
     on<TodoCompletionToggled>(_onCompletionToggled);
     on<TodoDescriptionChanged>(_onDescriptionChanged);
     on<TodoPriorityAdded>(_onPriorityAdded);
@@ -65,65 +59,113 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoProjectAdded event,
     Emitter<TodoState> emit,
   ) {
-    Set<String> projects = {...state.todo.projects};
-    projects.add(event.project);
-    final Todo todo = state.todo.copyWith(projects: projects);
-    emit(state.copyWith(todo: todo));
+    if (Todo.patternWord.hasMatch(event.project)) {
+      Set<String> projects = {...state.todo.projects};
+      projects.add(event.project);
+      final Todo todo = state.todo.copyWith(projects: projects);
+      emit(state.copyWith(todo: todo));
+    } else {
+      emit(
+        state.copyWith(
+          error: 'Invalid project "${event.project}"',
+        ),
+      );
+    }
   }
 
   void _onProjectRemoved(
     TodoProjectRemoved event,
     Emitter<TodoState> emit,
   ) {
-    Set<String> projects = {...state.todo.projects};
-    projects.remove(event.project);
-    final Todo todo = state.todo.copyWith(projects: projects);
-    emit(state.copyWith(todo: todo));
+    if (Todo.patternWord.hasMatch(event.project)) {
+      Set<String> projects = {...state.todo.projects};
+      projects.remove(event.project);
+      final Todo todo = state.todo.copyWith(projects: projects);
+      emit(state.copyWith(todo: todo));
+    } else {
+      emit(
+        state.copyWith(
+          error: 'Invalid project "${event.project}"',
+        ),
+      );
+    }
   }
 
   void _onContextAdded(
     TodoContextAdded event,
     Emitter<TodoState> emit,
   ) {
-    Set<String> contexts = {...state.todo.contexts};
-    contexts.add(event.context);
-    final Todo todo = state.todo.copyWith(contexts: contexts);
-    emit(state.copyWith(todo: todo));
+    if (Todo.patternWord.hasMatch(event.context)) {
+      Set<String> contexts = {...state.todo.contexts};
+      contexts.add(event.context);
+      final Todo todo = state.todo.copyWith(contexts: contexts);
+      emit(state.copyWith(todo: todo));
+    } else {
+      emit(
+        state.copyWith(
+          error: 'Invalid context "${event.context}"',
+        ),
+      );
+    }
   }
 
   void _onContextRemoved(
     TodoContextRemoved event,
     Emitter<TodoState> emit,
   ) {
-    Set<String> contexts = {...state.todo.contexts};
-    contexts.remove(event.context);
-    final Todo todo = state.todo.copyWith(contexts: contexts);
-    emit(state.copyWith(todo: todo));
+    if (Todo.patternWord.hasMatch(event.context)) {
+      Set<String> contexts = {...state.todo.contexts};
+      contexts.remove(event.context);
+      final Todo todo = state.todo.copyWith(contexts: contexts);
+      emit(state.copyWith(todo: todo));
+    } else {
+      emit(
+        state.copyWith(
+          error: 'Invalid context "${event.context}"',
+        ),
+      );
+    }
   }
 
   void _onKeyValueAdded(
     TodoKeyValueAdded event,
     Emitter<TodoState> emit,
   ) {
-    Map<String, String> keyValues = {...state.todo.keyValues};
-    final List<String> splittedKeyValue = event.keyValue.split(":");
-    if (splittedKeyValue.length == 2) {
-      keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
+    if (Todo.patternKeyValue.hasMatch(event.keyValue)) {
+      Map<String, String> keyValues = {...state.todo.keyValues};
+      final List<String> splittedKeyValue = event.keyValue.split(":");
+      if (splittedKeyValue.length == 2) {
+        keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
+      }
+      final Todo todo = state.todo.copyWith(keyValues: keyValues);
+      emit(state.copyWith(todo: todo));
+    } else {
+      emit(
+        state.copyWith(
+          error: 'Invalid key value "${event.keyValue}"',
+        ),
+      );
     }
-    final Todo todo = state.todo.copyWith(keyValues: keyValues);
-    emit(state.copyWith(todo: todo));
   }
 
   void _onKeyValueRemoved(
     TodoKeyValueRemoved event,
     Emitter<TodoState> emit,
   ) {
-    Map<String, String> keyValues = {...state.todo.keyValues};
-    final List<String> splittedKeyValue = event.keyValue.split(":");
-    if (splittedKeyValue.length == 2) {
-      keyValues.remove(splittedKeyValue[0]);
+    if (Todo.patternKeyValue.hasMatch(event.keyValue)) {
+      Map<String, String> keyValues = {...state.todo.keyValues};
+      final List<String> splittedKeyValue = event.keyValue.split(":");
+      if (splittedKeyValue.length == 2) {
+        keyValues.remove(splittedKeyValue[0]);
+      }
+      final Todo todo = state.todo.copyWith(keyValues: keyValues);
+      emit(state.copyWith(todo: todo));
+    } else {
+      emit(
+        state.copyWith(
+          error: 'Invalid key value "${event.keyValue}"',
+        ),
+      );
     }
-    final Todo todo = state.todo.copyWith(keyValues: keyValues);
-    emit(state.copyWith(todo: todo));
   }
 }

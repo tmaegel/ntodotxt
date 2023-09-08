@@ -35,6 +35,7 @@ class Todo extends Equatable {
   /// 2019-07-03 2019-07-01 Write some tests  (The task is incomplete, so can't have a completion date)
   /// x Write some tests                      (A completed task needs at least a completion date)
 
+  static final RegExp patternWord = RegExp(r'^\S+$');
   static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-Z])\)$');
   static final RegExp patternDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static final RegExp patternProject = RegExp(r'^\+\S+$');

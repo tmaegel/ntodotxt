@@ -73,32 +73,28 @@ abstract class TodoCreateView extends StatelessWidget {
     required BuildContext context,
     required TodoState state,
   }) {
-    return BlocBuilder<TodoBloc, TodoState>(
-      builder: (BuildContext context, TodoState state) {
-        return Column(
-          children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 18.0, right: 18.0, top: 20, bottom: 24),
-                    child: _buildTodoTextField(context, state),
-                  ),
-                  const Divider(),
-                  const TodoPriorityTags(),
-                  const Divider(),
-                  const TodoProjectTags(),
-                  const Divider(),
-                  const TodoContextTags(),
-                  const Divider(),
-                  const TodoKeyValueTags(),
-                ],
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 18.0, right: 18.0, top: 20, bottom: 24),
+                child: _buildTodoTextField(context, state),
               ),
-            ),
-          ],
-        );
-      },
+              const Divider(),
+              const TodoPriorityTags(),
+              const Divider(),
+              const TodoProjectTags(),
+              const Divider(),
+              const TodoContextTags(),
+              const Divider(),
+              const TodoKeyValueTags(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -108,7 +104,17 @@ class TodoCreateNarrowView extends TodoCreateView {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocConsumer<TodoBloc, TodoState>(
+      listener: (BuildContext context, TodoState state) {
+        if (state is TodoError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(state.error),
+            ),
+          );
+        }
+      },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
           appBar: MainAppBar(
@@ -133,7 +139,17 @@ class TodoCreateWideView extends TodoCreateView {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocConsumer<TodoBloc, TodoState>(
+      listener: (BuildContext context, TodoState state) {
+        if (state is TodoError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(state.error),
+            ),
+          );
+        }
+      },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
           appBar: const MainAppBar(

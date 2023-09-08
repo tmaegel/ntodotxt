@@ -20,8 +20,7 @@ void main() {
       final TodoBloc todoBloc = TodoBloc(
         todo: todo,
       );
-      expect(todoBloc.state.status, TodoStatus.initial);
-      expect(todoBloc.state.todo, todo);
+      expect(todoBloc.state, TodoSuccess(todo: todo));
     });
   });
 
@@ -33,7 +32,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoCompletionToggled(true)),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(completion: true, completionDate: now),
         ),
       ],
@@ -45,7 +44,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoCompletionToggled(false)),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(completion: false),
         ),
       ],
@@ -60,7 +59,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoDescriptionChanged('Write more tests')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(description: 'Write more tests'),
         ),
       ],
@@ -75,7 +74,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoPriorityAdded('B')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(priority: 'B'),
         ),
       ],
@@ -90,7 +89,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoPriorityRemoved()),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(priority: null, unsetPriority: true),
         ),
       ],
@@ -105,8 +104,21 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectAdded('project2')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(projects: {'project1', 'project2'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectAdded(<project>) is called (invalid format)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoProjectAdded('project 2')),
+      expect: () => [
+        TodoError(
+          error: 'Invalid project "project 2"',
+          todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
     );
@@ -117,7 +129,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectAdded('project1')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
@@ -129,7 +141,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectAdded('Project1')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
@@ -144,8 +156,21 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project1')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(projects: {}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectRemoved(<project>) is called (invalid format)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoProjectRemoved('project 1')),
+      expect: () => [
+        TodoError(
+          error: 'Invalid project "project 1"',
+          todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
     );
@@ -156,7 +181,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project2')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(projects: {'project1'}),
         ),
       ],
@@ -171,8 +196,21 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextAdded('context2')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(contexts: {'context1', 'context2'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextAdded(<context>) is called (invalid format)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoContextAdded('context 2')),
+      expect: () => [
+        TodoError(
+          error: 'Invalid context "context 2"',
+          todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
     );
@@ -183,7 +221,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextAdded('context1')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
@@ -195,7 +233,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextAdded('Context1')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
@@ -204,14 +242,27 @@ void main() {
 
   group('TodoContextRemoved', () {
     blocTest(
-      'emits a todo with updated contexts when TodoContextRemoved(<constext>) is called',
+      'emits a todo with updated contexts when TodoContextRemoved(<context>) is called',
       build: () => TodoBloc(
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context1')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(contexts: {}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextRemoved(<context>) is called (invalid format)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoContextRemoved('context 1')),
+      expect: () => [
+        TodoError(
+          error: 'Invalid context "context 1"',
+          todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
     );
@@ -222,7 +273,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context2')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(contexts: {'context1'}),
         ),
       ],
@@ -237,7 +288,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueAdded('key:val')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(keyValues: {'foo': 'bar', 'key': 'val'}),
         ),
       ],
@@ -249,7 +300,8 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueAdded('key_val')),
       expect: () => [
-        TodoState(
+        TodoError(
+          error: 'Invalid key value "key_val"',
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),
         ),
       ],
@@ -261,7 +313,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueAdded('foo:bar')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),
         ),
       ],
@@ -273,7 +325,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueAdded('Foo:bar')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),
         ),
       ],
@@ -285,7 +337,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueAdded('foo:new')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(keyValues: {'foo': 'new'}),
         ),
       ],
@@ -300,8 +352,21 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('foo:bar')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(keyValues: {}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValueRemoved(<key:val>) is called (invalid format)',
+      build: () => TodoBloc(
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) => bloc.add(const TodoKeyValueAdded('key_val')),
+      expect: () => [
+        TodoError(
+          error: 'Invalid key value "key_val"',
+          todo: todo.copyWith(keyValues: {'foo': 'bar'}),
         ),
       ],
     );
@@ -312,7 +377,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('key:val')),
       expect: () => [
-        TodoState(
+        TodoSuccess(
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),
         ),
       ],
