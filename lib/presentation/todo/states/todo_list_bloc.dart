@@ -19,8 +19,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListSelectionCompleted>(_onTodoListSelectionCompleted);
     on<TodoListSelectionIncompleted>(_onTodoListSelectionIncompleted);
     on<TodoListSelectionDeleted>(_onTodoListSelectionDeleted);
-    on<TodoListTodoDeleted>(_onTodoDeleted);
-    on<TodoListTodoSubmitted>(_onTodoSubmitted);
     on<TodoListOrderChanged>(_onTodoListOrderChanged);
     on<TodoListFilterChanged>(_onTodoListFilterChanged);
     on<TodoListGroupByChanged>(_onTodoListGroupByChanged);
@@ -36,7 +34,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         todoList: todoList,
       ),
       onError: (_, __) => state.copyWith(
-        status: TodoListStatus.failure,
+        status: TodoListStatus.error,
       ),
     );
   }
@@ -128,20 +126,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) {
     _todoListRepository.deleteMultipleTodos(state.selectedTodos.toList());
-  }
-
-  void _onTodoDeleted(
-    TodoListTodoDeleted event,
-    Emitter<TodoListState> emit,
-  ) {
-    _todoListRepository.deleteTodo(event.todo);
-  }
-
-  void _onTodoSubmitted(
-    TodoListTodoSubmitted event,
-    Emitter<TodoListState> emit,
-  ) {
-    _todoListRepository.saveTodo(event.todo);
   }
 
   void _onTodoListOrderChanged(

@@ -140,7 +140,7 @@ class TodoProjectTags extends TodoTagSection {
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
-                  tooltip: 'Add new project tag',
+                  tooltip: 'Add project tag',
                   onPressed: () => _openDialog(context),
                 )
               : null,
@@ -199,7 +199,7 @@ class TodoContextTags extends TodoTagSection {
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
-                  tooltip: 'Add new context tag',
+                  tooltip: 'Add context tag',
                   onPressed: () => _openDialog(context),
                 )
               : null,
@@ -258,7 +258,7 @@ class TodoKeyValueTags extends TodoTagSection {
           trailing: !readOnly
               ? IconButton(
                   icon: const Icon(Icons.add),
-                  tooltip: 'Add new key:value tag',
+                  tooltip: 'Add key:value tag',
                   onPressed: () => _openDialog(context),
                 )
               : null,

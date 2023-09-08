@@ -83,13 +83,13 @@ class Todo extends Equatable {
   /// Defaults to false.
   final bool selected;
 
-  Todo({
+  Todo._({
     this.id,
     this.completion = false,
     this.priority,
     DateTime? completionDate,
     DateTime? creationDate,
-    this.description = '',
+    required this.description,
     Set<String> projects = const {},
     Set<String> contexts = const {},
     Map<String, String> keyValues = const {},
@@ -114,20 +114,84 @@ class Todo extends Equatable {
           for (MapEntry<String, String> kv in keyValues.entries)
             kv.key.toLowerCase(): kv.value.toLowerCase()
         } {
+    // Validate completion date.
     if (completion) {
       if (completionDate == null) {
         // A completed todo needs at least a completion date.
-        throw const TodoStringMissingCompletionDate();
+        throw const TodoMissingCompletionDate();
       }
     } else {
       if (completionDate != null) {
-        throw const TodoStringForbiddenCompletionDate();
+        throw const TodoForbiddenCompletionDate();
+      }
+    }
+    // @todo: Validate description.
+    // if (description.isEmpty) {
+    //   throw const TodoMissingDescription();
+    // }
+    // Validate project tags.
+    for (var p in projects) {
+      if (!patternWord.hasMatch(p)) {
+        throw TodoInvalidProjectTag(tag: p);
+      }
+    }
+    // Validate context tags.
+    for (var c in contexts) {
+      if (!patternWord.hasMatch(c)) {
+        throw TodoInvalidContextTag(tag: c);
+      }
+    }
+    // Validate key value tags.
+    for (MapEntry<String, String> kv in keyValues.entries) {
+      if (!patternWord.hasMatch(kv.key) || !patternWord.hasMatch(kv.value)) {
+        throw TodoInvalidKeyValueTag(tag: '${kv.key}:${kv.value}');
       }
     }
   }
 
-  Todo.empty() : this();
+  const Todo.noValidation({
+    this.id,
+    this.completion = false,
+    this.priority,
+    this.completionDate,
+    this.creationDate,
+    required this.description,
+    this.projects = const {},
+    this.contexts = const {},
+    this.keyValues = const {},
+    this.selected = false,
+  });
 
+  const Todo.empty() : this.noValidation(description: '');
+
+  /// Factory for model creation (fallback).
+  factory Todo({
+    int? id,
+    bool completion = false,
+    String? priority,
+    DateTime? completionDate,
+    DateTime? creationDate,
+    required description,
+    Set<String> projects = const {},
+    Set<String> contexts = const {},
+    Map<String, String> keyValues = const {},
+    bool selected = false,
+  }) {
+    return Todo._(
+      id: id,
+      completion: completion,
+      priority: priority,
+      completionDate: completionDate,
+      creationDate: creationDate,
+      description: description,
+      projects: projects,
+      contexts: contexts,
+      keyValues: keyValues,
+      selected: selected,
+    );
+  }
+
+  /// Factory for model creation from string.
   factory Todo.fromString({required int id, required String todoStr}) {
     final List<String> todoSplitted = _trim(todoStr).split(' ');
     bool completion;
@@ -157,17 +221,13 @@ class Todo extends Equatable {
         // The provided date is the creation date (todo incompleted).
         creationDate = _date(_strElement(todoSplitted, 0));
         // The todo is not completed so two dates are forbidden.
-        if (_date(_strElement(todoSplitted, 1)) != null) {
-          throw const TodoStringForbiddenCompletionDate();
-        }
+        completionDate = _date(_strElement(todoSplitted, 1));
       } else {
         // [priority] [creationDate] [fullDescription]
         // The provided date is the creation date (todo incompleted).
         creationDate = _date(_strElement(todoSplitted, 1));
         // The todo is not completed so two dates are forbidden.
-        if (_date(_strElement(todoSplitted, 2)) != null) {
-          throw const TodoStringForbiddenCompletionDate();
-        }
+        completionDate = _date(_strElement(todoSplitted, 2));
       }
     }
 
@@ -180,7 +240,7 @@ class Todo extends Equatable {
     }
     fullDescriptionList = _fullDescriptionList(todoSplitted, descriptionIndex);
 
-    return Todo(
+    return Todo._(
       id: id,
       completion: completion,
       priority: priority,
@@ -327,7 +387,7 @@ class Todo extends Equatable {
     bool unsetCompletionDate = false,
     bool unsetCreationDate = false,
   }) {
-    return Todo(
+    return Todo._(
       id: id ?? (unsetId ? null : this.id),
       completion: completion ?? this.completion,
       priority: priority ?? (unsetPriority ? null : this.priority),

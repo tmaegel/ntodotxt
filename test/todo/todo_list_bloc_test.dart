@@ -145,68 +145,6 @@ void main() {
     );
   });
 
-  group('TodoListTodoDeleted', () {
-    blocTest(
-      'emits the todo list state with updated completion state when TodoListTodoDeleted(<todo>) is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) => bloc.add(
-        TodoListTodoDeleted(todo: todo),
-      ),
-      expect: () => [
-        TodoListState(todoList: [todo]),
-        const TodoListState(todoList: []),
-      ],
-    );
-    blocTest(
-      'emits the todo list state with updated completion state when TodoListTodoDeleted(<todo>) is called (not exists)',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) => bloc.add(
-        TodoListTodoDeleted(todo: todo.copyWith(id: 99)),
-      ),
-      expect: () => [
-        TodoListState(todoList: [todo]),
-      ],
-    );
-  });
-
-  group('TodoListTodoSubmitted', () {
-    blocTest(
-      'emits the submitted todo when TodoListTodoSubmitted(<todo>) is called (update)',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) =>
-          bloc.add(TodoListTodoSubmitted(todo: todo.copyWith(priority: 'B'))),
-      expect: () => [
-        TodoListState(todoList: [todo]),
-        TodoListState(
-          todoList: [todo.copyWith(priority: 'B')],
-        ),
-      ],
-    );
-    blocTest(
-      'emits the submitted todo when TodoListTodoSubmitted(<todo>) is called (create)',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) =>
-          bloc.add(TodoListTodoSubmitted(todo: todo.copyWith(unsetId: true))),
-      expect: () => [
-        TodoListState(todoList: [todo]),
-        TodoListState(
-          todoList: [
-            todo,
-            todo.copyWith(id: 1),
-          ],
-        ),
-      ],
-    );
-  });
-
   group('TodoListOrderChanged', () {
     blocTest(
       'emits the todo list state with updated order property when TodoListOrderChanged(<order>) is called',

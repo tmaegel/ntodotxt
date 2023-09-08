@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoCreatePage extends StatelessWidget {
@@ -19,6 +19,7 @@ class TodoCreatePage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
+        todoListRepository: context.read<TodoListRepository>(),
         todo: Todo.empty(),
       ),
       child: screenWidth < maxScreenWidthCompact
@@ -30,12 +31,6 @@ class TodoCreatePage extends StatelessWidget {
 
 abstract class TodoCreateView extends StatelessWidget {
   const TodoCreateView({super.key});
-
-  /// Save new todo
-  void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoListBloc>().add(TodoListTodoSubmitted(todo: state.todo));
-    context.pushNamed("todo-list");
-  }
 
   Widget _buildTodoTextField(BuildContext context, TodoState state) {
     return TextFormField(
@@ -65,7 +60,7 @@ abstract class TodoCreateView extends StatelessWidget {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.save),
       tooltip: 'Save',
-      action: () => _saveAction(context, state),
+      action: () => context.read<TodoBloc>().add(const TodoSubmitted()),
     );
   }
 
@@ -113,6 +108,8 @@ class TodoCreateNarrowView extends TodoCreateView {
               content: Text(state.error),
             ),
           );
+        } else if (state is TodoSuccess) {
+          context.pushNamed("todo-list");
         }
       },
       builder: (BuildContext context, TodoState state) {
@@ -148,6 +145,8 @@ class TodoCreateWideView extends TodoCreateView {
               content: Text(state.error),
             ),
           );
+        } else if (state is TodoSuccess) {
+          context.pushNamed("todo-list");
         }
       },
       builder: (BuildContext context, TodoState state) {

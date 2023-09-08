@@ -1,12 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
+  final TodoListRepository _todoListRepository;
+
   TodoBloc({
+    required TodoListRepository todoListRepository,
     required Todo todo,
-  }) : super(TodoSuccess(todo: todo)) {
+  })  : _todoListRepository = todoListRepository,
+        super(TodoInitial(todo: todo)) {
+    on<TodoSubmitted>(_onSubmitted);
+    on<TodoDeleted>(_onDeleted);
     on<TodoCompletionToggled>(_onCompletionToggled);
     on<TodoDescriptionChanged>(_onDescriptionChanged);
     on<TodoPriorityAdded>(_onPriorityAdded);
@@ -17,6 +25,27 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoContextRemoved>(_onContextRemoved);
     on<TodoKeyValueAdded>(_onKeyValueAdded);
     on<TodoKeyValueRemoved>(_onKeyValueRemoved);
+  }
+
+  void _onSubmitted(
+    TodoSubmitted event,
+    Emitter<TodoState> emit,
+  ) {
+    try {
+      _todoListRepository.saveTodo(state.todo);
+      emit(state.copyWithSubmit());
+    } on TodoMissingDescription catch (e) {
+      emit(
+        state.copyWithError(error: e.toString()),
+      );
+    }
+  }
+
+  void _onDeleted(
+    TodoDeleted event,
+    Emitter<TodoState> emit,
+  ) {
+    _todoListRepository.deleteTodo(state.todo);
   }
 
   void _onCompletionToggled(
@@ -59,16 +88,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoProjectAdded event,
     Emitter<TodoState> emit,
   ) {
-    if (Todo.patternWord.hasMatch(event.project)) {
+    try {
       Set<String> projects = {...state.todo.projects};
       projects.add(event.project);
       final Todo todo = state.todo.copyWith(projects: projects);
       emit(state.copyWith(todo: todo));
-    } else {
+    } on TodoInvalidProjectTag catch (e) {
       emit(
-        state.copyWith(
-          error: 'Invalid project "${event.project}"',
-        ),
+        state.copyWithError(error: e.toString()),
       );
     }
   }
@@ -77,16 +104,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoProjectRemoved event,
     Emitter<TodoState> emit,
   ) {
-    if (Todo.patternWord.hasMatch(event.project)) {
+    try {
       Set<String> projects = {...state.todo.projects};
       projects.remove(event.project);
       final Todo todo = state.todo.copyWith(projects: projects);
       emit(state.copyWith(todo: todo));
-    } else {
+    } on TodoInvalidProjectTag catch (e) {
       emit(
-        state.copyWith(
-          error: 'Invalid project "${event.project}"',
-        ),
+        state.copyWithError(error: e.toString()),
       );
     }
   }
@@ -95,16 +120,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoContextAdded event,
     Emitter<TodoState> emit,
   ) {
-    if (Todo.patternWord.hasMatch(event.context)) {
+    try {
       Set<String> contexts = {...state.todo.contexts};
       contexts.add(event.context);
       final Todo todo = state.todo.copyWith(contexts: contexts);
       emit(state.copyWith(todo: todo));
-    } else {
+    } on TodoInvalidContextTag catch (e) {
       emit(
-        state.copyWith(
-          error: 'Invalid context "${event.context}"',
-        ),
+        state.copyWithError(error: e.toString()),
       );
     }
   }
@@ -113,16 +136,14 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoContextRemoved event,
     Emitter<TodoState> emit,
   ) {
-    if (Todo.patternWord.hasMatch(event.context)) {
+    try {
       Set<String> contexts = {...state.todo.contexts};
       contexts.remove(event.context);
       final Todo todo = state.todo.copyWith(contexts: contexts);
       emit(state.copyWith(todo: todo));
-    } else {
+    } on TodoInvalidContextTag catch (e) {
       emit(
-        state.copyWith(
-          error: 'Invalid context "${event.context}"',
-        ),
+        state.copyWithError(error: e.toString()),
       );
     }
   }
@@ -131,7 +152,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoKeyValueAdded event,
     Emitter<TodoState> emit,
   ) {
-    if (Todo.patternKeyValue.hasMatch(event.keyValue)) {
+    try {
+      if (!Todo.patternKeyValue.hasMatch(event.keyValue)) {
+        throw TodoInvalidKeyValueTag(tag: event.keyValue);
+      }
       Map<String, String> keyValues = {...state.todo.keyValues};
       final List<String> splittedKeyValue = event.keyValue.split(":");
       if (splittedKeyValue.length == 2) {
@@ -139,11 +163,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
       final Todo todo = state.todo.copyWith(keyValues: keyValues);
       emit(state.copyWith(todo: todo));
-    } else {
+    } on TodoInvalidKeyValueTag catch (e) {
       emit(
-        state.copyWith(
-          error: 'Invalid key value "${event.keyValue}"',
-        ),
+        state.copyWithError(error: e.toString()),
       );
     }
   }
@@ -152,7 +174,10 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoKeyValueRemoved event,
     Emitter<TodoState> emit,
   ) {
-    if (Todo.patternKeyValue.hasMatch(event.keyValue)) {
+    try {
+      if (!Todo.patternKeyValue.hasMatch(event.keyValue)) {
+        throw TodoInvalidKeyValueTag(tag: event.keyValue);
+      }
       Map<String, String> keyValues = {...state.todo.keyValues};
       final List<String> splittedKeyValue = event.keyValue.split(":");
       if (splittedKeyValue.length == 2) {
@@ -160,11 +185,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       }
       final Todo todo = state.todo.copyWith(keyValues: keyValues);
       emit(state.copyWith(todo: todo));
-    } else {
+    } on TodoInvalidKeyValueTag catch (e) {
       emit(
-        state.copyWith(
-          error: 'Invalid key value "${event.keyValue}"',
-        ),
+        state.copyWithError(error: e.toString()),
       );
     }
   }

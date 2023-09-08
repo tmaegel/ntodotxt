@@ -8,20 +8,33 @@ sealed class TodoState extends Equatable {
     required this.todo,
   });
 
+  /// Initial state.
   TodoState copyWith({
-    String? error,
     Todo? todo,
   }) {
-    if (error == null) {
-      return TodoSuccess(
-        todo: todo ?? this.todo,
-      );
-    } else {
-      return TodoError(
-        error: error,
-        todo: todo ?? this.todo,
-      );
-    }
+    return TodoInitial(
+      todo: todo ?? this.todo,
+    );
+  }
+
+  /// Status after successful submission.
+  TodoState copyWithSubmit({
+    Todo? todo,
+  }) {
+    return TodoSuccess(
+      todo: todo ?? this.todo,
+    );
+  }
+
+  /// Error state
+  TodoState copyWithError({
+    required String error,
+    Todo? todo,
+  }) {
+    return TodoError(
+      error: error,
+      todo: todo ?? this.todo,
+    );
   }
 
   @override
@@ -31,6 +44,20 @@ sealed class TodoState extends Equatable {
 
   @override
   String toString() => 'TodoState { id: ${todo.id} todo: "$todo" }';
+}
+
+final class TodoInitial extends TodoState {
+  const TodoInitial({
+    required super.todo,
+  });
+
+  @override
+  List<Object?> get props => [
+        todo,
+      ];
+
+  @override
+  String toString() => 'TodoInitial { id: ${todo.id} todo: "$todo" }';
 }
 
 final class TodoSuccess extends TodoState {

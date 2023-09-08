@@ -100,7 +100,8 @@ class LocalStorageTodoListApi extends TodoListApi {
       if (index == -1) {
         throw TodoNotFound(id: todo.id);
       } else {
-        todoList[index] = todo;
+        // Call copyWith() to force validation logic.
+        todoList[index] = todo.copyWith();
       }
     }
 

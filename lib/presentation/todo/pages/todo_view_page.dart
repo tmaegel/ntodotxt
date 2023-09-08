@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
@@ -21,6 +22,7 @@ class TodoViewPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
+        todoListRepository: context.read<TodoListRepository>(),
         todo: _todo,
       ),
       child: screenWidth < maxScreenWidthCompact
@@ -33,16 +35,11 @@ class TodoViewPage extends StatelessWidget {
 abstract class TodoViewView extends StatelessWidget {
   const TodoViewView({super.key});
 
-  /// Edit current todo
-  void _editAction(BuildContext context, TodoState state) {
-    context.pushNamed("todo-edit", extra: state.todo);
-  }
-
   Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.edit),
       tooltip: 'Edit',
-      action: () => _editAction(context, state),
+      action: () => context.pushNamed("todo-edit", extra: state.todo),
     );
   }
 
@@ -52,7 +49,7 @@ abstract class TodoViewView extends StatelessWidget {
         IconButton(
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
-          onPressed: () {},
+          onPressed: () => context.read<TodoBloc>().add(const TodoDeleted()),
         ),
       ],
     );

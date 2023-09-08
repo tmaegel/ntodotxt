@@ -58,7 +58,7 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
             ),
             trailing: IconButton.filled(
               icon: const Icon(Icons.done),
-              tooltip: 'Add new ${widget.tagName} tag',
+              tooltip: 'Add ${widget.tagName} tag',
               onPressed: () {
                 widget.onSubmit(context, _controller.text);
                 Navigator.pop(context);

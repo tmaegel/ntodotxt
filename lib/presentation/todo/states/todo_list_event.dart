@@ -59,28 +59,6 @@ final class TodoListSelectionDeleted extends TodoListEvent {
   const TodoListSelectionDeleted();
 }
 
-final class TodoListTodoDeleted extends TodoListEvent {
-  final Todo todo;
-
-  const TodoListTodoDeleted({
-    required this.todo,
-  });
-
-  @override
-  List<Object?> get props => [todo];
-}
-
-final class TodoListTodoSubmitted extends TodoListEvent {
-  final Todo todo;
-
-  const TodoListTodoSubmitted({
-    required this.todo,
-  });
-
-  @override
-  List<Object?> get props => [todo];
-}
-
 final class TodoListOrderChanged extends TodoListEvent {
   final TodoListOrder order;
 

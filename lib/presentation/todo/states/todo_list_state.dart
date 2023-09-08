@@ -6,7 +6,7 @@ enum TodoListStatus {
   initial,
   loading,
   success,
-  failure,
+  error,
 }
 
 enum TodoListFilter {

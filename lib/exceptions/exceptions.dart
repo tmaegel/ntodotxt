@@ -1,10 +1,10 @@
-class TodoException implements Exception {
+sealed class TodoException implements Exception {
   final String message;
 
   const TodoException(this.message);
 
   @override
-  String toString() => 'TodoException: $message';
+  String toString() => message;
 }
 
 class TodoNotFound extends TodoException {
@@ -12,30 +12,43 @@ class TodoNotFound extends TodoException {
   const TodoNotFound({
     this.id,
   }) : super('Todo with id $id could not be found');
-
-  @override
-  String toString() => 'TodoNotFound: $message';
 }
 
 class TodoStringMalformed extends TodoException {
   const TodoStringMalformed() : super('Todo string is malformed');
-
-  @override
-  String toString() => 'TodoStringMalformed: $message';
 }
 
-class TodoStringForbiddenCompletionDate extends TodoException {
-  const TodoStringForbiddenCompletionDate()
+class TodoInvalidProjectTag extends TodoException {
+  final String tag;
+  const TodoInvalidProjectTag({
+    required this.tag,
+  }) : super('Invalid project tag: $tag');
+}
+
+class TodoInvalidContextTag extends TodoException {
+  final String tag;
+  const TodoInvalidContextTag({
+    required this.tag,
+  }) : super('Invalid context tag: $tag');
+}
+
+class TodoInvalidKeyValueTag extends TodoException {
+  final String tag;
+  const TodoInvalidKeyValueTag({
+    required this.tag,
+  }) : super('Invalid key value tag: $tag');
+}
+
+class TodoMissingDescription extends TodoException {
+  const TodoMissingDescription() : super('Description is mandatory');
+}
+
+class TodoForbiddenCompletionDate extends TodoException {
+  const TodoForbiddenCompletionDate()
       : super('Completion date is forbidden if todo is incompleted');
-
-  @override
-  String toString() => 'TodoStringForbiddenCompletionDate: $message';
 }
 
-class TodoStringMissingCompletionDate extends TodoException {
-  const TodoStringMissingCompletionDate()
+class TodoMissingCompletionDate extends TodoException {
+  const TodoMissingCompletionDate()
       : super('Completed todo requires a completion date');
-
-  @override
-  String toString() => 'TodoStringMissingCompletionDate: $message';
 }

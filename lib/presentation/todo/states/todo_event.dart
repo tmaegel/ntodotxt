@@ -7,6 +7,20 @@ sealed class TodoEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+final class TodoSubmitted extends TodoEvent {
+  const TodoSubmitted();
+
+  @override
+  List<Object> get props => [];
+}
+
+final class TodoDeleted extends TodoEvent {
+  const TodoDeleted();
+
+  @override
+  List<Object> get props => [];
+}
+
 final class TodoCompletionToggled extends TodoEvent {
   final bool completion;
 

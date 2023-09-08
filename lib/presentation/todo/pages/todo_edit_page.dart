@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
 
 class TodoEditPage extends StatelessWidget {
@@ -22,6 +22,7 @@ class TodoEditPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
+        todoListRepository: context.read<TodoListRepository>(),
         todo: _todo,
       ),
       child: screenWidth < maxScreenWidthCompact
@@ -33,18 +34,6 @@ class TodoEditPage extends StatelessWidget {
 
 abstract class TodoEditView extends StatelessWidget {
   const TodoEditView({super.key});
-
-  /// Save current todo
-  void _saveAction(BuildContext context, TodoState state) {
-    context.read<TodoListBloc>().add(TodoListTodoSubmitted(todo: state.todo));
-    context.pushNamed("todo-view", extra: state.todo);
-  }
-
-  /// Delete current todo
-  void _deleteAction(BuildContext context, TodoState state) {
-    context.read<TodoListBloc>().add(TodoListTodoDeleted(todo: state.todo));
-    context.go(context.namedLocation('todo-list'));
-  }
 
   Widget _buildTodoTextField(BuildContext context, TodoState state) {
     return TextFormField(
@@ -74,7 +63,7 @@ abstract class TodoEditView extends StatelessWidget {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.save),
       tooltip: 'Save',
-      action: () => _saveAction(context, state),
+      action: () => context.read<TodoBloc>().add(const TodoSubmitted()),
     );
   }
 
@@ -84,7 +73,7 @@ abstract class TodoEditView extends StatelessWidget {
         IconButton(
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
-          onPressed: () => _deleteAction(context, state),
+          onPressed: () => context.read<TodoBloc>().add(const TodoDeleted()),
         ),
       ],
     );
@@ -134,6 +123,8 @@ class TodoEditNarrowView extends TodoEditView {
               content: Text(state.error),
             ),
           );
+        } else if (state is TodoSuccess) {
+          context.pushNamed("todo-view", extra: state.todo);
         }
       },
       builder: (BuildContext context, TodoState state) {
@@ -173,6 +164,8 @@ class TodoEditWideView extends TodoEditView {
               content: Text(state.error),
             ),
           );
+        } else if (state is TodoSuccess) {
+          context.pushNamed("todo-view", extra: state.todo);
         }
       },
       builder: (BuildContext context, TodoState state) {
