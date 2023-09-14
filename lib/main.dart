@@ -85,6 +85,10 @@ class App extends StatelessWidget {
               title: 'Flutter layout demo',
               debugShowCheckedModeBanner: false, // Remove the debug banner
               theme: lightTheme.copyWith(
+                expansionTileTheme: lightTheme.expansionTileTheme.copyWith(
+                  collapsedBackgroundColor:
+                      lightTheme.appBarTheme.backgroundColor,
+                ),
                 listTileTheme: lightTheme.listTileTheme.copyWith(
                   selectedColor: lightTheme.textTheme.bodySmall?.color,
                   selectedTileColor: lightTheme.hoverColor,
