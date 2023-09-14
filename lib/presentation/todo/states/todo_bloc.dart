@@ -19,11 +19,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoDescriptionChanged>(_onDescriptionChanged);
     on<TodoPriorityAdded>(_onPriorityAdded);
     on<TodoPriorityRemoved>(_onPriorityRemoved);
-    on<TodoProjectAdded>(_onProjectAdded);
+    on<TodoProjectsAdded>(_onProjectAdded);
     on<TodoProjectRemoved>(_onProjectRemoved);
-    on<TodoContextAdded>(_onContextAdded);
+    on<TodoContextsAdded>(_onContextAdded);
     on<TodoContextRemoved>(_onContextRemoved);
-    on<TodoKeyValueAdded>(_onKeyValueAdded);
+    on<TodoKeyValuesAdded>(_onKeyValueAdded);
     on<TodoKeyValueRemoved>(_onKeyValueRemoved);
   }
 
@@ -85,12 +85,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onProjectAdded(
-    TodoProjectAdded event,
+    TodoProjectsAdded event,
     Emitter<TodoState> emit,
   ) {
     try {
       Set<String> projects = {...state.todo.projects};
-      projects.add(event.project);
+      projects.addAll(event.projects);
       final Todo todo = state.todo.copyWith(projects: projects);
       emit(state.copyWith(todo: todo));
     } on TodoInvalidProjectTag catch (e) {
@@ -117,12 +117,12 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onContextAdded(
-    TodoContextAdded event,
+    TodoContextsAdded event,
     Emitter<TodoState> emit,
   ) {
     try {
       Set<String> contexts = {...state.todo.contexts};
-      contexts.add(event.context);
+      contexts.addAll(event.contexts);
       final Todo todo = state.todo.copyWith(contexts: contexts);
       emit(state.copyWith(todo: todo));
     } on TodoInvalidContextTag catch (e) {
@@ -149,17 +149,19 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   }
 
   void _onKeyValueAdded(
-    TodoKeyValueAdded event,
+    TodoKeyValuesAdded event,
     Emitter<TodoState> emit,
   ) {
     try {
-      if (!Todo.patternKeyValue.hasMatch(event.keyValue)) {
-        throw TodoInvalidKeyValueTag(tag: event.keyValue);
-      }
       Map<String, String> keyValues = {...state.todo.keyValues};
-      final List<String> splittedKeyValue = event.keyValue.split(":");
-      if (splittedKeyValue.length == 2) {
-        keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
+      for (var kv in event.keyValues) {
+        if (!Todo.patternKeyValue.hasMatch(kv)) {
+          throw TodoInvalidKeyValueTag(tag: kv);
+        }
+        final List<String> splittedKeyValue = kv.split(":");
+        if (splittedKeyValue.length == 2) {
+          keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
+        }
       }
       final Todo todo = state.todo.copyWith(keyValues: keyValues);
       emit(state.copyWith(todo: todo));

@@ -124,7 +124,7 @@ class TodoEditNarrowView extends TodoEditView {
             ),
           );
         } else if (state is TodoSuccess) {
-          context.pushNamed("todo-view", extra: state.todo);
+          context.goNamed("todo-list");
         }
       },
       builder: (BuildContext context, TodoState state) {
@@ -165,7 +165,7 @@ class TodoEditWideView extends TodoEditView {
             ),
           );
         } else if (state is TodoSuccess) {
-          context.pushNamed("todo-view", extra: state.todo);
+          context.goNamed("todo-list");
         }
       },
       builder: (BuildContext context, TodoState state) {

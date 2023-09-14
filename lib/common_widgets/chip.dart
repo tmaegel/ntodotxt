@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 
 class GenericChoiceChip extends ChoiceChip {
-  final bool overwriteEnabled;
-
   const GenericChoiceChip({
     required super.label,
     super.selected = false,
     super.showCheckmark = false,
     super.onSelected,
-    this.overwriteEnabled = false,
     super.key,
   });
-
-  @override
-  bool get isEnabled => !overwriteEnabled ? onSelected != null : true;
 }
 
 class GenericChipGroup extends StatelessWidget {

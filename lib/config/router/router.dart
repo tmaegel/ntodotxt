@@ -11,7 +11,6 @@ import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_view_page.dart';
 
 class AppRouter {
   final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -55,16 +54,6 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const NarrowLayout(
                 child: TodoCreatePage(),
-              );
-            },
-          ),
-          GoRoute(
-            path: 'todo/view',
-            name: 'todo-view',
-            builder: (BuildContext context, GoRouterState state) {
-              Todo todo = state.extra as Todo;
-              return NarrowLayout(
-                child: TodoViewPage(todo: todo),
               );
             },
           ),
@@ -132,14 +121,6 @@ class AppRouter {
                 name: 'todo-create',
                 builder: (BuildContext context, GoRouterState state) {
                   return const TodoCreatePage();
-                },
-              ),
-              GoRoute(
-                path: 'todo/view',
-                name: 'todo-view',
-                builder: (BuildContext context, GoRouterState state) {
-                  Todo todo = state.extra as Todo;
-                  return TodoViewPage(todo: todo);
                 },
               ),
               GoRoute(

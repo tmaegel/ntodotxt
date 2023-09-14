@@ -52,13 +52,13 @@ final class TodoPriorityRemoved extends TodoEvent {
   const TodoPriorityRemoved();
 }
 
-final class TodoProjectAdded extends TodoEvent {
-  final String project;
+final class TodoProjectsAdded extends TodoEvent {
+  final List<String> projects;
 
-  const TodoProjectAdded(this.project);
+  const TodoProjectsAdded(this.projects);
 
   @override
-  List<Object> get props => [project];
+  List<Object> get props => [projects];
 }
 
 final class TodoProjectRemoved extends TodoEvent {
@@ -70,13 +70,13 @@ final class TodoProjectRemoved extends TodoEvent {
   List<Object> get props => [project];
 }
 
-final class TodoContextAdded extends TodoEvent {
-  final String context;
+final class TodoContextsAdded extends TodoEvent {
+  final List<String> contexts;
 
-  const TodoContextAdded(this.context);
+  const TodoContextsAdded(this.contexts);
 
   @override
-  List<Object> get props => [context];
+  List<Object> get props => [contexts];
 }
 
 final class TodoContextRemoved extends TodoEvent {
@@ -88,13 +88,13 @@ final class TodoContextRemoved extends TodoEvent {
   List<Object> get props => [context];
 }
 
-final class TodoKeyValueAdded extends TodoEvent {
-  final String keyValue;
+final class TodoKeyValuesAdded extends TodoEvent {
+  final List<String> keyValues;
 
-  const TodoKeyValueAdded(this.keyValue);
+  const TodoKeyValuesAdded(this.keyValues);
 
   @override
-  List<Object> get props => [keyValue];
+  List<Object> get props => [keyValues];
 }
 
 final class TodoKeyValueRemoved extends TodoEvent {

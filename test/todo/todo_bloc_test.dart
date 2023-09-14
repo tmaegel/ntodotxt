@@ -110,27 +110,28 @@ void main() {
     );
   });
 
-  group('TodoProjectAdded', () {
+  group('TodoProjectsAdded', () {
     blocTest(
-      'emits a todo with updated projects when TodoProjectAdded(<project>) is called',
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoProjectAdded('project2')),
+      act: (bloc) => bloc.add(const TodoProjectsAdded(['project2'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(projects: {'project1', 'project2'}),
         ),
       ],
     );
+
     blocTest(
-      'emits a todo with updated projects when TodoProjectAdded(<project>) is called (invalid format)',
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (invalid format)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoProjectAdded('project 2')),
+      act: (bloc) => bloc.add(const TodoProjectsAdded(['project 2'])),
       expect: () => [
         TodoError(
           error: 'Invalid project tag: project 2',
@@ -139,12 +140,12 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated projects when TodoProjectAdded(<project>) is called (duplication)',
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (duplication)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoProjectAdded('project1')),
+      act: (bloc) => bloc.add(const TodoProjectsAdded(['project1'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(projects: {'project1'}),
@@ -152,15 +153,72 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated projects when TodoProjectAdded(<project>) is called (duplication, case sensitive)',
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (duplication/case sensitive)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoProjectAdded('Project1')),
+      act: (bloc) => bloc.add(const TodoProjectsAdded(['Project1'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(projects: {'project1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoProjectsAdded(['project2', 'project3'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(projects: {'project1', 'project2', 'project3'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries/invalid format)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoProjectsAdded(['project1', 'project 2'])),
+      expect: () => [
+        TodoError(
+          error: 'Invalid project tag: project 2',
+          todo: todo.copyWith(projects: {'project1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries/duplication)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoProjectsAdded(['project1', 'project2'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(projects: {'project1', 'project2'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries/duplication/case sensitive)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoProjectsAdded(['Project1', 'Project2'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(projects: {'project1', 'project2'}),
         ),
       ],
     );
@@ -208,14 +266,14 @@ void main() {
     );
   });
 
-  group('TodoContextAdded', () {
+  group('TodoContextsAdded', () {
     blocTest(
-      'emits a todo with updated contexts when TodoContextAdded(<constext>) is called',
+      'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoContextAdded('context2')),
+      act: (bloc) => bloc.add(const TodoContextsAdded(['context2'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(contexts: {'context1', 'context2'}),
@@ -223,12 +281,12 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated contexts when TodoContextAdded(<context>) is called (invalid format)',
+      'emits a todo with updated contexts when TodoContextsAdded(<contexts>) is called (invalid format)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoContextAdded('context 2')),
+      act: (bloc) => bloc.add(const TodoContextsAdded(['context 2'])),
       expect: () => [
         TodoError(
           error: 'Invalid context tag: context 2',
@@ -237,12 +295,12 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated contexts when TodoContextAdded(<context>) is called (duplication)',
+      'emits a todo with updated contexts when TodoContextsAdded(<contexts>) is called (duplication)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoContextAdded('context1')),
+      act: (bloc) => bloc.add(const TodoContextsAdded(['context1'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(contexts: {'context1'}),
@@ -250,15 +308,72 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated contexts when TodoContextAdded(<context>) is called (duplication, case sensitive)',
+      'emits a todo with updated contexts when TodoContextsAdded(<contexts>) is called (duplication/case sensitive)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoContextAdded('Context1')),
+      act: (bloc) => bloc.add(const TodoContextsAdded(['Context1'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(contexts: {'context1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoContextsAdded(['context2', 'context3'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(contexts: {'context1', 'context2', 'context3'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries/invalid format)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoContextsAdded(['context1', 'context 2'])),
+      expect: () => [
+        TodoError(
+          error: 'Invalid context tag: context 2',
+          todo: todo.copyWith(contexts: {'context1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries/duplication)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoContextsAdded(['context1', 'context2'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(contexts: {'context1', 'context2'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries/duplication/case sensitive)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoContextsAdded(['Context1', 'Context2'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(contexts: {'context1', 'context2'}),
         ),
       ],
     );
@@ -306,14 +421,14 @@ void main() {
     );
   });
 
-  group('TodoKeyValueAdded', () {
+  group('TodoKeyValuesAdded', () {
     blocTest(
-      'emits a todo with updated key-values when TodoKeyValueAdded(<key:val>) is called',
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoKeyValueAdded('key:val')),
+      act: (bloc) => bloc.add(const TodoKeyValuesAdded(['key:val'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(keyValues: {'foo': 'bar', 'key': 'val'}),
@@ -321,12 +436,12 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated key-values when TodoKeyValueAdded(<key:val>) is called (invalid format)',
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (invalid format)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoKeyValueAdded('key_val')),
+      act: (bloc) => bloc.add(const TodoKeyValuesAdded(['key_val'])),
       expect: () => [
         TodoError(
           error: 'Invalid key value tag: key_val',
@@ -335,12 +450,12 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated key-values when TodoKeyValueAdded(<key:val>) is called (duplication)',
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (duplication)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoKeyValueAdded('foo:bar')),
+      act: (bloc) => bloc.add(const TodoKeyValuesAdded(['foo:bar'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),
@@ -348,12 +463,12 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated key-values when TodoKeyValueAdded(<key:val>) is called (duplication, case sensitive)',
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (duplication/case sensitive)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoKeyValueAdded('Foo:bar')),
+      act: (bloc) => bloc.add(const TodoKeyValuesAdded(['Foo:bar'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(keyValues: {'foo': 'bar'}),
@@ -361,15 +476,87 @@ void main() {
       ],
     );
     blocTest(
-      'emits a todo with updated key-values when TodoKeyValueAdded(<key:val>) is called (duplication, update value)',
+      'emits a todo with updated key-values when TodoKeyValueAdded(<keyValues>) is called (duplication/update value)',
       build: () => TodoBloc(
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoKeyValueAdded('foo:new')),
+      act: (bloc) => bloc.add(const TodoKeyValuesAdded(['foo:new'])),
       expect: () => [
         TodoInitial(
           todo: todo.copyWith(keyValues: {'foo': 'new'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoKeyValuesAdded(['key1:val1', 'key2:val2'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(
+              keyValues: {'foo': 'bar', 'key1': 'val1', 'key2': 'val2'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/invalid format)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoKeyValuesAdded(['key1:val1', 'key2_val2'])),
+      expect: () => [
+        TodoError(
+          error: 'Invalid key value tag: key2_val2',
+          todo: todo.copyWith(keyValues: {'foo': 'bar'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/duplication)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoKeyValuesAdded(['key1:val1', 'foo:bar'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(keyValues: {'foo': 'bar', 'key1': 'val1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/duplication/case sensitive)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoKeyValuesAdded(['Key1:val1', 'Foo:bar'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(keyValues: {'foo': 'bar', 'key1': 'val1'}),
+        ),
+      ],
+    );
+    blocTest(
+      'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/update value)',
+      build: () => TodoBloc(
+        todoListRepository: todoListRepository,
+        todo: todo.copyWith(),
+      ),
+      act: (bloc) =>
+          bloc.add(const TodoKeyValuesAdded(['key1:val1', 'foo:new'])),
+      expect: () => [
+        TodoInitial(
+          todo: todo.copyWith(keyValues: {'foo': 'new', 'key1': 'val1'}),
         ),
       ],
     );
@@ -395,7 +582,7 @@ void main() {
         todoListRepository: todoListRepository,
         todo: todo.copyWith(),
       ),
-      act: (bloc) => bloc.add(const TodoKeyValueAdded('key_val')),
+      act: (bloc) => bloc.add(const TodoKeyValueRemoved('key_val')),
       expect: () => [
         TodoError(
           error: 'Invalid key value tag: key_val',

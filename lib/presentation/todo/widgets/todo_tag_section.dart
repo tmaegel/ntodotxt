@@ -8,11 +8,9 @@ import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
 abstract class TodoTagSection extends StatelessWidget {
   final Icon leadingIcon;
-  final bool readOnly;
 
   const TodoTagSection({
     required this.leadingIcon,
-    this.readOnly = false,
     super.key,
   });
 
@@ -40,10 +38,7 @@ abstract class TodoTagSection extends StatelessWidget {
           GenericChoiceChip(
             label: Text(t),
             selected: selectedTags.contains(t),
-            overwriteEnabled: readOnly,
-            onSelected: !readOnly
-                ? (bool selected) => _onSelected(context, t, selected)
-                : null,
+            onSelected: (bool selected) => _onSelected(context, t, selected),
           ),
       ],
     );
@@ -53,7 +48,6 @@ abstract class TodoTagSection extends StatelessWidget {
 class TodoPriorityTags extends TodoTagSection {
   const TodoPriorityTags({
     super.leadingIcon = const Icon(Icons.outlined_flag),
-    super.readOnly,
     super.key,
   });
 
@@ -94,14 +88,13 @@ class TodoPriorityTags extends TodoTagSection {
 class TodoProjectTags extends TodoTagSection {
   const TodoProjectTags({
     super.leadingIcon = const Icon(Icons.rocket_launch_outlined),
-    super.readOnly,
     super.key,
   });
 
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoProjectAdded(value));
+      context.read<TodoBloc>().add(TodoProjectsAdded([value]));
     } else {
       context.read<TodoBloc>().add(TodoProjectRemoved(value));
     }
@@ -137,13 +130,11 @@ class TodoProjectTags extends TodoTagSection {
             tags: state.todo.projects,
             selectedTags: state.todo.projects,
           ),
-          trailing: !readOnly
-              ? IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Add project tag',
-                  onPressed: () => _openDialog(context),
-                )
-              : null,
+          trailing: IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Add project tag',
+            onPressed: () => _openDialog(context),
+          ),
         );
       },
     );
@@ -153,14 +144,13 @@ class TodoProjectTags extends TodoTagSection {
 class TodoContextTags extends TodoTagSection {
   const TodoContextTags({
     super.leadingIcon = const Icon(Icons.sell_outlined),
-    super.readOnly,
     super.key,
   });
 
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoContextAdded(value));
+      context.read<TodoBloc>().add(TodoContextsAdded([value]));
     } else {
       context.read<TodoBloc>().add(TodoContextRemoved(value));
     }
@@ -196,13 +186,11 @@ class TodoContextTags extends TodoTagSection {
             tags: state.todo.contexts,
             selectedTags: state.todo.contexts,
           ),
-          trailing: !readOnly
-              ? IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Add context tag',
-                  onPressed: () => _openDialog(context),
-                )
-              : null,
+          trailing: IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Add context tag',
+            onPressed: () => _openDialog(context),
+          ),
         );
       },
     );
@@ -212,14 +200,13 @@ class TodoContextTags extends TodoTagSection {
 class TodoKeyValueTags extends TodoTagSection {
   const TodoKeyValueTags({
     super.leadingIcon = const Icon(Icons.join_inner_outlined),
-    super.readOnly,
     super.key,
   });
 
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoKeyValueAdded(value));
+      context.read<TodoBloc>().add(TodoKeyValuesAdded([value]));
     } else {
       context.read<TodoBloc>().add(TodoKeyValueRemoved(value));
     }
@@ -255,13 +242,11 @@ class TodoKeyValueTags extends TodoTagSection {
             tags: state.todo.formattedKeyValues,
             selectedTags: state.todo.formattedKeyValues,
           ),
-          trailing: !readOnly
-              ? IconButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Add key:value tag',
-                  onPressed: () => _openDialog(context),
-                )
-              : null,
+          trailing: IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Add key:value tag',
+            onPressed: () => _openDialog(context),
+          ),
         );
       },
     );
