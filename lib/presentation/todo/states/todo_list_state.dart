@@ -104,7 +104,37 @@ extension TodoOrder on TodoListOrder {
 }
 
 extension TodoGroupBy on TodoListGroupBy {
-  // Map<String, Iterable<Todo>> _groupByUpcoming(Iterable<Todo> todoList) {}
+  Map<String, Iterable<Todo>> upcoming({
+    required Iterable<Todo> todoList,
+  }) {
+    final Iterable<Todo> incompletedTodoList =
+        todoList.where((t) => !t.completion);
+    Map<String, Iterable<Todo>> groupBy = {
+      'Deadline passed': incompletedTodoList.where(
+        (t) {
+          DateTime? due = t.dueDate;
+          return (due != null && Todo.compareToToday(due) < 0) ? true : false;
+        },
+      ),
+      'Today': incompletedTodoList.where(
+        (t) {
+          DateTime? due = t.dueDate;
+          return (due != null && Todo.compareToToday(due) == 0) ? true : false;
+        },
+      ),
+      'Upcoming': incompletedTodoList.where(
+        (t) {
+          DateTime? due = t.dueDate;
+          return (due != null && Todo.compareToToday(due) > 0) ? true : false;
+        },
+      ),
+      'No deadline': incompletedTodoList.where(
+        (t) => t.dueDate == null,
+      ),
+    };
+
+    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+  }
 
   Map<String, Iterable<Todo>?> priority({
     required Iterable<Todo> todoList,
@@ -113,7 +143,7 @@ extension TodoGroupBy on TodoListGroupBy {
     Map<String, Iterable<Todo>> groupBy = {};
     for (var p in sections) {
       final Iterable<Todo> items =
-          todoList.where((todo) => todo.priority == p && !todo.completion);
+          todoList.where((t) => t.priority == p && !t.completion);
       if (items.isNotEmpty) {
         groupBy[p ?? 'No priority'] = items;
       }
@@ -131,11 +161,9 @@ extension TodoGroupBy on TodoListGroupBy {
     for (var p in [...sections, null]) {
       Iterable<Todo> items;
       if (p == null) {
-        items =
-            todoList.where((todo) => todo.projects.isEmpty && !todo.completion);
+        items = todoList.where((t) => t.projects.isEmpty && !t.completion);
       } else {
-        items = todoList
-            .where((todo) => todo.projects.contains(p) && !todo.completion);
+        items = todoList.where((t) => t.projects.contains(p) && !t.completion);
       }
       if (items.isNotEmpty) {
         groupBy[p ?? 'No project'] = items;
@@ -150,15 +178,13 @@ extension TodoGroupBy on TodoListGroupBy {
     required Set<String?> sections,
   }) {
     Map<String, Iterable<Todo>> groupBy = {};
-    // Consider also todos without projects.
+    // Consider also todos without contexts.
     for (var c in [...sections, null]) {
       Iterable<Todo> items;
       if (c == null) {
-        items =
-            todoList.where((todo) => todo.contexts.isEmpty && !todo.completion);
+        items = todoList.where((t) => t.contexts.isEmpty && !t.completion);
       } else {
-        items = todoList
-            .where((todo) => todo.contexts.contains(c) && !todo.completion);
+        items = todoList.where((t) => t.contexts.contains(c) && !t.completion);
       }
       if (items.isNotEmpty) {
         groupBy[c ?? 'No context'] = items;
@@ -173,8 +199,7 @@ extension TodoGroupBy on TodoListGroupBy {
     required Iterable<Todo> todoList,
   }) {
     // Add completed items last.
-    final Iterable<Todo> completedItems =
-        todoList.where((todo) => todo.completion);
+    final Iterable<Todo> completedItems = todoList.where((t) => t.completion);
     if (completedItems.isNotEmpty) {
       groupBy['Done'] = completedItems;
     }
@@ -194,7 +219,7 @@ final class TodoListState extends Equatable {
     this.status = TodoListStatus.initial,
     this.filter = TodoListFilter.all,
     this.order = TodoListOrder.ascending,
-    this.groupBy = TodoListGroupBy.priority,
+    this.groupBy = TodoListGroupBy.upcoming,
     this.todoList = const [],
   });
 
@@ -258,8 +283,10 @@ final class TodoListState extends Equatable {
 
   Map<String, Iterable<Todo>?> get groupedByTodoList {
     switch (groupBy) {
-      // case TodoListGroupBy.upcoming:
-      // return groupBy.priority(filteredTodoList);
+      case TodoListGroupBy.upcoming:
+        return groupBy.upcoming(
+          todoList: filteredTodoList,
+        );
       case TodoListGroupBy.priority:
         return groupBy.priority(
           todoList: filteredTodoList,
@@ -276,10 +303,9 @@ final class TodoListState extends Equatable {
           sections: contexts,
         );
       default:
-        // Default is priority.
-        return groupBy.priority(
+        // Default is upcoming.
+        return groupBy.upcoming(
           todoList: filteredTodoList,
-          sections: priorities,
         );
     }
   }

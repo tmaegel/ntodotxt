@@ -203,31 +203,31 @@ class Todo extends Equatable {
     // Get completion
     completion = _completion(_strElement(todoSplitted, 0));
     if (completion) {
-      completionDate = _date(_strElement(todoSplitted, 1));
+      completionDate = str2Date(_strElement(todoSplitted, 1));
       priority = _priority(_strElement(todoSplitted, 2));
       if (priority == null) {
         // x [completionDate] [fullDescription]
         // x [completionDate] [creationDate] [fullDescription]
-        creationDate = _date(_strElement(todoSplitted, 2));
+        creationDate = str2Date(_strElement(todoSplitted, 2));
       } else {
         // x [completionDate] [priority] [fullDescription]
         // x [completionDate] [priority] [creationDate] [fullDescription]
-        creationDate = _date(_strElement(todoSplitted, 3));
+        creationDate = str2Date(_strElement(todoSplitted, 3));
       }
     } else {
       priority = _priority(_strElement(todoSplitted, 0));
       if (priority == null) {
         // [creationDate] [fullDescription]
         // The provided date is the creation date (todo incompleted).
-        creationDate = _date(_strElement(todoSplitted, 0));
+        creationDate = str2Date(_strElement(todoSplitted, 0));
         // The todo is not completed so two dates are forbidden.
-        completionDate = _date(_strElement(todoSplitted, 1));
+        completionDate = str2Date(_strElement(todoSplitted, 1));
       } else {
         // [priority] [creationDate] [fullDescription]
         // The provided date is the creation date (todo incompleted).
-        creationDate = _date(_strElement(todoSplitted, 1));
+        creationDate = str2Date(_strElement(todoSplitted, 1));
         // The todo is not completed so two dates are forbidden.
-        completionDate = _date(_strElement(todoSplitted, 2));
+        completionDate = str2Date(_strElement(todoSplitted, 2));
       }
     }
 
@@ -279,14 +279,6 @@ class Todo extends Equatable {
       return match.namedGroup("priority");
     } else {
       // Priority is optional.
-      return null;
-    }
-  }
-
-  static DateTime? _date(String value) {
-    if (patternDate.hasMatch(value)) {
-      return DateTime.parse(value);
-    } else {
       return null;
     }
   }
@@ -349,6 +341,28 @@ class Todo extends Equatable {
     }
 
     return keyValues;
+  }
+
+  static DateTime? str2Date(String value) {
+    if (patternDate.hasMatch(value)) {
+      return DateTime.parse(value);
+    } else {
+      return null;
+    }
+  }
+
+  static int compareToToday(DateTime date) {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    return date.compareTo(today);
+  }
+
+  DateTime? get dueDate {
+    if (keyValues.containsKey('due')) {
+      return str2Date(keyValues['due'] ?? '');
+    }
+
+    return null;
   }
 
   Set<String> get formattedProjects {
