@@ -52,9 +52,12 @@ class _ResponsiveNavigationDrawerState
     final bool isNarrowLayout =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
     return NavigationDrawer(
-      backgroundColor:
-          !isNarrowLayout ? Theme.of(context).scaffoldBackgroundColor : null,
-      surfaceTintColor: !isNarrowLayout ? Colors.transparent : null,
+      backgroundColor: !isNarrowLayout
+          ? Theme.of(context).appBarTheme.backgroundColor
+          : null,
+      surfaceTintColor: !isNarrowLayout
+          ? Theme.of(context).appBarTheme.backgroundColor
+          : null,
       selectedIndex: selectedIndex, // First destination is selected.
       children: <Widget>[
         const Padding(

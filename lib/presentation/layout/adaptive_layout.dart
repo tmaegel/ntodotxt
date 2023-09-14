@@ -32,7 +32,11 @@ class WideLayout extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          const ResponsiveNavigationDrawer(),
+          // To hide rounded cornors of NavigationDrawer.
+          Container(
+            color: Theme.of(context).appBarTheme.backgroundColor,
+            child: const ResponsiveNavigationDrawer(),
+          ),
           const VerticalDivider(width: 2),
           Expanded(child: child),
         ],

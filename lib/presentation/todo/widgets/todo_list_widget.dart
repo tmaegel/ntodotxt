@@ -20,11 +20,7 @@ class TodoListSection extends StatelessWidget {
     return ExpansionTile(
       key: key,
       initiallyExpanded: true,
-      shape: Border(
-        bottom: BorderSide(
-          color: DividerTheme.of(context).color!,
-        ),
-      ),
+      shape: const Border(),
       title: Padding(
         padding: const EdgeInsets.only(left: 5.0),
         child: Text(

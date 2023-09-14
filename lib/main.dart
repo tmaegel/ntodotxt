@@ -91,6 +91,10 @@ class App extends StatelessWidget {
                 ),
               ),
               darkTheme: darkTheme.copyWith(
+                expansionTileTheme: darkTheme.expansionTileTheme.copyWith(
+                  collapsedBackgroundColor:
+                      darkTheme.appBarTheme.backgroundColor,
+                ),
                 listTileTheme: darkTheme.listTileTheme.copyWith(
                   selectedColor: darkTheme.textTheme.bodySmall?.color,
                   selectedTileColor: darkTheme.hoverColor,

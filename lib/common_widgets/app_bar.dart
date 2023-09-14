@@ -16,7 +16,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(title),
-      backgroundColor: Colors.transparent,
       actions: toolbar != null ? <Widget>[_buildToolBar(context)] : null,
     );
   }
