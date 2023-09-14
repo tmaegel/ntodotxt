@@ -26,12 +26,15 @@ class OrderDialog extends StatelessWidget {
           builder: (context) {
             return ListView.builder(
               shrinkWrap: true,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 16.0,
+              ),
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 String key = items.keys.elementAt(index);
                 return ListTile(
+                  contentPadding: EdgeInsets.zero,
                   title: Text(key),
                   leading: Radio<TodoListOrder>(
                     value: items[key]!,
