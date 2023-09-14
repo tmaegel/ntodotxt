@@ -43,7 +43,7 @@ abstract class TodoCreateView extends StatelessWidget {
         hintText: 'Enter your todo description here ...',
         isDense: true,
         filled: false,
-        contentPadding: EdgeInsets.zero,
+        contentPadding: EdgeInsets.all(20.0),
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
@@ -73,11 +73,7 @@ abstract class TodoCreateView extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 18.0, right: 18.0, top: 20, bottom: 24),
-                child: _buildTodoTextField(context, state),
-              ),
+              _buildTodoTextField(context, state),
               const Divider(),
               const TodoPriorityTags(),
               const TodoProjectTags(),

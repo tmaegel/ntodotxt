@@ -57,7 +57,7 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText:
-                      'Enter <${widget.tagName}> tags seperated by whitespaces ...',
+                      'Enter <${widget.tagName}> tags seperated by whitespace ...',
                   isDense: true,
                   filled: false,
                   contentPadding: EdgeInsets.zero,
