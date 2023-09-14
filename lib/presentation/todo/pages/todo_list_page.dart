@@ -107,9 +107,13 @@ abstract class TodoListView extends StatelessWidget {
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
           onPressed: () {
-            context.read<TodoListBloc>().add(
-                  const TodoListSelectionDeleted(),
-                );
+            context.read<TodoListBloc>().add(const TodoListSelectionDeleted());
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                content: const Text('Todos deleted.'),
+              ),
+            );
           },
         ),
         isSelectedCompleted
@@ -117,18 +121,30 @@ abstract class TodoListView extends StatelessWidget {
                 tooltip: 'Mark as undone',
                 icon: const Icon(Icons.remove_done),
                 onPressed: () {
-                  context.read<TodoListBloc>().add(
-                        const TodoListSelectionIncompleted(),
-                      );
+                  context
+                      .read<TodoListBloc>()
+                      .add(const TodoListSelectionIncompleted());
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      content: const Text('Mark todos as undone.'),
+                    ),
+                  );
                 },
               )
             : IconButton(
                 tooltip: 'Mark as done',
                 icon: const Icon(Icons.done_all),
                 onPressed: () {
-                  context.read<TodoListBloc>().add(
-                        const TodoListSelectionCompleted(),
-                      );
+                  context
+                      .read<TodoListBloc>()
+                      .add(const TodoListSelectionCompleted());
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      content: const Text('Mark todos as done.'),
+                    ),
+                  );
                 },
               ),
       ],

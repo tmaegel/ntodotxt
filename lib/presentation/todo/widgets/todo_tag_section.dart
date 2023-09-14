@@ -73,6 +73,7 @@ class TodoPriorityTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
+          minLeadingWidth: 40,
           leading: leadingIcon,
           title: _buildChips(
             context: context,
@@ -124,6 +125,7 @@ class TodoProjectTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
+          minLeadingWidth: 40,
           leading: leadingIcon,
           title: _buildChips(
             context: context,
@@ -180,6 +182,7 @@ class TodoContextTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
+          minLeadingWidth: 40,
           leading: leadingIcon,
           title: _buildChips(
             context: context,
@@ -236,6 +239,7 @@ class TodoKeyValueTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
+          minLeadingWidth: 40,
           leading: leadingIcon,
           title: _buildChips(
             context: context,

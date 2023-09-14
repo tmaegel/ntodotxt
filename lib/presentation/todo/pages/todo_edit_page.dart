@@ -41,7 +41,7 @@ abstract class TodoEditView extends StatelessWidget {
       initialValue: state.todo.description,
       minLines: 1,
       maxLines: 5,
-      style: Theme.of(context).textTheme.titleLarge,
+      style: Theme.of(context).textTheme.titleMedium,
       decoration: const InputDecoration(
         hintText: 'Enter your todo description here ...',
         isDense: true,
@@ -73,7 +73,16 @@ abstract class TodoEditView extends StatelessWidget {
         IconButton(
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
-          onPressed: () => context.read<TodoBloc>().add(const TodoDeleted()),
+          onPressed: () {
+            context.read<TodoBloc>().add(const TodoDeleted());
+            context.goNamed("todo-list");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                content: const Text('Todo deleted.'),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -95,11 +104,8 @@ abstract class TodoEditView extends StatelessWidget {
               ),
               const Divider(),
               const TodoPriorityTags(),
-              const Divider(),
               const TodoProjectTags(),
-              const Divider(),
               const TodoContextTags(),
-              const Divider(),
               const TodoKeyValueTags(),
             ],
           ),
@@ -129,8 +135,8 @@ class TodoEditNarrowView extends TodoEditView {
       },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          appBar: MainAppBar(
-            title: "Edit ${state.todo.id}",
+          appBar: const MainAppBar(
+            title: "Edit",
           ),
           body: _buildBody(
             context: context,

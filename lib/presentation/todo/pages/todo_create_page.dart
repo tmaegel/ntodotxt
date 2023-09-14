@@ -20,7 +20,7 @@ class TodoCreatePage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TodoBloc(
         todoListRepository: context.read<TodoListRepository>(),
-        todo: Todo.empty(),
+        todo: const Todo.empty(),
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoCreateNarrowView()
@@ -38,7 +38,7 @@ abstract class TodoCreateView extends StatelessWidget {
       initialValue: state.todo.description,
       minLines: 1,
       maxLines: 5,
-      style: Theme.of(context).textTheme.titleLarge,
+      style: Theme.of(context).textTheme.titleMedium,
       decoration: const InputDecoration(
         hintText: 'Enter your todo description here ...',
         isDense: true,
@@ -80,11 +80,8 @@ abstract class TodoCreateView extends StatelessWidget {
               ),
               const Divider(),
               const TodoPriorityTags(),
-              const Divider(),
               const TodoProjectTags(),
-              const Divider(),
               const TodoContextTags(),
-              const Divider(),
               const TodoKeyValueTags(),
             ],
           ),
@@ -114,8 +111,8 @@ class TodoCreateNarrowView extends TodoCreateView {
       },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          appBar: MainAppBar(
-            title: "Create ${state.todo.id}",
+          appBar: const MainAppBar(
+            title: "Create",
           ),
           body: _buildBody(
             context: context,
