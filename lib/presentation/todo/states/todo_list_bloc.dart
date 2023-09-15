@@ -12,6 +12,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   })  : _todoListRepository = todoListRepository,
         super(const TodoListState()) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
+    on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
     on<TodoListTodoSelectedToggled>(_onTodoSelectedToggled);
     on<TodoListSelectedAll>(_onTodoListSelectedAll);
@@ -24,19 +25,41 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListGroupByChanged>(_onTodoListGroupByChanged);
   }
 
-  void _onTodoListSubscriptionRequested(
+  Future<void> _onTodoListSubscriptionRequested(
     TodoListSubscriptionRequested event,
     Emitter<TodoListState> emit,
   ) async {
+    emit(
+      state.copyWith(status: TodoListStatus.loading),
+    );
+
     await emit.forEach<List<Todo>>(
       _todoListRepository.getTodoList(),
       onData: (todoList) => state.copyWith(
+        status: TodoListStatus.success,
         todoList: todoList,
       ),
       onError: (_, __) => state.copyWith(
         status: TodoListStatus.error,
       ),
     );
+  }
+
+  Future<void> _onTodoListSynchronizationRequested(
+    TodoListSynchronizationRequested event,
+    Emitter<TodoListState> emit,
+  ) async {
+    emit(
+      state.copyWith(status: TodoListStatus.loading),
+    );
+
+    try {
+      await _todoListRepository.syncTodoList();
+    } catch (e) {
+      emit(
+        state.copyWith(status: TodoListStatus.error),
+      );
+    }
   }
 
   void _onTodoCompletionToggled(

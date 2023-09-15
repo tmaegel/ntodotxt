@@ -1,22 +1,25 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:rxdart/subjects.dart';
 
 abstract class TodoListApi {
   const TodoListApi();
 
-  /// Provides a [Stream] of all todos.
+  /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
 
-  /// Read [todoList]
-  Future<List<Todo>> readTodoList();
+  /// Read [todoList] from source.
+  Future<List<Todo>> readFromFile();
 
-  /// Write [todoList]
-  // void writeTodoList(List<Todo> todoList);
+  /// Write [todoList] to source.
+  Future<void> writeToFile();
+
+  /// Refresh (re-read) [todoList] from source.
+  Future<void> syncTodoList();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
@@ -46,8 +49,18 @@ class LocalStorageTodoListApi extends TodoListApi {
     _streamController.add(todoList);
   }
 
-  factory LocalStorageTodoListApi.fromList(List<String> rawTodoList) {
-    return LocalStorageTodoListApi(_fromList(rawTodoList));
+  // Factory to read the todo list from list of strings.
+  factory LocalStorageTodoListApi.fromList(List<String> rawTodoList) =>
+      LocalStorageTodoListApi(_fromList(rawTodoList));
+
+  // Factory function to async read the todo list from file.
+  static Future<LocalStorageTodoListApi> fromFile() async =>
+      LocalStorageTodoListApi(await _fromFile());
+
+  static Future<List<Todo>> _fromFile() async {
+    final file = await localFile;
+    final lines = await file.readAsLines();
+    return _fromList(lines);
   }
 
   static List<Todo> _fromList(List<String> rawTodoList) {
@@ -59,25 +72,17 @@ class LocalStorageTodoListApi extends TodoListApi {
     ];
   }
 
-  Future<List<Todo>> _fromFile(String fileName) async {
-    return await readTodoList();
+  static Future<String> get localPath async {
+    final directory = await getApplicationSupportDirectory();
+
+    return directory.path;
   }
 
-  @override
-  Stream<List<Todo>> getTodoList() => _streamController.asBroadcastStream();
+  static Future<File> get localFile async {
+    final directory = await localPath;
 
-  @override
-  Future<List<Todo>> readTodoList() async {
-    final file = await localFile;
-    final lines = file.readAsLinesSync();
-    return _fromList(lines);
+    return File('$directory${Platform.pathSeparator}$fileName');
   }
-
-  // @override
-  // void writeTodoList(List<Todo> todoList) async {
-  //   final file = await localFile;
-  //   file.writeAsStringSync(rawTodoList.join('\n'));
-  // }
 
   int get newId {
     final List<Todo> todoList = [..._streamController.value];
@@ -114,6 +119,29 @@ class LocalStorageTodoListApi extends TodoListApi {
   }
 
   @override
+  Stream<List<Todo>> getTodoList() => _streamController.asBroadcastStream();
+
+  @override
+  Future<List<Todo>> readFromFile() async => await _fromFile();
+
+  @override
+  Future<void> writeToFile() async {
+    final file = await localFile;
+    final List<Todo> todoList = [..._streamController.value];
+    await file.writeAsString(
+      todoList.join(Platform.lineTerminator),
+      flush: true,
+    );
+  }
+
+  @override
+  Future<void> syncTodoList() async {
+    await writeToFile();
+    List<Todo> todoList = await readFromFile();
+    _streamController.add(todoList);
+  }
+
+  @override
   void saveTodo(Todo todo) {
     List<Todo> todoList = [..._streamController.value];
     _streamController.add(_save(todoList, todo));
@@ -141,18 +169,5 @@ class LocalStorageTodoListApi extends TodoListApi {
       todoList = _delete(todoList, todo);
     }
     _streamController.add(todoList);
-  }
-
-  static Future<String> get localPath async {
-    // Find the path to the documents directory.
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  static Future<File> get localFile async {
-    final directory = await localPath;
-
-    return File('$directory/$fileName');
   }
 }

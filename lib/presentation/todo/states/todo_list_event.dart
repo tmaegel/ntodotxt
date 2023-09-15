@@ -13,6 +13,10 @@ final class TodoListSubscriptionRequested extends TodoListEvent {
   const TodoListSubscriptionRequested();
 }
 
+final class TodoListSynchronizationRequested extends TodoListEvent {
+  const TodoListSynchronizationRequested();
+}
+
 final class TodoListTodoCompletionToggled extends TodoListEvent {
   final Todo todo;
   final bool completion;

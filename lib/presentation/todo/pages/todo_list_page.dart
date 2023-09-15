@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,52 +20,23 @@ class TodoListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth < maxScreenWidthCompact) {
-      return const TodoListNarrowView();
+      return TodoListNarrowView();
     } else {
-      return const TodoListWideView();
+      return TodoListWideView();
     }
   }
 }
 
 abstract class TodoListView extends StatelessWidget {
-  const TodoListView({super.key});
+  final ScrollController controller = ScrollController();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
-  /// Switch todo list ordering.
-  void _orderAction(BuildContext context) {
-    showModalBottomSheet<void>(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) => const OrderDialog(),
-    );
-  }
+  TodoListView({
+    super.key,
+  });
 
-  /// Switch todo list filter.
-  void _filterAction(BuildContext context) {
-    showModalBottomSheet<void>(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) => const FilterDialog(),
-    );
-  }
-
-  /// Switch todo group by view.
-  void _groupByAction(BuildContext context) {
-    showModalBottomSheet<void>(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) => const GroupByDialog(),
-    );
-  }
-
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return PrimaryFloatingActionButton(
-      icon: const Icon(Icons.add),
-      tooltip: 'Add',
-      action: () => context.push(
-        context.namedLocation('todo-create'),
-      ),
-    );
-  }
+  bool get isNarrowLayout;
 
   Widget _buildPrimaryToolBarActions(BuildContext context) {
     return Row(
@@ -72,17 +44,35 @@ abstract class TodoListView extends StatelessWidget {
         IconButton(
           tooltip: 'Group by',
           icon: const Icon(Icons.widgets),
-          onPressed: () => _groupByAction(context),
+          onPressed: () {
+            showModalBottomSheet<void>(
+              useRootNavigator: true,
+              context: context,
+              builder: (BuildContext context) => const GroupByDialog(),
+            );
+          },
         ),
         IconButton(
           tooltip: 'Sort',
           icon: const Icon(Icons.sort_by_alpha),
-          onPressed: () => _orderAction(context),
+          onPressed: () {
+            showModalBottomSheet<void>(
+              useRootNavigator: true,
+              context: context,
+              builder: (BuildContext context) => const OrderDialog(),
+            );
+          },
         ),
         IconButton(
           tooltip: 'Filter',
           icon: const Icon(Icons.filter_alt),
-          onPressed: () => _filterAction(context),
+          onPressed: () {
+            showModalBottomSheet<void>(
+              useRootNavigator: true,
+              context: context,
+              builder: (BuildContext context) => const FilterDialog(),
+            );
+          },
         ),
         IconButton(
           tooltip: 'Search',
@@ -150,10 +140,6 @@ abstract class TodoListView extends StatelessWidget {
       ],
     );
   }
-}
-
-class TodoListNarrowView extends TodoListView {
-  const TodoListNarrowView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -161,55 +147,71 @@ class TodoListNarrowView extends TodoListView {
       appBar: const MainAppBar(
         title: "Todos",
       ),
-      body: const TodoList(),
-      drawer: const ResponsiveNavigationDrawer(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      floatingActionButton: _buildFloatingActionButton(context),
-      bottomNavigationBar: PrimaryBottomAppBar(
-        children: [
-          BlocBuilder<TodoListBloc, TodoListState>(
-            buildWhen: (TodoListState previousState, TodoListState state) {
-              // Rebuild if selection has changed only.
-              return previousState.isSelected != state.isSelected;
-            },
-            builder: (BuildContext context, TodoListState state) {
-              if (state.isSelected) {
-                return _buildSecondaryToolBarActions(context, state);
-              } else {
-                return _buildPrimaryToolBarActions(context);
-              }
-            },
-          ),
-        ],
+      drawer: isNarrowLayout ? const ResponsiveNavigationDrawer() : null,
+      floatingActionButtonLocation: isNarrowLayout
+          ? FloatingActionButtonLocation.endContained
+          : FloatingActionButtonLocation.endFloat,
+      floatingActionButton: PrimaryFloatingActionButton(
+        icon: const Icon(Icons.add),
+        tooltip: 'Add',
+        action: () => context.push(
+          context.namedLocation('todo-create'),
+        ),
+      ),
+      bottomNavigationBar: isNarrowLayout
+          ? PrimaryBottomAppBar(
+              children: [
+                BlocBuilder<TodoListBloc, TodoListState>(
+                  buildWhen:
+                      (TodoListState previousState, TodoListState state) {
+                    // Rebuild if selection has changed only.
+                    return previousState.isSelected != state.isSelected;
+                  },
+                  builder: (BuildContext context, TodoListState state) {
+                    if (state.isSelected) {
+                      return _buildSecondaryToolBarActions(context, state);
+                    } else {
+                      return _buildPrimaryToolBarActions(context);
+                    }
+                  },
+                ),
+              ],
+            )
+          : null,
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: () async {
+          // Waiting for first 'success' state.
+          Future bloc = context.read<TodoListBloc>().stream.firstWhere(
+                (state) => state.status == TodoListStatus.success,
+              );
+          context
+              .read<TodoListBloc>()
+              .add(const TodoListSynchronizationRequested());
+          await bloc;
+        },
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+          }),
+          child: const TodoList(),
+        ),
       ),
     );
   }
 }
 
-class TodoListWideView extends TodoListView {
-  const TodoListWideView({super.key});
+class TodoListNarrowView extends TodoListView {
+  TodoListNarrowView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        title: "Todos",
-        toolbar: BlocBuilder<TodoListBloc, TodoListState>(
-          buildWhen: (TodoListState previousState, TodoListState state) {
-            // Rebuild if selection has changed only.
-            return previousState.isSelected != state.isSelected;
-          },
-          builder: (BuildContext context, TodoListState state) {
-            if (state.isSelected) {
-              return _buildSecondaryToolBarActions(context, state);
-            } else {
-              return _buildPrimaryToolBarActions(context);
-            }
-          },
-        ),
-      ),
-      floatingActionButton: _buildFloatingActionButton(context),
-      body: const TodoList(),
-    );
-  }
+  bool get isNarrowLayout => true;
+}
+
+class TodoListWideView extends TodoListView {
+  TodoListWideView({super.key});
+
+  @override
+  bool get isNarrowLayout => false;
 }

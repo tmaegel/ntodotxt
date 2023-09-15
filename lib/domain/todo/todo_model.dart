@@ -434,14 +434,14 @@ class Todo extends Equatable {
   @override
   String toString() {
     final List<String?> items = [
-      if (completion) 'x' else null,
+      completion ? 'x' : null,
       formattedDate(completionDate),
-      priority != '' ? '($priority)' : null,
+      priority != null ? '($priority)' : null,
       formattedDate(creationDate),
       description,
-      formattedProjects.join(' '),
-      formattedContexts.join(' '),
-      formattedKeyValues.join(' '),
+      formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
+      formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,
+      formattedKeyValues.isNotEmpty ? formattedKeyValues.join(' ') : null,
     ]..removeWhere((value) => value == null);
 
     return items.join(' ');

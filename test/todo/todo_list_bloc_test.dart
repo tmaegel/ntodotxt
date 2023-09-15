@@ -32,7 +32,7 @@ void main() {
       expect(todoListBloc.state.status, TodoListStatus.initial);
       expect(todoListBloc.state.filter, TodoListFilter.all);
       expect(todoListBloc.state.order, TodoListOrder.ascending);
-      expect(todoListBloc.state.groupBy, TodoListGroupBy.priority);
+      expect(todoListBloc.state.groupBy, TodoListGroupBy.upcoming);
       expect(todoListBloc.state.todoList, []);
     });
   });
@@ -45,7 +45,11 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoListSubscriptionRequested()),
       expect: () => [
+        const TodoListState(
+          status: TodoListStatus.loading,
+        ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo],
         ),
       ],
@@ -62,10 +66,15 @@ void main() {
         TodoListTodoCompletionToggled(todo: todo, completion: true),
       ),
       expect: () => [
+        const TodoListState(
+          status: TodoListStatus.loading,
+        ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo],
         ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo.copyWith(completion: true, completionDate: now)],
         ),
       ],
@@ -94,10 +103,15 @@ void main() {
         selected: true,
       )),
       expect: () => [
+        const TodoListState(
+          status: TodoListStatus.loading,
+        ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo],
         ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo.copyWith(selected: true)],
         ),
       ],
@@ -112,10 +126,15 @@ void main() {
       )..add(const TodoListSubscriptionRequested()),
       act: (bloc) => bloc.add(const TodoListSelectedAll()),
       expect: () => [
+        const TodoListState(
+          status: TodoListStatus.loading,
+        ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo],
         ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo.copyWith(selected: true)],
         ),
       ],
@@ -132,13 +151,19 @@ void main() {
         ..add(const TodoListSelectedAll())
         ..add(const TodoListUnselectedAll()),
       expect: () => [
+        const TodoListState(
+          status: TodoListStatus.loading,
+        ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo],
         ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo.copyWith(selected: true)],
         ),
         TodoListState(
+          status: TodoListStatus.success,
           todoList: [todo.copyWith(selected: false)],
         ),
       ],

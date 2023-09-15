@@ -9,8 +9,17 @@ class TodoListRepository {
     required TodoListApi todoListApi,
   }) : _todoListApi = todoListApi;
 
-  /// Provides a [Stream] of all todos.
+  /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
+
+  /// Read [todoList] from source.
+  Future<List<Todo>> readFromFile() => _todoListApi.readFromFile();
+
+  /// Write [todoList] to source.
+  Future<void> writeToFile() => _todoListApi.writeToFile();
+
+  /// Refresh (re-read) [todoList] from source.
+  Future<void> syncTodoList() => _todoListApi.syncTodoList();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
