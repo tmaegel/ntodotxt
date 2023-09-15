@@ -17,8 +17,8 @@ class GroupByDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       buildWhen: (TodoListState previousState, TodoListState state) {
-        // Rebuild if groupBy is changed only.
-        return previousState.groupBy != state.groupBy;
+        // Rebuild if group is changed only.
+        return previousState.group != state.group;
       },
       builder: (BuildContext context, TodoListState state) {
         return BottomSheet(
@@ -40,7 +40,7 @@ class GroupByDialog extends StatelessWidget {
                   title: Text(key),
                   leading: Radio<TodoListGroupBy>(
                     value: items[key]!,
-                    groupValue: state.groupBy,
+                    groupValue: state.group,
                     onChanged: (TodoListGroupBy? value) =>
                         _setState(context, value),
                   ),
@@ -53,11 +53,9 @@ class GroupByDialog extends StatelessWidget {
     );
   }
 
-  void _setState(BuildContext context, TodoListGroupBy? groupBy) {
-    if (groupBy != null) {
-      context
-          .read<TodoListBloc>()
-          .add(TodoListGroupByChanged(groupBy: groupBy));
+  void _setState(BuildContext context, TodoListGroupBy? group) {
+    if (group != null) {
+      context.read<TodoListBloc>().add(TodoListGroupByChanged(group: group));
     }
     Navigator.pop(context);
   }

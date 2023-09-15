@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 
 void main() {
@@ -29,11 +28,13 @@ void main() {
       final TodoListBloc todoListBloc = TodoListBloc(
         todoListRepository: todoListRepository,
       );
-      expect(todoListBloc.state.status, TodoListStatus.initial);
+      expect(todoListBloc.state is TodoListInitial, true);
       expect(todoListBloc.state.filter, TodoListFilter.all);
       expect(todoListBloc.state.order, TodoListOrder.ascending);
-      expect(todoListBloc.state.groupBy, TodoListGroupBy.upcoming);
+      expect(todoListBloc.state.group, TodoListGroupBy.upcoming);
       expect(todoListBloc.state.todoList, []);
+      expect(todoListBloc.state.toString(),
+          'TodoListInitial { filter: TodoListFilter.all order: TodoListOrder.ascending group: TodoListGroupBy.upcoming }');
     });
   });
 
@@ -45,13 +46,8 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoListSubscriptionRequested()),
       expect: () => [
-        const TodoListState(
-          status: TodoListStatus.loading,
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
-          todoList: [todo],
-        ),
+        const TodoListLoading(),
+        TodoListSuccess(todoList: [todo]),
       ],
     );
   });
@@ -66,15 +62,9 @@ void main() {
         TodoListTodoCompletionToggled(todo: todo, completion: true),
       ),
       expect: () => [
-        const TodoListState(
-          status: TodoListStatus.loading,
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
-          todoList: [todo],
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
+        const TodoListLoading(),
+        TodoListSuccess(todoList: [todo]),
+        TodoListSuccess(
           todoList: [todo.copyWith(completion: true, completionDate: now)],
         ),
       ],
@@ -88,7 +78,14 @@ void main() {
         TodoListTodoCompletionToggled(
             todo: todo.copyWith(id: 99), completion: true),
       ),
-      errors: () => [isA<TodoNotFound>()],
+      expect: () => [
+        const TodoListLoading(),
+        TodoListSuccess(todoList: [todo]),
+        TodoListError(
+          message: 'Todo with id 99 could not be found',
+          todoList: [todo],
+        ),
+      ],
     );
   });
 
@@ -103,15 +100,9 @@ void main() {
         selected: true,
       )),
       expect: () => [
-        const TodoListState(
-          status: TodoListStatus.loading,
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
-          todoList: [todo],
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
+        const TodoListLoading(),
+        TodoListSuccess(todoList: [todo]),
+        TodoListSuccess(
           todoList: [todo.copyWith(selected: true)],
         ),
       ],
@@ -126,15 +117,9 @@ void main() {
       )..add(const TodoListSubscriptionRequested()),
       act: (bloc) => bloc.add(const TodoListSelectedAll()),
       expect: () => [
-        const TodoListState(
-          status: TodoListStatus.loading,
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
-          todoList: [todo],
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
+        const TodoListLoading(),
+        TodoListSuccess(todoList: [todo]),
+        TodoListSuccess(
           todoList: [todo.copyWith(selected: true)],
         ),
       ],
@@ -151,19 +136,12 @@ void main() {
         ..add(const TodoListSelectedAll())
         ..add(const TodoListUnselectedAll()),
       expect: () => [
-        const TodoListState(
-          status: TodoListStatus.loading,
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
-          todoList: [todo],
-        ),
-        TodoListState(
-          status: TodoListStatus.success,
+        const TodoListLoading(),
+        TodoListSuccess(todoList: [todo]),
+        TodoListSuccess(
           todoList: [todo.copyWith(selected: true)],
         ),
-        TodoListState(
-          status: TodoListStatus.success,
+        TodoListSuccess(
           todoList: [todo.copyWith(selected: false)],
         ),
       ],
@@ -179,7 +157,7 @@ void main() {
       act: (bloc) =>
           bloc.add(const TodoListOrderChanged(order: TodoListOrder.descending)),
       expect: () => [
-        const TodoListState(
+        const TodoListSuccess(
           order: TodoListOrder.descending,
         ),
       ],
@@ -195,7 +173,7 @@ void main() {
       act: (bloc) => bloc.add(
           const TodoListFilterChanged(filter: TodoListFilter.completedOnly)),
       expect: () => [
-        const TodoListState(
+        const TodoListSuccess(
           filter: TodoListFilter.completedOnly,
         ),
       ],
@@ -204,15 +182,15 @@ void main() {
 
   group('TodoListGroupByChanged', () {
     blocTest(
-      'emits the todo list state with updated groupBy property when TodoListGroupByChanged(<groupBy>) is called',
+      'emits the todo list state with updated group property when TodoListGroupByChanged(<group>) is called',
       build: () => TodoListBloc(
         todoListRepository: todoListRepository,
       ),
       act: (bloc) => bloc
-          .add(const TodoListGroupByChanged(groupBy: TodoListGroupBy.context)),
+          .add(const TodoListGroupByChanged(group: TodoListGroupBy.context)),
       expect: () => [
-        const TodoListState(
-          groupBy: TodoListGroupBy.context,
+        const TodoListSuccess(
+          group: TodoListGroupBy.context,
         ),
       ],
     );

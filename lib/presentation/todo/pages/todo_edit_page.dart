@@ -122,7 +122,7 @@ class TodoEditNarrowView extends TodoEditView {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Theme.of(context).colorScheme.error,
-              content: Text(state.error),
+              content: Text(state.message),
             ),
           );
         } else if (state is TodoSuccess) {
@@ -163,7 +163,7 @@ class TodoEditWideView extends TodoEditView {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Theme.of(context).colorScheme.error,
-              content: Text(state.error),
+              content: Text(state.message),
             ),
           );
         } else if (state is TodoSuccess) {

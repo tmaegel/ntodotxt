@@ -104,12 +104,12 @@ extension TodoOrder on TodoListOrder {
 }
 
 extension TodoGroupBy on TodoListGroupBy {
-  Map<String, Iterable<Todo>> upcoming({
+  Map<String, Iterable<Todo>> groupByUpcoming({
     required Iterable<Todo> todoList,
   }) {
     final Iterable<Todo> incompletedTodoList =
         todoList.where((t) => !t.completion);
-    Map<String, Iterable<Todo>> groupBy = {
+    Map<String, Iterable<Todo>> groups = {
       'Deadline passed': incompletedTodoList.where(
         (t) {
           DateTime? due = t.dueDate;
@@ -133,30 +133,30 @@ extension TodoGroupBy on TodoListGroupBy {
       ),
     };
 
-    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+    return _appendCompleted(groups: groups, todoList: todoList);
   }
 
-  Map<String, Iterable<Todo>?> priority({
+  Map<String, Iterable<Todo>?> groupByPriority({
     required Iterable<Todo> todoList,
     required Set<String?> sections,
   }) {
-    Map<String, Iterable<Todo>> groupBy = {};
+    Map<String, Iterable<Todo>> groups = {};
     for (var p in sections) {
       final Iterable<Todo> items =
           todoList.where((t) => t.priority == p && !t.completion);
       if (items.isNotEmpty) {
-        groupBy[p ?? 'No priority'] = items;
+        groups[p ?? 'No priority'] = items;
       }
     }
 
-    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+    return _appendCompleted(groups: groups, todoList: todoList);
   }
 
-  Map<String, Iterable<Todo>> project({
+  Map<String, Iterable<Todo>> groupByProject({
     required Iterable<Todo> todoList,
     required Set<String?> sections,
   }) {
-    Map<String, Iterable<Todo>> groupBy = {};
+    Map<String, Iterable<Todo>> groups = {};
     // Consider also todos without projects.
     for (var p in [...sections, null]) {
       Iterable<Todo> items;
@@ -166,18 +166,18 @@ extension TodoGroupBy on TodoListGroupBy {
         items = todoList.where((t) => t.projects.contains(p) && !t.completion);
       }
       if (items.isNotEmpty) {
-        groupBy[p ?? 'No project'] = items;
+        groups[p ?? 'No project'] = items;
       }
     }
 
-    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+    return _appendCompleted(groups: groups, todoList: todoList);
   }
 
-  Map<String, Iterable<Todo>> context({
+  Map<String, Iterable<Todo>> groupByContext({
     required Iterable<Todo> todoList,
     required Set<String?> sections,
   }) {
-    Map<String, Iterable<Todo>> groupBy = {};
+    Map<String, Iterable<Todo>> groups = {};
     // Consider also todos without contexts.
     for (var c in [...sections, null]) {
       Iterable<Todo> items;
@@ -187,39 +187,37 @@ extension TodoGroupBy on TodoListGroupBy {
         items = todoList.where((t) => t.contexts.contains(c) && !t.completion);
       }
       if (items.isNotEmpty) {
-        groupBy[c ?? 'No context'] = items;
+        groups[c ?? 'No context'] = items;
       }
     }
 
-    return _appendCompleted(groupBy: groupBy, todoList: todoList);
+    return _appendCompleted(groups: groups, todoList: todoList);
   }
 
   Map<String, Iterable<Todo>> _appendCompleted({
-    required Map<String, Iterable<Todo>> groupBy,
+    required Map<String, Iterable<Todo>> groups,
     required Iterable<Todo> todoList,
   }) {
     // Add completed items last.
     final Iterable<Todo> completedItems = todoList.where((t) => t.completion);
     if (completedItems.isNotEmpty) {
-      groupBy['Done'] = completedItems;
+      groups['Done'] = completedItems;
     }
 
-    return groupBy;
+    return groups;
   }
 }
 
-final class TodoListState extends Equatable {
-  final TodoListStatus status;
+sealed class TodoListState extends Equatable {
   final TodoListFilter filter;
   final TodoListOrder order;
-  final TodoListGroupBy groupBy;
+  final TodoListGroupBy group;
   final List<Todo> todoList;
 
   const TodoListState({
-    this.status = TodoListStatus.initial,
     this.filter = TodoListFilter.all,
     this.order = TodoListOrder.ascending,
-    this.groupBy = TodoListGroupBy.upcoming,
+    this.group = TodoListGroupBy.upcoming,
     this.todoList = const [],
   });
 
@@ -282,62 +280,166 @@ final class TodoListState extends Equatable {
   Iterable<Todo> get filteredTodoList => order.sort(filter.apply(todoList));
 
   Map<String, Iterable<Todo>?> get groupedByTodoList {
-    switch (groupBy) {
+    switch (group) {
       case TodoListGroupBy.upcoming:
-        return groupBy.upcoming(
+        return group.groupByUpcoming(
           todoList: filteredTodoList,
         );
       case TodoListGroupBy.priority:
-        return groupBy.priority(
+        return group.groupByPriority(
           todoList: filteredTodoList,
           sections: priorities,
         );
       case TodoListGroupBy.project:
-        return groupBy.project(
+        return group.groupByProject(
           todoList: filteredTodoList,
           sections: projects,
         );
       case TodoListGroupBy.context:
-        return groupBy.context(
+        return group.groupByContext(
           todoList: filteredTodoList,
           sections: contexts,
         );
       default:
         // Default is upcoming.
-        return groupBy.upcoming(
+        return group.groupByUpcoming(
           todoList: filteredTodoList,
         );
     }
   }
 
+  /// Initial state.
   TodoListState copyWith({
-    TodoListStatus? status,
     TodoListFilter? filter,
     TodoListOrder? order,
-    TodoListGroupBy? groupBy,
+    TodoListGroupBy? group,
     List<Todo>? todoList,
   }) {
-    return TodoListState(
-      status: status ?? this.status,
+    return TodoListInitial(
       filter: filter ?? this.filter,
       order: order ?? this.order,
-      groupBy: groupBy ?? this.groupBy,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
+
+  TodoListState loading({
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListLoading(
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
+
+  TodoListState success({
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListSuccess(
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
+
+  TodoListState error({
+    required String message,
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListError(
+      message: message,
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
   List<Object?> get props => [
-        status,
-        todoList,
         filter,
         order,
-        groupBy,
+        group,
+        todoList,
       ];
 
   @override
   String toString() =>
-      'TodoListState { status: $status filter: $filter order: $order groupBy: $groupBy ids ${[
-        for (var t in todoList) t.id
-      ]}';
+      'TodoListState { filter: $filter order: $order group: $group }';
+}
+
+final class TodoListInitial extends TodoListState {
+  const TodoListInitial({
+    super.filter,
+    super.order,
+    super.group,
+    super.todoList,
+  });
+
+  @override
+  String toString() =>
+      'TodoListInitial { filter: $filter order: $order group: $group }';
+}
+
+final class TodoListLoading extends TodoListState {
+  const TodoListLoading({
+    super.filter,
+    super.order,
+    super.group,
+    super.todoList,
+  });
+
+  @override
+  String toString() =>
+      'TodoListLoading { filter: $filter order: $order group: $group }';
+}
+
+final class TodoListSuccess extends TodoListState {
+  const TodoListSuccess({
+    super.filter,
+    super.order,
+    super.group,
+    super.todoList,
+  });
+
+  @override
+  String toString() =>
+      'TodoListSuccess { filter: $filter order: $order group: $group }';
+}
+
+final class TodoListError extends TodoListState {
+  final String message;
+
+  const TodoListError({
+    required this.message,
+    super.filter,
+    super.order,
+    super.group,
+    super.todoList,
+  });
+
+  @override
+  List<Object?> get props => [
+        message,
+        filter,
+        order,
+        group,
+        todoList,
+      ];
+
+  @override
+  String toString() =>
+      'TodoListError { message: $message filter: $filter order: $order group: $group }';
 }

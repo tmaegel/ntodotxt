@@ -17,8 +17,7 @@ sealed class TodoState extends Equatable {
     );
   }
 
-  /// Status after successful submission.
-  TodoState copyWithSubmit({
+  TodoState success({
     Todo? todo,
   }) {
     return TodoSuccess(
@@ -26,13 +25,12 @@ sealed class TodoState extends Equatable {
     );
   }
 
-  /// Error state
-  TodoState copyWithError({
-    required String error,
+  TodoState error({
+    required String message,
     Todo? todo,
   }) {
     return TodoError(
-      error: error,
+      message: message,
       todo: todo ?? this.todo,
     );
   }
@@ -75,20 +73,20 @@ final class TodoSuccess extends TodoState {
 }
 
 final class TodoError extends TodoState {
-  final String error;
+  final String message;
 
   const TodoError({
-    required this.error,
+    required this.message,
     required super.todo,
   });
 
   @override
   List<Object?> get props => [
-        error,
+        message,
         todo,
       ];
 
   @override
   String toString() =>
-      'TodoError { error: $error id: ${todo.id} todo: "$todo" }';
+      'TodoError { message: $message id: ${todo.id} todo: "$todo" }';
 }

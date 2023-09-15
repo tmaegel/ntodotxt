@@ -33,11 +33,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   ) {
     try {
       _todoListRepository.saveTodo(state.todo);
-      emit(state.copyWithSubmit());
-    } on TodoMissingDescription catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success());
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -45,43 +43,63 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     TodoDeleted event,
     Emitter<TodoState> emit,
   ) {
-    _todoListRepository.deleteTodo(state.todo);
+    try {
+      _todoListRepository.deleteTodo(state.todo);
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onCompletionToggled(
     TodoCompletionToggled event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith(
-      completion: event.completion,
-      completionDate: event.completion ? DateTime.now() : null,
-      unsetCompletionDate: !event.completion,
-    );
-    emit(state.copyWith(todo: todo));
+    try {
+      final Todo todo = state.todo.copyWith(
+        completion: event.completion,
+        completionDate: event.completion ? DateTime.now() : null,
+        unsetCompletionDate: !event.completion,
+      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onDescriptionChanged(
     TodoDescriptionChanged event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith(description: event.description);
-    emit(state.copyWith(todo: todo));
+    try {
+      final Todo todo = state.todo.copyWith(description: event.description);
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onPriorityAdded(
     TodoPriorityAdded event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith(priority: event.priority);
-    emit(state.copyWith(todo: todo));
+    try {
+      final Todo todo = state.todo.copyWith(priority: event.priority);
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onPriorityRemoved(
     TodoPriorityRemoved event,
     Emitter<TodoState> emit,
   ) {
-    final Todo todo = state.todo.copyWith(unsetPriority: true);
-    emit(state.copyWith(todo: todo));
+    try {
+      final Todo todo = state.todo.copyWith(unsetPriority: true);
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onProjectAdded(
@@ -92,11 +110,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       Set<String> projects = {...state.todo.projects};
       projects.addAll(event.projects);
       final Todo todo = state.todo.copyWith(projects: projects);
-      emit(state.copyWith(todo: todo));
-    } on TodoInvalidProjectTag catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -108,11 +124,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       Set<String> projects = {...state.todo.projects};
       projects.remove(event.project);
       final Todo todo = state.todo.copyWith(projects: projects);
-      emit(state.copyWith(todo: todo));
-    } on TodoInvalidProjectTag catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -124,11 +138,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       Set<String> contexts = {...state.todo.contexts};
       contexts.addAll(event.contexts);
       final Todo todo = state.todo.copyWith(contexts: contexts);
-      emit(state.copyWith(todo: todo));
-    } on TodoInvalidContextTag catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -140,11 +152,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       Set<String> contexts = {...state.todo.contexts};
       contexts.remove(event.context);
       final Todo todo = state.todo.copyWith(contexts: contexts);
-      emit(state.copyWith(todo: todo));
-    } on TodoInvalidContextTag catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -164,11 +174,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         }
       }
       final Todo todo = state.todo.copyWith(keyValues: keyValues);
-      emit(state.copyWith(todo: todo));
-    } on TodoInvalidKeyValueTag catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -186,11 +194,9 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         keyValues.remove(splittedKeyValue[0]);
       }
       final Todo todo = state.todo.copyWith(keyValues: keyValues);
-      emit(state.copyWith(todo: todo));
-    } on TodoInvalidKeyValueTag catch (e) {
-      emit(
-        state.copyWithError(error: e.toString()),
-      );
+      emit(state.success(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 }

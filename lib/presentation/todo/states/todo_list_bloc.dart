@@ -10,7 +10,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   TodoListBloc({
     required TodoListRepository todoListRepository,
   })  : _todoListRepository = todoListRepository,
-        super(const TodoListState()) {
+        super(const TodoListInitial()) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
@@ -29,19 +29,11 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListSubscriptionRequested event,
     Emitter<TodoListState> emit,
   ) async {
-    emit(
-      state.copyWith(status: TodoListStatus.loading),
-    );
-
+    emit(state.loading());
     await emit.forEach<List<Todo>>(
       _todoListRepository.getTodoList(),
-      onData: (todoList) => state.copyWith(
-        status: TodoListStatus.success,
-        todoList: todoList,
-      ),
-      onError: (_, __) => state.copyWith(
-        status: TodoListStatus.error,
-      ),
+      onData: (todoList) => state.success(todoList: todoList),
+      onError: (e, _) => state.error(message: e.toString()),
     );
   }
 
@@ -49,16 +41,11 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListSynchronizationRequested event,
     Emitter<TodoListState> emit,
   ) async {
-    emit(
-      state.copyWith(status: TodoListStatus.loading),
-    );
-
+    emit(state.loading());
     try {
       await _todoListRepository.syncTodoList();
-    } catch (e) {
-      emit(
-        state.copyWith(status: TodoListStatus.error),
-      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -66,109 +53,151 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListTodoCompletionToggled event,
     Emitter<TodoListState> emit,
   ) {
-    final Todo todo = event.todo.copyWith(
-      completion: event.completion,
-      completionDate: event.completion ? DateTime.now() : null,
-      unsetCompletionDate: !event.completion,
-    );
-    _todoListRepository.saveTodo(todo);
+    try {
+      final Todo todo = event.todo.copyWith(
+        completion: event.completion,
+        completionDate: event.completion ? DateTime.now() : null,
+        unsetCompletionDate: !event.completion,
+      );
+      _todoListRepository.saveTodo(todo);
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoSelectedToggled(
     TodoListTodoSelectedToggled event,
     Emitter<TodoListState> emit,
   ) {
-    final Todo todo = event.todo.copyWith(
-      selected: event.selected,
-    );
-    _todoListRepository.saveTodo(todo);
+    try {
+      final Todo todo = event.todo.copyWith(
+        selected: event.selected,
+      );
+      _todoListRepository.saveTodo(todo);
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListSelectedAll(
     TodoListSelectedAll event,
     Emitter<TodoListState> emit,
   ) {
-    _todoListRepository.saveMultipleTodos(
-      [
-        for (var t in state.todoList)
-          t.copyWith(
-            selected: true,
-          ),
-      ],
-    );
+    try {
+      _todoListRepository.saveMultipleTodos(
+        [
+          for (var t in state.todoList)
+            t.copyWith(
+              selected: true,
+            ),
+        ],
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListUnselectedAll(
     TodoListUnselectedAll event,
     Emitter<TodoListState> emit,
   ) {
-    _todoListRepository.saveMultipleTodos(
-      [
-        for (var t in state.todoList)
-          t.copyWith(
-            selected: false,
-          ),
-      ],
-    );
+    try {
+      _todoListRepository.saveMultipleTodos(
+        [
+          for (var t in state.todoList)
+            t.copyWith(
+              selected: false,
+            ),
+        ],
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListSelectionCompleted(
     TodoListSelectionCompleted event,
     Emitter<TodoListState> emit,
   ) {
-    _todoListRepository.saveMultipleTodos(
-      [
-        for (var t in state.selectedTodos)
-          t.copyWith(
-            selected: false,
-            completion: true,
-            completionDate: DateTime.now(),
-          )
-      ],
-    );
+    try {
+      _todoListRepository.saveMultipleTodos(
+        [
+          for (var t in state.selectedTodos)
+            t.copyWith(
+              selected: false,
+              completion: true,
+              completionDate: DateTime.now(),
+            )
+        ],
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListSelectionIncompleted(
     TodoListSelectionIncompleted event,
     Emitter<TodoListState> emit,
   ) {
-    _todoListRepository.saveMultipleTodos(
-      [
-        for (var t in state.selectedTodos)
-          t.copyWith(
-            selected: false,
-            completion: false,
-            unsetCompletionDate: true,
-          )
-      ],
-    );
+    try {
+      _todoListRepository.saveMultipleTodos(
+        [
+          for (var t in state.selectedTodos)
+            t.copyWith(
+              selected: false,
+              completion: false,
+              unsetCompletionDate: true,
+            )
+        ],
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListSelectionDeleted(
     TodoListSelectionDeleted event,
     Emitter<TodoListState> emit,
   ) {
-    _todoListRepository.deleteMultipleTodos(state.selectedTodos.toList());
+    try {
+      _todoListRepository.deleteMultipleTodos(
+        state.selectedTodos.toList(),
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListOrderChanged(
     TodoListOrderChanged event,
     Emitter<TodoListState> emit,
   ) {
-    emit(state.copyWith(order: event.order));
+    try {
+      emit(state.success(order: event.order));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListFilterChanged(
     TodoListFilterChanged event,
     Emitter<TodoListState> emit,
   ) {
-    emit(state.copyWith(filter: event.filter));
+    try {
+      emit(state.success(filter: event.filter));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onTodoListGroupByChanged(
     TodoListGroupByChanged event,
     Emitter<TodoListState> emit,
   ) {
-    emit(state.copyWith(groupBy: event.groupBy));
+    try {
+      emit(state.success(group: event.group));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 }

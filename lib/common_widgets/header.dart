@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/constants/todo.dart';
 
 class Subheader extends StatelessWidget {
   final String title;

@@ -144,8 +144,23 @@ abstract class TodoListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(
+      appBar: MainAppBar(
         title: "Todos",
+        toolbar: !isNarrowLayout
+            ? BlocBuilder<TodoListBloc, TodoListState>(
+                buildWhen: (TodoListState previousState, TodoListState state) {
+                  // Rebuild if selection has changed only.
+                  return previousState.isSelected != state.isSelected;
+                },
+                builder: (BuildContext context, TodoListState state) {
+                  if (state.isSelected) {
+                    return _buildSecondaryToolBarActions(context, state);
+                  } else {
+                    return _buildPrimaryToolBarActions(context);
+                  }
+                },
+              )
+            : null,
       ),
       drawer: isNarrowLayout ? const ResponsiveNavigationDrawer() : null,
       floatingActionButtonLocation: isNarrowLayout
@@ -183,7 +198,7 @@ abstract class TodoListView extends StatelessWidget {
         onRefresh: () async {
           // Waiting for first 'success' state.
           Future bloc = context.read<TodoListBloc>().stream.firstWhere(
-                (state) => state.status == TodoListStatus.success,
+                (state) => state is TodoListSuccess,
               );
           context
               .read<TodoListBloc>()
