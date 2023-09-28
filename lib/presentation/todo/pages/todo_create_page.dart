@@ -114,10 +114,9 @@ class TodoCreateNarrowView extends TodoCreateView {
             context: context,
             state: state,
           ),
-          floatingActionButton: _buildFloatingActionButton(context, state),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.endContained,
-          bottomNavigationBar: const PrimaryBottomAppBar(children: []),
+          floatingActionButton: !state.todo.isDescriptionEmpty
+              ? _buildFloatingActionButton(context, state)
+              : null,
         );
       },
     );
@@ -151,7 +150,9 @@ class TodoCreateWideView extends TodoCreateView {
             context: context,
             state: state,
           ),
-          floatingActionButton: _buildFloatingActionButton(context, state),
+          floatingActionButton: !state.todo.isDescriptionEmpty
+              ? _buildFloatingActionButton(context, state)
+              : null,
         );
       },
     );

@@ -131,21 +131,17 @@ class TodoEditNarrowView extends TodoEditView {
       },
       builder: (BuildContext context, TodoState state) {
         return Scaffold(
-          appBar: const MainAppBar(
+          appBar: MainAppBar(
             title: "Edit",
+            toolbar: _buildToolBar(context, state),
           ),
           body: _buildBody(
             context: context,
             state: state,
           ),
-          floatingActionButton: _buildFloatingActionButton(context, state),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.endContained,
-          bottomNavigationBar: PrimaryBottomAppBar(
-            children: [
-              _buildToolBar(context, state),
-            ],
-          ),
+          floatingActionButton: !state.todo.isDescriptionEmpty
+              ? _buildFloatingActionButton(context, state)
+              : null,
         );
       },
     );
@@ -180,7 +176,9 @@ class TodoEditWideView extends TodoEditView {
             context: context,
             state: state,
           ),
-          floatingActionButton: _buildFloatingActionButton(context, state),
+          floatingActionButton: !state.todo.isDescriptionEmpty
+              ? _buildFloatingActionButton(context, state)
+              : null,
         );
       },
     );

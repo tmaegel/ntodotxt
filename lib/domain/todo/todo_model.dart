@@ -125,10 +125,6 @@ class Todo extends Equatable {
         throw const TodoForbiddenCompletionDate();
       }
     }
-    // @todo: Validate description.
-    // if (description.isEmpty) {
-    //   throw const TodoMissingDescription();
-    // }
     // Validate project tags.
     for (var p in projects) {
       if (!patternWord.hasMatch(p)) {
@@ -162,6 +158,7 @@ class Todo extends Equatable {
     this.selected = false,
   });
 
+  /// Is only used for creating new todos, as these initially have no description.
   const Todo.empty() : this.noValidation(description: '');
 
   /// Factory for model creation (fallback).
@@ -364,6 +361,8 @@ class Todo extends Equatable {
 
     return null;
   }
+
+  bool get isDescriptionEmpty => _trim(description).isEmpty;
 
   Set<String> get formattedProjects {
     return {for (var p in projects) "+$p"};
