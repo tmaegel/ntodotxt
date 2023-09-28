@@ -21,6 +21,7 @@ class GenericChipGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       spacing: 4.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: children,

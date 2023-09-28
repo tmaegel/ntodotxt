@@ -147,30 +147,28 @@ void main() {
     expect(find.byKey(groupbyDialogKey), findsNothing);
 
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Deadline passed'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'Deadline passed',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Today'),
+      find.byWidgetPredicate(
+        (Widget widget) => widget is TodoListSection && widget.title == 'Today',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Upcoming'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'Upcoming',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Done'),
+      find.byWidgetPredicate(
+        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
       ),
       findsOneWidget,
     );
@@ -201,23 +199,21 @@ void main() {
     expect(find.byKey(groupbyDialogKey), findsNothing);
 
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('A'),
+      find.byWidgetPredicate(
+        (Widget widget) => widget is TodoListSection && widget.title == 'A',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('No priority'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'No priority',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Done'),
+      find.byWidgetPredicate(
+        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
       ),
       findsOneWidget,
     );
@@ -248,23 +244,22 @@ void main() {
     expect(find.byKey(groupbyDialogKey), findsNothing);
 
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('projecttag'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'projecttag',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('No project'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'No project',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Done'),
+      find.byWidgetPredicate(
+        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
       ),
       findsOneWidget,
     );
@@ -295,23 +290,22 @@ void main() {
     expect(find.byKey(groupbyDialogKey), findsNothing);
 
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('contexttag'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'contexttag',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('No context'),
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is TodoListSection && widget.title == 'No context',
       ),
       findsOneWidget,
     );
     expect(
-      find.descendant(
-        of: find.byType(TodoList),
-        matching: find.text('Done'),
+      find.byWidgetPredicate(
+        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
       ),
       findsOneWidget,
     );

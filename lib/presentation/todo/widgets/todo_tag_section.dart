@@ -145,7 +145,7 @@ class TodoProjectTags extends TodoTagSection {
 
 class TodoContextTags extends TodoTagSection {
   const TodoContextTags({
-    super.leadingIcon = const Icon(Icons.sell_outlined),
+    super.leadingIcon = const Icon(Icons.tag),
     super.key,
   });
 

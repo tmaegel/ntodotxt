@@ -43,9 +43,42 @@ class TodoTile extends StatelessWidget {
 
     return GenericChipGroup(
       children: <Widget>[
-        for (var p in todo.formattedProjects) Text(p),
-        for (var c in todo.formattedContexts) Text(c),
-        for (var kv in todo.formattedKeyValues) Text(kv),
+        if (todo.priority != null)
+          const Icon(
+            Icons.flag,
+            size: 15.0,
+          ),
+        if (todo.priority != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Text(todo.priority!),
+          ),
+        if (todo.projects.isNotEmpty)
+          const Icon(
+            Icons.rocket_launch,
+            size: 15.0,
+          ),
+        if (todo.projects.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Text(todo.projects.join(', ')),
+          ),
+        if (todo.contexts.isNotEmpty)
+          const Icon(
+            Icons.tag,
+            size: 15.0,
+          ),
+        if (todo.contexts.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Text(todo.contexts.join(', ')),
+          ),
+        if (todo.keyValues.isNotEmpty)
+          const Icon(
+            Icons.join_inner,
+            size: 15.0,
+          ),
+        if (todo.keyValues.isNotEmpty) Text(todo.formattedKeyValues.join(', ')),
       ],
     );
   }
