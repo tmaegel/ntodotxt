@@ -17,6 +17,14 @@ sealed class TodoState extends Equatable {
     );
   }
 
+  TodoState change({
+    Todo? todo,
+  }) {
+    return TodoChange(
+      todo: todo ?? this.todo,
+    );
+  }
+
   TodoState success({
     Todo? todo,
   }) {
@@ -56,6 +64,20 @@ final class TodoInitial extends TodoState {
 
   @override
   String toString() => 'TodoInitial { id: ${todo.id} todo: "$todo" }';
+}
+
+final class TodoChange extends TodoState {
+  const TodoChange({
+    required super.todo,
+  });
+
+  @override
+  List<Object?> get props => [
+        todo,
+      ];
+
+  @override
+  String toString() => 'TodoChange { id: ${todo.id} todo: "$todo" }';
 }
 
 final class TodoSuccess extends TodoState {
