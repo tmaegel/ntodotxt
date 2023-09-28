@@ -13,7 +13,7 @@ abstract class TodoListApi {
   Stream<List<Todo>> getTodoList();
 
   /// Read [todoList] from source.
-  Future<List<Todo>> readFromFile();
+  Future<void> readFromFile();
 
   /// Write [todoList] to source.
   Future<void> writeToFile();
@@ -59,6 +59,9 @@ class LocalStorageTodoListApi extends TodoListApi {
 
   static Future<List<Todo>> _fromFile() async {
     final file = await localFile;
+    if (await file.exists() == false) {
+      await file.create();
+    }
     final lines = await file.readAsLines();
     return _fromList(lines);
   }
@@ -122,7 +125,9 @@ class LocalStorageTodoListApi extends TodoListApi {
   Stream<List<Todo>> getTodoList() => _streamController.asBroadcastStream();
 
   @override
-  Future<List<Todo>> readFromFile() async => await _fromFile();
+  Future<void> readFromFile() async {
+    _streamController.add(await _fromFile());
+  }
 
   @override
   Future<void> writeToFile() async {
@@ -137,8 +142,7 @@ class LocalStorageTodoListApi extends TodoListApi {
   @override
   Future<void> syncTodoList() async {
     await writeToFile();
-    List<Todo> todoList = await readFromFile();
-    _streamController.add(todoList);
+    await readFromFile();
   }
 
   @override

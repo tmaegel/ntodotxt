@@ -13,7 +13,7 @@ class TodoListRepository {
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
 
   /// Read [todoList] from source.
-  Future<List<Todo>> readFromFile() => _todoListApi.readFromFile();
+  Future<void> readFromFile() => _todoListApi.readFromFile();
 
   /// Write [todoList] to source.
   Future<void> writeToFile() => _todoListApi.writeToFile();
