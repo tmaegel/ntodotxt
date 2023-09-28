@@ -22,6 +22,7 @@ class GroupByDialog extends StatelessWidget {
       },
       builder: (BuildContext context, TodoListState state) {
         return BottomSheet(
+          key: const Key("groupByDialog"),
           enableDrag: false,
           showDragHandle: false,
           onClosing: () {},
@@ -39,6 +40,7 @@ class GroupByDialog extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Text(key),
                   leading: Radio<TodoListGroupBy>(
+                    key: Key('${items[key]!.name}RadioButton'),
                     value: items[key]!,
                     groupValue: state.group,
                     onChanged: (TodoListGroupBy? value) =>

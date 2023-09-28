@@ -377,7 +377,7 @@ sealed class TodoListState extends Equatable {
 
   @override
   String toString() =>
-      'TodoListState { filter: $filter order: $order group: $group }';
+      'TodoListState { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }
 
 final class TodoListInitial extends TodoListState {
@@ -390,7 +390,7 @@ final class TodoListInitial extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListInitial { filter: $filter order: $order group: $group }';
+      'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }
 
 final class TodoListLoading extends TodoListState {
@@ -403,7 +403,7 @@ final class TodoListLoading extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListLoading { filter: $filter order: $order group: $group }';
+      'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }
 
 final class TodoListSuccess extends TodoListState {
@@ -416,7 +416,7 @@ final class TodoListSuccess extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListSuccess { filter: $filter order: $order group: $group }';
+      'TodoListSuccess { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }
 
 final class TodoListError extends TodoListState {
@@ -441,5 +441,5 @@ final class TodoListError extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListError { message: $message filter: $filter order: $order group: $group }';
+      'TodoListError { message: $message filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }

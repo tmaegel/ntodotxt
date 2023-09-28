@@ -21,6 +21,7 @@ class FilterDialog extends StatelessWidget {
       },
       builder: (BuildContext context, TodoListState state) {
         return BottomSheet(
+          key: const Key("filterDialog"),
           enableDrag: false,
           showDragHandle: false,
           onClosing: () {},
@@ -38,6 +39,7 @@ class FilterDialog extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Text(key),
                   leading: Radio<TodoListFilter>(
+                    key: Key('${items[key]!.name}RadioButton'),
                     value: items[key]!,
                     groupValue: state.filter,
                     onChanged: (TodoListFilter? value) =>

@@ -34,7 +34,7 @@ void main() {
       expect(todoListBloc.state.group, TodoListGroupBy.upcoming);
       expect(todoListBloc.state.todoList, []);
       expect(todoListBloc.state.toString(),
-          'TodoListInitial { filter: TodoListFilter.all order: TodoListOrder.ascending group: TodoListGroupBy.upcoming }');
+          'TodoListInitial { filter: all order: ascending group: upcoming }');
     });
   });
 

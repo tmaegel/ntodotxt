@@ -20,6 +20,7 @@ class OrderDialog extends StatelessWidget {
       },
       builder: (BuildContext context, TodoListState state) {
         return BottomSheet(
+          key: const Key("orderDialog"),
           enableDrag: false,
           showDragHandle: false,
           onClosing: () {},
@@ -37,6 +38,7 @@ class OrderDialog extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Text(key),
                   leading: Radio<TodoListOrder>(
+                    key: Key('${items[key]!.name}RadioButton'),
                     value: items[key]!,
                     groupValue: state.order,
                     onChanged: (TodoListOrder? value) =>

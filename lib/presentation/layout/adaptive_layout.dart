@@ -13,7 +13,9 @@ class NarrowLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: SafeArea(
+        child: child,
+      ),
     );
   }
 }
@@ -30,16 +32,18 @@ class WideLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          // To hide rounded cornors of NavigationDrawer.
-          Container(
-            color: Theme.of(context).appBarTheme.backgroundColor,
-            child: const ResponsiveNavigationDrawer(),
-          ),
-          const VerticalDivider(width: 2),
-          Expanded(child: child),
-        ],
+      body: SafeArea(
+        child: Row(
+          children: [
+            // To hide rounded cornors of NavigationDrawer.
+            Container(
+              color: Theme.of(context).appBarTheme.backgroundColor,
+              child: const ResponsiveNavigationDrawer(),
+            ),
+            const VerticalDivider(width: 2),
+            Expanded(child: child),
+          ],
+        ),
       ),
     );
   }

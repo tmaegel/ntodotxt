@@ -44,9 +44,8 @@ abstract class TodoListView extends StatelessWidget {
         IconButton(
           tooltip: 'Group by',
           icon: const Icon(Icons.widgets),
-          onPressed: () {
-            showModalBottomSheet<void>(
-              useRootNavigator: true,
+          onPressed: () async {
+            await showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) => const GroupByDialog(),
             );
@@ -55,9 +54,8 @@ abstract class TodoListView extends StatelessWidget {
         IconButton(
           tooltip: 'Sort',
           icon: const Icon(Icons.sort_by_alpha),
-          onPressed: () {
-            showModalBottomSheet<void>(
-              useRootNavigator: true,
+          onPressed: () async {
+            await showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) => const OrderDialog(),
             );
@@ -66,9 +64,8 @@ abstract class TodoListView extends StatelessWidget {
         IconButton(
           tooltip: 'Filter',
           icon: const Icon(Icons.filter_alt),
-          onPressed: () {
-            showModalBottomSheet<void>(
-              useRootNavigator: true,
+          onPressed: () async {
+            await showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) => const FilterDialog(),
             );
@@ -206,10 +203,12 @@ abstract class TodoListView extends StatelessWidget {
           await bloc;
         },
         child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-          }),
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+            },
+          ),
           child: const TodoList(),
         ),
       ),
