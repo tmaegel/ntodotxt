@@ -212,10 +212,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "5668e6d3dbcb2d0dfa25f7567554b88c57e1e3f3c440b672b24d4a9477017d5b"
+      sha256: a07c781bf55bf11ae85133338e4850f0b4e33e261c44a66c750fc707d65d8393
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.2"
+    version: "11.1.2"
   http_multi_server:
     dependency: transitive
     description:
@@ -613,6 +613,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.3"
+  test_cov_console:
+    dependency: "direct dev"
+    description:
+      name: test_cov_console
+      sha256: "73519e8be3689d73f5cffb652c12c310acacf48379396d834da937094836e65e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
   typed_data:
     dependency: transitive
     description:
@@ -673,10 +681,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "9e82a402b7f3d518fb9c02d0e9ae45952df31b9bf34d77baf19da2de03fc2aaa"
+      sha256: "350a11abd2d1d97e0cc7a28a81b781c08002aa2864d9e3f192ca0ffa18b06ed3"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.7"
+    version: "5.0.9"
   xdg_directories:
     dependency: transitive
     description:

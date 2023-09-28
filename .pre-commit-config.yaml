@@ -1,0 +1,40 @@
+---
+exclude: (^android/|^build/|^coverage/|^ios/|^linux/|^macos/|^web/|^windows/)
+fail_fast: true
+
+repos:
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: "v4.4.0"
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-byte-order-marker
+      - id: check-case-conflict
+      - id: pretty-format-json
+        args: ["--autofix", "--indent=4", "--no-sort-keys"]
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: requirements-txt-fixer
+      - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: flutter test
+        name: flutter test
+        language: system
+        entry: flutter test --coverage
+        pass_filenames: false
+
+      - id: test coverage
+        name: test coverage
+        language: system
+        entry: dart run test_cov_console -l
+        pass_filenames: false
+        verbose: true
