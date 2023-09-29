@@ -15,7 +15,10 @@ class TodoNotFound extends TodoException {
 }
 
 class TodoStringMalformed extends TodoException {
-  const TodoStringMalformed() : super('Todo string is malformed');
+  final String str;
+  const TodoStringMalformed({
+    required this.str,
+  }) : super('Todo string is malformed: "$str"');
 }
 
 class TodoInvalidProjectTag extends TodoException {

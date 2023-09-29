@@ -44,7 +44,7 @@ class TodoList extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Theme.of(context).colorScheme.error,
-              content: const Text('ERROR: ???'),
+              content: Text('ERROR: ${state.message}'),
             ),
           );
         }

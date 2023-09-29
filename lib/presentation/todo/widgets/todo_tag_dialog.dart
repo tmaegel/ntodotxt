@@ -62,6 +62,7 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
               title: TextFormField(
                 key: _textFormKey,
                 controller: _controller,
+                style: Theme.of(context).textTheme.bodyMedium,
                 decoration: InputDecoration(
                   hintText:
                       'Enter <${widget.tagName}> tags seperated by whitespace ...',

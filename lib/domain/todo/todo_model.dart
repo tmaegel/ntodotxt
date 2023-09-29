@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 
 class Todo extends Equatable {
-  /// Structure of a valid todoStr
+  /// Structure of a valid todo string
   /// with some modification (https://github.com/todotxt/todo.txt/discussions/52)
   ///
   /// [completion]      (optional)
@@ -143,6 +143,16 @@ class Todo extends Equatable {
         throw TodoInvalidKeyValueTag(tag: '${kv.key}:${kv.value}');
       }
     }
+
+    // Initialize creationDate to be sure there is always one set.
+    // if (creationDate == null) {
+    //   final DateTime now = DateTime.now();
+    //   creationDate = DateTime(
+    //     now.year,
+    //     now.month,
+    //     now.day,
+    //   );
+    // }
   }
 
   const Todo.noValidation({
@@ -189,8 +199,8 @@ class Todo extends Equatable {
   }
 
   /// Factory for model creation from string.
-  factory Todo.fromString({required int id, required String todoStr}) {
-    final List<String> todoSplitted = _trim(todoStr).split(' ');
+  factory Todo.fromString({required int id, required String value}) {
+    final todoStr = _trim(value); // Trim first.
     bool completion;
     String? priority;
     DateTime? completionDate;
@@ -198,34 +208,28 @@ class Todo extends Equatable {
     List<String>? fullDescriptionList;
 
     // Get completion
-    completion = _completion(_strElement(todoSplitted, 0));
+    completion = _completion(_todoStringElementAt(todoStr, 0));
     if (completion) {
-      completionDate = str2Date(_strElement(todoSplitted, 1));
-      priority = _priority(_strElement(todoSplitted, 2));
+      completionDate = str2Date(_todoStringElementAt(todoStr, 1));
+      priority = _priority(_todoStringElementAt(todoStr, 2));
+      // x <completionDate> [<priority>] [<creationDate>] <fullDescription>
       if (priority == null) {
-        // x [completionDate] [fullDescription]
-        // x [completionDate] [creationDate] [fullDescription]
-        creationDate = str2Date(_strElement(todoSplitted, 2));
+        creationDate = str2Date(_todoStringElementAt(todoStr, 2));
       } else {
-        // x [completionDate] [priority] [fullDescription]
-        // x [completionDate] [priority] [creationDate] [fullDescription]
-        creationDate = str2Date(_strElement(todoSplitted, 3));
+        creationDate = str2Date(_todoStringElementAt(todoStr, 3));
       }
     } else {
-      priority = _priority(_strElement(todoSplitted, 0));
+      priority = _priority(_todoStringElementAt(todoStr, 0));
+      // [<priority>] [<creationDate>] <fullDescription>
       if (priority == null) {
-        // [creationDate] [fullDescription]
         // The provided date is the creation date (todo incompleted).
-        creationDate = str2Date(_strElement(todoSplitted, 0));
-        // The todo is not completed so two dates are forbidden.
-        completionDate = str2Date(_strElement(todoSplitted, 1));
+        creationDate = str2Date(_todoStringElementAt(todoStr, 0));
       } else {
-        // [priority] [creationDate] [fullDescription]
         // The provided date is the creation date (todo incompleted).
-        creationDate = str2Date(_strElement(todoSplitted, 1));
-        // The todo is not completed so two dates are forbidden.
-        completionDate = str2Date(_strElement(todoSplitted, 2));
+        creationDate = str2Date(_todoStringElementAt(todoStr, 1));
       }
+      // The todo is not completed so two dates are forbidden.
+      // Everything that comes after the creationDate is interpreted as a description.
     }
 
     // Get beginning of description.
@@ -235,7 +239,7 @@ class Todo extends Equatable {
         descriptionIndex += 1;
       }
     }
-    fullDescriptionList = _fullDescriptionList(todoSplitted, descriptionIndex);
+    fullDescriptionList = _fullDescriptionList(todoStr, descriptionIndex);
 
     return Todo._(
       id: id,
@@ -257,11 +261,26 @@ class Todo extends Equatable {
     });
   }
 
-  static String _strElement(List<String> splitted, int index) {
+  static String _todoStringElementAt(String value, int index) {
+    final List<String> todoStrSplitted = value.split(' ');
     try {
-      return splitted[index];
+      return todoStrSplitted[index];
     } on RangeError {
-      throw const TodoStringMalformed();
+      return '';
+    }
+  }
+
+  static List<String> _fullDescriptionList(String value, int index) {
+    final List<String> todoStrSplitted = value.split(' ');
+    try {
+      final List<String> fullDescriptionList = todoStrSplitted.sublist(index);
+      if (fullDescriptionList.isNotEmpty) {
+        return fullDescriptionList;
+      } else {
+        throw TodoStringMalformed(str: value);
+      }
+    } on RangeError {
+      throw TodoStringMalformed(str: value);
     }
   }
 
@@ -280,28 +299,20 @@ class Todo extends Equatable {
     }
   }
 
-  static List<String> _fullDescriptionList(List<String> splitted, int index) {
-    try {
-      final List<String> fullDescriptionList = splitted.sublist(index);
-      if (fullDescriptionList.isNotEmpty) {
-        return fullDescriptionList;
-      } else {
-        throw const TodoStringMalformed();
-      }
-    } on RangeError {
-      throw const TodoStringMalformed();
-    }
-  }
-
   /// Trim projects, contexts and key-values from description.
   static String _description(List<String> descriptionList) {
-    return _trim(
+    final String description = _trim(
       descriptionList
           .join(' ')
           .replaceAll(RegExp(r'\+\S+'), '')
           .replaceAll(RegExp(r'\@\S+'), '')
           .replaceAll(RegExp(r'\S+:\S+'), ''),
     );
+    if (description.isEmpty) {
+      throw const TodoStringMalformed(str: '');
+    }
+
+    return description;
   }
 
   static Set<String> _projects(List<String> fullDescriptionList) {

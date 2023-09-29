@@ -71,7 +71,7 @@ class LocalStorageTodoListApi extends TodoListApi {
     rawTodoList.sort();
     return [
       for (var i = 0; i < rawTodoList.length; i++)
-        Todo.fromString(id: i, todoStr: rawTodoList[i])
+        Todo.fromString(id: i, value: rawTodoList[i])
     ];
   }
 
