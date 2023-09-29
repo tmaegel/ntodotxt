@@ -4,6 +4,7 @@ import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -84,6 +85,7 @@ class App extends StatelessWidget {
               title: 'Flutter layout demo',
               debugShowCheckedModeBanner: false, // Remove the debug banner
               theme: lightTheme.copyWith(
+                splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
                 chipTheme: lightTheme.chipTheme.copyWith(
                   backgroundColor: lightTheme.dividerColor,
                   shape: const StadiumBorder(),
@@ -98,6 +100,7 @@ class App extends StatelessWidget {
                 ),
               ),
               darkTheme: darkTheme.copyWith(
+                splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
                 chipTheme: darkTheme.chipTheme.copyWith(
                   backgroundColor: darkTheme.dividerColor,
                   shape: const StadiumBorder(),
@@ -108,7 +111,8 @@ class App extends StatelessWidget {
                 ),
                 listTileTheme: darkTheme.listTileTheme.copyWith(
                   selectedColor: darkTheme.textTheme.bodySmall?.color,
-                  selectedTileColor: darkTheme.hoverColor,
+                  selectedTileColor:
+                      PlatformInfo.isAppOS ? Colors.red : darkTheme.hoverColor,
                 ),
               ),
               // If you do not have a themeMode switch, uncomment this line

@@ -25,7 +25,7 @@ class TodoListSection extends StatelessWidget {
         padding: const EdgeInsets.only(left: 5.0),
         child: Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
       children: children,

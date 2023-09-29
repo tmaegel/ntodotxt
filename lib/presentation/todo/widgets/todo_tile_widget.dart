@@ -27,7 +27,10 @@ class TodoTile extends StatelessWidget {
         value: todo.completion,
         onChanged: (bool? completion) => onChange(completion),
       ),
-      title: Text(todo.description),
+      title: Text(
+        todo.description,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
       subtitle: _buildSubtitle(),
       onTap: () => onTap(),
       onLongPress: () => onLongPress(),
