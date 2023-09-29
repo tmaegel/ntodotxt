@@ -25,9 +25,15 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
   // Holds the selected tags before adding to the regular state.
   List<String> selectedTags = [];
 
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
-  final _controller = TextEditingController();
+  late GlobalKey<FormFieldState> _textFormKey;
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _textFormKey = GlobalKey<FormFieldState>();
+    _controller = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -53,7 +59,8 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: TextField(
+              title: TextFormField(
+                key: _textFormKey,
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText:

@@ -21,70 +21,7 @@ class AppRouter {
 
   AppRouter(this.loginCubit);
 
-  late final GoRouter routerNarrowLayout = GoRouter(
-    initialLocation: '/todo',
-    debugLogDiagnostics: true,
-    routes: <RouteBase>[
-      GoRoute(
-        path: '/login',
-        name: 'login',
-        builder: (BuildContext context, GoRouterState state) {
-          return const LoginPage();
-        },
-      ),
-      GoRoute(
-        path: '/settings',
-        name: 'settings',
-        builder: (BuildContext context, GoRouterState state) {
-          return const SettingsPage();
-        },
-      ),
-      GoRoute(
-        path: '/todo',
-        name: 'todo-list',
-        builder: (BuildContext context, GoRouterState state) {
-          return const NarrowLayout(
-            child: TodoListPage(),
-          );
-        },
-        routes: [
-          GoRoute(
-            path: 'todo/create',
-            name: 'todo-create',
-            builder: (BuildContext context, GoRouterState state) {
-              return const NarrowLayout(
-                child: TodoCreatePage(),
-              );
-            },
-          ),
-          GoRoute(
-            path: 'todo/edit',
-            name: 'todo-edit',
-            builder: (BuildContext context, GoRouterState state) {
-              Todo todo = state.extra as Todo;
-              return NarrowLayout(
-                child: TodoEditPage(todo: todo),
-              );
-            },
-          ),
-        ],
-      ),
-    ],
-    redirect: (BuildContext context, GoRouterState state) {
-      final AuthStatus authState = context.read<LoginCubit>().state.status;
-      final bool onLoginPage = state.fullPath == '/login';
-      if (authState != AuthStatus.authenticated) {
-        return onLoginPage ? null : '/login';
-      }
-      if (onLoginPage) {
-        return '/todo';
-      }
-      return null;
-    },
-    refreshListenable: GoRouterRefreshStream(loginCubit.stream),
-  );
-
-  late final GoRouter routerWideLayout = GoRouter(
+  late final GoRouter config = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/todo',
     debugLogDiagnostics: true,
@@ -99,7 +36,7 @@ class AppRouter {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
-          return WideLayout(child: child);
+          return AdaptiveLayout(child: child);
         },
         routes: [
           GoRoute(

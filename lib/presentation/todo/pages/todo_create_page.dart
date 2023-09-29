@@ -8,6 +8,7 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoCreatePage extends StatelessWidget {
   const TodoCreatePage({
@@ -32,30 +33,6 @@ class TodoCreatePage extends StatelessWidget {
 abstract class TodoCreateView extends StatelessWidget {
   const TodoCreateView({super.key});
 
-  Widget _buildTodoTextField(BuildContext context, TodoState state) {
-    return TextFormField(
-      key: const Key('createTodoView_textFormField'),
-      initialValue: state.todo.description,
-      minLines: 1,
-      maxLines: 5,
-      style: Theme.of(context).textTheme.titleMedium,
-      decoration: const InputDecoration(
-        hintText: 'Enter your todo description here ...',
-        isDense: true,
-        filled: false,
-        contentPadding: EdgeInsets.all(20.0),
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-      ),
-      onChanged: (value) {
-        context.read<TodoBloc>().add(TodoDescriptionChanged(value));
-      },
-    );
-  }
-
   Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.save),
@@ -64,21 +41,18 @@ abstract class TodoCreateView extends StatelessWidget {
     );
   }
 
-  Widget _buildBody({
-    required BuildContext context,
-    required TodoState state,
-  }) {
+  Widget _buildBody() {
     return Column(
       children: [
         Expanded(
           child: ListView(
-            children: [
-              _buildTodoTextField(context, state),
-              const Divider(),
-              const TodoPriorityTags(),
-              const TodoProjectTags(),
-              const TodoContextTags(),
-              const TodoKeyValueTags(),
+            children: const [
+              TodoDescriptionTextField(),
+              Divider(),
+              TodoPriorityTags(),
+              TodoProjectTags(),
+              TodoContextTags(),
+              TodoKeyValueTags(),
             ],
           ),
         ),
@@ -110,10 +84,7 @@ class TodoCreateNarrowView extends TodoCreateView {
           appBar: const MainAppBar(
             title: "Create",
           ),
-          body: _buildBody(
-            context: context,
-            state: state,
-          ),
+          body: _buildBody(),
           floatingActionButton: !state.todo.isDescriptionEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
@@ -146,10 +117,7 @@ class TodoCreateWideView extends TodoCreateView {
           appBar: const MainAppBar(
             title: "Create",
           ),
-          body: _buildBody(
-            context: context,
-            state: state,
-          ),
+          body: _buildBody(),
           floatingActionButton: !state.todo.isDescriptionEmpty
               ? _buildFloatingActionButton(context, state)
               : null,

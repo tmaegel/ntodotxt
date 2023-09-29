@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart';
-import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
@@ -12,6 +11,7 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final LocalStorageTodoListApi todoListApi =
@@ -114,16 +114,11 @@ class App extends StatelessWidget {
               // If you do not have a themeMode switch, uncomment this line
               // to let the device system mode control the theme mode:
               themeMode: ThemeMode.system,
-              routerConfig: _isNarrowLayout(context)
-                  ? AppRouter(context.read<LoginCubit>()).routerNarrowLayout
-                  : AppRouter(context.read<LoginCubit>()).routerWideLayout,
+              routerConfig: AppRouter(context.read<LoginCubit>()).config,
             );
           },
         ),
       ),
     );
   }
-
-  bool _isNarrowLayout(BuildContext context) =>
-      MediaQuery.of(context).size.width < maxScreenWidthCompact;
 }

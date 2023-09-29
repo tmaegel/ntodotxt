@@ -1,5 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
+import 'package:ntodotxt/constants/screen.dart';
+
+class AdaptiveLayout extends StatelessWidget {
+  // The widget to display in the body of the Scaffold.
+  final Widget child;
+
+  const AdaptiveLayout({
+    required this.child,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width < maxScreenWidthCompact) {
+      return NarrowLayout(child: child);
+    } else {
+      return WideLayout(child: child);
+    }
+  }
+}
 
 class NarrowLayout extends StatelessWidget {
   // The widget to display in the body of the Scaffold.

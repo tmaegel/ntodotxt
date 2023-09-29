@@ -8,6 +8,7 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_section.dart';
+import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoEditPage extends StatelessWidget {
   final Todo _todo;
@@ -34,30 +35,6 @@ class TodoEditPage extends StatelessWidget {
 
 abstract class TodoEditView extends StatelessWidget {
   const TodoEditView({super.key});
-
-  Widget _buildTodoTextField(BuildContext context, TodoState state) {
-    return TextFormField(
-      key: const Key('editTodoView_textFormField'),
-      initialValue: state.todo.description,
-      minLines: 1,
-      maxLines: 5,
-      style: Theme.of(context).textTheme.titleMedium,
-      decoration: const InputDecoration(
-        hintText: 'Enter your todo description here ...',
-        isDense: true,
-        filled: false,
-        contentPadding: EdgeInsets.all(20.0),
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-      ),
-      onChanged: (value) {
-        context.read<TodoBloc>().add(TodoDescriptionChanged(value));
-      },
-    );
-  }
 
   Widget _buildFloatingActionButton(BuildContext context, TodoState state) {
     return PrimaryFloatingActionButton(
@@ -88,21 +65,18 @@ abstract class TodoEditView extends StatelessWidget {
     );
   }
 
-  Widget _buildBody({
-    required BuildContext context,
-    required TodoState state,
-  }) {
+  Widget _buildBody() {
     return Column(
       children: [
         Expanded(
           child: ListView(
-            children: [
-              _buildTodoTextField(context, state),
-              const Divider(),
-              const TodoPriorityTags(),
-              const TodoProjectTags(),
-              const TodoContextTags(),
-              const TodoKeyValueTags(),
+            children: const [
+              TodoDescriptionTextField(),
+              Divider(),
+              TodoPriorityTags(),
+              TodoProjectTags(),
+              TodoContextTags(),
+              TodoKeyValueTags(),
             ],
           ),
         ),
@@ -135,10 +109,7 @@ class TodoEditNarrowView extends TodoEditView {
             title: "Edit",
             toolbar: _buildToolBar(context, state),
           ),
-          body: _buildBody(
-            context: context,
-            state: state,
-          ),
+          body: _buildBody(),
           floatingActionButton: !state.todo.isDescriptionEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
@@ -172,10 +143,7 @@ class TodoEditWideView extends TodoEditView {
             title: "Edit",
             toolbar: _buildToolBar(context, state),
           ),
-          body: _buildBody(
-            context: context,
-            state: state,
-          ),
+          body: _buildBody(),
           floatingActionButton: !state.todo.isDescriptionEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
