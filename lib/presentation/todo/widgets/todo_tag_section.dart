@@ -19,8 +19,8 @@ abstract class TodoTagSection extends StatelessWidget {
     required Widget child,
   }) {
     showModalBottomSheet<void>(
-      useRootNavigator: true,
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) => child,
     );
   }
