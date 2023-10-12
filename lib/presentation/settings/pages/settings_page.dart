@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
+import 'package:ntodotxt/common_widgets/filter_dialog.dart';
+import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
+import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/presentation/settings/states/settings.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -33,6 +37,51 @@ class SettingsView extends StatelessWidget {
       builder: (BuildContext context, SettingsState state) {
         return ListView(
           children: [
+            ListTile(
+              title: Text(
+                'Appearance',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
+            ListTile(
+              title: const Text("Filter"),
+              subtitle: Text(state.todoFilter),
+              onTap: () async {
+                context.read<SettingsCubit>().updateTodoFilter(
+                      await showDialog<TodoListFilter?>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            const FilterSettingsDialog(),
+                      ),
+                    );
+              },
+            ),
+            ListTile(
+              title: const Text("Order"),
+              subtitle: Text(state.todoOrder),
+              onTap: () async {
+                context.read<SettingsCubit>().updateTodoOrder(
+                      await showDialog<TodoListOrder?>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            const OrderSettingsDialog(),
+                      ),
+                    );
+              },
+            ),
+            ListTile(
+              title: const Text("Group by"),
+              subtitle: Text(state.todoGrouping),
+              onTap: () async {
+                context.read<SettingsCubit>().updateTodoGrouping(
+                      await showDialog<TodoListGroupBy?>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            const GroupBySettingsDialog(),
+                      ),
+                    );
+              },
+            ),
             ListTile(
               title: Text(
                 'Todo',

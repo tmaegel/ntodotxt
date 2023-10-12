@@ -64,34 +64,34 @@ final class TodoListSelectionDeleted extends TodoListEvent {
 }
 
 final class TodoListOrderChanged extends TodoListEvent {
-  final TodoListOrder order;
+  final TodoListOrder? order;
 
   const TodoListOrderChanged({
     required this.order,
   });
 
   @override
-  List<Object> get props => [order];
+  List<Object?> get props => [order];
 }
 
 final class TodoListFilterChanged extends TodoListEvent {
-  final TodoListFilter filter;
+  final TodoListFilter? filter;
 
   const TodoListFilterChanged({
     required this.filter,
   });
 
   @override
-  List<Object> get props => [filter];
+  List<Object?> get props => [filter];
 }
 
 final class TodoListGroupByChanged extends TodoListEvent {
-  final TodoListGroupBy group;
+  final TodoListGroupBy? group;
 
   const TodoListGroupByChanged({
     required this.group,
   });
 
   @override
-  List<Object> get props => [group];
+  List<Object?> get props => [group];
 }

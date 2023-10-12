@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/presentation/settings/states/settings_state.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
@@ -12,11 +13,35 @@ class SettingsCubit extends Cubit<SettingsState> {
   void loadPrefs() {
     emit(
       state.copyWith(
+        todoFilter: prefs.getString('todoFilter'),
+        todoOrder: prefs.getString('todoOrder'),
+        todoGrouping: prefs.getString('todoGrouping'),
         todoFilename: prefs.getString('todoFilename'),
         doneFilename: prefs.getString('doneFilename'),
         autoArchive: prefs.getBool('autoArchive'),
       ),
     );
+  }
+
+  void updateTodoFilter(TodoListFilter? value) async {
+    if (value != null) {
+      await prefs.setString('todoFilter', value.name);
+      emit(state.copyWith(todoFilter: value.name));
+    }
+  }
+
+  void updateTodoOrder(TodoListOrder? value) async {
+    if (value != null) {
+      await prefs.setString('todoOrder', value.name);
+      emit(state.copyWith(todoOrder: value.name));
+    }
+  }
+
+  void updateTodoGrouping(TodoListGroupBy? value) async {
+    if (value != null) {
+      await prefs.setString('todoGrouping', value.name);
+      emit(state.copyWith(todoGrouping: value.name));
+    }
   }
 
   void updateTodoFilename(String? value) async {

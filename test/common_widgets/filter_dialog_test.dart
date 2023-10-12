@@ -7,16 +7,18 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_list_widget.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tile_widget.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 const appBarKey = Key("appBar");
 const buttonKey = Key("button");
-const filterDialogKey = Key("filterDialog");
-const radioButtonKeyAll = Key('allRadioButton');
-const radioButtonKeyCompletedOnly = Key('completedOnlyRadioButton');
-const radioButtonKeyIncompletedOnly = Key('incompletedOnlyRadioButton');
+const filterDialogKey = Key("FilterTodoListBottomSheet");
+const radioButtonKeyAll = Key('allBottomSheetRadioButton');
+const radioButtonKeyCompletedOnly = Key('completedOnlyBottomSheetRadioButton');
+const radioButtonKeyIncompletedOnly =
+    Key('incompletedOnlyBottomSheetRadioButton');
 
 Future<void> pumpFilterDialog(
   WidgetTester tester,
@@ -42,10 +44,21 @@ Future<void> pumpFilterDialog(
                     key: buttonKey,
                     child: const Text("Show dialog"),
                     onPressed: () async {
-                      await showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) => const FilterDialog(),
-                      );
+                      context.read<TodoListBloc>().add(
+                            TodoListFilterChanged(
+                              filter:
+                                  await showModalBottomSheet<TodoListFilter?>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const FilterTodoListBottomSheet(),
+                              ),
+                            ),
+                          );
+                      // await showModalBottomSheet<TodoListFilter?>(
+                      //   context: context,
+                      //   builder: (BuildContext context) =>
+                      //       const FilterTodoListBottomSheet(),
+                      // );
                     },
                   );
                 },

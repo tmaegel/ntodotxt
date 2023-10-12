@@ -73,6 +73,7 @@ class App extends StatelessWidget {
           ),
           BlocProvider<TodoListBloc>(
             create: (context) => TodoListBloc(
+              prefs: prefs,
               todoListRepository: todoListRepository,
             )..add(
                 const TodoListSubscriptionRequested(),

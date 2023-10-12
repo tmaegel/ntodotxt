@@ -3,14 +3,32 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final TodoListRepository _todoListRepository;
 
   TodoListBloc({
+    SharedPreferences? prefs,
     required TodoListRepository todoListRepository,
   })  : _todoListRepository = todoListRepository,
-        super(const TodoListInitial()) {
+        super(
+          TodoListInitial(
+            filter: TodoListFilter.values.byName(
+              prefs == null ? 'all' : prefs.getString('todoFilter') ?? 'all',
+            ),
+            order: TodoListOrder.values.byName(
+              prefs == null
+                  ? 'ascending'
+                  : prefs.getString('todoOrder') ?? 'ascending',
+            ),
+            group: TodoListGroupBy.values.byName(
+              prefs == null
+                  ? 'upcoming'
+                  : prefs.getString('todoGrouping') ?? 'upcoming',
+            ),
+          ),
+        ) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);

@@ -45,30 +45,45 @@ abstract class TodoListView extends StatelessWidget {
           tooltip: 'Group by',
           icon: const Icon(Icons.widgets),
           onPressed: () async {
-            await showModalBottomSheet<void>(
-              context: context,
-              builder: (BuildContext context) => const GroupByDialog(),
-            );
+            context.read<TodoListBloc>().add(
+                  TodoListGroupByChanged(
+                    group: await showModalBottomSheet<TodoListGroupBy?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const GroupByTodoListBottomSheet(),
+                    ),
+                  ),
+                );
           },
         ),
         IconButton(
           tooltip: 'Sort',
           icon: const Icon(Icons.sort_by_alpha),
           onPressed: () async {
-            await showModalBottomSheet<void>(
-              context: context,
-              builder: (BuildContext context) => const OrderDialog(),
-            );
+            context.read<TodoListBloc>().add(
+                  TodoListOrderChanged(
+                    order: await showModalBottomSheet<TodoListOrder?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const OrderTodoListBottomSheet(),
+                    ),
+                  ),
+                );
           },
         ),
         IconButton(
           tooltip: 'Filter',
           icon: const Icon(Icons.filter_alt),
           onPressed: () async {
-            await showModalBottomSheet<void>(
-              context: context,
-              builder: (BuildContext context) => const FilterDialog(),
-            );
+            context.read<TodoListBloc>().add(
+                  TodoListFilterChanged(
+                    filter: await showModalBottomSheet<TodoListFilter?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const FilterTodoListBottomSheet(),
+                    ),
+                  ),
+                );
           },
         ),
         IconButton(

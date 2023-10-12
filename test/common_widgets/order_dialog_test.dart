@@ -7,15 +7,16 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_list_widget.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tile_widget.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 const appBarKey = Key("appBar");
 const buttonKey = Key("button");
-const orderDialogKey = Key("orderDialog");
-const radioButtonKeyAscending = Key('ascendingRadioButton');
-const radioButtonKeyDescending = Key('descendingRadioButton');
+const orderDialogKey = Key("OrderTodoListBottomSheet");
+const radioButtonKeyAscending = Key('ascendingBottomSheetRadioButton');
+const radioButtonKeyDescending = Key('descendingBottomSheetRadioButton');
 
 Future<void> pumpOrderDialog(
   WidgetTester tester,
@@ -41,10 +42,20 @@ Future<void> pumpOrderDialog(
                     key: buttonKey,
                     child: const Text("Show dialog"),
                     onPressed: () async {
-                      await showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) => const OrderDialog(),
-                      );
+                      context.read<TodoListBloc>().add(
+                            TodoListOrderChanged(
+                              order: await showModalBottomSheet<TodoListOrder?>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const OrderTodoListBottomSheet(),
+                              ),
+                            ),
+                          );
+                      // await showModalBottomSheet<TodoListOrder?>(
+                      //   context: context,
+                      //   builder: (BuildContext context) =>
+                      //       const OrderTodoListBottomSheet(),
+                      // );
                     },
                   );
                 },

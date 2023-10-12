@@ -7,18 +7,19 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_list_widget.dart';
 
 final scaffoldKey = GlobalKey<ScaffoldState>();
 const appBarKey = Key("appBar");
 const buttonKey = Key("button");
-const groupbyDialogKey = Key("groupByDialog");
-const radioButtonKeyUpcoming = Key('upcomingRadioButton');
-const radioButtonKeyPriority = Key('priorityRadioButton');
-const radioButtonKeyProject = Key('projectRadioButton');
-const radioButtonKeyContext = Key('contextRadioButton');
+const groupbyDialogKey = Key("GroupByTodoListBottomSheet");
+const radioButtonKeyUpcoming = Key('upcomingBottomSheetRadioButton');
+const radioButtonKeyPriority = Key('priorityBottomSheetRadioButton');
+const radioButtonKeyProject = Key('projectBottomSheetRadioButton');
+const radioButtonKeyContext = Key('contextBottomSheetRadioButton');
 
-Future<void> pumpGroupByDialog(
+Future<void> pumpGroupByBottomSheet(
   WidgetTester tester,
   TodoListRepository todoListRepository,
 ) async {
@@ -42,11 +43,21 @@ Future<void> pumpGroupByDialog(
                     key: buttonKey,
                     child: const Text("Show dialog"),
                     onPressed: () async {
-                      await showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            const GroupByDialog(),
-                      );
+                      context.read<TodoListBloc>().add(
+                            TodoListGroupByChanged(
+                              group:
+                                  await showModalBottomSheet<TodoListGroupBy?>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const GroupByTodoListBottomSheet(),
+                              ),
+                            ),
+                          );
+                      // await showModalBottomSheet<TodoListGroupBy?>(
+                      //   context: context,
+                      //   builder: (BuildContext context) =>
+                      //       const GroupByTodoListBottomSheet(),
+                      // );
                     },
                   );
                 },
@@ -101,7 +112,7 @@ void main() {
       TodoListRepository(todoListApi: todoListApi);
 
   testWidgets('Open and close the group by dialog (default)', (tester) async {
-    await pumpGroupByDialog(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, todoListRepository);
 
     expect(find.byKey(groupbyDialogKey), findsNothing);
 
@@ -114,28 +125,28 @@ void main() {
     expect(find.byKey(groupbyDialogKey), findsOneWidget);
     expect(
       find.descendant(
-        of: find.byType(GroupByDialog),
+        of: find.byType(GroupByTodoListBottomSheet),
         matching: find.text('Upcoming'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
-        of: find.byType(GroupByDialog),
+        of: find.byType(GroupByTodoListBottomSheet),
         matching: find.text('Priority'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
-        of: find.byType(GroupByDialog),
+        of: find.byType(GroupByTodoListBottomSheet),
         matching: find.text('Project'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
-        of: find.byType(GroupByDialog),
+        of: find.byType(GroupByTodoListBottomSheet),
         matching: find.text('Context'),
       ),
       findsOneWidget,
@@ -175,7 +186,7 @@ void main() {
   });
 
   testWidgets('Group by the list by "priority"', (tester) async {
-    await pumpGroupByDialog(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, todoListRepository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -220,7 +231,7 @@ void main() {
   });
 
   testWidgets('Group by the list by "project"', (tester) async {
-    await pumpGroupByDialog(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, todoListRepository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -266,7 +277,7 @@ void main() {
   });
 
   testWidgets('Group by the list by "context"', (tester) async {
-    await pumpGroupByDialog(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, todoListRepository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
