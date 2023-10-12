@@ -256,10 +256,27 @@ void main() {
       });
     });
     group("without creation date", () {
+      test("incompleted simple todo with forceCreationDate (default)", () {
+        final DateTime now = DateTime.now();
+        final todo = Todo.fromString(
+          id: id,
+          value: "Write some tests",
+          forceCreationDate: true,
+        );
+        expect(
+          todo.creationDate,
+          DateTime(
+            now.year,
+            now.month,
+            now.day,
+          ),
+        );
+      });
       test("incompleted simple todo", () {
         final todo = Todo.fromString(
           id: id,
           value: "Write some tests",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -267,6 +284,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           value: "(A) Todo",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -274,6 +292,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           value: "(A) Write some tests",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -281,6 +300,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           value: "(A) Write some tests +project @context due:2022-12-31",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -288,6 +308,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           value: "x 2022-11-16 Write some tests",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -295,6 +316,7 @@ void main() {
         final todo = Todo.fromString(
           id: id,
           value: "x 2022-11-16 (A) Write some tests",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -303,6 +325,7 @@ void main() {
           id: id,
           value:
               "x 2022-11-16 (A) Write some tests +project @context due:2022-12-31",
+          forceCreationDate: false,
         );
         expect(todo.creationDate, null);
       });
@@ -711,7 +734,51 @@ void main() {
       });
     });
 
-    group("exception", () {
+    group("edge cases", () {
+      test("completed with projects", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "x 2022-11-16 +project1 +project2",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
+      test("completed with contexts", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "x 2022-11-16 @context1 @context2",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
+      test("completed with key-values", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "x 2022-11-16 key1:val1 key2:val2",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
+      test("completed with all kind of tags", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "x 2022-11-16 +project @context key:val",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
       test("completed", () {
         expect(
           () => Todo.fromString(
@@ -745,6 +812,50 @@ void main() {
           ),
         );
       });
+      test("incompleted with projects", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "+project1 +project2",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
+      test("incompleted with contexts", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "@context1 @context2",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
+      test("incompleted with key-values", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "key1:val1 key2:val2",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
+      test("incompleted with all kind of tags", () {
+        expect(
+          () => Todo.fromString(
+            id: id,
+            value: "+project @context key:val",
+          ),
+          throwsA(
+            isA<TodoStringMalformed>(),
+          ),
+        );
+      });
       test("incompleted", () {
         expect(
           () => Todo.fromString(
@@ -756,7 +867,7 @@ void main() {
           ),
         );
       });
-      test("incompleted wiht priority", () {
+      test("incompleted with priority", () {
         expect(
           () => Todo.fromString(
             id: id,
@@ -767,7 +878,7 @@ void main() {
           ),
         );
       });
-      test("incompleted wiht priority and creation date", () {
+      test("incompleted with priority and creation date", () {
         expect(
           () => Todo.fromString(
             id: id,

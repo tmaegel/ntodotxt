@@ -83,37 +83,19 @@ class Todo extends Equatable {
   /// Defaults to false.
   final bool selected;
 
+  // Core todo constructor with validation logic.
   Todo._({
     this.id,
     this.completion = false,
     this.priority,
-    DateTime? completionDate,
-    DateTime? creationDate,
+    this.completionDate,
+    this.creationDate,
     required this.description,
-    Set<String> projects = const {},
-    Set<String> contexts = const {},
-    Map<String, String> keyValues = const {},
+    this.projects = const {},
+    this.contexts = const {},
+    this.keyValues = const {},
     this.selected = false,
-  })  : completionDate = completionDate == null
-            ? null
-            : DateTime(
-                completionDate.year,
-                completionDate.month,
-                completionDate.day,
-              ),
-        creationDate = creationDate == null
-            ? null
-            : DateTime(
-                creationDate.year,
-                creationDate.month,
-                creationDate.day,
-              ),
-        projects = {for (var p in projects) p.toLowerCase()},
-        contexts = {for (var c in contexts) c.toLowerCase()},
-        keyValues = {
-          for (MapEntry<String, String> kv in keyValues.entries)
-            kv.key.toLowerCase(): kv.value.toLowerCase()
-        } {
+  }) {
     // Validate completion date.
     if (completion) {
       if (completionDate == null) {
@@ -143,19 +125,9 @@ class Todo extends Equatable {
         throw TodoInvalidKeyValueTag(tag: '${kv.key}:${kv.value}');
       }
     }
-
-    // Initialize creationDate to be sure there is always one set.
-    // if (creationDate == null) {
-    //   final DateTime now = DateTime.now();
-    //   creationDate = DateTime(
-    //     now.year,
-    //     now.month,
-    //     now.day,
-    //   );
-    // }
   }
 
-  const Todo.noValidation({
+  const Todo.unsafe({
     this.id,
     this.completion = false,
     this.priority,
@@ -169,9 +141,9 @@ class Todo extends Equatable {
   });
 
   /// Is only used for creating new todos, as these initially have no description.
-  const Todo.empty() : this.noValidation(description: '');
+  const Todo.empty() : this.unsafe(description: '');
 
-  /// Factory for model creation (fallback).
+  /// Factory for model creation with safety mechanisms.
   factory Todo({
     int? id,
     bool completion = false,
@@ -183,7 +155,43 @@ class Todo extends Equatable {
     Set<String> contexts = const {},
     Map<String, String> keyValues = const {},
     bool selected = false,
+    bool forceCreationDate = true, // Initialize creationDate if not defined.
   }) {
+    if (completionDate != null) {
+      completionDate = DateTime(
+        completionDate.year,
+        completionDate.month,
+        completionDate.day,
+      );
+    }
+    if (creationDate != null) {
+      creationDate = DateTime(
+        creationDate.year,
+        creationDate.month,
+        creationDate.day,
+      );
+    } else {
+      // Initialize creationDate to be sure there is always one set.
+      if (forceCreationDate) {
+        final DateTime now = DateTime.now();
+        creationDate = DateTime(
+          now.year,
+          now.month,
+          now.day,
+        );
+      }
+    }
+    projects = {
+      for (var p in projects) p.toLowerCase(),
+    };
+    contexts = {
+      for (var c in contexts) c.toLowerCase(),
+    };
+    keyValues = {
+      for (MapEntry<String, String> kv in keyValues.entries)
+        kv.key.toLowerCase(): kv.value.toLowerCase()
+    };
+
     return Todo._(
       id: id,
       completion: completion,
@@ -199,7 +207,11 @@ class Todo extends Equatable {
   }
 
   /// Factory for model creation from string.
-  factory Todo.fromString({required int id, required String value}) {
+  factory Todo.fromString({
+    required int id,
+    required String value,
+    bool forceCreationDate = true, // Initialize creationDate if not defined.
+  }) {
     final todoStr = _trim(value); // Trim first.
     bool completion;
     String? priority;
@@ -241,7 +253,7 @@ class Todo extends Equatable {
     }
     fullDescriptionList = _fullDescriptionList(todoStr, descriptionIndex);
 
-    return Todo._(
+    return Todo(
       id: id,
       completion: completion,
       priority: priority,
@@ -251,6 +263,7 @@ class Todo extends Equatable {
       projects: _projects(fullDescriptionList),
       contexts: _contexts(fullDescriptionList),
       keyValues: _keyValues(fullDescriptionList),
+      forceCreationDate: forceCreationDate,
     );
   }
 
@@ -359,10 +372,43 @@ class Todo extends Equatable {
     }
   }
 
+  static String? date2Str(DateTime? date) {
+    if (date == null) {
+      return null;
+    }
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
   static int compareToToday(DateTime date) {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     return date.compareTo(today);
+  }
+
+  static String differenceToToday(DateTime date) {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final Duration difference = today.difference(date);
+    final int days = difference.inDays;
+
+    if (days < 0) {
+      return 'In future'; // In real this should never the case.
+    } else if (days == 0) {
+      return 'Today';
+    } else if (days == 1) {
+      return 'Yesterday';
+    } else if (days > 1 && days <= 6) {
+      return '$days days ago';
+    } else if (days > 6 && days <= 30) {
+      final int weeks = days ~/ 7;
+      return weeks == 1 ? '$weeks week ago' : '$weeks weeks ago';
+    } else if (days > 30 && days <= 364) {
+      final int months = days ~/ 31;
+      return months == 1 ? '$months month ago' : '$months months ago';
+    } else {
+      final int years = days ~/ 365;
+      return years == 1 ? '$years year ago' : '$years years ago';
+    }
   }
 
   DateTime? get dueDate {
@@ -387,13 +433,6 @@ class Todo extends Equatable {
     return {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
   }
 
-  String? formattedDate(DateTime? date) {
-    if (date == null) {
-      return null;
-    }
-    return DateFormat('yyyy-MM-dd').format(date);
-  }
-
   /// Returns a copy of this `todo` with the given values updated.
   Todo copyWith({
     int? id,
@@ -411,7 +450,7 @@ class Todo extends Equatable {
     bool unsetCompletionDate = false,
     bool unsetCreationDate = false,
   }) {
-    return Todo._(
+    return Todo(
       id: id ?? (unsetId ? null : this.id),
       completion: completion ?? this.completion,
       priority: priority ?? (unsetPriority ? null : this.priority),
@@ -445,9 +484,9 @@ class Todo extends Equatable {
   String toString() {
     final List<String?> items = [
       completion ? 'x' : null,
-      formattedDate(completionDate),
+      date2Str(completionDate),
       priority != null ? '($priority)' : null,
-      formattedDate(creationDate),
+      date2Str(creationDate),
       description,
       formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
       formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,

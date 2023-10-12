@@ -38,7 +38,9 @@ class TodoTile extends StatelessWidget {
   }
 
   Widget? _buildSubtitle() {
-    if (todo.projects.isEmpty &&
+    if (todo.creationDate == null &&
+        todo.priority == null &&
+        todo.projects.isEmpty &&
         todo.contexts.isEmpty &&
         todo.keyValues.isEmpty) {
       return null;
@@ -46,6 +48,16 @@ class TodoTile extends StatelessWidget {
 
     return GenericChipGroup(
       children: <Widget>[
+        if (todo.creationDate != null)
+          const Icon(
+            Icons.edit_calendar,
+            size: 15.0,
+          ),
+        if (todo.creationDate != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Text(Todo.differenceToToday(todo.creationDate!)),
+          ),
         if (todo.priority != null)
           const Icon(
             Icons.flag,
