@@ -50,8 +50,6 @@ abstract class TodoCreateView extends StatelessWidget {
               TodoFullStringTextField(),
               Divider(),
               TodoPriorityTags(),
-              TodoCompletionItem(),
-              TodoCompletionDateItem(),
               TodoCreationDateItem(),
               TodoDueDateItem(),
               TodoProjectTags(),
