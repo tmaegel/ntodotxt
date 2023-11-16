@@ -65,17 +65,16 @@ class TodoPriorityTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        if (previousState.todo.priority == state.todo.priority) {
-          return false;
-        } else {
-          return true;
-        }
+        return previousState.todo.priority != state.todo.priority;
       },
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: leadingIcon,
+          leading: Tooltip(
+            message: 'Priority',
+            child: leadingIcon,
+          ),
           title: _buildChips(
             context: context,
             tags: priorities,
@@ -116,18 +115,18 @@ class TodoProjectTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        if (const IterableEquality()
-            .equals(previousState.todo.projects, state.todo.projects)) {
-          return false;
-        } else {
-          return true;
-        }
+        return const IterableEquality()
+                .equals(previousState.todo.projects, state.todo.projects) ==
+            false;
       },
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: leadingIcon,
+          leading: Tooltip(
+            message: 'Projects',
+            child: leadingIcon,
+          ),
           title: _buildChips(
             context: context,
             tags: state.todo.projects,
@@ -173,18 +172,18 @@ class TodoContextTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        if (const IterableEquality()
-            .equals(previousState.todo.contexts, state.todo.contexts)) {
-          return false;
-        } else {
-          return true;
-        }
+        return const IterableEquality()
+                .equals(previousState.todo.contexts, state.todo.contexts) ==
+            false;
       },
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: leadingIcon,
+          leading: Tooltip(
+            message: 'Contexts',
+            child: leadingIcon,
+          ),
           title: _buildChips(
             context: context,
             tags: state.todo.contexts,
@@ -230,18 +229,18 @@ class TodoKeyValueTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        if (const DeepCollectionEquality()
-            .equals(previousState.todo.keyValues, state.todo.keyValues)) {
-          return false;
-        } else {
-          return true;
-        }
+        return const DeepCollectionEquality()
+                .equals(previousState.todo.keyValues, state.todo.keyValues) ==
+            false;
       },
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: leadingIcon,
+          leading: Tooltip(
+            message: 'Key values',
+            child: leadingIcon,
+          ),
           title: _buildChips(
             context: context,
             tags: state.todo.formattedKeyValues,
@@ -252,6 +251,38 @@ class TodoKeyValueTags extends TodoTagSection {
             tooltip: 'Add key:value tag',
             onPressed: () => _openDialog(context),
           ),
+        );
+      },
+    );
+  }
+}
+
+class TodoCompletionItem extends StatelessWidget {
+  const TodoCompletionItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoBloc, TodoState>(
+      buildWhen: (TodoState previousState, TodoState state) {
+        return previousState.todo.completion != state.todo.completion;
+      },
+      builder: (BuildContext context, TodoState state) {
+        return ListTile(
+          key: key,
+          minLeadingWidth: 40,
+          leading: const Tooltip(
+            message: 'Completion',
+            child: Icon(Icons.check_circle_outline),
+          ),
+          trailing: Checkbox(
+            value: state.todo.completion,
+            onChanged: (bool? completion) {
+              context.read<TodoBloc>().add(
+                    TodoCompletionToggled(completion ?? false),
+                  );
+            },
+          ),
+          title: Text(state.todo.completion ? 'Completed' : 'Incompleted'),
         );
       },
     );
@@ -271,7 +302,10 @@ class TodoCompletionDateItem extends StatelessWidget {
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: const Icon(Icons.event_available),
+          leading: const Tooltip(
+            message: 'Completion date',
+            child: Icon(Icons.event_available),
+          ),
           title: Text(
             state.todo.completionDate != null
                 ? state.todo.formattedCompletionDate
@@ -296,7 +330,10 @@ class TodoCreationDateItem extends StatelessWidget {
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: const Icon(Icons.edit_calendar),
+          leading: const Tooltip(
+            message: 'Creation date',
+            child: Icon(Icons.edit_calendar),
+          ),
           title: Text(
             state.todo.creationDate != null
                 ? state.todo.formattedCreationDate
@@ -315,19 +352,19 @@ class TodoDueDateItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        if (const DeepCollectionEquality()
-            .equals(previousState.todo.keyValues, state.todo.keyValues)) {
-          return false;
-        } else {
-          return true;
-        }
+        return const DeepCollectionEquality()
+                .equals(previousState.todo.keyValues, state.todo.keyValues) ==
+            false;
       },
       builder: (BuildContext context, TodoState state) {
         final String? dueDate = Todo.date2Str(state.todo.dueDate);
         return ListTile(
           key: key,
           minLeadingWidth: 40,
-          leading: const Icon(Icons.event),
+          leading: const Tooltip(
+            message: 'Due date',
+            child: Icon(Icons.event),
+          ),
           title: Text(Todo.date2Str(state.todo.dueDate) ?? 'no due date'),
           trailing: dueDate == null
               ? null

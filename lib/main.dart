@@ -86,6 +86,9 @@ class App extends StatelessWidget {
               title: 'Flutter layout demo',
               debugShowCheckedModeBanner: false, // Remove the debug banner
               theme: lightTheme.copyWith(
+                appBarTheme: lightTheme.appBarTheme.copyWith(
+                  backgroundColor: Colors.transparent,
+                ),
                 splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
                 chipTheme: lightTheme.chipTheme.copyWith(
                   backgroundColor: lightTheme.dividerColor,
@@ -101,6 +104,9 @@ class App extends StatelessWidget {
                 ),
               ),
               darkTheme: darkTheme.copyWith(
+                appBarTheme: darkTheme.appBarTheme.copyWith(
+                  backgroundColor: Colors.transparent,
+                ),
                 splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
                 chipTheme: darkTheme.chipTheme.copyWith(
                   backgroundColor: darkTheme.dividerColor,
