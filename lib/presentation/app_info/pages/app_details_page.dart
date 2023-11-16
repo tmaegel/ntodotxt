@@ -46,22 +46,22 @@ class AppInfoView extends StatelessWidget {
           onTap: () => _openUrl(repoUrl),
         ),
         ListTile(
-          leading: const Icon(Icons.bug_report),
+          leading: const Icon(Icons.bug_report_outlined),
           title: const Text('Issue tracker'),
           subtitle: const Text('$repoUrl/issues'),
           onTap: () => _openUrl('$repoUrl/issues'),
         ),
         ListTile(
-          leading: const Icon(Icons.email),
+          leading: const Icon(Icons.email_outlined),
           title: const Text('Contact me'),
           subtitle: const Text('mail@tonimaegel.de'),
           onTap: () => _openUrl('mailto:mail@tonimaegel.de'),
         ),
         ListTile(
-          leading: const Icon(Icons.policy),
+          leading: const Icon(Icons.shield_outlined),
           title: const Text('Licence'),
           subtitle: const Text('MIT License'),
-          onTap: () => _openUrl('$repoUrl/blob/main/LICENSE'),
+          onTap: () => context.pushNamed("licenses"),
         ),
       ],
     );

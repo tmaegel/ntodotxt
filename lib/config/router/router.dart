@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/app_info/pages/app_details_page.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
+import 'package:ntodotxt/presentation/licenses/pages/licenses_page.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
@@ -53,6 +54,15 @@ class AppRouter {
                 builder: (BuildContext context, GoRouterState state) {
                   return const AppInfoPage();
                 },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'settings/app-info/licenses',
+                    name: 'licenses',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const LicenceListPage();
+                    },
+                  ),
+                ],
               ),
             ],
           ),

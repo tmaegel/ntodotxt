@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  dart_pubspec_licenses:
+    dependency: transitive
+    description:
+      name: dart_pubspec_licenses
+      sha256: "38680e2d2fc41df3a0d435d0955b91acc382aeefcb89ef4738f8167c8288a29d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   diff_match_patch:
     dependency: transitive
     description:
@@ -187,6 +195,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  flutter_oss_licenses:
+    dependency: "direct dev"
+    description:
+      name: flutter_oss_licenses
+      sha256: eb15e1146b101dca063a177f6d339dfb85b639a9e2d2b71c18188d5fb2144869
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -271,6 +287,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.8.1"
   lints:
     dependency: transitive
     description:
