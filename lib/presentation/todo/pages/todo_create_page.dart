@@ -47,7 +47,7 @@ abstract class TodoCreateView extends StatelessWidget {
         Expanded(
           child: ListView(
             children: const [
-              TodoDescriptionTextField(),
+              TodoFullStringTextField(),
               Divider(),
               TodoPriorityTags(),
               TodoProjectTags(),

@@ -421,17 +421,20 @@ class Todo extends Equatable {
 
   bool get isDescriptionEmpty => _trim(description).isEmpty;
 
-  Set<String> get formattedProjects {
-    return {for (var p in projects) "+$p"};
-  }
+  String get formattedCompletion => completion ? 'x' : '';
 
-  Set<String> get formattedContexts {
-    return {for (var c in contexts) "@$c"};
-  }
+  String get formattedPriority => priority != null ? '($priority)' : '';
 
-  Set<String> get formattedKeyValues {
-    return {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
-  }
+  String get formattedCompletionDate => date2Str(completionDate) ?? '';
+
+  String get formattedCreationDate => date2Str(creationDate) ?? '';
+
+  Set<String> get formattedProjects => {for (var p in projects) "+$p"};
+
+  Set<String> get formattedContexts => {for (var c in contexts) "@$c"};
+
+  Set<String> get formattedKeyValues =>
+      {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
 
   /// Returns a copy of this `todo` with the given values updated.
   Todo copyWith({
@@ -483,10 +486,10 @@ class Todo extends Equatable {
   @override
   String toString() {
     final List<String?> items = [
-      completion ? 'x' : null,
-      date2Str(completionDate),
-      priority != null ? '($priority)' : null,
-      date2Str(creationDate),
+      formattedCompletion,
+      formattedCompletionDate,
+      formattedPriority,
+      formattedCreationDate,
       description,
       formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
       formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,
