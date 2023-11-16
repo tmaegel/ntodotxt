@@ -188,13 +188,14 @@ class TodoKeyValueTagDialog extends TodoTagDialog {
 
   @override
   Set<String> availableTags(BuildContext context) {
+    final Set<String> allKeyValues =
+        context.read<TodoListBloc>().state.keyValues;
     final Set<String> formattedKeyValues =
         context.read<TodoBloc>().state.todo.formattedKeyValues;
-    return context
-        .read<TodoListBloc>()
-        .state
-        .keyValues
-        .where((c) => !formattedKeyValues.contains(c))
+    return allKeyValues
+        .where(
+          (c) => !formattedKeyValues.contains(c) && !c.startsWith('due:'),
+        )
         .toSet();
   }
 
