@@ -129,7 +129,7 @@ class SettingsView extends StatelessWidget {
             ),
             ListTile(
               title: const Text('About'),
-              onTap: () => context.goNamed("app-info"),
+              onTap: () => context.pushNamed("app-info"),
             ),
           ],
         );

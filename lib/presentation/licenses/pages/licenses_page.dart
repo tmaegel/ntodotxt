@@ -32,10 +32,7 @@ class LicenseListView extends StatelessWidget {
         Package package = ossLicenses[index];
         return ListTile(
           title: Text(package.name),
-          subtitle: Text(
-            package.repository ?? (package.homepage ?? ''),
-            style: const TextStyle(color: Colors.grey),
-          ),
+          subtitle: Text(package.repository ?? (package.homepage ?? '')),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
