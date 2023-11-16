@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/constants/todo.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
@@ -252,6 +253,116 @@ class TodoKeyValueTags extends TodoTagSection {
             onPressed: () => _openDialog(context),
           ),
         );
+      },
+    );
+  }
+}
+
+class TodoCompletionDateItem extends StatelessWidget {
+  const TodoCompletionDateItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoBloc, TodoState>(
+      buildWhen: (TodoState previousState, TodoState state) {
+        return previousState.todo.completionDate != state.todo.completionDate;
+      },
+      builder: (BuildContext context, TodoState state) {
+        return ListTile(
+          key: key,
+          minLeadingWidth: 40,
+          leading: const Icon(Icons.event_available),
+          title: Text(
+            state.todo.completionDate != null
+                ? state.todo.formattedCompletionDate
+                : 'no completion date',
+          ),
+        );
+      },
+    );
+  }
+}
+
+class TodoCreationDateItem extends StatelessWidget {
+  const TodoCreationDateItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoBloc, TodoState>(
+      buildWhen: (TodoState previousState, TodoState state) {
+        return previousState.todo.creationDate != state.todo.creationDate;
+      },
+      builder: (BuildContext context, TodoState state) {
+        return ListTile(
+          key: key,
+          minLeadingWidth: 40,
+          leading: const Icon(Icons.edit_calendar),
+          title: Text(
+            state.todo.creationDate != null
+                ? state.todo.formattedCreationDate
+                : Todo.date2Str(DateTime.now())!,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class TodoDueDateItem extends StatelessWidget {
+  const TodoDueDateItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoBloc, TodoState>(
+      buildWhen: (TodoState previousState, TodoState state) {
+        if (const DeepCollectionEquality()
+            .equals(previousState.todo.keyValues, state.todo.keyValues)) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      builder: (BuildContext context, TodoState state) {
+        final String? dueDate = Todo.date2Str(state.todo.dueDate);
+        return ListTile(
+          key: key,
+          minLeadingWidth: 40,
+          leading: const Icon(Icons.event),
+          title: Text(Todo.date2Str(state.todo.dueDate) ?? 'no due date'),
+          trailing: dueDate == null
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.remove),
+                  tooltip: 'Unset due date',
+                  onPressed: () {
+                    context.read<TodoBloc>().add(
+                          TodoKeyValueRemoved('due:$dueDate'),
+                        );
+                  },
+                ),
+          onTap: () => _pickDateDialog(context),
+        );
+      },
+    );
+  }
+
+  void _pickDateDialog(BuildContext context) {
+    final DateTime now = DateTime.now();
+    showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 3650)),
+    ).then(
+      (date) {
+        if (date != null) {
+          final String? formattedDate = Todo.date2Str(date);
+          if (formattedDate != null) {
+            context.read<TodoBloc>().add(
+                  TodoKeyValuesAdded(['due:$formattedDate']),
+                );
+          }
+        }
       },
     );
   }
