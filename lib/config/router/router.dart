@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/presentation/app_info/pages/app_details_page.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login.dart';
@@ -45,6 +46,15 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const SettingsPage();
             },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'settings/app-info',
+                name: 'app-info',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const AppInfoPage();
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/todo',

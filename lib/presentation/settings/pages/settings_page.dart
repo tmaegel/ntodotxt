@@ -123,26 +123,13 @@ class SettingsView extends StatelessWidget {
             const Divider(),
             ListTile(
               title: Text(
-                'About',
+                'Others',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
-            const ListTile(
-              title: Text('Licences'),
-              subtitle: Text('MIT License'),
-            ),
-            const ListTile(
-              title: Text('Report error'),
-              subtitle: Text('Requires a free GitHub account.'),
-            ),
-            const ListTile(
-              title: Text('Contribution'),
-              subtitle: Text('Contribute to the source code.'),
-            ),
-            const ListTile(
-              title: Text('Version'),
-              subtitle: Text('v0.0.1'),
-            ),
+            ListTile(
+                title: const Text('About'),
+                onTap: () => context.goNamed("app-info")),
           ],
         );
       },
