@@ -494,7 +494,18 @@ class Todo extends Equatable {
       formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
       formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,
       formattedKeyValues.isNotEmpty ? formattedKeyValues.join(' ') : null,
-    ]..removeWhere((value) => value == null);
+    ]..removeWhere(
+        (value) {
+          if (value == null) {
+            return true;
+          } else {
+            if (value.isEmpty) {
+              return true;
+            }
+          }
+          return false;
+        },
+      );
 
     return items.join(' ');
   }

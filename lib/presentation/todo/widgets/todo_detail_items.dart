@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
@@ -115,9 +115,7 @@ class TodoProjectTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        return const IterableEquality()
-                .equals(previousState.todo.projects, state.todo.projects) ==
-            false;
+        return previousState.todo.projects != state.todo.projects;
       },
       builder: (BuildContext context, TodoState state) {
         return ListTile(
@@ -172,9 +170,7 @@ class TodoContextTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        return const IterableEquality()
-                .equals(previousState.todo.contexts, state.todo.contexts) ==
-            false;
+        return previousState.todo.contexts != state.todo.contexts;
       },
       builder: (BuildContext context, TodoState state) {
         return ListTile(
@@ -229,8 +225,7 @@ class TodoKeyValueTags extends TodoTagSection {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        return const DeepCollectionEquality()
-                .equals(previousState.todo.keyValues, state.todo.keyValues) ==
+        return mapEquals(previousState.todo.keyValues, state.todo.keyValues) ==
             false;
       },
       builder: (BuildContext context, TodoState state) {
@@ -352,8 +347,7 @@ class TodoDueDateItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        return const DeepCollectionEquality()
-                .equals(previousState.todo.keyValues, state.todo.keyValues) ==
+        return mapEquals(previousState.todo.keyValues, state.todo.keyValues) ==
             false;
       },
       builder: (BuildContext context, TodoState state) {
