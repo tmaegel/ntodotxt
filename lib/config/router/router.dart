@@ -19,9 +19,9 @@ class AppRouter {
       GlobalKey<NavigatorState>(debugLabel: 'root');
   final GlobalKey<NavigatorState> _shellNavigatorKey =
       GlobalKey<NavigatorState>(debugLabel: 'shell');
-  final LoginCubit loginCubit;
+  final AuthCubit authCubit;
 
-  AppRouter(this.loginCubit);
+  AppRouter(this.authCubit);
 
   late final GoRouter config = GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -94,9 +94,9 @@ class AppRouter {
       ),
     ],
     redirect: (BuildContext context, GoRouterState state) {
-      final AuthStatus authState = context.read<LoginCubit>().state.status;
+      final AuthState authState = context.read<AuthCubit>().state;
       final bool onLoginPage = state.fullPath == '/login';
-      if (authState != AuthStatus.authenticated) {
+      if (authState is! OfflineLogin && authState is! WebDAVLogin) {
         return onLoginPage ? null : '/login';
       }
       if (onLoginPage) {
@@ -104,7 +104,7 @@ class AppRouter {
       }
       return null;
     },
-    refreshListenable: GoRouterRefreshStream(loginCubit.stream),
+    refreshListenable: GoRouterRefreshStream(authCubit.stream),
   );
 }
 

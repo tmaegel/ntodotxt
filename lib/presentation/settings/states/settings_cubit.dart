@@ -13,57 +13,74 @@ class SettingsCubit extends Cubit<SettingsState> {
   void loadPrefs() {
     emit(
       state.copyWith(
-        todoFilter: prefs.getString('todoFilter'),
-        todoOrder: prefs.getString('todoOrder'),
-        todoGrouping: prefs.getString('todoGrouping'),
+        // Todo
         todoFilename: prefs.getString('todoFilename'),
         doneFilename: prefs.getString('doneFilename'),
         autoArchive: prefs.getBool('autoArchive'),
+        // Display
+        todoFilter: prefs.getString('todoFilter'),
+        todoOrder: prefs.getString('todoOrder'),
+        todoGrouping: prefs.getString('todoGrouping'),
       ),
     );
   }
 
-  void updateTodoFilter(TodoListFilter? value) async {
-    if (value != null) {
-      await prefs.setString('todoFilter', value.name);
-      emit(state.copyWith(todoFilter: value.name));
+  void resetSettings() {
+    final List<String> settings = [
+      'todoFilename',
+      'doneFilename',
+      'autoArchive',
+      'todoFilter',
+      'todoOrder',
+      'todoGrouping',
+    ];
+    for (var setting in settings) {
+      prefs.remove(setting);
     }
+    emit(const SettingsState());
   }
 
-  void updateTodoOrder(TodoListOrder? value) async {
-    if (value != null) {
-      await prefs.setString('todoOrder', value.name);
-      emit(state.copyWith(todoOrder: value.name));
-    }
-  }
-
-  void updateTodoGrouping(TodoListGroupBy? value) async {
-    if (value != null) {
-      await prefs.setString('todoGrouping', value.name);
-      emit(state.copyWith(todoGrouping: value.name));
-    }
-  }
-
-  void updateTodoFilename(String? value) async {
+  void updateTodoFilename(String? value) {
     if (value != null) {
       if (value.isNotEmpty) {
-        await prefs.setString('todoFilename', value);
+        prefs.setString('todoFilename', value);
         emit(state.copyWith(todoFilename: value));
       }
     }
   }
 
-  void updateDoneFilename(String? value) async {
+  void updateDoneFilename(String? value) {
     if (value != null) {
       if (value.isNotEmpty) {
-        await prefs.setString('doneFilename', value);
+        prefs.setString('doneFilename', value);
         emit(state.copyWith(doneFilename: value));
       }
     }
   }
 
-  void toggleAutoArchive(bool value) async {
-    await prefs.setBool('autoArchive', value);
+  void toggleAutoArchive(bool value) {
+    prefs.setBool('autoArchive', value);
     emit(state.copyWith(autoArchive: value));
+  }
+
+  void updateTodoFilter(TodoListFilter? value) {
+    if (value != null) {
+      prefs.setString('todoFilter', value.name);
+      emit(state.copyWith(todoFilter: value.name));
+    }
+  }
+
+  void updateTodoOrder(TodoListOrder? value) {
+    if (value != null) {
+      prefs.setString('todoOrder', value.name);
+      emit(state.copyWith(todoOrder: value.name));
+    }
+  }
+
+  void updateTodoGrouping(TodoListGroupBy? value) {
+    if (value != null) {
+      prefs.setString('todoGrouping', value.name);
+      emit(state.copyWith(todoGrouping: value.name));
+    }
   }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
+import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -14,14 +16,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
+
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  const secureStorage = FlutterSecureStorage(
+    // Pass the option to the constructor
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+
   final LocalStorageTodoListApi todoListApi =
       await LocalStorageTodoListApi.fromFile();
   final TodoListRepository todoListRepository =
       TodoListRepository(todoListApi: todoListApi);
+
+  // Initialize the initial auth state before starting the app.
+  final AuthState authState = await AuthCubit.init(secureStorage);
+
   runApp(
     App(
       todoListRepository: todoListRepository,
+      secureStorage: secureStorage,
+      authState: authState,
       prefs: prefs,
     ),
   );
@@ -49,11 +64,15 @@ class SimpleBlocObserver extends BlocObserver {
 
 class App extends StatelessWidget {
   final TodoListRepository todoListRepository;
+  final FlutterSecureStorage secureStorage;
   final SharedPreferences prefs;
+  final AuthState authState;
 
   const App({
     required this.todoListRepository,
+    required this.secureStorage,
     required this.prefs,
+    required this.authState,
     super.key,
   });
 
@@ -65,8 +84,11 @@ class App extends StatelessWidget {
       value: todoListRepository,
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<LoginCubit>(
-            create: (BuildContext context) => LoginCubit(),
+          BlocProvider<AuthCubit>(
+            create: (BuildContext context) => AuthCubit(
+              storage: secureStorage,
+              state: authState,
+            ),
           ),
           BlocProvider<SettingsCubit>(
             create: (BuildContext context) => SettingsCubit(prefs: prefs),
@@ -125,7 +147,7 @@ class App extends StatelessWidget {
               // If you do not have a themeMode switch, uncomment this line
               // to let the device system mode control the theme mode:
               themeMode: ThemeMode.system,
-              routerConfig: AppRouter(context.read<LoginCubit>()).config,
+              routerConfig: AppRouter(context.read<AuthCubit>()).config,
             );
           },
         ),
