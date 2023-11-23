@@ -6,6 +6,8 @@ import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late TodoListRepository todoListRepository;
   final Todo todo = Todo(
     id: 0,

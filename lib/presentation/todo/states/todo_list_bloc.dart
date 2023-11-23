@@ -61,7 +61,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     emit(state.loading());
     try {
-      await _todoListRepository.syncTodoList();
+      await _todoListRepository.readFromSource();
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

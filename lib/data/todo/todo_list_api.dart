@@ -13,13 +13,10 @@ abstract class TodoListApi {
   Stream<List<Todo>> getTodoList();
 
   /// Read [todoList] from source.
-  Future<void> readFromFile();
+  Future<void> readFromSource();
 
   /// Write [todoList] to source.
-  Future<void> writeToFile();
-
-  /// Refresh (re-read) [todoList] from source.
-  Future<void> syncTodoList();
+  Future<void> writeToSource();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
@@ -125,12 +122,12 @@ class LocalStorageTodoListApi extends TodoListApi {
   Stream<List<Todo>> getTodoList() => _streamController.asBroadcastStream();
 
   @override
-  Future<void> readFromFile() async {
+  Future<void> readFromSource() async {
     _streamController.add(await _fromFile());
   }
 
   @override
-  Future<void> writeToFile() async {
+  Future<void> writeToSource() async {
     final file = await localFile;
     final List<Todo> todoList = [..._streamController.value];
     await file.writeAsString(
@@ -140,15 +137,10 @@ class LocalStorageTodoListApi extends TodoListApi {
   }
 
   @override
-  Future<void> syncTodoList() async {
-    await writeToFile();
-    await readFromFile();
-  }
-
-  @override
   void saveTodo(Todo todo) {
     List<Todo> todoList = [..._streamController.value];
     _streamController.add(_save(todoList, todo));
+    writeToSource(); // Write changes to the source.
   }
 
   @override
@@ -158,12 +150,14 @@ class LocalStorageTodoListApi extends TodoListApi {
       todoList = _save(todoList, todo);
     }
     _streamController.add(todoList);
+    writeToSource(); // Write changes to the source.
   }
 
   @override
   void deleteTodo(Todo todo) {
     final List<Todo> todoList = [..._streamController.value];
     _streamController.add(_delete(todoList, todo));
+    writeToSource(); // Write changes to the source.
   }
 
   @override
@@ -173,5 +167,6 @@ class LocalStorageTodoListApi extends TodoListApi {
       todoList = _delete(todoList, todo);
     }
     _streamController.add(todoList);
+    writeToSource(); // Write changes to the source.
   }
 }

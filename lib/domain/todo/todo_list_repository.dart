@@ -13,13 +13,10 @@ class TodoListRepository {
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
 
   /// Read [todoList] from source.
-  Future<void> readFromFile() => _todoListApi.readFromFile();
+  Future<void> readFromSource() => _todoListApi.readFromSource();
 
   /// Write [todoList] to source.
-  Future<void> writeToFile() => _todoListApi.writeToFile();
-
-  /// Refresh (re-read) [todoList] from source.
-  Future<void> syncTodoList() => _todoListApi.syncTodoList();
+  Future<void> writeToSource() => _todoListApi.writeToSource();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
