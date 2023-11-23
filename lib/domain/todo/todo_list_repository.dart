@@ -9,6 +9,9 @@ class TodoListRepository {
     required TodoListApi todoListApi,
   }) : _todoListApi = todoListApi;
 
+  /// Initialize repository. Not needed for testing.
+  void init() => _todoListApi.init();
+
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
 

@@ -21,7 +21,7 @@ void main() {
   final DateTime now = DateTime.now();
 
   setUp(() {
-    final LocalStorageTodoListApi todoListApi = LocalStorageTodoListApi([todo]);
+    final LocalTodoListApi todoListApi = LocalTodoListApi.fromList([todo]);
     todoListRepository = TodoListRepository(todoListApi: todoListApi);
   });
 

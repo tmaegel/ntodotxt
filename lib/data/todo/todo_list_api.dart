@@ -9,6 +9,9 @@ import 'package:rxdart/subjects.dart';
 abstract class TodoListApi {
   const TodoListApi();
 
+  /// Initialize api. Not needed for testing.
+  void init();
+
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
 
@@ -34,7 +37,7 @@ abstract class TodoListApi {
   void deleteMultipleTodos(List<Todo> todos);
 }
 
-class LocalStorageTodoListApi extends TodoListApi {
+class LocalTodoListApi extends TodoListApi {
   static const String fileName = "todo.txt";
 
   /// Provides a [Stream] of all todos.
@@ -42,17 +45,17 @@ class LocalStorageTodoListApi extends TodoListApi {
   // added to the controller, and emits that as the first item to any new listener.
   final _streamController = BehaviorSubject<List<Todo>>.seeded(const []);
 
-  LocalStorageTodoListApi(List<Todo> todoList) {
+  LocalTodoListApi();
+
+  /// For testing purpose.
+  LocalTodoListApi.fromList(List<Todo> todoList) {
     _streamController.add(todoList);
   }
 
-  // Factory to read the todo list from list of strings.
-  factory LocalStorageTodoListApi.fromList(List<String> rawTodoList) =>
-      LocalStorageTodoListApi(_fromList(rawTodoList));
-
-  // Factory function to async read the todo list from file.
-  static Future<LocalStorageTodoListApi> fromFile() async =>
-      LocalStorageTodoListApi(await _fromFile());
+  @override
+  void init() async {
+    _streamController.add(await _fromFile());
+  }
 
   static Future<List<Todo>> _fromFile() async {
     final file = await localFile;
@@ -60,15 +63,11 @@ class LocalStorageTodoListApi extends TodoListApi {
       await file.create();
     }
     final lines = await file.readAsLines();
-    return _fromList(lines);
-  }
-
-  static List<Todo> _fromList(List<String> rawTodoList) {
     // Index the todo objecte to get a unique id.
-    rawTodoList.sort();
+    lines.sort();
     return [
-      for (var i = 0; i < rawTodoList.length; i++)
-        Todo.fromString(id: i, value: rawTodoList[i])
+      for (var i = 0; i < lines.length; i++)
+        Todo.fromString(id: i, value: lines[i])
     ];
   }
 
@@ -168,5 +167,35 @@ class LocalStorageTodoListApi extends TodoListApi {
     }
     _streamController.add(todoList);
     writeToSource(); // Write changes to the source.
+  }
+}
+
+class WebDAVTodoListApi extends LocalTodoListApi {
+  final String serverURI;
+  final String username;
+  final String password;
+
+  WebDAVTodoListApi({
+    required this.serverURI,
+    required this.username,
+    required this.password,
+  }) : super();
+
+  @override
+  void init() {
+    // @todo: Initial loading todo.txt from webdav here.
+    super.init();
+  }
+
+  @override
+  Future<void> readFromSource() {
+    // @todo: Load from WebDAV here.
+    return super.readFromSource();
+  }
+
+  @override
+  Future<void> writeToSource() {
+    // @todo: Save to WebDAV here.
+    return super.writeToSource();
   }
 }

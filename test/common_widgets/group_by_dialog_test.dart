@@ -74,7 +74,7 @@ Future<void> pumpGroupByBottomSheet(
 }
 
 void main() {
-  final LocalStorageTodoListApi todoListApi = LocalStorageTodoListApi(
+  final LocalTodoListApi todoListApi = LocalTodoListApi.fromList(
     [
       Todo(
         id: 0,

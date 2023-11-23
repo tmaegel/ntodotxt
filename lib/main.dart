@@ -24,10 +24,9 @@ void main() async {
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
 
-  final LocalStorageTodoListApi todoListApi =
-      await LocalStorageTodoListApi.fromFile();
+  final LocalTodoListApi todoListApi = LocalTodoListApi();
   final TodoListRepository todoListRepository =
-      TodoListRepository(todoListApi: todoListApi);
+      TodoListRepository(todoListApi: todoListApi)..init();
 
   // Initialize the initial auth state before starting the app.
   final AuthState authState = await AuthCubit.init(secureStorage);
