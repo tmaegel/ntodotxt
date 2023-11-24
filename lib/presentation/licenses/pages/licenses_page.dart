@@ -73,7 +73,7 @@ class LicenceDetailPage extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
