@@ -25,17 +25,17 @@ abstract class TodoListApi {
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
   /// If the id of [todo] is null, it will be created.
-  Future<void> saveTodo(Todo todo);
+  void saveTodo(Todo todo);
 
   /// Saves multiple [todos] at once.
-  Future<void> saveMultipleTodos(List<Todo> todos);
+  void saveMultipleTodos(List<Todo> todos);
 
   /// Deletes the given [todo].
   /// If the [todo] not exists, a [TodoNotFound] error is thrown.
-  Future<void> deleteTodo(Todo todo);
+  void deleteTodo(Todo todo);
 
   /// Deletes multiple [todos] at once.
-  Future<void> deleteMultipleTodos(List<Todo> todos);
+  void deleteMultipleTodos(List<Todo> todos);
 }
 
 class LocalTodoListApi extends TodoListApi {
@@ -150,14 +150,14 @@ class LocalTodoListApi extends TodoListApi {
   }
 
   @override
-  Future<void> saveTodo(Todo todo) async {
+  void saveTodo(Todo todo) {
     debugPrint('Saving todo ${todo.toDebugString()}');
     List<Todo> todoList = [..._todoList];
     updateList(_save(todoList, todo));
   }
 
   @override
-  Future<void> saveMultipleTodos(List<Todo> todos) async {
+  void saveMultipleTodos(List<Todo> todos) {
     debugPrint('Saving todos $todos');
     List<Todo> todoList = [..._todoList];
     for (var todo in todos) {
@@ -167,14 +167,14 @@ class LocalTodoListApi extends TodoListApi {
   }
 
   @override
-  Future<void> deleteTodo(Todo todo) async {
+  void deleteTodo(Todo todo) {
     debugPrint('Deleting todo ${todo.toDebugString()}');
     List<Todo> todoList = [..._todoList];
     updateList(_delete(todoList, todo));
   }
 
   @override
-  Future<void> deleteMultipleTodos(List<Todo> todos) async {
+  void deleteMultipleTodos(List<Todo> todos) {
     debugPrint('Deleting todos $todos');
     List<Todo> todoList = [..._todoList];
     for (var todo in todos) {

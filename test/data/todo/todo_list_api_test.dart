@@ -68,7 +68,7 @@ void main() {
         final TodoListRepository repository =
             TodoListRepository(todoListApi: api);
         await repository.init(file: file);
-        await repository.saveTodo(todo);
+        repository.saveTodo(todo);
 
         await expectLater(
           api.getTodoList(),
@@ -98,7 +98,7 @@ void main() {
         final TodoListRepository repository =
             TodoListRepository(todoListApi: api);
         await repository.init(file: file);
-        await repository.saveTodo(todo2);
+        repository.saveTodo(todo2);
 
         await expectLater(
           api.getTodoList(),
@@ -130,9 +130,8 @@ void main() {
             TodoListRepository(todoListApi: api);
         await repository.init(file: file);
 
-        await expectLater(
-          () async =>
-              await repository.saveTodo(todo2), // Save non-existing todo.
+        expect(
+          () async => repository.saveTodo(todo2), // Save non-existing todo.
           throwsA(isA<TodoNotFound>()),
         );
 
@@ -155,7 +154,7 @@ void main() {
         final TodoListRepository repository =
             TodoListRepository(todoListApi: api);
         await repository.init(file: file);
-        await repository.deleteTodo(todo);
+        repository.deleteTodo(todo);
 
         await expectLater(
           api.getTodoList(),
@@ -183,7 +182,7 @@ void main() {
         final TodoListRepository repository =
             TodoListRepository(todoListApi: api);
         await repository.init(file: file);
-        await repository.deleteTodo(todo2); // Delete non-existing todo.
+        repository.deleteTodo(todo2); // Delete non-existing todo.
 
         await expectLater(
           api.getTodoList(),
@@ -239,7 +238,7 @@ void main() {
           completion: true,
           completionDate: DateTime.now(),
         );
-        await repository.saveMultipleTodos([todoUpdate, todo2Update]);
+        repository.saveMultipleTodos([todoUpdate, todo2Update]);
 
         await expectLater(
           api.getTodoList(),
@@ -290,7 +289,7 @@ void main() {
           ),
         );
 
-        await repository.deleteMultipleTodos([todo, todo2]);
+        repository.deleteMultipleTodos([todo, todo2]);
 
         await expectLater(
           api.getTodoList(),

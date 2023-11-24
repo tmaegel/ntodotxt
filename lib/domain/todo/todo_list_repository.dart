@@ -26,17 +26,17 @@ class TodoListRepository {
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
   /// If the id of [todo] is null, it will be created.
-  Future<void> saveTodo(Todo todo) => _todoListApi.saveTodo(todo);
+  void saveTodo(Todo todo) => _todoListApi.saveTodo(todo);
 
   /// Saves multiple [todos] at once.
-  Future<void> saveMultipleTodos(List<Todo> todos) =>
+  void saveMultipleTodos(List<Todo> todos) =>
       _todoListApi.saveMultipleTodos(todos);
 
   /// Deletes the given [todo].
   /// If the [todo] not exists, a [TodoNotFound] error is thrown.
-  Future<void> deleteTodo(Todo todo) => _todoListApi.deleteTodo(todo);
+  void deleteTodo(Todo todo) => _todoListApi.deleteTodo(todo);
 
   /// Deletes multiple [todos] at once.
-  Future<void> deleteMultipleTodos(List<Todo> todos) =>
+  void deleteMultipleTodos(List<Todo> todos) =>
       _todoListApi.deleteMultipleTodos(todos);
 }

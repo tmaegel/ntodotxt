@@ -76,7 +76,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         completionDate: event.completion ? DateTime.now() : null,
         unsetCompletionDate: !event.completion,
       );
-      await _todoListRepository.saveTodo(todo);
+      _todoListRepository.saveTodo(todo);
       await _todoListRepository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -86,12 +86,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoSelectedToggled(
     TodoListTodoSelectedToggled event,
     Emitter<TodoListState> emit,
-  ) async {
+  ) {
     try {
       final Todo todo = event.todo.copyWith(
         selected: event.selected,
       );
-      await _todoListRepository.saveTodo(todo);
+      _todoListRepository.saveTodo(todo);
       // We dont want to write changes to file here.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -101,9 +101,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoListSelectedAll(
     TodoListSelectedAll event,
     Emitter<TodoListState> emit,
-  ) async {
+  ) {
     try {
-      await _todoListRepository.saveMultipleTodos(
+      _todoListRepository.saveMultipleTodos(
         [
           for (var t in state.todoList)
             t.copyWith(
@@ -120,9 +120,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoListUnselectedAll(
     TodoListUnselectedAll event,
     Emitter<TodoListState> emit,
-  ) async {
+  ) {
     try {
-      await _todoListRepository.saveMultipleTodos(
+      _todoListRepository.saveMultipleTodos(
         [
           for (var t in state.todoList)
             t.copyWith(
@@ -141,7 +141,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) async {
     try {
-      await _todoListRepository.saveMultipleTodos(
+      _todoListRepository.saveMultipleTodos(
         [
           for (var t in state.selectedTodos)
             t.copyWith(
@@ -162,7 +162,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) async {
     try {
-      await _todoListRepository.saveMultipleTodos(
+      _todoListRepository.saveMultipleTodos(
         [
           for (var t in state.selectedTodos)
             t.copyWith(
@@ -183,7 +183,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) async {
     try {
-      await _todoListRepository.deleteMultipleTodos(
+      _todoListRepository.deleteMultipleTodos(
         state.selectedTodos.toList(),
       );
       await _todoListRepository.writeToSource(); // Write to file.
