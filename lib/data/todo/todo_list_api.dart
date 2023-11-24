@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,7 +11,7 @@ abstract class TodoListApi {
   const TodoListApi();
 
   /// Initialize api. Not needed for testing.
-  void init();
+  Future<void> init({File? file});
 
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
@@ -24,45 +25,71 @@ abstract class TodoListApi {
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
   /// If the id of [todo] is null, it will be created.
-  void saveTodo(Todo todo);
+  Future<void> saveTodo(Todo todo);
 
   /// Saves multiple [todos] at once.
-  void saveMultipleTodos(List<Todo> todos);
+  Future<void> saveMultipleTodos(List<Todo> todos);
 
   /// Deletes the given [todo].
   /// If the [todo] not exists, a [TodoNotFound] error is thrown.
-  void deleteTodo(Todo todo);
+  Future<void> deleteTodo(Todo todo);
 
   /// Deletes multiple [todos] at once.
-  void deleteMultipleTodos(List<Todo> todos);
+  Future<void> deleteMultipleTodos(List<Todo> todos);
 }
 
 class LocalTodoListApi extends TodoListApi {
-  static const String fileName = "todo.txt";
-
-  /// Provides a [Stream] of all todos.
-  // A special StreamController that captures the latest item that has been
-  // added to the controller, and emits that as the first item to any new listener.
-  final _streamController = BehaviorSubject<List<Todo>>.seeded(const []);
+  static const String filename = "todo.txt";
+  late final File todoFile;
 
   LocalTodoListApi();
 
-  /// For testing purpose.
-  LocalTodoListApi.fromList(List<Todo> todoList) {
-    _streamController.add(todoList);
+  /// Provides a [Stream] of all todos.
+  // A special Streamcontroller that captures the latest item that has been
+  // added to the controller, and emits that as the first item to any new listener.
+  final controller = BehaviorSubject<List<Todo>>.seeded(const []);
+
+  List<Todo> get _todoList => controller.value;
+
+  void updateList(List<Todo> todoList) {
+    _dispatch(todoList);
+  }
+
+  void addToList(Todo value) {
+    List<Todo> todoList = [..._todoList, value];
+    _dispatch(todoList);
+  }
+
+  void _dispatch(List<Todo> todoList) {
+    controller.add(todoList);
+    debugPrint(
+      'Updated todos ${[for (var todo in _todoList) todo.toDebugString()]}',
+    );
+  }
+
+  void dispose() {
+    controller.close();
   }
 
   @override
-  void init() async {
-    _streamController.add(await _fromFile());
+  Future<void> init({File? file}) async {
+    debugPrint('Initializing');
+    if (file == null) {
+      // Initialize real file in user directory.
+      final directory = await getApplicationSupportDirectory();
+      final String directoryPath = directory.path;
+      todoFile = File('$directoryPath${Platform.pathSeparator}$filename');
+    } else {
+      todoFile = file;
+    }
+    if (await todoFile.exists() == false) {
+      await todoFile.create();
+    }
+    await readFromSource();
   }
 
-  static Future<List<Todo>> _fromFile() async {
-    final file = await localFile;
-    if (await file.exists() == false) {
-      await file.create();
-    }
-    final lines = await file.readAsLines();
+  Future<List<Todo>> _fromFile() async {
+    final lines = await todoFile.readAsLines();
     // Index the todo objecte to get a unique id.
     lines.sort();
     return [
@@ -71,22 +98,9 @@ class LocalTodoListApi extends TodoListApi {
     ];
   }
 
-  static Future<String> get localPath async {
-    final directory = await getApplicationSupportDirectory();
-
-    return directory.path;
-  }
-
-  static Future<File> get localFile async {
-    final directory = await localPath;
-
-    return File('$directory${Platform.pathSeparator}$fileName');
-  }
-
   int get newId {
-    final List<Todo> todoList = [..._streamController.value];
-    int maxId = 0;
-    for (var todo in todoList) {
+    int maxId = -1; // If list is empty the newId should 0.
+    for (var todo in _todoList) {
       if (todo.id != null) {
         if (todo.id! > maxId) maxId = todo.id!;
       }
@@ -95,7 +109,8 @@ class LocalTodoListApi extends TodoListApi {
     return (maxId + 1);
   }
 
-  List<Todo> _save(List<Todo> todoList, Todo todo) {
+  List<Todo> _save(Todo todo) {
+    List<Todo> todoList = [..._todoList];
     if (todo.id == null) {
       todo = todo.copyWith(id: newId); // Overwrite todo with id.
       todoList.add(todo);
@@ -112,61 +127,64 @@ class LocalTodoListApi extends TodoListApi {
     return todoList;
   }
 
-  List<Todo> _delete(List<Todo> todoList, Todo todo) {
+  List<Todo> _delete(Todo todo) {
+    List<Todo> todoList = [..._todoList];
     todoList.removeWhere((t) => t.id == todo.id);
     return todoList;
   }
 
   @override
-  Stream<List<Todo>> getTodoList() => _streamController.asBroadcastStream();
+  Stream<List<Todo>> getTodoList() => controller.asBroadcastStream();
 
   @override
   Future<void> readFromSource() async {
-    _streamController.add(await _fromFile());
+    debugPrint('Reading todos from file');
+    updateList(await _fromFile());
   }
 
   @override
   Future<void> writeToSource() async {
-    final file = await localFile;
-    final List<Todo> todoList = [..._streamController.value];
-    await file.writeAsString(
-      todoList.join(Platform.lineTerminator),
+    debugPrint('Writing todos to file');
+    await todoFile.writeAsString(
+      _todoList.join(Platform.lineTerminator),
       flush: true,
     );
   }
 
   @override
-  void saveTodo(Todo todo) {
-    List<Todo> todoList = [..._streamController.value];
-    _streamController.add(_save(todoList, todo));
-    writeToSource(); // Write changes to the source.
+  Future<void> saveTodo(Todo todo) async {
+    debugPrint('Saving todo ${todo.toDebugString()}');
+    updateList(_save(todo));
+    await writeToSource(); // Write changes to the source.
   }
 
   @override
-  void saveMultipleTodos(List<Todo> todos) {
-    List<Todo> todoList = [..._streamController.value];
+  Future<void> saveMultipleTodos(List<Todo> todos) async {
+    debugPrint('Saving todos $todos');
+    List<Todo> todoList = [..._todoList];
     for (var todo in todos) {
-      todoList = _save(todoList, todo);
+      todoList = _save(todo);
     }
-    _streamController.add(todoList);
-    writeToSource(); // Write changes to the source.
+    updateList(todoList);
+    await writeToSource(); // Write changes to the source.
   }
 
   @override
-  void deleteTodo(Todo todo) {
-    final List<Todo> todoList = [..._streamController.value];
-    _streamController.add(_delete(todoList, todo));
-    writeToSource(); // Write changes to the source.
+  Future<void> deleteTodo(Todo todo) async {
+    debugPrint('Deleting todo ${todo.toDebugString()}');
+    updateList(_delete(todo));
+    await writeToSource(); // Write changes to the source.
   }
 
   @override
-  void deleteMultipleTodos(List<Todo> todos) {
-    List<Todo> todoList = [..._streamController.value];
+  Future<void> deleteMultipleTodos(List<Todo> todos) async {
+    debugPrint('Deleting todos $todos');
+    List<Todo> todoList = [..._todoList];
     for (var todo in todos) {
-      todoList = _delete(todoList, todo);
+      todoList = _delete(todo);
     }
-    _streamController.add(todoList);
-    writeToSource(); // Write changes to the source.
+    updateList(todoList);
+    await writeToSource(); // Write changes to the source.
   }
 }
 
@@ -182,9 +200,9 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   }) : super();
 
   @override
-  void init() {
+  Future<void> init({File? file}) {
     // @todo: Initial loading todo.txt from webdav here.
-    super.init();
+    return super.init(file: file);
   }
 
   @override

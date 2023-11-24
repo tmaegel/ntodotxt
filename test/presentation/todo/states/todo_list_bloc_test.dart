@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -8,6 +11,8 @@ import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late MemoryFileSystem fs;
+  late File file;
   late TodoListRepository todoListRepository;
   final Todo todo = Todo(
     id: 0,
@@ -20,9 +25,15 @@ void main() {
   );
   final DateTime now = DateTime.now();
 
-  setUp(() {
-    final LocalTodoListApi todoListApi = LocalTodoListApi.fromList([todo]);
+  setUp(() async {
+    fs = MemoryFileSystem();
+    file = fs.file('todo.test');
+    await file.create();
+    await file.writeAsString(todo.toString(), flush: true); // Initial todo.
+
+    final LocalTodoListApi todoListApi = LocalTodoListApi();
     todoListRepository = TodoListRepository(todoListApi: todoListApi);
+    await todoListRepository.init(file: file);
   });
 
   group('Initial', () {
@@ -35,8 +46,6 @@ void main() {
       expect(todoListBloc.state.order, TodoListOrder.ascending);
       expect(todoListBloc.state.group, TodoListGroupBy.upcoming);
       expect(todoListBloc.state.todoList, []);
-      expect(todoListBloc.state.toString(),
-          'TodoListInitial { filter: all order: ascending group: upcoming }');
     });
   });
 
@@ -48,7 +57,6 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoListSubscriptionRequested()),
       expect: () => [
-        const TodoListLoading(),
         TodoListSuccess(todoList: [todo]),
       ],
     );
@@ -57,14 +65,11 @@ void main() {
   group('TodoListTodoCompletionToggled', () {
     blocTest(
       'emits the todo list state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) => bloc.add(
-        TodoListTodoCompletionToggled(todo: todo, completion: true),
-      ),
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(TodoListTodoCompletionToggled(todo: todo, completion: true)),
       expect: () => [
-        const TodoListLoading(),
         TodoListSuccess(todoList: [todo]),
         TodoListSuccess(
           todoList: [todo.copyWith(completion: true, completionDate: now)],
@@ -73,15 +78,12 @@ void main() {
     );
     blocTest(
       'emits the todo list state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called (not exists)',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) => bloc.add(
-        TodoListTodoCompletionToggled(
-            todo: todo.copyWith(id: 99), completion: true),
-      ),
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(TodoListTodoCompletionToggled(
+            todo: todo.copyWith(id: 99), completion: true)),
       expect: () => [
-        const TodoListLoading(),
         TodoListSuccess(todoList: [todo]),
         TodoListError(
           message: 'Todo with id 99 could not be found',
@@ -94,19 +96,15 @@ void main() {
   group('TodoListTodoSelectedToggled', () {
     blocTest(
       'emits the todo list state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) => bloc.add(TodoListTodoSelectedToggled(
-        todo: todo.copyWith(),
-        selected: true,
-      )),
-      expect: () => [
-        const TodoListLoading(),
-        TodoListSuccess(todoList: [todo]),
-        TodoListSuccess(
-          todoList: [todo.copyWith(selected: true)],
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(
+          TodoListTodoSelectedToggled(todo: todo.copyWith(), selected: true),
         ),
+      expect: () => [
+        TodoListSuccess(todoList: [todo]),
+        TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
       ],
     );
   });
@@ -114,16 +112,13 @@ void main() {
   group('TodoListSelectedAll', () {
     blocTest(
       'emits the todo list state with updated selected state when TodoListSelectedAll() is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
-      act: (bloc) => bloc.add(const TodoListSelectedAll()),
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListSelectedAll()),
       expect: () => [
-        const TodoListLoading(),
         TodoListSuccess(todoList: [todo]),
-        TodoListSuccess(
-          todoList: [todo.copyWith(selected: true)],
-        ),
+        TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
       ],
     );
   });
@@ -131,21 +126,15 @@ void main() {
   group('TodoListUnselectedAll', () {
     blocTest(
       'emits the todo list state with updated selected state when TodoListUnselectedAll() is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      )..add(const TodoListSubscriptionRequested()),
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
       act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
         ..add(const TodoListSelectedAll())
         ..add(const TodoListUnselectedAll()),
       expect: () => [
-        const TodoListLoading(),
         TodoListSuccess(todoList: [todo]),
-        TodoListSuccess(
-          todoList: [todo.copyWith(selected: true)],
-        ),
-        TodoListSuccess(
-          todoList: [todo.copyWith(selected: false)],
-        ),
+        TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
+        TodoListSuccess(todoList: [todo.copyWith(selected: false)]),
       ],
     );
   });
@@ -153,15 +142,13 @@ void main() {
   group('TodoListOrderChanged', () {
     blocTest(
       'emits the todo list state with updated order property when TodoListOrderChanged(<order>) is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      ),
-      act: (bloc) =>
-          bloc.add(const TodoListOrderChanged(order: TodoListOrder.descending)),
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListOrderChanged(order: TodoListOrder.descending)),
       expect: () => [
-        const TodoListSuccess(
-          order: TodoListOrder.descending,
-        ),
+        TodoListSuccess(order: TodoListOrder.ascending, todoList: [todo]),
+        TodoListSuccess(order: TodoListOrder.descending, todoList: [todo]),
       ],
     );
   });
@@ -169,15 +156,15 @@ void main() {
   group('TodoListFilterChanged', () {
     blocTest(
       'emits the todo list state with updated filter property when TodoListFilterChanged(<filter>) is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      ),
-      act: (bloc) => bloc.add(
-          const TodoListFilterChanged(filter: TodoListFilter.completedOnly)),
-      expect: () => [
-        const TodoListSuccess(
-          filter: TodoListFilter.completedOnly,
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      act: (bloc) => bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(
+          const TodoListFilterChanged(filter: TodoListFilter.completedOnly),
         ),
+      expect: () => [
+        TodoListSuccess(filter: TodoListFilter.all, todoList: [todo]),
+        TodoListSuccess(filter: TodoListFilter.completedOnly, todoList: [todo]),
       ],
     );
   });
@@ -185,15 +172,13 @@ void main() {
   group('TodoListGroupByChanged', () {
     blocTest(
       'emits the todo list state with updated group property when TodoListGroupByChanged(<group>) is called',
-      build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
-      ),
+      build: () => TodoListBloc(todoListRepository: todoListRepository),
       act: (bloc) => bloc
-          .add(const TodoListGroupByChanged(group: TodoListGroupBy.context)),
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListGroupByChanged(group: TodoListGroupBy.context)),
       expect: () => [
-        const TodoListSuccess(
-          group: TodoListGroupBy.context,
-        ),
+        TodoListSuccess(group: TodoListGroupBy.upcoming, todoList: [todo]),
+        TodoListSuccess(group: TodoListGroupBy.context, todoList: [todo]),
       ],
     );
   });

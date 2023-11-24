@@ -390,7 +390,9 @@ final class TodoListInitial extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var todo in todoList) todo.toDebugString()
+      ]}}';
 }
 
 final class TodoListLoading extends TodoListState {
@@ -403,7 +405,9 @@ final class TodoListLoading extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var todo in todoList) todo.toDebugString()
+      ]}}';
 }
 
 final class TodoListSuccess extends TodoListState {
@@ -416,7 +420,9 @@ final class TodoListSuccess extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListSuccess { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListSuccess { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var todo in todoList) todo.toDebugString()
+      ]}}';
 }
 
 final class TodoListError extends TodoListState {
@@ -441,5 +447,7 @@ final class TodoListError extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListError { message: $message filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListError { message: $message filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var todo in todoList) todo.toDebugString()
+      ]}}';
 }

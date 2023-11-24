@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -8,6 +11,8 @@ import 'package:ntodotxt/presentation/todo/states/todo.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late MemoryFileSystem fs;
+  late File file;
   late TodoListRepository todoListRepository;
   final Todo todo = Todo(
     id: 0,
@@ -20,9 +25,15 @@ void main() {
   );
   final DateTime now = DateTime.now();
 
-  setUp(() {
-    final LocalTodoListApi todoListApi = LocalTodoListApi.fromList([todo]);
+  setUp(() async {
+    fs = MemoryFileSystem();
+    file = fs.file('todo.test');
+    await file.create();
+    await file.writeAsString(todo.toString(), flush: true); // Initial todo.
+
+    final LocalTodoListApi todoListApi = LocalTodoListApi();
     todoListRepository = TodoListRepository(todoListApi: todoListApi);
+    await todoListRepository.init(file: file);
   });
 
   group('Initial', () {
@@ -44,9 +55,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoCompletionToggled(true)),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(completion: true, completionDate: now),
-        ),
+        TodoChange(todo: todo.copyWith(completion: true, completionDate: now)),
       ],
     );
     blocTest(
@@ -57,9 +66,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoCompletionToggled(false)),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(completion: false),
-        ),
+        TodoChange(todo: todo.copyWith(completion: false)),
       ],
     );
   });
@@ -73,9 +80,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoDescriptionChanged('Write more tests')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(description: 'Write more tests'),
-        ),
+        TodoChange(todo: todo.copyWith(description: 'Write more tests')),
       ],
     );
   });
@@ -89,9 +94,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoPriorityAdded('B')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(priority: 'B'),
-        ),
+        TodoChange(todo: todo.copyWith(priority: 'B')),
       ],
     );
   });
@@ -105,9 +108,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoPriorityRemoved()),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(priority: null, unsetPriority: true),
-        ),
+        TodoChange(todo: todo.copyWith(priority: null, unsetPriority: true)),
       ],
     );
   });
@@ -121,9 +122,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['project2'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1', 'project2'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1', 'project2'})),
       ],
     );
 
@@ -149,9 +148,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['project1'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1'})),
       ],
     );
     blocTest(
@@ -162,9 +159,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['Project1'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1'})),
       ],
     );
     blocTest(
@@ -205,9 +200,7 @@ void main() {
       act: (bloc) =>
           bloc.add(const TodoProjectsAdded(['project1', 'project2'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1', 'project2'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1', 'project2'})),
       ],
     );
     blocTest(
@@ -219,9 +212,7 @@ void main() {
       act: (bloc) =>
           bloc.add(const TodoProjectsAdded(['Project1', 'Project2'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1', 'project2'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1', 'project2'})),
       ],
     );
   });
@@ -235,9 +226,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project1')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {})),
       ],
     );
     blocTest(
@@ -248,9 +237,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project 1')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1'})),
       ],
     );
     blocTest(
@@ -261,9 +248,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project2')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(projects: {'project1'}),
-        ),
+        TodoChange(todo: todo.copyWith(projects: {'project1'})),
       ],
     );
   });
@@ -277,9 +262,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['context2'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1', 'context2'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1', 'context2'})),
       ],
     );
     blocTest(
@@ -304,9 +287,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['context1'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1'})),
       ],
     );
     blocTest(
@@ -317,9 +298,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['Context1'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1'})),
       ],
     );
     blocTest(
@@ -360,9 +339,7 @@ void main() {
       act: (bloc) =>
           bloc.add(const TodoContextsAdded(['context1', 'context2'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1', 'context2'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1', 'context2'})),
       ],
     );
     blocTest(
@@ -374,9 +351,7 @@ void main() {
       act: (bloc) =>
           bloc.add(const TodoContextsAdded(['Context1', 'Context2'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1', 'context2'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1', 'context2'})),
       ],
     );
   });
@@ -390,9 +365,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context1')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {})),
       ],
     );
     blocTest(
@@ -403,9 +376,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context 1')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1'})),
       ],
     );
     blocTest(
@@ -416,9 +387,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context2')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(contexts: {'context1'}),
-        ),
+        TodoChange(todo: todo.copyWith(contexts: {'context1'})),
       ],
     );
   });
@@ -459,9 +428,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['foo:bar'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(keyValues: {'foo': 'bar'}),
-        ),
+        TodoChange(todo: todo.copyWith(keyValues: {'foo': 'bar'})),
       ],
     );
     blocTest(
@@ -472,9 +439,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['Foo:bar'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(keyValues: {'foo': 'bar'}),
-        ),
+        TodoChange(todo: todo.copyWith(keyValues: {'foo': 'bar'})),
       ],
     );
     blocTest(
@@ -485,9 +450,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['foo:new'])),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(keyValues: {'foo': 'new'}),
-        ),
+        TodoChange(todo: todo.copyWith(keyValues: {'foo': 'new'})),
       ],
     );
     blocTest(
@@ -573,9 +536,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('foo:bar')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(keyValues: {}),
-        ),
+        TodoChange(todo: todo.copyWith(keyValues: {})),
       ],
     );
     blocTest(
@@ -600,9 +561,7 @@ void main() {
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('key:val')),
       expect: () => [
-        TodoChange(
-          todo: todo.copyWith(keyValues: {'foo': 'bar'}),
-        ),
+        TodoChange(todo: todo.copyWith(keyValues: {'foo': 'bar'})),
       ],
     );
   });

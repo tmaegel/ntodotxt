@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -73,43 +76,50 @@ Future<void> pumpGroupByBottomSheet(
   );
 }
 
-void main() {
-  final LocalTodoListApi todoListApi = LocalTodoListApi.fromList(
-    [
-      Todo(
-        id: 0,
-        creationDate: DateTime.now(),
-        description: 'Todo without priority',
-      ),
-      Todo(
-        id: 1,
-        priority: 'A',
-        creationDate: DateTime.now(),
-        description: 'Todo with priority',
-      ),
-      Todo(
-        id: 2,
-        creationDate: DateTime.now(),
-        description: 'Todo with project',
-        projects: const {'projecttag'},
-      ),
-      Todo(
-        id: 3,
-        creationDate: DateTime.now(),
-        description: 'Todo with context',
-        contexts: const {'contexttag'},
-      ),
-      Todo(
-        id: 4,
-        completion: true,
-        creationDate: DateTime.now(),
-        completionDate: DateTime.now(),
-        description: 'Todo (completed)',
-      ),
-    ],
-  );
+void main() async {
+  List<Todo> todoList = [
+    Todo(
+      id: 0,
+      creationDate: DateTime.now(),
+      description: 'Todo without priority',
+    ),
+    Todo(
+      id: 1,
+      priority: 'A',
+      creationDate: DateTime.now(),
+      description: 'Todo with priority',
+    ),
+    Todo(
+      id: 2,
+      creationDate: DateTime.now(),
+      description: 'Todo with project',
+      projects: const {'projecttag'},
+    ),
+    Todo(
+      id: 3,
+      creationDate: DateTime.now(),
+      description: 'Todo with context',
+      contexts: const {'contexttag'},
+    ),
+    Todo(
+      id: 4,
+      completion: true,
+      creationDate: DateTime.now(),
+      completionDate: DateTime.now(),
+      description: 'Todo (completed)',
+    ),
+  ];
+  MemoryFileSystem fs = MemoryFileSystem();
+  File file = fs.file('todo.test');
+  await file.create();
+  await file.writeAsString(
+    todoList.join(Platform.lineTerminator),
+    flush: true,
+  ); // Initial todos.
+  final LocalTodoListApi todoListApi = LocalTodoListApi();
   final TodoListRepository todoListRepository =
       TodoListRepository(todoListApi: todoListApi);
+  await todoListRepository.init(file: file);
 
   testWidgets('Open and close the group by dialog (default)', (tester) async {
     await pumpGroupByBottomSheet(tester, todoListRepository);

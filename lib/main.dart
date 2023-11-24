@@ -96,9 +96,7 @@ class App extends StatelessWidget {
             create: (context) => TodoListBloc(
               prefs: prefs,
               todoListRepository: todoListRepository,
-            )..add(
-                const TodoListSubscriptionRequested(),
-              ),
+            )..add(const TodoListSubscriptionRequested()),
           ),
         ],
         child: Builder(

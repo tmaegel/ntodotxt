@@ -83,6 +83,10 @@ class Todo extends Equatable {
   /// Defaults to false.
   final bool selected;
 
+  /// Flag that force to init the creation date.
+  /// Defaults to true.
+  final bool forceCreationDate;
+
   // Core todo constructor with validation logic.
   Todo._({
     this.id,
@@ -95,6 +99,7 @@ class Todo extends Equatable {
     this.contexts = const {},
     this.keyValues = const {},
     this.selected = false,
+    this.forceCreationDate = true, // Initialize creationDate if not defined.
   }) {
     // Validate completion date.
     if (completion) {
@@ -138,6 +143,7 @@ class Todo extends Equatable {
     this.contexts = const {},
     this.keyValues = const {},
     this.selected = false,
+    this.forceCreationDate = true, // Initialize creationDate if not defined.
   });
 
   /// Is only used for creating new todos, as these initially have no description.
@@ -203,6 +209,7 @@ class Todo extends Equatable {
       contexts: contexts,
       keyValues: keyValues,
       selected: selected,
+      forceCreationDate: forceCreationDate,
     );
   }
 
@@ -448,6 +455,7 @@ class Todo extends Equatable {
     Set<String>? contexts,
     Map<String, String>? keyValues,
     bool? selected,
+    bool? forceCreationDate,
     bool unsetId = false,
     bool unsetPriority = false,
     bool unsetCompletionDate = false,
@@ -466,6 +474,7 @@ class Todo extends Equatable {
       contexts: contexts ?? this.contexts,
       keyValues: keyValues ?? this.keyValues,
       selected: selected ?? this.selected,
+      forceCreationDate: forceCreationDate ?? this.forceCreationDate,
     );
   }
 
@@ -481,6 +490,7 @@ class Todo extends Equatable {
         contexts,
         keyValues,
         selected,
+        // Exclude forceCreationDate here,
       ];
 
   @override
@@ -509,4 +519,7 @@ class Todo extends Equatable {
 
     return items.join(' ');
   }
+
+  String toDebugString() =>
+      '${toString()} (DEBUG: id: $id, selected: $selected)';
 }
