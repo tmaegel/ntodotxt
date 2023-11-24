@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:intl/intl.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 
 class Todo extends Equatable {
@@ -383,7 +382,7 @@ class Todo extends Equatable {
     if (date == null) {
       return null;
     }
-    return DateFormat('yyyy-MM-dd').format(date);
+    return "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
   static int compareToToday(DateTime date) {

@@ -18,7 +18,6 @@ dependencies:
   path_provider: ^2.0.11
   equatable: ^2.0.5
   rxdart: ^0.27.7
-  intl: ^0.18.1
   collection: ^1.17.2
   flex_color_scheme: ^7.3.1
   shared_preferences: ^2.2.1
