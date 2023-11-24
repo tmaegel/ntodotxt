@@ -57,15 +57,13 @@ void main() {
       });
     });
 
-    group("save()", () {
+    group("saveTodo()", () {
       test("create new todo", () async {
         // Need todo with unset id here.
         final Todo todo = Todo(
           description: 'Code something',
           creationDate: DateTime(2023, 11, 23),
         );
-
-        final LocalTodoListApi api = LocalTodoListApi();
 
         final TodoListRepository repository =
             TodoListRepository(todoListApi: api);
@@ -142,7 +140,7 @@ void main() {
       });
     });
 
-    group("delete()", () {
+    group("deleteTodo()", () {
       test("delete existing todo", () async {
         final Todo todo = Todo.fromString(
           id: 0,
@@ -195,6 +193,106 @@ void main() {
           await file.readAsLines(),
           [todo.toString()],
         );
+      });
+    });
+
+    group("saveMultipleTodos()", () {
+      test("update todos", () async {
+        final Todo todo = Todo.fromString(
+          id: 0,
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: 1,
+          value: '2023-11-23 Code something other',
+        );
+
+        await file.writeAsString(
+          [todo, todo2].join(Platform.lineTerminator),
+          flush: true,
+        ); // Initial todo.
+
+        final TodoListRepository repository =
+            TodoListRepository(todoListApi: api);
+        await repository.init(file: file);
+
+        await expectLater(
+          api.getTodoList(),
+          emitsInOrder(
+            [
+              [todo, todo2],
+            ],
+          ),
+        );
+
+        final Todo todoUpdate = todo.copyWith(
+          completion: true,
+          completionDate: DateTime.now(),
+        );
+        final Todo todo2Update = todo2.copyWith(
+          completion: true,
+          completionDate: DateTime.now(),
+        );
+        await repository.saveMultipleTodos([todoUpdate, todo2Update]);
+
+        await expectLater(
+          api.getTodoList(),
+          emitsInOrder(
+            [
+              [todoUpdate, todo2Update],
+            ],
+          ),
+        );
+        expect(
+          await file.readAsLines(),
+          [
+            todoUpdate.toString(),
+            todo2Update.toString(),
+          ],
+        );
+      });
+    });
+
+    group("deleteMultipleTodos()", () {
+      test("delete todos", () async {
+        final Todo todo = Todo.fromString(
+          id: 0,
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: 1,
+          value: '2023-11-23 Code something other',
+        );
+
+        await file.writeAsString(
+          [todo, todo2].join(Platform.lineTerminator),
+          flush: true,
+        ); // Initial todo.
+
+        final TodoListRepository repository =
+            TodoListRepository(todoListApi: api);
+        await repository.init(file: file);
+
+        await expectLater(
+          api.getTodoList(),
+          emitsInOrder(
+            [
+              [todo, todo2],
+            ],
+          ),
+        );
+
+        await repository.deleteMultipleTodos([todo, todo2]);
+
+        await expectLater(
+          api.getTodoList(),
+          emitsInOrder(
+            [
+              [],
+            ],
+          ),
+        );
+        expect(await file.readAsLines(), []);
       });
     });
   });

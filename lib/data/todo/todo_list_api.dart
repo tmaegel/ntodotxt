@@ -109,8 +109,7 @@ class LocalTodoListApi extends TodoListApi {
     return (maxId + 1);
   }
 
-  List<Todo> _save(Todo todo) {
-    List<Todo> todoList = [..._todoList];
+  List<Todo> _save(List<Todo> todoList, Todo todo) {
     if (todo.id == null) {
       todo = todo.copyWith(id: newId); // Overwrite todo with id.
       todoList.add(todo);
@@ -127,8 +126,7 @@ class LocalTodoListApi extends TodoListApi {
     return todoList;
   }
 
-  List<Todo> _delete(Todo todo) {
-    List<Todo> todoList = [..._todoList];
+  List<Todo> _delete(List<Todo> todoList, Todo todo) {
     todoList.removeWhere((t) => t.id == todo.id);
     return todoList;
   }
@@ -154,7 +152,8 @@ class LocalTodoListApi extends TodoListApi {
   @override
   Future<void> saveTodo(Todo todo) async {
     debugPrint('Saving todo ${todo.toDebugString()}');
-    updateList(_save(todo));
+    List<Todo> todoList = [..._todoList];
+    updateList(_save(todoList, todo));
     await writeToSource(); // Write changes to the source.
   }
 
@@ -163,7 +162,7 @@ class LocalTodoListApi extends TodoListApi {
     debugPrint('Saving todos $todos');
     List<Todo> todoList = [..._todoList];
     for (var todo in todos) {
-      todoList = _save(todo);
+      todoList = _save(todoList, todo);
     }
     updateList(todoList);
     await writeToSource(); // Write changes to the source.
@@ -172,7 +171,8 @@ class LocalTodoListApi extends TodoListApi {
   @override
   Future<void> deleteTodo(Todo todo) async {
     debugPrint('Deleting todo ${todo.toDebugString()}');
-    updateList(_delete(todo));
+    List<Todo> todoList = [..._todoList];
+    updateList(_delete(todoList, todo));
     await writeToSource(); // Write changes to the source.
   }
 
@@ -181,7 +181,7 @@ class LocalTodoListApi extends TodoListApi {
     debugPrint('Deleting todos $todos');
     List<Todo> todoList = [..._todoList];
     for (var todo in todos) {
-      todoList = _delete(todo);
+      todoList = _delete(todoList, todo);
     }
     updateList(todoList);
     await writeToSource(); // Write changes to the source.
