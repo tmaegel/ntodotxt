@@ -77,6 +77,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         unsetCompletionDate: !event.completion,
       );
       await _todoListRepository.saveTodo(todo);
+      await _todoListRepository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -91,6 +92,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         selected: event.selected,
       );
       await _todoListRepository.saveTodo(todo);
+      // We dont want to write changes to file here.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -109,6 +111,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             ),
         ],
       );
+      // We dont want to write changes to file here.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -127,6 +130,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             ),
         ],
       );
+      // We dont want to write changes to file here.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -147,6 +151,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             )
         ],
       );
+      await _todoListRepository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -167,6 +172,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             )
         ],
       );
+      await _todoListRepository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -180,6 +186,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       await _todoListRepository.deleteMultipleTodos(
         state.selectedTodos.toList(),
       );
+      await _todoListRepository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

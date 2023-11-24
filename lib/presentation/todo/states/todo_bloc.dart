@@ -33,6 +33,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   ) async {
     try {
       await _todoListRepository.saveTodo(state.todo);
+      await _todoListRepository.writeToSource(); // Write to file.
       emit(state.success());
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -45,6 +46,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   ) async {
     try {
       await _todoListRepository.deleteTodo(state.todo);
+      await _todoListRepository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

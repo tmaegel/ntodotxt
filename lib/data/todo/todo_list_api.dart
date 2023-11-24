@@ -154,7 +154,6 @@ class LocalTodoListApi extends TodoListApi {
     debugPrint('Saving todo ${todo.toDebugString()}');
     List<Todo> todoList = [..._todoList];
     updateList(_save(todoList, todo));
-    await writeToSource(); // Write changes to the source.
   }
 
   @override
@@ -165,7 +164,6 @@ class LocalTodoListApi extends TodoListApi {
       todoList = _save(todoList, todo);
     }
     updateList(todoList);
-    await writeToSource(); // Write changes to the source.
   }
 
   @override
@@ -173,7 +171,6 @@ class LocalTodoListApi extends TodoListApi {
     debugPrint('Deleting todo ${todo.toDebugString()}');
     List<Todo> todoList = [..._todoList];
     updateList(_delete(todoList, todo));
-    await writeToSource(); // Write changes to the source.
   }
 
   @override
@@ -184,7 +181,6 @@ class LocalTodoListApi extends TodoListApi {
       todoList = _delete(todoList, todo);
     }
     updateList(todoList);
-    await writeToSource(); // Write changes to the source.
   }
 }
 

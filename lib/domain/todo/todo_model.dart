@@ -490,7 +490,7 @@ class Todo extends Equatable {
         contexts,
         keyValues,
         selected,
-        // Exclude forceCreationDate here,
+        // Exclude forceCreationDate here.
       ];
 
   @override
