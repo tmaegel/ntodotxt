@@ -24,6 +24,7 @@ dependencies:
   shared_preferences: ^2.2.1
   url_launcher: ^6.2.1
   flutter_secure_storage: ^9.0.0
+  xml: ^6.4.2
 
 dev_dependencies:
   flutter_test:

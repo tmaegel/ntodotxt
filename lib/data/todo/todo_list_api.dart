@@ -185,12 +185,12 @@ class LocalTodoListApi extends TodoListApi {
 }
 
 class WebDAVTodoListApi extends LocalTodoListApi {
-  final String serverURI;
+  final String server;
   final String username;
   final String password;
 
   WebDAVTodoListApi({
-    required this.serverURI,
+    required this.server,
     required this.username,
     required this.password,
   }) : super();
