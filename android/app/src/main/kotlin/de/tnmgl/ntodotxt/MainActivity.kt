@@ -1,4 +1,4 @@
-package com.example.ntodotxt
+package de.tnmgl.ntodotxt
 
 import io.flutter.embedding.android.FlutterActivity
 
