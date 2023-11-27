@@ -38,17 +38,7 @@ class TodoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TodoListBloc, TodoListState>(
-      listener: (BuildContext context, TodoListState state) {
-        if (state is TodoListError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              content: Text('ERROR: ${state.message}'),
-            ),
-          );
-        }
-      },
+    return BlocBuilder<TodoListBloc, TodoListState>(
       builder: (BuildContext context, TodoListState state) {
         return Column(
           children: [

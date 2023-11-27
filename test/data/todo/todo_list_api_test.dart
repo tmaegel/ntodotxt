@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -9,12 +8,11 @@ import 'package:ntodotxt/exceptions/exceptions.dart';
 
 void main() {
   late LocalTodoListApi api;
-  late MemoryFileSystem fs;
   late File file;
   setUp(() async {
     api = LocalTodoListApi();
-    fs = MemoryFileSystem();
-    file = fs.file('todo.test');
+    // Filewatcher does not work with MemoryFileSystem.
+    file = File('/tmp/todo.test');
     await file.create();
     await file.writeAsString("", flush: true); // Empty file.
   });
@@ -79,7 +77,7 @@ void main() {
           ),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo.toString()],
@@ -109,7 +107,7 @@ void main() {
           ),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo2.toString()],
@@ -135,7 +133,7 @@ void main() {
           throwsA(isA<TodoNotFound>()),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo.toString()],
@@ -165,7 +163,7 @@ void main() {
           ),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(await file.readAsLines(), []);
       });
       test("delete non-existing todo", () async {
@@ -193,7 +191,7 @@ void main() {
           ),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo.toString()],
@@ -249,7 +247,7 @@ void main() {
           ),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(
           await file.readAsLines(),
           [
@@ -300,7 +298,7 @@ void main() {
           ),
         );
 
-        await repository.writeToSource();
+        repository.writeToSource();
         expect(await file.readAsLines(), []);
       });
     });

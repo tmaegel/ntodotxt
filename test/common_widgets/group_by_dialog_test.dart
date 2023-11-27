@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -109,8 +108,8 @@ void main() async {
       description: 'Todo (completed)',
     ),
   ];
-  MemoryFileSystem fs = MemoryFileSystem();
-  File file = fs.file('todo.test');
+  // Filewatcher does not work with MemoryFileSystem.
+  File file = File('/tmp/todo.test');
   await file.create();
   await file.writeAsString(
     todoList.join(Platform.lineTerminator),

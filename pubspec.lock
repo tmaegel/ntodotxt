@@ -146,7 +146,7 @@ packages:
     source: hosted
     version: "2.1.0"
   file:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: file
       sha256: "5fc22d7c25582e38ad9a8515372cd9a93834027aacf1801cf01164dac0ffa08c"
@@ -782,7 +782,7 @@ packages:
     source: hosted
     version: "11.7.1"
   watcher:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: watcher
       sha256: "3d2ad6751b3c16cf07c7fca317a1413b3f26530319181b37e3b9039b84fc01d8"

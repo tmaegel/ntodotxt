@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -11,7 +10,6 @@ import 'package:ntodotxt/presentation/todo/states/todo.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late MemoryFileSystem fs;
   late File file;
   late TodoListRepository todoListRepository;
   final Todo todo = Todo(
@@ -26,8 +24,8 @@ void main() {
   final DateTime now = DateTime.now();
 
   setUp(() async {
-    fs = MemoryFileSystem();
-    file = fs.file('todo.test');
+    // Filewatcher does not work with MemoryFileSystem.
+    file = File('/tmp/todo.test');
     await file.create();
     await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 

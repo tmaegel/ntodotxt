@@ -6,6 +6,7 @@ import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:watcher/watcher.dart';
 
 abstract class TodoListApi {
   const TodoListApi();
@@ -16,11 +17,14 @@ abstract class TodoListApi {
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
 
+  /// Watch for changes on source.
+  Stream<WatchEvent> watchSource();
+
   /// Read [todoList] from source.
   Future<void> readFromSource();
 
   /// Write [todoList] to source.
-  Future<void> writeToSource();
+  void writeToSource();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
@@ -83,7 +87,10 @@ class LocalTodoListApi extends TodoListApi {
       todoFile = file;
     }
     if (await todoFile.exists() == false) {
+      debugPrint('Todo file ${todoFile.path} does not exist. Creating.');
       await todoFile.create();
+    } else {
+      debugPrint('Todo file ${todoFile.path} exists already.');
     }
     await readFromSource();
   }
@@ -135,18 +142,24 @@ class LocalTodoListApi extends TodoListApi {
   Stream<List<Todo>> getTodoList() => controller.asBroadcastStream();
 
   @override
+  Stream<WatchEvent> watchSource() {
+    debugPrint('Watch for file changes on the file ${todoFile.path}');
+    FileWatcher watcher = FileWatcher(todoFile.path);
+    return watcher.events;
+  }
+
+  @override
   Future<void> readFromSource() async {
     debugPrint('Reading todos from file');
     updateList(await _fromFile());
   }
 
   @override
-  Future<void> writeToSource() async {
+  void writeToSource() {
     debugPrint('Writing todos to file');
-    await todoFile.writeAsString(
-      _todoList.join(Platform.lineTerminator),
-      flush: true,
-    );
+    // Using the sync version here.
+    // Otherwise it produces multiple MODIFY events.
+    todoFile.writeAsStringSync(_todoList.join(Platform.lineTerminator));
   }
 
   @override
@@ -208,7 +221,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   }
 
   @override
-  Future<void> writeToSource() {
+  void writeToSource() {
     // @todo: Save to WebDAV here.
     return super.writeToSource();
   }

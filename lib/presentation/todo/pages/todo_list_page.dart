@@ -19,11 +19,22 @@ class TodoListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth < maxScreenWidthCompact) {
-      return TodoListNarrowView();
-    } else {
-      return TodoListWideView();
-    }
+    return BlocListener<TodoListBloc, TodoListState>(
+      listener: (context, state) {
+        // Catch errors on the highes possible layer.
+        if (state is TodoListError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(state.message),
+            ),
+          );
+        }
+      },
+      child: screenWidth < maxScreenWidthCompact
+          ? TodoListNarrowView()
+          : TodoListWideView(),
+    );
   }
 }
 
