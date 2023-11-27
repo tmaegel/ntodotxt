@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logging/logging.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
@@ -11,26 +14,45 @@ import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final log = Logger('ntodotxt');
+
 void main() async {
+  Logger.root.level = Level.FINE; // defaults to Level.INFO
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
+  log.info('Initialize main');
+
+  log.info('Setup bloc oberserver');
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
 
+  log.info('Setup shared preferences');
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  log.info('Setup secure storage');
   const secureStorage = FlutterSecureStorage(
     // Pass the option to the constructor
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
 
-  final LocalTodoListApi todoListApi = LocalTodoListApi();
+  log.info('Setup todo list repository');
+  final String directory = (await getApplicationCacheDirectory()).path;
+  final File file = File('$directory${Platform.pathSeparator}todo.txt');
+  final LocalTodoListApi todoListApi = LocalTodoListApi(file);
   final TodoListRepository todoListRepository =
-      TodoListRepository(todoListApi: todoListApi)..init();
+      TodoListRepository(todoListApi: todoListApi);
 
   // Initialize the initial auth state before starting the app.
+  log.info('Setup authentication state');
   final AuthState authState = await AuthCubit.init(secureStorage);
 
+  log.info('Run app');
   runApp(
     App(
       todoListRepository: todoListRepository,
@@ -45,18 +67,18 @@ class SimpleBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
-    debugPrint('${bloc.runtimeType} $change');
+    log.finest('${bloc.runtimeType} $change');
   }
 
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    debugPrint('${bloc.runtimeType} $transition');
+    log.finest('${bloc.runtimeType} $transition');
   }
 
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    debugPrint('${bloc.runtimeType} $error $stackTrace');
+    log.finest('${bloc.runtimeType} $error $stackTrace');
     super.onError(bloc, error, stackTrace);
   }
 }

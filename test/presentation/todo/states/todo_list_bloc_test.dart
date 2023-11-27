@@ -29,9 +29,8 @@ void main() {
     await file.create();
     await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 
-    final LocalTodoListApi todoListApi = LocalTodoListApi();
+    final LocalTodoListApi todoListApi = LocalTodoListApi(file);
     todoListRepository = TodoListRepository(todoListApi: todoListApi);
-    await todoListRepository.init(file: file);
   });
 
   group('Initial', () {

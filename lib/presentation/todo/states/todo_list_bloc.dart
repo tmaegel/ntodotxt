@@ -51,11 +51,11 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     // Watch for changes to the source to propagate errors to the ui.
     _todoListRepository.watchSource().listen(
-      (WatchEvent event) async {
+      (WatchEvent event) {
         try {
           if (event.type == ChangeType.MODIFY) {
             debugPrint('The file ${event.path} has been modified.');
-            await _todoListRepository.readFromSource();
+            _todoListRepository.readFromSource();
           }
         } on Exception catch (e) {
           emit(state.error(
@@ -71,13 +71,13 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     );
   }
 
-  Future<void> _onTodoListSynchronizationRequested(
+  void _onTodoListSynchronizationRequested(
     TodoListSynchronizationRequested event,
     Emitter<TodoListState> emit,
-  ) async {
+  ) {
     emit(state.loading());
     try {
-      await _todoListRepository.readFromSource();
+      _todoListRepository.readFromSource();
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

@@ -12,9 +12,6 @@ class TodoListRepository {
     required TodoListApi todoListApi,
   }) : _todoListApi = todoListApi;
 
-  /// Initialize repository. Not needed for testing.
-  Future<void> init({File? file}) => _todoListApi.init(file: file);
-
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList() => _todoListApi.getTodoList();
 
@@ -22,7 +19,7 @@ class TodoListRepository {
   Stream<WatchEvent> watchSource() => _todoListApi.watchSource();
 
   /// Read [todoList] from source.
-  Future<void> readFromSource() => _todoListApi.readFromSource();
+  void readFromSource() => _todoListApi.readFromSource();
 
   /// Write [todoList] to source.
   void writeToSource() => _todoListApi.writeToSource();

@@ -26,7 +26,7 @@ class AppRouter {
   late final GoRouter config = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/todo',
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
     routes: <RouteBase>[
       GoRoute(
         path: '/login',

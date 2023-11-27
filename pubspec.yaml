@@ -25,6 +25,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   xml: ^6.4.2
   watcher: ^1.1.0
+  logging: ^1.2.0
 
 dev_dependencies:
   flutter_test:

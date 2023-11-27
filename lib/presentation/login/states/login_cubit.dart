@@ -44,7 +44,7 @@ class AuthCubit extends Cubit<AuthState> {
     return const Unauthenticated();
   }
 
-  void resetSecureStorage() async {
+  Future<void> resetSecureStorage() async {
     final List<String> attrs = [
       'backend',
       'server',
@@ -56,23 +56,23 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void loginOffline() async {
-    resetSecureStorage();
+  Future<void> loginOffline() async {
+    await resetSecureStorage();
     await storage.write(key: 'backend', value: Backend.offline.name);
     emit(const OfflineLogin());
   }
 
-  void logout() async {
-    resetSecureStorage();
+  Future<void> logout() async {
+    await resetSecureStorage();
     emit(const Unauthenticated());
   }
 
-  void loginWebDAV({
+  Future<void> loginWebDAV({
     required String server,
     required String username,
     required String password,
   }) async {
-    resetSecureStorage();
+    await resetSecureStorage();
     await storage.write(key: 'backend', value: Backend.webdav.name);
     await storage.write(key: 'server', value: server);
     await storage.write(key: 'username', value: username);
@@ -86,7 +86,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  void updateWebDAVServer(String? value) async {
+  Future<void> updateWebDAVServer(String? value) async {
     if (state is! WebDAVLogin) {
       return;
     }
@@ -98,7 +98,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void updateWebDAVUsername(String? value) async {
+  Future<void> updateWebDAVUsername(String? value) async {
     if (state is! WebDAVLogin) {
       return;
     }
@@ -110,7 +110,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void updateWebDAVPassword(String? value) async {
+  Future<void> updateWebDAVPassword(String? value) async {
     if (state is! WebDAVLogin) {
       return;
     }
@@ -122,7 +122,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void updateBackend(Backend? value) async {
+  Future<void> updateBackend(Backend? value) async {
     if (value != null) {
       if (value == Backend.offline) {
         await storage.write(key: 'backend', value: Backend.offline.name);

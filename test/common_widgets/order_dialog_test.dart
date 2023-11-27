@@ -96,10 +96,9 @@ void main() async {
     todoList.join(Platform.lineTerminator),
     flush: true,
   ); // Initial todos.
-  final LocalTodoListApi todoListApi = LocalTodoListApi();
+  final LocalTodoListApi todoListApi = LocalTodoListApi(file);
   final TodoListRepository todoListRepository =
       TodoListRepository(todoListApi: todoListApi);
-  await todoListRepository.init(file: file);
 
   testWidgets('Open and close the order dialog', (tester) async {
     await pumpOrderDialog(tester, todoListRepository);
