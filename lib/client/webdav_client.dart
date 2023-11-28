@@ -7,6 +7,7 @@ import 'dart:io'
         HttpClientResponse,
         HttpHeaders;
 
+import 'package:ntodotxt/main.dart' show log;
 import 'package:xml/xml.dart'
     show XmlDocument, XmlException, XmlStringExtension;
 
@@ -20,36 +21,36 @@ class WebDAVClientException implements Exception {
 }
 
 class WebDAVClient {
+  final String schema;
   final String host;
   final int port;
+  final String baseUrl;
   final String username;
   final String password;
-  final String baseUrl;
-
-  late final HttpClient client;
 
   WebDAVClient._({
+    required this.schema,
     required this.host,
     required this.port,
+    required this.baseUrl,
     required this.username,
     required this.password,
-    required this.baseUrl,
-  }) {
-    client = HttpClient();
-  }
+  });
 
   factory WebDAVClient({
+    String schema = 'http',
     required String host,
     required int port,
+    required String baseUrl,
     required String username,
     required String password,
-    String baseUrl = '/remote.php/dav/files',
   }) {
     if (baseUrl.endsWith('/')) {
       baseUrl = baseUrl.substring(0, baseUrl.length - 1);
     }
 
     return WebDAVClient._(
+      schema: schema,
       host: host,
       port: port,
       username: username,
@@ -62,14 +63,28 @@ class WebDAVClient {
         utf8.encode('$username:$password'),
       );
 
-  String fullPath(String filename) {
+  Uri serverUri(String filename) {
+    return Uri(
+      scheme: schema,
+      host: host,
+      port: port,
+      path: path(filename),
+    );
+  }
+
+  String path(String filename) {
     return '$baseUrl/$username/$filename';
   }
 
-  Future<String> download(String filename) async {
+  Future<String> download({
+    String targetFilename = 'todo.txt',
+  }) async {
+    final HttpClient client = HttpClient();
+    final Uri url = serverUri(targetFilename);
+    log.info('Download from server $url');
+
     try {
-      HttpClientRequest request =
-          await client.get(host, port, fullPath(filename));
+      HttpClientRequest request = await client.getUrl(url);
       request.headers.contentType =
           ContentType('text', 'plain', charset: 'utf-8');
       request.headers.set(HttpHeaders.authorizationHeader, 'Basic $token');
@@ -99,14 +114,20 @@ class WebDAVClient {
     }
   }
 
-  Future<void> upload(String filename) async {
+  Future<void> upload({
+    required String content,
+    String targetFilename = 'todo.txt',
+  }) async {
+    final HttpClient client = HttpClient();
+    final Uri url = serverUri(targetFilename);
+    log.info('Upload to server $url');
+
     try {
-      HttpClientRequest request =
-          await client.put(host, port, fullPath(filename));
+      HttpClientRequest request = await client.putUrl(url);
       request.headers.contentType =
           ContentType('text', 'plain', charset: 'utf-8');
       request.headers.set(HttpHeaders.authorizationHeader, 'Basic $token');
-      request.write('testabc111');
+      request.write(content);
 
       HttpClientResponse response = await request.close();
 

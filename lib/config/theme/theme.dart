@@ -27,9 +27,6 @@ final ThemeData lightTheme = light.copyWith(
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: light.primaryColor),
     ),
-    focusedErrorBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: light.colorScheme.error),
-    ),
     enabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: light.dividerColor),
     ),
@@ -38,6 +35,12 @@ final ThemeData lightTheme = light.copyWith(
     ),
     disabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: light.disabledColor),
+    ),
+    focusedErrorBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: dark.colorScheme.error),
+    ),
+    errorBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: dark.colorScheme.error),
     ),
   ),
 );
@@ -62,9 +65,6 @@ final ThemeData darkTheme = dark.copyWith(
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: dark.primaryColor),
     ),
-    focusedErrorBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.colorScheme.error),
-    ),
     enabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: dark.dividerColor),
     ),
@@ -73,6 +73,12 @@ final ThemeData darkTheme = dark.copyWith(
     ),
     disabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: dark.disabledColor),
+    ),
+    focusedErrorBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: dark.colorScheme.error),
+    ),
+    errorBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: dark.colorScheme.error),
     ),
   ),
 );

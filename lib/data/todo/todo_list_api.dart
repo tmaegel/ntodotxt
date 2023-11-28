@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:ntodotxt/main.dart' show log;
@@ -19,10 +20,10 @@ abstract class TodoListApi {
   Stream<WatchEvent> watchSource();
 
   /// Read [todoList] from source.
-  void readFromSource();
+  Future<void> readFromSource();
 
   /// Write [todoList] to source.
-  void writeToSource();
+  Future<void> writeToSource();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.
@@ -49,7 +50,7 @@ class LocalTodoListApi extends TodoListApi {
     } else {
       log.fine('File ${todoFile.path} exists already.');
     }
-    readFromSource();
+    updateList(_fromFileSync()); // Read synchrone here.
   }
 
   /// Provides a [Stream] of all todos.
@@ -81,7 +82,17 @@ class LocalTodoListApi extends TodoListApi {
     controller.close();
   }
 
-  List<Todo> _fromFile() {
+  Future<List<Todo>> _fromFile() async {
+    final lines = await todoFile.readAsLines();
+    // Index the todo objecte to get a unique id.
+    lines.sort();
+    return [
+      for (var i = 0; i < lines.length; i++)
+        Todo.fromString(id: i, value: lines[i])
+    ];
+  }
+
+  List<Todo> _fromFileSync() {
     final lines = todoFile.readAsLinesSync();
     // Index the todo objecte to get a unique id.
     lines.sort();
@@ -135,13 +146,13 @@ class LocalTodoListApi extends TodoListApi {
   }
 
   @override
-  void readFromSource() {
+  Future<void> readFromSource() async {
     log.info('Reading todos from file');
-    updateList(_fromFile());
+    updateList(await _fromFile());
   }
 
   @override
-  void writeToSource() {
+  Future<void> writeToSource() async {
     log.info('Writing todos to file');
     // Using the sync version here.
     // Otherwise it produces multiple MODIFY events.
@@ -184,18 +195,64 @@ class LocalTodoListApi extends TodoListApi {
 }
 
 class WebDAVTodoListApi extends LocalTodoListApi {
-  final String server;
-  final String username;
-  final String password;
+  final WebDAVClient client;
 
-  WebDAVTodoListApi({
+  WebDAVTodoListApi._({
     required File todoFile,
-    required this.server,
-    required this.username,
-    required this.password,
+    required this.client,
   }) : super(todoFile: todoFile);
 
-  // Future<void> downloadFromSource() {}
-  //
-  // Future<void> uploadToSource() {}
+  factory WebDAVTodoListApi({
+    required File todoFile,
+    required String server,
+    required String baseUrl,
+    required String username,
+    required String password,
+  }) {
+    late WebDAVClient client;
+    final RegExp exp =
+        RegExp(r"(?<schema>^(http|https)):\/\/(?<host>\w+):(?<port>\d+)$");
+    final RegExpMatch? match = exp.firstMatch(server);
+    if (match != null) {
+      String schema = match.namedGroup('schema')!;
+      String host = match.namedGroup('host')!;
+      int port = int.parse(match.namedGroup('port')!);
+      client = WebDAVClient(
+        schema: schema,
+        host: host,
+        port: port,
+        baseUrl: baseUrl,
+        username: username,
+        password: password,
+      );
+    } else {
+      throw const FormatException('Invalid server foramt.');
+    }
+
+    return WebDAVTodoListApi._(
+      todoFile: todoFile,
+      client: client,
+    );
+  }
+
+  // Future<void> readFromSource() async {}
+
+  @override
+  Future<void> writeToSource() async {
+    await super.writeToSource();
+    await uploadToSource();
+  }
+
+  @override
+  Future<void> downloadFromSource() async {
+    log.info('Downloading todos from server');
+    String content = await client.download();
+  }
+
+  Future<void> uploadToSource() async {
+    log.info('Uploading todos to server');
+    await client.upload(
+      content: _todoList.join(Platform.lineTerminator),
+    );
+  }
 }

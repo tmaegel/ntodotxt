@@ -68,6 +68,10 @@ void main() {
         ..add(TodoListTodoCompletionToggled(todo: todo, completion: true)),
       expect: () => [
         TodoListSuccess(todoList: [todo]),
+        TodoListLoading(todoList: [todo]),
+        TodoListLoading(
+          todoList: [todo.copyWith(completion: true, completionDate: now)],
+        ),
         TodoListSuccess(
           todoList: [todo.copyWith(completion: true, completionDate: now)],
         ),
@@ -82,6 +86,7 @@ void main() {
             todo: todo.copyWith(id: 99), completion: true)),
       expect: () => [
         TodoListSuccess(todoList: [todo]),
+        TodoListLoading(todoList: [todo]),
         TodoListError(
           message: 'Todo with id 99 could not be found',
           todoList: [todo],

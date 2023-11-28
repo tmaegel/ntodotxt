@@ -27,7 +27,7 @@ late final SharedPreferences prefs;
 late final String cacheDirectory;
 
 void main() async {
-  Logger.root.level = Level.FINE; // defaults to Level.INFO
+  Logger.root.level = Level.FINER; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
@@ -45,17 +45,17 @@ void main() async {
   prefs = await SharedPreferences.getInstance();
 
   log.info('Check initial login and backend status');
-  final AuthState initialAuthState = await AuthCubit.init(secureStorage);
+  final LoginState initialLoginState = await LoginCubit.init(secureStorage);
 
   log.info('Run app');
-  runApp(AuthenticationWrapper(initialAuthState: initialAuthState));
+  runApp(AuthenticationWrapper(initialLoginState: initialLoginState));
 }
 
 class SimpleBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
-    log.finest('${bloc.runtimeType} $change');
+    log.finer('${bloc.runtimeType} $change');
   }
 
   @override
@@ -107,26 +107,38 @@ class App extends StatelessWidget {
 }
 
 class AuthenticationWrapper extends StatelessWidget {
-  final AuthState initialAuthState;
+  final LoginState initialLoginState;
 
   const AuthenticationWrapper({
-    required this.initialAuthState,
+    required this.initialLoginState,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => AuthCubit(
+      create: (BuildContext context) => LoginCubit(
         storage: secureStorage,
-        state: initialAuthState,
+        state: initialLoginState,
       ),
-      child: BlocBuilder<AuthCubit, AuthState>(
+      child: BlocConsumer<LoginCubit, LoginState>(
+        listenWhen: (LoginState previous, LoginState current) =>
+            current is LoginError,
+        listener: (BuildContext context, LoginState state) {
+          if (state is LoginError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                content: Text(state.message),
+              ),
+            );
+          }
+        },
         buildWhen: (previousState, state) =>
-            (previousState is Unauthenticated && state is! Unauthenticated) ||
-            (previousState is! Unauthenticated && state is Unauthenticated),
-        builder: (BuildContext context, AuthState state) {
-          if (state is Unauthenticated) {
+            (previousState is Logout && state is! Logout) ||
+            (previousState is! Logout && state is Logout),
+        builder: (BuildContext context, LoginState state) {
+          if (state is Logout) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
@@ -148,19 +160,20 @@ class AuthenticationWrapper extends StatelessWidget {
     );
   }
 
-  TodoListApi _createApi(AuthState authState) {
+  TodoListApi _createApi(LoginState loginState) {
     final File file = File('$cacheDirectory${Platform.pathSeparator}todo.txt');
-    switch (authState) {
-      case OfflineLogin():
+    switch (loginState) {
+      case LoginOffline():
         log.info('Use local backend');
         return LocalTodoListApi(todoFile: file);
-      case WebDAVLogin():
+      case LoginWebDAV():
         log.info('Use local+webdav backend');
         return WebDAVTodoListApi(
           todoFile: file,
-          server: authState.server,
-          username: authState.username,
-          password: authState.password,
+          server: loginState.server,
+          baseUrl: loginState.baseUrl,
+          username: loginState.username,
+          password: loginState.password,
         );
       default:
         log.info('Fallback to local backend');

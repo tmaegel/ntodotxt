@@ -17,10 +17,10 @@ class TodoListRepository {
   Stream<WatchEvent> watchSource() => _api.watchSource();
 
   /// Read [todoList] from source.
-  void readFromSource() => _api.readFromSource();
+  Future<void> readFromSource() => _api.readFromSource();
 
   /// Write [todoList] to source.
-  void writeToSource() => _api.writeToSource();
+  Future<void> writeToSource() => _api.writeToSource();
 
   /// Saves a [todo].
   /// If a [todo] with the same id already exists, it will be replaced.

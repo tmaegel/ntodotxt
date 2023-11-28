@@ -219,14 +219,9 @@ abstract class TodoListView extends StatelessWidget {
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
-          // Waiting for first 'success' state.
-          Future bloc = context.read<TodoListBloc>().stream.firstWhere(
-                (state) => state is TodoListSuccess,
-              );
           context
               .read<TodoListBloc>()
               .add(const TodoListSynchronizationRequested());
-          await bloc;
         },
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(
@@ -235,9 +230,47 @@ abstract class TodoListView extends StatelessWidget {
               PointerDeviceKind.mouse,
             },
           ),
-          child: const TodoList(),
+          child: _buildTodoList(),
         ),
       ),
+    );
+  }
+
+  Widget _buildTodoList() {
+    return BlocBuilder<TodoListBloc, TodoListState>(
+      buildWhen: (TodoListState previousState, TodoListState state) {
+        // Rebuild if loading state is changed only.
+        return (previousState is TodoListLoading &&
+                state is! TodoListLoading) ||
+            (previousState is! TodoListLoading && state is TodoListLoading);
+      },
+      builder: (BuildContext context, TodoListState state) {
+        if (state is TodoListLoading) {
+          return Stack(
+            children: <Widget>[
+              const TodoList(),
+              // Custom progress indicator.
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).canvasColor,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return const TodoList();
+        }
+      },
     );
   }
 }

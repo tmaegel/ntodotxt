@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/main.dart' show log;
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,11 +51,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     // Watch for changes to the source to propagate errors to the ui.
     _repository.watchSource().listen(
-      (WatchEvent event) {
+      (WatchEvent event) async {
         try {
           if (event.type == ChangeType.MODIFY) {
-            debugPrint('The file ${event.path} has been modified.');
-            _repository.readFromSource();
+            log.info('The file ${event.path} has been modified.');
+            // No whenComplete callback here. The state is changed down below.
+            await _repository.readFromSource();
           }
         } on Exception catch (e) {
           emit(state.error(
@@ -66,7 +67,14 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     );
     await emit.forEach<List<Todo>>(
       _repository.getTodoList(),
-      onData: (todoList) => state.success(todoList: todoList),
+      onData: (todoList) {
+        if (state is TodoListInitial) {
+          return state.success(todoList: todoList);
+        } else {
+          // Use copyWith here to keep the state (e.g. if loading)
+          return state.copyWith(todoList: todoList);
+        }
+      },
       onError: (e, _) => state.error(message: e.toString()),
     );
   }
@@ -74,10 +82,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoListSynchronizationRequested(
     TodoListSynchronizationRequested event,
     Emitter<TodoListState> emit,
-  ) {
+  ) async {
     emit(state.loading());
     try {
-      _repository.readFromSource();
+      await _repository
+          .readFromSource()
+          .whenComplete(() => emit(state.success()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -86,7 +96,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoCompletionToggled(
     TodoListTodoCompletionToggled event,
     Emitter<TodoListState> emit,
-  ) {
+  ) async {
+    emit(state.loading());
     try {
       final Todo todo = event.todo.copyWith(
         completion: event.completion,
@@ -94,7 +105,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         unsetCompletionDate: !event.completion,
       );
       _repository.saveTodo(todo);
-      _repository.writeToSource(); // Write to file.
+      await _repository
+          .writeToSource()
+          .whenComplete(() => emit(state.success()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -156,7 +169,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoListSelectionCompleted(
     TodoListSelectionCompleted event,
     Emitter<TodoListState> emit,
-  ) {
+  ) async {
+    emit(state.loading());
     try {
       _repository.saveMultipleTodos(
         [
@@ -168,7 +182,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             )
         ],
       );
-      _repository.writeToSource(); // Write to file.
+      await _repository
+          .writeToSource()
+          .whenComplete(() => emit(state.success()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -177,7 +193,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoListSelectionIncompleted(
     TodoListSelectionIncompleted event,
     Emitter<TodoListState> emit,
-  ) {
+  ) async {
+    emit(state.loading());
     try {
       _repository.saveMultipleTodos(
         [
@@ -189,7 +206,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             )
         ],
       );
-      _repository.writeToSource(); // Write to file.
+      await _repository
+          .writeToSource()
+          .whenComplete(() => emit(state.success()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -198,12 +217,15 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   void _onTodoListSelectionDeleted(
     TodoListSelectionDeleted event,
     Emitter<TodoListState> emit,
-  ) {
+  ) async {
+    emit(state.loading());
     try {
       _repository.deleteMultipleTodos(
         state.selectedTodos.toList(),
       );
-      _repository.writeToSource(); // Write to file.
+      await _repository
+          .writeToSource()
+          .whenComplete(() => emit(state.success()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

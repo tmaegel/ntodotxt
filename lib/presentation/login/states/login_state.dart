@@ -1,16 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-enum Backend { offline, webdav }
+enum Backend { none, offline, webdav }
 
-sealed class AuthState extends Equatable {
+sealed class LoginState extends Equatable {
   /// Backend to use to store todos.
   final Backend backend;
 
-  const AuthState({
-    this.backend = Backend.offline,
+  const LoginState({
+    this.backend = Backend.none,
   });
 
-  AuthState copyWith();
+  LoginState copyWith();
 
   @override
   List<Object> get props => [
@@ -18,12 +18,15 @@ sealed class AuthState extends Equatable {
       ];
 
   @override
-  String toString() => 'AuthState { }';
+  String toString() => 'LoginState { }';
 }
 
-final class WebDAVLogin extends AuthState {
+final class LoginWebDAV extends LoginState {
   /// Backend server.
   final String server;
+
+  /// Base Url.
+  final String baseUrl;
 
   /// Backend username.
   final String username;
@@ -31,21 +34,24 @@ final class WebDAVLogin extends AuthState {
   /// Backend password.
   final String password;
 
-  const WebDAVLogin({
+  const LoginWebDAV({
     super.backend = Backend.webdav,
     required this.server,
+    required this.baseUrl,
     required this.username,
     required this.password,
   });
 
   @override
-  WebDAVLogin copyWith({
+  LoginWebDAV copyWith({
     String? server,
+    String? baseUrl,
     String? username,
     String? password,
   }) {
-    return WebDAVLogin(
+    return LoginWebDAV(
       server: server ?? this.server,
+      baseUrl: baseUrl ?? this.baseUrl,
       username: username ?? this.username,
       password: password ?? this.password,
     );
@@ -60,17 +66,17 @@ final class WebDAVLogin extends AuthState {
       ];
 
   @override
-  String toString() => 'WebDAVLogin { }';
+  String toString() => 'LoginWebDAV { }';
 }
 
-final class OfflineLogin extends AuthState {
-  const OfflineLogin({
-    super.backend,
+final class LoginOffline extends LoginState {
+  const LoginOffline({
+    super.backend = Backend.offline,
   });
 
   @override
-  OfflineLogin copyWith() {
-    return const OfflineLogin();
+  LoginOffline copyWith() {
+    return const LoginOffline();
   }
 
   @override
@@ -79,17 +85,25 @@ final class OfflineLogin extends AuthState {
       ];
 
   @override
-  String toString() => 'OfflineLogin { }';
+  String toString() => 'LoginOffline { }';
 }
 
-final class Unauthenticated extends AuthState {
-  const Unauthenticated({
+final class LoginError extends LoginState {
+  /// Error message.
+  final String message;
+
+  const LoginError({
+    required this.message,
     super.backend,
   });
 
   @override
-  Unauthenticated copyWith() {
-    return const Unauthenticated();
+  LoginError copyWith({
+    String? message,
+  }) {
+    return LoginError(
+      message: message ?? this.message,
+    );
   }
 
   @override
@@ -98,5 +112,24 @@ final class Unauthenticated extends AuthState {
       ];
 
   @override
-  String toString() => 'Unauthenticated { }';
+  String toString() => 'LoginError { message: $message }';
+}
+
+final class Logout extends LoginState {
+  const Logout({
+    super.backend,
+  });
+
+  @override
+  Logout copyWith() {
+    return const Logout();
+  }
+
+  @override
+  List<Object> get props => [
+        backend,
+      ];
+
+  @override
+  String toString() => 'Logout { }';
 }

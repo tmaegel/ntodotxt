@@ -72,7 +72,7 @@ void main() {
           ),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo.toString()],
@@ -101,7 +101,7 @@ void main() {
           ),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo2.toString()],
@@ -126,7 +126,7 @@ void main() {
           throwsA(isA<TodoNotFound>()),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo.toString()],
@@ -155,7 +155,7 @@ void main() {
           ),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(await file.readAsLines(), []);
       });
       test("delete non-existing todo", () async {
@@ -182,7 +182,7 @@ void main() {
           ),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(
           await file.readAsLines(),
           [todo.toString()],
@@ -237,7 +237,7 @@ void main() {
           ),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(
           await file.readAsLines(),
           [
@@ -287,7 +287,7 @@ void main() {
           ),
         );
 
-        repository.writeToSource();
+        await repository.writeToSource();
         expect(await file.readAsLines(), []);
       });
     });

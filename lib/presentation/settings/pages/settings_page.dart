@@ -157,7 +157,7 @@ class SettingsView extends StatelessWidget {
             subtitle: const Text(
                 'Disconnects the connection to the backend. Settings and todos are preserved.'),
             onTap: () {
-              context.read<AuthCubit>().logout();
+              context.read<LoginCubit>().logout();
             },
           ),
           ListTile(

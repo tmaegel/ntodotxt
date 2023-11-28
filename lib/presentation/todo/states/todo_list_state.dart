@@ -308,20 +308,12 @@ sealed class TodoListState extends Equatable {
     }
   }
 
-  /// Initial state.
   TodoListState copyWith({
     TodoListFilter? filter,
     TodoListOrder? order,
     TodoListGroupBy? group,
     List<Todo>? todoList,
-  }) {
-    return TodoListInitial(
-      filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
-      todoList: todoList ?? this.todoList,
-    );
-  }
+  });
 
   TodoListState loading({
     TodoListFilter? filter,
@@ -389,6 +381,21 @@ final class TodoListInitial extends TodoListState {
   });
 
   @override
+  TodoListInitial copyWith({
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListInitial(
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
+
+  @override
   String toString() =>
       'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }
@@ -402,6 +409,21 @@ final class TodoListLoading extends TodoListState {
   });
 
   @override
+  TodoListLoading copyWith({
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListLoading(
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
+
+  @override
   String toString() =>
       'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
 }
@@ -413,6 +435,21 @@ final class TodoListSuccess extends TodoListState {
     super.group,
     super.todoList,
   });
+
+  @override
+  TodoListSuccess copyWith({
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListSuccess(
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
 
   @override
   String toString() =>
@@ -429,6 +466,23 @@ final class TodoListError extends TodoListState {
     super.group,
     super.todoList,
   });
+
+  @override
+  TodoListError copyWith({
+    String? message,
+    TodoListFilter? filter,
+    TodoListOrder? order,
+    TodoListGroupBy? group,
+    List<Todo>? todoList,
+  }) {
+    return TodoListError(
+      message: message ?? this.message,
+      filter: filter ?? this.filter,
+      order: order ?? this.order,
+      group: group ?? this.group,
+      todoList: todoList ?? this.todoList,
+    );
+  }
 
   @override
   List<Object?> get props => [
