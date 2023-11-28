@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/screen.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_detail_items.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
@@ -23,7 +23,6 @@ class TodoEditPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        repository: context.read<TodoListRepository>(),
         todo: _todo,
       ),
       child: screenWidth < maxScreenWidthCompact
@@ -40,7 +39,12 @@ abstract class TodoEditView extends StatelessWidget {
     return PrimaryFloatingActionButton(
       icon: const Icon(Icons.save),
       tooltip: 'Save',
-      action: () => context.read<TodoBloc>().add(const TodoSubmitted()),
+      action: () {
+        context.goNamed("todo-list");
+        context
+            .read<TodoListBloc>()
+            .add(TodoListTodoSubmitted(todo: state.todo));
+      },
     );
   }
 
@@ -51,8 +55,10 @@ abstract class TodoEditView extends StatelessWidget {
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
           onPressed: () {
-            context.read<TodoBloc>().add(const TodoDeleted());
             context.goNamed("todo-list");
+            context
+                .read<TodoListBloc>()
+                .add(TodoListTodoDeleted(todo: state.todo));
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Theme.of(context).colorScheme.primary,

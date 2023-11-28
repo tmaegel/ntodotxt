@@ -1,20 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final TodoListRepository _repository;
-
   TodoBloc({
-    required TodoListRepository repository,
     required Todo todo,
-  })  : _repository = repository,
-        super(TodoInitial(todo: todo)) {
-    on<TodoSubmitted>(_onSubmitted);
-    on<TodoDeleted>(_onDeleted);
+  }) : super(TodoInitial(todo: todo)) {
     on<TodoCompletionToggled>(_onCompletionToggled);
     on<TodoDescriptionChanged>(_onDescriptionChanged);
     on<TodoPriorityAdded>(_onPriorityAdded);
@@ -25,31 +18,6 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoContextRemoved>(_onContextRemoved);
     on<TodoKeyValuesAdded>(_onKeyValueAdded);
     on<TodoKeyValueRemoved>(_onKeyValueRemoved);
-  }
-
-  void _onSubmitted(
-    TodoSubmitted event,
-    Emitter<TodoState> emit,
-  ) async {
-    try {
-      _repository.saveTodo(state.todo);
-      await _repository.writeToSource(); // Write to file.
-      emit(state.success());
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onDeleted(
-    TodoDeleted event,
-    Emitter<TodoState> emit,
-  ) async {
-    try {
-      _repository.deleteTodo(state.todo);
-      await _repository.writeToSource(); // Write to file.
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
   }
 
   void _onCompletionToggled(

@@ -33,6 +33,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         ) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
+    on<TodoListTodoSubmitted>(_onTodoSubmitted);
+    on<TodoListTodoDeleted>(_onTodoDeleted);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
     on<TodoListTodoSelectedToggled>(_onTodoSelectedToggled);
     on<TodoListSelectedAll>(_onTodoListSelectedAll);
@@ -105,6 +107,38 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         unsetCompletionDate: !event.completion,
       );
       _repository.saveTodo(todo);
+      await _repository
+          .writeToSource()
+          .whenComplete(() => emit(state.success()));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  void _onTodoSubmitted(
+    TodoListTodoSubmitted event,
+    Emitter<TodoListState> emit,
+  ) async {
+    emit(state.loading());
+    try {
+      final Todo todo = event.todo.copyWith();
+      _repository.saveTodo(todo);
+      await _repository
+          .writeToSource()
+          .whenComplete(() => emit(state.success()));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  void _onTodoDeleted(
+    TodoListTodoDeleted event,
+    Emitter<TodoListState> emit,
+  ) async {
+    emit(state.loading());
+    try {
+      final Todo todo = event.todo.copyWith();
+      _repository.deleteTodo(todo);
       await _repository
           .writeToSource()
           .whenComplete(() => emit(state.success()));
