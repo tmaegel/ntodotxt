@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
-import 'package:ntodotxt/common_widgets/backend_dialog.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
-import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:ntodotxt/presentation/settings/states/settings.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
@@ -36,66 +34,10 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (BuildContext context) {
-      final authState = context.watch<AuthCubit>().state;
-      final settingsState = context.watch<SettingsCubit>().state;
-      // Return a Widget which depends on the state
-      // of SettingsCubit and AuthCubit.
+    return BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (BuildContext context, SettingsState state) {
       return ListView(
         children: [
-          ListTile(
-            title: Text(
-              'General',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          ListTile(
-            title: const Text("Backend"),
-            subtitle: Text(authState.backend.name),
-            onTap: () async {
-              context.read<AuthCubit>().updateBackend(
-                    await showDialog<Backend?>(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const BackendSettingsDialog(),
-                    ),
-                  );
-            },
-          ),
-          if (authState is WebDAVLogin)
-            ListTile(
-              title: const Text("Server"),
-              subtitle: Text(authState.server),
-              onTap: () async => context.read<AuthCubit>().updateWebDAVServer(
-                    await _askedForTextInput(
-                        context: context,
-                        label: "Enter WebDAV server",
-                        value: authState.server),
-                  ),
-            ),
-          if (authState is WebDAVLogin)
-            ListTile(
-              title: const Text("Username"),
-              subtitle: Text(authState.username),
-              onTap: () async => context.read<AuthCubit>().updateWebDAVUsername(
-                    await _askedForTextInput(
-                        context: context,
-                        label: "Enter WebDAV username",
-                        value: authState.username),
-                  ),
-            ),
-          if (authState is WebDAVLogin)
-            ListTile(
-              title: const Text("Password"),
-              subtitle: Text(authState.password),
-              onTap: () async => context.read<AuthCubit>().updateWebDAVPassword(
-                    await _askedForTextInput(
-                        context: context,
-                        label: "Enter WebDAV username",
-                        value: authState.password),
-                  ),
-            ),
-          const Divider(),
           ListTile(
             title: Text(
               'Todo',
@@ -104,22 +46,22 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Todo filename (default: todo.txt)"),
-            subtitle: Text(settingsState.todoFilename),
+            subtitle: Text(state.todoFilename),
             onTap: () async => context.read<SettingsCubit>().updateTodoFilename(
                   await _askedForTextInput(
                       context: context,
                       label: "Enter filename",
-                      value: settingsState.todoFilename),
+                      value: state.todoFilename),
                 ),
           ),
           ListTile(
             title: const Text("Done filename (default: done.txt)"),
-            subtitle: Text(settingsState.doneFilename),
+            subtitle: Text(state.doneFilename),
             onTap: () async => context.read<SettingsCubit>().updateDoneFilename(
                   await _askedForTextInput(
                       context: context,
                       label: "Enter filename",
-                      value: settingsState.doneFilename),
+                      value: state.doneFilename),
                 ),
           ),
           const Divider(),
@@ -131,7 +73,7 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Filter"),
-            subtitle: Text(settingsState.todoFilter),
+            subtitle: Text(state.todoFilter),
             onTap: () async {
               context.read<SettingsCubit>().updateTodoFilter(
                     await showDialog<TodoListFilter?>(
@@ -144,7 +86,7 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Order"),
-            subtitle: Text(settingsState.todoOrder),
+            subtitle: Text(state.todoOrder),
             onTap: () async {
               context.read<SettingsCubit>().updateTodoOrder(
                     await showDialog<TodoListOrder?>(
@@ -157,7 +99,7 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: const Text("Group by"),
-            subtitle: Text(settingsState.todoGrouping),
+            subtitle: Text(state.todoGrouping),
             onTap: () async {
               context.read<SettingsCubit>().updateTodoGrouping(
                     await showDialog<TodoListGroupBy?>(
@@ -173,7 +115,7 @@ class SettingsView extends StatelessWidget {
             subtitle:
                 const Text("Automatically move done todos to the done file."),
             trailing: Switch(
-              value: settingsState.autoArchive,
+              value: state.autoArchive,
               onChanged: (bool value) =>
                   context.read<SettingsCubit>().toggleAutoArchive(value),
             ),
@@ -203,11 +145,18 @@ class SettingsView extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text("Reset app settings"),
+            title: const Text("Reset settings"),
             subtitle: const Text(
-                'Resets setting to the defaults. This also disconnects the connection to the backend. Todos will not be deleted.'),
+                'Resets setting to the defaults. Login data and todos are preserved.'),
             onTap: () {
               context.read<SettingsCubit>().resetSettings();
+            },
+          ),
+          ListTile(
+            title: const Text("Logout"),
+            subtitle: const Text(
+                'Disconnects the connection to the backend. Settings and todos are preserved.'),
+            onTap: () {
               context.read<AuthCubit>().logout();
             },
           ),

@@ -10,7 +10,7 @@ import 'package:watcher/watcher.dart';
 abstract class TodoListApi {
   final File todoFile;
 
-  const TodoListApi(this.todoFile);
+  const TodoListApi({required this.todoFile});
 
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
@@ -41,7 +41,7 @@ abstract class TodoListApi {
 }
 
 class LocalTodoListApi extends TodoListApi {
-  LocalTodoListApi(super.todoFile) {
+  LocalTodoListApi({required super.todoFile}) {
     // Use synchronize versions here.
     if (todoFile.existsSync() == false) {
       log.fine('File ${todoFile.path} does not exist. Creating.');
@@ -60,10 +60,12 @@ class LocalTodoListApi extends TodoListApi {
   List<Todo> get _todoList => controller.value;
 
   void updateList(List<Todo> todoList) {
+    log.fine('Update todo list');
     _dispatch(todoList);
   }
 
   void addToList(Todo value) {
+    log.fine('Add todo to todo list');
     List<Todo> todoList = [..._todoList, value];
     _dispatch(todoList);
   }
@@ -191,7 +193,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
     required this.server,
     required this.username,
     required this.password,
-  }) : super(todoFile);
+  }) : super(todoFile: todoFile);
 
   // Future<void> downloadFromSource() {}
   //

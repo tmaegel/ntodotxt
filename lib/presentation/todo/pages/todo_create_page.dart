@@ -20,7 +20,7 @@ class TodoCreatePage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        todoListRepository: context.read<TodoListRepository>(),
+        repository: context.read<TodoListRepository>(),
         todo: const Todo.empty(),
       ),
       child: screenWidth < maxScreenWidthCompact

@@ -11,7 +11,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late File file;
-  late TodoListRepository todoListRepository;
+  late TodoListRepository repository;
   final Todo todo = Todo(
     id: 0,
     priority: 'A',
@@ -29,14 +29,14 @@ void main() {
     await file.create();
     await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 
-    final LocalTodoListApi todoListApi = LocalTodoListApi(file);
-    todoListRepository = TodoListRepository(todoListApi: todoListApi);
+    final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+    repository = TodoListRepository(api: api);
   });
 
   group('Initial', () {
     test('initial state', () {
       final TodoListBloc todoListBloc = TodoListBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
       );
       expect(todoListBloc.state is TodoListInitial, true);
       expect(todoListBloc.state.filter, TodoListFilter.all);
@@ -50,7 +50,7 @@ void main() {
     blocTest(
       'emits the initial todo list when TodoListSubscriptionRequested() is called',
       build: () => TodoListBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
       ),
       act: (bloc) => bloc.add(const TodoListSubscriptionRequested()),
       expect: () => [
@@ -62,7 +62,7 @@ void main() {
   group('TodoListTodoCompletionToggled', () {
     blocTest(
       'emits the todo list state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(TodoListTodoCompletionToggled(todo: todo, completion: true)),
@@ -75,7 +75,7 @@ void main() {
     );
     blocTest(
       'emits the todo list state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called (not exists)',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(TodoListTodoCompletionToggled(
@@ -93,7 +93,7 @@ void main() {
   group('TodoListTodoSelectedToggled', () {
     blocTest(
       'emits the todo list state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(
@@ -109,7 +109,7 @@ void main() {
   group('TodoListSelectedAll', () {
     blocTest(
       'emits the todo list state with updated selected state when TodoListSelectedAll() is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(const TodoListSelectedAll()),
@@ -123,7 +123,7 @@ void main() {
   group('TodoListUnselectedAll', () {
     blocTest(
       'emits the todo list state with updated selected state when TodoListUnselectedAll() is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(const TodoListSelectedAll())
@@ -139,7 +139,7 @@ void main() {
   group('TodoListOrderChanged', () {
     blocTest(
       'emits the todo list state with updated order property when TodoListOrderChanged(<order>) is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(const TodoListOrderChanged(order: TodoListOrder.descending)),
@@ -153,7 +153,7 @@ void main() {
   group('TodoListFilterChanged', () {
     blocTest(
       'emits the todo list state with updated filter property when TodoListFilterChanged(<filter>) is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(
@@ -169,7 +169,7 @@ void main() {
   group('TodoListGroupByChanged', () {
     blocTest(
       'emits the todo list state with updated group property when TodoListGroupByChanged(<group>) is called',
-      build: () => TodoListBloc(todoListRepository: todoListRepository),
+      build: () => TodoListBloc(repository: repository),
       act: (bloc) => bloc
         ..add(const TodoListSubscriptionRequested())
         ..add(const TodoListGroupByChanged(group: TodoListGroupBy.context)),

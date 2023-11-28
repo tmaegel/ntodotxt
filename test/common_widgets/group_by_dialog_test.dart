@@ -23,12 +23,12 @@ const radioButtonKeyContext = Key('contextBottomSheetRadioButton');
 
 Future<void> pumpGroupByBottomSheet(
   WidgetTester tester,
-  TodoListRepository todoListRepository,
+  TodoListRepository repository,
 ) async {
   await tester.pumpWidget(
     BlocProvider(
       create: (BuildContext context) => TodoListBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
       )..add(
           const TodoListSubscriptionRequested(),
         ),
@@ -115,12 +115,11 @@ void main() async {
     todoList.join(Platform.lineTerminator),
     flush: true,
   ); // Initial todos.
-  final LocalTodoListApi todoListApi = LocalTodoListApi(file);
-  final TodoListRepository todoListRepository =
-      TodoListRepository(todoListApi: todoListApi);
+  final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+  final TodoListRepository repository = TodoListRepository(api: api);
 
   testWidgets('Open and close the group by dialog (default)', (tester) async {
-    await pumpGroupByBottomSheet(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, repository);
 
     expect(find.byKey(groupbyDialogKey), findsNothing);
 
@@ -194,7 +193,7 @@ void main() async {
   });
 
   testWidgets('Group by the list by "priority"', (tester) async {
-    await pumpGroupByBottomSheet(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -239,7 +238,7 @@ void main() async {
   });
 
   testWidgets('Group by the list by "project"', (tester) async {
-    await pumpGroupByBottomSheet(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -285,7 +284,7 @@ void main() async {
   });
 
   testWidgets('Group by the list by "context"', (tester) async {
-    await pumpGroupByBottomSheet(tester, todoListRepository);
+    await pumpGroupByBottomSheet(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {

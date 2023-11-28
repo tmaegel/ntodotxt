@@ -11,7 +11,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late File file;
-  late TodoListRepository todoListRepository;
+  late TodoListRepository repository;
   final Todo todo = Todo(
     id: 0,
     priority: 'A',
@@ -29,14 +29,14 @@ void main() {
     await file.create();
     await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 
-    final LocalTodoListApi todoListApi = LocalTodoListApi(file);
-    todoListRepository = TodoListRepository(todoListApi: todoListApi);
+    final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+    repository = TodoListRepository(api: api);
   });
 
   group('Initial', () {
     test('initial state', () {
       final TodoBloc todoBloc = TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo,
       );
       expect(todoBloc.state, TodoInitial(todo: todo));
@@ -47,7 +47,7 @@ void main() {
     blocTest(
       'emits a completed todo with completion date when TodoCompletionToggled(true) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(completion: false),
       ),
       act: (bloc) => bloc.add(const TodoCompletionToggled(true)),
@@ -58,7 +58,7 @@ void main() {
     blocTest(
       'emits a incompleted todo with unsetted completion date when TodoCompletionToggled(false) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(completion: true, completionDate: now),
       ),
       act: (bloc) => bloc.add(const TodoCompletionToggled(false)),
@@ -72,7 +72,7 @@ void main() {
     blocTest(
       'emits a todo with updated description when TodoDescriptionChanged(<description>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoDescriptionChanged('Write more tests')),
@@ -86,7 +86,7 @@ void main() {
     blocTest(
       'emits a todo updated priority when TodoPriorityAdded(<priority>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoPriorityAdded('B')),
@@ -100,7 +100,7 @@ void main() {
     blocTest(
       'emits a todo removed priority when TodoPriorityRemoved() is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoPriorityRemoved()),
@@ -114,7 +114,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['project2'])),
@@ -126,7 +126,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['project 2'])),
@@ -140,7 +140,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (duplication)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['project1'])),
@@ -151,7 +151,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (duplication/case sensitive)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectsAdded(['Project1'])),
@@ -162,7 +162,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -176,7 +176,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries/invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -191,7 +191,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries/duplication)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -203,7 +203,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectsAdded(<projects>) is called (multiple entries/duplication/case sensitive)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -218,7 +218,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectRemoved(<project>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project1')),
@@ -229,7 +229,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectRemoved(<project>) is called (invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project 1')),
@@ -240,7 +240,7 @@ void main() {
     blocTest(
       'emits a todo with updated projects when TodoProjectRemoved(<project>) is called (not exists)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoProjectRemoved('project2')),
@@ -254,7 +254,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['context2'])),
@@ -265,7 +265,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<contexts>) is called (invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['context 2'])),
@@ -279,7 +279,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<contexts>) is called (duplication)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['context1'])),
@@ -290,7 +290,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<contexts>) is called (duplication/case sensitive)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextsAdded(['Context1'])),
@@ -301,7 +301,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -315,7 +315,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries/invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -330,7 +330,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries/duplication)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -342,7 +342,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextsAdded(<constexts>) is called (multiple entries/duplication/case sensitive)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -357,7 +357,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextRemoved(<context>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context1')),
@@ -368,7 +368,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextRemoved(<context>) is called (invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context 1')),
@@ -379,7 +379,7 @@ void main() {
     blocTest(
       'emits a todo with updated contexts when TodoContextRemoved(<context>) is called (not exists)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoContextRemoved('context2')),
@@ -393,7 +393,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['key:val'])),
@@ -406,7 +406,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['key_val'])),
@@ -420,7 +420,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (duplication)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['foo:bar'])),
@@ -431,7 +431,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (duplication/case sensitive)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['Foo:bar'])),
@@ -442,7 +442,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValueAdded(<keyValues>) is called (duplication/update value)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValuesAdded(['foo:new'])),
@@ -453,7 +453,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -468,7 +468,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -483,7 +483,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/duplication)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -497,7 +497,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/duplication/case sensitive)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -511,7 +511,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValuesAdded(<keyValues>) is called (multiple entries/update value)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) =>
@@ -528,7 +528,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValueRemoved(<key:val>) is called',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('foo:bar')),
@@ -539,7 +539,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValueRemoved(<key:val>) is called (invalid format)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('key_val')),
@@ -553,7 +553,7 @@ void main() {
     blocTest(
       'emits a todo with updated key-values when TodoKeyValueRemoved(<key:val>) is called (not exits)',
       build: () => TodoBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
         todo: todo.copyWith(),
       ),
       act: (bloc) => bloc.add(const TodoKeyValueRemoved('key:val')),

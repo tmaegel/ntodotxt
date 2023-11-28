@@ -28,7 +28,8 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (backend == Backend.offline) {
       return const OfflineLogin();
-    } else if (backend == Backend.webdav) {
+    }
+    if (backend == Backend.webdav) {
       String? server = await storage.read(key: 'server');
       String? username = await storage.read(key: 'username');
       String? password = await storage.read(key: 'password');

@@ -22,12 +22,12 @@ const radioButtonKeyDescending = Key('descendingBottomSheetRadioButton');
 
 Future<void> pumpOrderDialog(
   WidgetTester tester,
-  TodoListRepository todoListRepository,
+  TodoListRepository repository,
 ) async {
   await tester.pumpWidget(
     BlocProvider(
       create: (BuildContext context) => TodoListBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
       )..add(
           const TodoListSubscriptionRequested(),
         ),
@@ -96,12 +96,11 @@ void main() async {
     todoList.join(Platform.lineTerminator),
     flush: true,
   ); // Initial todos.
-  final LocalTodoListApi todoListApi = LocalTodoListApi(file);
-  final TodoListRepository todoListRepository =
-      TodoListRepository(todoListApi: todoListApi);
+  final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+  final TodoListRepository repository = TodoListRepository(api: api);
 
   testWidgets('Open and close the order dialog', (tester) async {
-    await pumpOrderDialog(tester, todoListRepository);
+    await pumpOrderDialog(tester, repository);
 
     expect(find.byKey(orderDialogKey), findsNothing);
 
@@ -121,7 +120,7 @@ void main() async {
   });
 
   testWidgets('Order the list by "ascending"', (tester) async {
-    await pumpOrderDialog(tester, todoListRepository);
+    await pumpOrderDialog(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -153,7 +152,7 @@ void main() async {
   });
 
   testWidgets('Order the list by "descending"', (tester) async {
-    await pumpOrderDialog(tester, todoListRepository);
+    await pumpOrderDialog(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {

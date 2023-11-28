@@ -6,12 +6,12 @@ import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  final TodoListRepository _todoListRepository;
+  final TodoListRepository _repository;
 
   TodoBloc({
-    required TodoListRepository todoListRepository,
+    required TodoListRepository repository,
     required Todo todo,
-  })  : _todoListRepository = todoListRepository,
+  })  : _repository = repository,
         super(TodoInitial(todo: todo)) {
     on<TodoSubmitted>(_onSubmitted);
     on<TodoDeleted>(_onDeleted);
@@ -32,8 +32,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     try {
-      _todoListRepository.saveTodo(state.todo);
-      _todoListRepository.writeToSource(); // Write to file.
+      _repository.saveTodo(state.todo);
+      _repository.writeToSource(); // Write to file.
       emit(state.success());
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -45,8 +45,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     try {
-      _todoListRepository.deleteTodo(state.todo);
-      _todoListRepository.writeToSource(); // Write to file.
+      _repository.deleteTodo(state.todo);
+      _repository.writeToSource(); // Write to file.
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

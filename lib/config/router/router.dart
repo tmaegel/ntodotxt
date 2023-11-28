@@ -1,14 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/app_info/pages/app_details_page.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/licenses/pages/licenses_page.dart';
-import 'package:ntodotxt/presentation/login/pages/login_page.dart';
-import 'package:ntodotxt/presentation/login/states/login.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
@@ -19,22 +14,14 @@ class AppRouter {
       GlobalKey<NavigatorState>(debugLabel: 'root');
   final GlobalKey<NavigatorState> _shellNavigatorKey =
       GlobalKey<NavigatorState>(debugLabel: 'shell');
-  final AuthCubit authCubit;
 
-  AppRouter(this.authCubit);
+  AppRouter();
 
   late final GoRouter config = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/todo',
     debugLogDiagnostics: false,
     routes: <RouteBase>[
-      GoRoute(
-        path: '/login',
-        name: 'login',
-        builder: (BuildContext context, GoRouterState state) {
-          return const LoginPage();
-        },
-      ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -93,33 +80,5 @@ class AppRouter {
         ],
       ),
     ],
-    redirect: (BuildContext context, GoRouterState state) {
-      final AuthState authState = context.read<AuthCubit>().state;
-      final bool onLoginPage = state.fullPath == '/login';
-      if (authState is! OfflineLogin && authState is! WebDAVLogin) {
-        return onLoginPage ? null : '/login';
-      }
-      if (onLoginPage) {
-        return '/todo';
-      }
-      return null;
-    },
-    refreshListenable: GoRouterRefreshStream(authCubit.stream),
   );
-}
-
-class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
-    notifyListeners();
-    _subscription =
-        stream.asBroadcastStream().listen((dynamic _) => notifyListeners());
-  }
-
-  late final StreamSubscription<dynamic> _subscription;
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
-  }
 }

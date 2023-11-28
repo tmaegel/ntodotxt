@@ -24,12 +24,12 @@ const radioButtonKeyIncompletedOnly =
 
 Future<void> pumpFilterDialog(
   WidgetTester tester,
-  TodoListRepository todoListRepository,
+  TodoListRepository repository,
 ) async {
   await tester.pumpWidget(
     BlocProvider(
       create: (BuildContext context) => TodoListBloc(
-        todoListRepository: todoListRepository,
+        repository: repository,
       )..add(
           const TodoListSubscriptionRequested(),
         ),
@@ -99,12 +99,11 @@ void main() async {
     todoList.join(Platform.lineTerminator),
     flush: true,
   ); // Initial todos.
-  final LocalTodoListApi todoListApi = LocalTodoListApi(file);
-  final TodoListRepository todoListRepository =
-      TodoListRepository(todoListApi: todoListApi);
+  final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+  final TodoListRepository repository = TodoListRepository(api: api);
 
   testWidgets('Open and close the filter dialog', (tester) async {
-    await pumpFilterDialog(tester, todoListRepository);
+    await pumpFilterDialog(tester, repository);
 
     expect(find.byKey(filterDialogKey), findsNothing);
 
@@ -125,7 +124,7 @@ void main() async {
   });
 
   testWidgets('Filter the list by "all"', (tester) async {
-    await pumpFilterDialog(tester, todoListRepository);
+    await pumpFilterDialog(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -155,7 +154,7 @@ void main() async {
   });
 
   testWidgets('Filter the list by "completed only"', (tester) async {
-    await pumpFilterDialog(tester, todoListRepository);
+    await pumpFilterDialog(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
@@ -183,7 +182,7 @@ void main() async {
   });
 
   testWidgets('Filter the list by "incompleted only"', (tester) async {
-    await pumpFilterDialog(tester, todoListRepository);
+    await pumpFilterDialog(tester, repository);
 
     final button = find.byKey(buttonKey);
     await tester.runAsync(() async {
