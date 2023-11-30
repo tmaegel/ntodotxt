@@ -78,30 +78,25 @@ Future<void> pumpGroupByBottomSheet(
 void main() async {
   List<Todo> todoList = [
     Todo(
-      id: 0,
       creationDate: DateTime.now(),
       description: 'Todo without priority',
     ),
     Todo(
-      id: 1,
       priority: 'A',
       creationDate: DateTime.now(),
       description: 'Todo with priority',
     ),
     Todo(
-      id: 2,
       creationDate: DateTime.now(),
       description: 'Todo with project',
       projects: const {'projecttag'},
     ),
     Todo(
-      id: 3,
       creationDate: DateTime.now(),
       description: 'Todo with context',
       contexts: const {'contexttag'},
     ),
     Todo(
-      id: 4,
       completion: true,
       creationDate: DateTime.now(),
       completionDate: DateTime.now(),

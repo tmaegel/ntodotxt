@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -70,7 +69,7 @@ class TodoSearchTile extends StatelessWidget {
   TodoSearchTile({
     required this.todo,
     Key? key,
-  }) : super(key: PageStorageKey<int>(todo.id!));
+  }) : super(key: PageStorageKey<String>(todo.id!));
 
   @override
   Widget build(BuildContext context) {

@@ -27,7 +27,7 @@ late final SharedPreferences prefs;
 late final String cacheDirectory;
 
 void main() async {
-  Logger.root.level = Level.FINER; // defaults to Level.INFO
+  Logger.root.level = Level.FINE; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
@@ -55,6 +55,8 @@ class SimpleBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
+    log.fine(
+        'STATE CHANGE: ${change.currentState.runtimeType} > ${change.nextState.runtimeType}');
     log.finer('${bloc.runtimeType} $change');
   }
 
@@ -66,7 +68,7 @@ class SimpleBlocObserver extends BlocObserver {
 
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    log.finest('${bloc.runtimeType} $error $stackTrace');
+    log.fine('${bloc.runtimeType} $error $stackTrace');
     super.onError(bloc, error, stackTrace);
   }
 }
@@ -85,7 +87,9 @@ class App extends StatelessWidget {
           create: (context) => TodoListBloc(
             prefs: prefs,
             repository: context.read<TodoListRepository>(),
-          )..add(const TodoListSubscriptionRequested()),
+          )
+            ..add(const TodoListSubscriptionRequested())
+            ..add(const TodoListSynchronizationRequested()),
         ),
       ],
       child: Builder(

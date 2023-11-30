@@ -25,11 +25,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     try {
-      final Todo todo = state.todo.copyWith(
-        completion: event.completion,
-        completionDate: event.completion ? DateTime.now() : null,
-        unsetCompletionDate: !event.completion,
-      );
+      final Todo todo = state.todo.copyWith(completion: event.completion);
       emit(state.change(todo: todo));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -65,7 +61,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     try {
-      final Todo todo = state.todo.copyWith(unsetPriority: true);
+      final Todo todo = state.todo.copyWith(priority: '');
       emit(state.change(todo: todo));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

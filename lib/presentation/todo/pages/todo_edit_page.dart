@@ -120,7 +120,7 @@ class TodoEditNarrowView extends TodoEditView {
             toolbar: _buildToolBar(context, state),
           ),
           body: _buildBody(),
-          floatingActionButton: !state.todo.isDescriptionEmpty
+          floatingActionButton: state.todo.description.isNotEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
         );
@@ -154,7 +154,7 @@ class TodoEditWideView extends TodoEditView {
             toolbar: _buildToolBar(context, state),
           ),
           body: _buildBody(),
-          floatingActionButton: !state.todo.isDescriptionEmpty
+          floatingActionButton: state.todo.description.isNotEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
         );

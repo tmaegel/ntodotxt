@@ -76,13 +76,11 @@ Future<void> pumpOrderDialog(
 void main() async {
   List<Todo> todoList = [
     Todo(
-      id: 0,
       completion: false,
       creationDate: DateTime.now(),
       description: 'Todo A',
     ),
     Todo(
-      id: 1,
       completion: false,
       creationDate: DateTime.now(),
       description: 'Todo B',

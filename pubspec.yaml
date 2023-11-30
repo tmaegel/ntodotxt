@@ -13,27 +13,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.3
-  go_router: ^11.0.0
-  path_provider: ^2.0.11
-  equatable: ^2.0.5
-  rxdart: ^0.27.7
   collection: ^1.17.2
+  equatable: ^2.0.5
   flex_color_scheme: ^7.3.1
+  flutter_bloc: ^8.1.3
+  flutter_secure_storage: ^9.0.0
+  go_router: ^11.0.0
+  logging: ^1.2.0
+  path_provider: ^2.0.11
+  rxdart: ^0.27.7
   shared_preferences: ^2.2.1
   url_launcher: ^6.2.1
-  flutter_secure_storage: ^9.0.0
+  uuid: ^4.2.1
   xml: ^6.4.2
-  watcher: ^1.1.0
-  logging: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  bloc_test: ^9.1.4
-  test_cov_console: ^0.2.2
   flutter_oss_licenses: ^2.0.1
+  test_cov_console: ^0.2.2
 
 flutter:
   uses-material-design: true

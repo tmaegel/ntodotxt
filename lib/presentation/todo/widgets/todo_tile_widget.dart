@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
 class TodoTile extends StatelessWidget {
@@ -16,7 +15,7 @@ class TodoTile extends StatelessWidget {
     required this.onLongPress,
     this.selected = false,
     Key? key,
-  }) : super(key: PageStorageKey<int>(todo.id!));
+  }) : super(key: PageStorageKey<String>(todo.id!));
 
   @override
   Widget build(BuildContext context) {

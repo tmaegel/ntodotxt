@@ -425,7 +425,9 @@ final class TodoListLoading extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var t in todoList) '$t ${t.selected}'
+      ]} }';
 }
 
 final class TodoListSuccess extends TodoListState {
@@ -453,7 +455,9 @@ final class TodoListSuccess extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListSuccess { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListSuccess { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var t in todoList) '$t ${t.selected}'
+      ]} }';
 }
 
 final class TodoListError extends TodoListState {

@@ -1,39 +1,41 @@
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
+import 'package:uuid/uuid.dart';
 
+///
+/// Structure of a valid todo string
+/// with some modification (https://github.com/todotxt/todo.txt/discussions/52)
+///
+/// [completion]      (optional)
+/// [completionDate]  (forbidden if incompleted, mandatory if completed)
+/// [priority]        (optional)
+/// [creationDate]    (optional)
+/// [
+///
+///   [fullDescription] (description + tags: projects, context, keyValues
+///                      can be placed anywhere here)
+///   [description]     (mandatory)
+///   [projects]        (optional: preceded by a single space and a '+',
+///                      contains any non-whitespace character)
+///   [contexts]        (optional: preceded by a single space and a '@',
+///                      contains any non-whitespace character)
+///   [keyValues]       (optional: separated by a single colon,
+///                      key value contains any non-whitespace character which are not colons)
+/// ]
+///
+/// VALID examples:
+///
+/// Write some tests                        (When incomplete, no date is required)
+/// 2019-07-01 Write some tests             (The provided date is the creation date)
+/// x 2019-07-03 Write some test            (The provided date is the completion date)
+/// x 2019-07-03 2019-07-01 Write some test (The provided dates are, in order, completion then creation)
+///
+/// INVALID examples:
+///
+/// 2019-07-03 2019-07-01 Write some tests  (The task is incomplete, so can't have a completion date)
+/// x Write some tests                      (A completed task needs at least a completion date)
+///
 class Todo extends Equatable {
-  /// Structure of a valid todo string
-  /// with some modification (https://github.com/todotxt/todo.txt/discussions/52)
-  ///
-  /// [completion]      (optional)
-  /// [completionDate]  (forbidden if incompleted, mandatory if completed)
-  /// [priority]        (optional)
-  /// [creationDate]    (optional)
-  /// [
-  ///
-  ///   [fullDescription] (description + tags: projects, context, keyValues
-  ///                      can be placed anywhere here)
-  ///   [description]     (mandatory)
-  ///   [projects]        (optional: preceded by a single space and a '+',
-  ///                      contains any non-whitespace character)
-  ///   [contexts]        (optional: preceded by a single space and a '@',
-  ///                      contains any non-whitespace character)
-  ///   [keyValues]       (optional: separated by a single colon,
-  ///                      key value contains any non-whitespace character which are not colons)
-  /// ]
-
-  /// VALID examples:
-  ///
-  /// Write some tests                        (When incomplete, no date is required)
-  /// 2019-07-01 Write some tests             (The provided date is the creation date)
-  /// x 2019-07-03 Write some test            (The provided date is the completion date)
-  /// x 2019-07-03 2019-07-01 Write some test (The provided dates are, in order, completion then creation)
-
-  /// INVALID examples:
-  ///
-  /// 2019-07-03 2019-07-01 Write some tests  (The task is incomplete, so can't have a completion date)
-  /// x Write some tests                      (A completed task needs at least a completion date)
-
   static final RegExp patternWord = RegExp(r'^\S+$');
   static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-Z])\)$');
   static final RegExp patternDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
@@ -41,67 +43,159 @@ class Todo extends Equatable {
   static final RegExp patternContext = RegExp(r'^\@\S+$');
   static final RegExp patternKeyValue = RegExp(r'^\S+:\S+$');
 
-  /// Unique identifier.
-  /// Defaults to null (if unsaved todo).
-  final int? id;
+  /// Whether the [Todo] is completed.
+  /// Defaults to null (unset).
+  final bool? _completion;
 
-  /// Whether the `todo` is completed.
-  /// Defaults to false.
-  final bool completion;
-
-  /// The priority of the `todo`.
+  /// The priority of the [Todo].
   /// Priorities are A, B, C, ...
-  final String? priority;
+  /// Defaults to null (empty, unset).
+  final String? _priority;
 
-  /// The completion date of the `todo`.
+  /// The completion date of the [Todo].
+  /// Defaults to null (unset).
+  final DateTime? _completionDate;
+
+  /// The creation date of the [Todo].
+  /// Defaults to null (unser).
+  final DateTime? _creationDate;
+
+  /// The description of the [Todo].
+  /// Defaults to null (unset).
+  final String? _description;
+
+  /// The list of projects of the [Todo].
+  /// Defaults to null (unset).
+  final Set<String>? _projects;
+
+  /// The list of contexts of the [Todo].
+  /// Defaults to null (unset).
+  final Set<String>? _contexts;
+
+  /// The list of key value pairs of the [Todo].
+  /// Defaults to null (unset).
+  final Map<String, String>? _keyValues;
+
+  /// Flag that indicates whether the [Todo]
+  /// was selected in the list.
+  /// Defaults to null (unset).
+  final bool? _selected;
+
+  /// Returns the uniqzue [id] of the [Todo]
+  /// stored in the [keyValues].
+  String get id {
+    if (keyValues.containsKey('id')) {
+      if (keyValues['id'] != null) {
+        return keyValues['id']!;
+      }
+    }
+
+    final String id = const Uuid().v4().toString();
+    keyValues['id'] = id;
+
+    return id;
+  }
+
+  /// Whether the [Todo] is completed.
+  /// Defaults to false.
+  bool get completion => _completion ?? false;
+
+  /// The priority of the [Todo].
+  /// Allowed values are A, B, C, ... or null (no empty string).
+  /// Empty string value is used to reset the priority.
+  String? get priority {
+    if (_priority != null) {
+      if (_priority!.isNotEmpty) {
+        return _priority;
+      }
+    }
+
+    return null;
+  }
+
+  /// The completion date of the [Todo].
   /// Defaults to null.
-  final DateTime? completionDate;
+  DateTime? get completionDate => _completionDate;
 
-  /// The creation date of the `todo`.
+  /// The creation date of the [Todo].
   /// Defaults to null.
-  final DateTime? creationDate;
+  DateTime? get creationDate => _creationDate;
 
-  /// The description of the `todo`.
-  /// Defaults to empty string.
-  final String description;
+  /// The description of the [Todo].
+  /// Returns the description or an empty string (if null).
+  String get description => _description ?? '';
 
-  /// The list of projects of the `todo`.
-  /// Defaults to an empty list.
-  final Set<String> projects;
+  /// The list of contexts of the [Todo].
+  /// Defaults to an empty [Set].
+  Set<String> get projects => _projects ?? const {};
 
-  /// The list of contexts of the `todo`.
-  /// Defaults to an empty list.
-  final Set<String> contexts;
+  /// The list of contexts of the [Todo].
+  /// Defaults to an empty [Set].
+  Set<String> get contexts => _contexts ?? const {};
 
-  /// The list of key value apirs of the `todo`.
-  /// Defaults to an empty map.
-  final Map<String, String> keyValues;
+  /// The list of key value pairs of the [Todo].
+  /// Defaults to an empty [Map].
+  Map<String, String> get keyValues => _keyValues ?? const {};
 
-  /// Flag that indicates whether the todo
+  /// Flag that indicates whether the [Todo]
   /// was selected in the list.
   /// Defaults to false.
-  final bool selected;
+  bool get selected => _selected ?? false;
 
-  /// Flag that force to init the creation date.
-  /// Defaults to true.
-  final bool forceCreationDate;
+  DateTime? get dueDate {
+    if (keyValues.containsKey('due')) {
+      return str2date(keyValues['due'] ?? '');
+    }
+
+    return null;
+  }
+
+  String get formattedCompletion => completion ? 'x' : '';
+
+  String get formattedPriority {
+    if (priority != null) {
+      return '($priority)';
+    }
+
+    return '';
+  }
+
+  String get formattedCompletionDate => date2Str(completionDate) ?? '';
+
+  String get formattedCreationDate => date2Str(creationDate) ?? '';
+
+  Set<String> get formattedProjects => {for (var p in projects) "+$p"};
+
+  Set<String> get formattedContexts => {for (var c in contexts) "@$c"};
+
+  Set<String> get formattedKeyValues => {
+        // Exclude id from key-values.
+        for (var k in keyValues.keys)
+          if (k != 'id') "$k:${keyValues[k]}"
+      };
 
   // Core todo constructor with validation logic.
   Todo._({
-    this.id,
-    this.completion = false,
-    this.priority,
-    this.completionDate,
-    this.creationDate,
-    required this.description,
-    this.projects = const {},
-    this.contexts = const {},
-    this.keyValues = const {},
-    this.selected = false,
-    this.forceCreationDate = true, // Initialize creationDate if not defined.
-  }) {
+    bool? completion,
+    String? priority,
+    DateTime? completionDate,
+    DateTime? creationDate,
+    String? description,
+    Set<String>? projects,
+    Set<String>? contexts,
+    Map<String, String>? keyValues,
+    bool? selected,
+  })  : _completion = completion,
+        _priority = priority,
+        _completionDate = completionDate,
+        _creationDate = creationDate,
+        _description = description,
+        _projects = projects,
+        _contexts = contexts,
+        _keyValues = keyValues,
+        _selected = selected {
     // Validate completion date.
-    if (completion) {
+    if (completion == true) {
       if (completionDate == null) {
         // A completed todo needs at least a completion date.
         throw const TodoMissingCompletionDate();
@@ -112,93 +206,96 @@ class Todo extends Equatable {
       }
     }
     // Validate project tags.
-    for (var p in projects) {
-      if (!patternWord.hasMatch(p)) {
-        throw TodoInvalidProjectTag(tag: p);
+    if (projects != null) {
+      for (var p in projects) {
+        if (!patternWord.hasMatch(p)) {
+          throw TodoInvalidProjectTag(tag: p);
+        }
       }
     }
     // Validate context tags.
-    for (var c in contexts) {
-      if (!patternWord.hasMatch(c)) {
-        throw TodoInvalidContextTag(tag: c);
+    if (contexts != null) {
+      for (var c in contexts) {
+        if (!patternWord.hasMatch(c)) {
+          throw TodoInvalidContextTag(tag: c);
+        }
       }
     }
     // Validate key value tags.
-    for (MapEntry<String, String> kv in keyValues.entries) {
-      if (!patternWord.hasMatch(kv.key) || !patternWord.hasMatch(kv.value)) {
-        throw TodoInvalidKeyValueTag(tag: '${kv.key}:${kv.value}');
+    if (keyValues == null) {
+      throw const TodoMissingId();
+    } else {
+      for (MapEntry<String, String> kv in keyValues.entries) {
+        if (!patternWord.hasMatch(kv.key) || !patternWord.hasMatch(kv.value)) {
+          throw TodoInvalidKeyValueTag(tag: '${kv.key}:${kv.value}');
+        }
+      }
+      if (!keyValues.containsKey('id')) {
+        throw const TodoMissingId();
       }
     }
   }
 
-  const Todo.unsafe({
-    this.id,
-    this.completion = false,
-    this.priority,
-    this.completionDate,
-    this.creationDate,
-    required this.description,
-    this.projects = const {},
-    this.contexts = const {},
-    this.keyValues = const {},
-    this.selected = false,
-    this.forceCreationDate = true, // Initialize creationDate if not defined.
-  });
-
-  /// Is only used for creating new todos, as these initially have no description.
-  const Todo.empty() : this.unsafe(description: '');
-
   /// Factory for model creation with safety mechanisms.
   factory Todo({
-    int? id,
-    bool completion = false,
+    String? id,
+    bool? completion,
     String? priority,
     DateTime? completionDate,
     DateTime? creationDate,
-    required description,
-    Set<String> projects = const {},
-    Set<String> contexts = const {},
-    Map<String, String> keyValues = const {},
-    bool selected = false,
-    bool forceCreationDate = true, // Initialize creationDate if not defined.
+    String? description,
+    Set<String>? projects,
+    Set<String>? contexts,
+    Map<String, String>? keyValues,
+    bool? selected,
   }) {
-    if (completionDate != null) {
-      completionDate = DateTime(
-        completionDate.year,
-        completionDate.month,
-        completionDate.day,
-      );
-    }
-    if (creationDate != null) {
-      creationDate = DateTime(
-        creationDate.year,
-        creationDate.month,
-        creationDate.day,
-      );
+    final DateTime now = DateTime.now();
+
+    if (completion == true) {
+      if (completionDate == null) {
+        completionDate = DateTime(now.year, now.month, now.day);
+      } else {
+        completionDate = DateTime(
+            completionDate.year, completionDate.month, completionDate.day);
+      }
     } else {
+      completionDate = null;
+    }
+
+    if (creationDate == null) {
       // Initialize creationDate to be sure there is always one set.
-      if (forceCreationDate) {
-        final DateTime now = DateTime.now();
-        creationDate = DateTime(
-          now.year,
-          now.month,
-          now.day,
-        );
+      creationDate = DateTime(now.year, now.month, now.day);
+    } else {
+      creationDate =
+          DateTime(creationDate.year, creationDate.month, creationDate.day);
+    }
+
+    if (projects != null) {
+      projects = {
+        for (var p in projects) p.toLowerCase(),
+      };
+    }
+    if (contexts != null) {
+      contexts = {
+        for (var c in contexts) c.toLowerCase(),
+      };
+    }
+    if (keyValues == null) {
+      // To make each todo unique store an id as key-value pair is necessary.
+      keyValues = {};
+      keyValues['id'] = id ?? const Uuid().v4().toString();
+    } else {
+      keyValues = {
+        for (MapEntry<String, String> kv in keyValues.entries)
+          kv.key.toLowerCase(): kv.value.toLowerCase()
+      };
+      // To make each todo unique store an id as key-value pair is necessary.
+      if (!keyValues.containsKey('id')) {
+        keyValues['id'] = id ?? const Uuid().v4().toString();
       }
     }
-    projects = {
-      for (var p in projects) p.toLowerCase(),
-    };
-    contexts = {
-      for (var c in contexts) c.toLowerCase(),
-    };
-    keyValues = {
-      for (MapEntry<String, String> kv in keyValues.entries)
-        kv.key.toLowerCase(): kv.value.toLowerCase()
-    };
 
     return Todo._(
-      id: id,
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -208,15 +305,12 @@ class Todo extends Equatable {
       contexts: contexts,
       keyValues: keyValues,
       selected: selected,
-      forceCreationDate: forceCreationDate,
     );
   }
 
   /// Factory for model creation from string.
   factory Todo.fromString({
-    required int id,
     required String value,
-    bool forceCreationDate = true, // Initialize creationDate if not defined.
   }) {
     final todoStr = _trim(value); // Trim first.
     bool completion;
@@ -226,25 +320,25 @@ class Todo extends Equatable {
     List<String>? fullDescriptionList;
 
     // Get completion
-    completion = _completion(_todoStringElementAt(todoStr, 0));
+    completion = _str2completion(_todoStringElementAt(todoStr, 0));
     if (completion) {
-      completionDate = str2Date(_todoStringElementAt(todoStr, 1));
-      priority = _priority(_todoStringElementAt(todoStr, 2));
+      completionDate = str2date(_todoStringElementAt(todoStr, 1));
+      priority = _str2priority(_todoStringElementAt(todoStr, 2));
       // x <completionDate> [<priority>] [<creationDate>] <fullDescription>
       if (priority == null) {
-        creationDate = str2Date(_todoStringElementAt(todoStr, 2));
+        creationDate = str2date(_todoStringElementAt(todoStr, 2));
       } else {
-        creationDate = str2Date(_todoStringElementAt(todoStr, 3));
+        creationDate = str2date(_todoStringElementAt(todoStr, 3));
       }
     } else {
-      priority = _priority(_todoStringElementAt(todoStr, 0));
+      priority = _str2priority(_todoStringElementAt(todoStr, 0));
       // [<priority>] [<creationDate>] <fullDescription>
       if (priority == null) {
         // The provided date is the creation date (todo incompleted).
-        creationDate = str2Date(_todoStringElementAt(todoStr, 0));
+        creationDate = str2date(_todoStringElementAt(todoStr, 0));
       } else {
         // The provided date is the creation date (todo incompleted).
-        creationDate = str2Date(_todoStringElementAt(todoStr, 1));
+        creationDate = str2date(_todoStringElementAt(todoStr, 1));
       }
       // The todo is not completed so two dates are forbidden.
       // Everything that comes after the creationDate is interpreted as a description.
@@ -260,18 +354,139 @@ class Todo extends Equatable {
     fullDescriptionList = _fullDescriptionList(todoStr, descriptionIndex);
 
     return Todo(
-      id: id,
       completion: completion,
       priority: priority,
       completionDate: completionDate,
       creationDate: creationDate,
-      description: _description(fullDescriptionList),
-      projects: _projects(fullDescriptionList),
-      contexts: _contexts(fullDescriptionList),
-      keyValues: _keyValues(fullDescriptionList),
-      forceCreationDate: forceCreationDate,
+      description: _str2description(fullDescriptionList),
+      projects: _str2projects(fullDescriptionList),
+      contexts: _str2contexts(fullDescriptionList),
+      keyValues: _str2keyValues(fullDescriptionList),
     );
   }
+
+  /// A regular copyWith function.
+  Todo copyWith({
+    bool? completion,
+    String? priority,
+    DateTime? completionDate,
+    DateTime? creationDate,
+    String? description,
+    Set<String>? projects,
+    Set<String>? contexts,
+    Map<String, String>? keyValues,
+    bool? selected,
+  }) {
+    return Todo(
+      id: id,
+      completion: completion ?? this.completion,
+      priority: priority ?? this.priority,
+      completionDate: completionDate ?? this.completionDate,
+      creationDate: creationDate ?? this.creationDate,
+      description: description ?? this.description,
+      projects: projects ?? this.projects,
+      contexts: contexts ?? this.contexts,
+      keyValues: keyValues ?? this.keyValues,
+      selected: selected ?? this.selected,
+    );
+  }
+
+  /// Creates a todo object that only sets the values
+  /// that have been explicitly edited.
+  /// The other values remain to null.
+  Todo copyDiff({
+    bool? completion,
+    String? priority,
+    DateTime? completionDate,
+    DateTime? creationDate,
+    String? description,
+    Set<String>? projects,
+    Set<String>? contexts,
+    Map<String, String>? keyValues,
+    bool? selected,
+  }) {
+    return Todo(
+      id: id,
+      completion: completion,
+      priority: priority,
+      completionDate: completionDate,
+      // Once the creationDate is set, keep it.
+      creationDate: this.creationDate ?? creationDate,
+      description: description,
+      projects: projects,
+      contexts: contexts,
+      keyValues: keyValues,
+      selected: selected,
+    );
+  }
+
+  /// Copy only the explicitly set attributes into the new object.
+  /// Use the existing values for the rest.
+  /// If the values of _<variables> are not null, they have been
+  /// explicitly edited.
+  Todo copyMerge(Todo todo) {
+    return Todo(
+      id: id,
+      completion: _completion ?? todo.completion,
+      priority: _priority ?? todo.priority,
+      completionDate: _completionDate ?? todo.completionDate,
+      creationDate: _creationDate ?? todo.creationDate,
+      description: _description ?? todo.description,
+      projects: _projects ?? todo.projects,
+      contexts: _contexts ?? todo.contexts,
+      keyValues: _keyValues == null
+          ? todo.keyValues
+          : (_keyValues!.length == 1 && _keyValues!.containsKey('id'))
+              ? todo.keyValues
+              : _keyValues,
+      selected: _selected ?? todo.selected,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        completion,
+        completionDate,
+        priority,
+        creationDate,
+        description,
+        projects,
+        contexts,
+        keyValues,
+        selected,
+      ];
+
+  @override
+  String toString() {
+    final Set<String> keyValuesStringSet = {
+      for (var k in keyValues.keys) "$k:${keyValues[k]}"
+    };
+    final List<String?> items = [
+      formattedCompletion,
+      formattedCompletionDate,
+      formattedPriority,
+      formattedCreationDate,
+      description,
+      formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
+      formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,
+      keyValuesStringSet.isNotEmpty ? keyValuesStringSet.join(' ') : null,
+    ]..removeWhere(
+        (value) {
+          if (value == null) {
+            return true;
+          } else {
+            if (value.isEmpty) {
+              return true;
+            }
+          }
+          return false;
+        },
+      );
+
+    return items.join(' ');
+  }
+
+  String toDebugString() => '${toString()} (DEBUG: selected: $selected)';
 
   static String _trim(String value) {
     // Trim leading, trailing and duplicate whitespaces.
@@ -303,12 +518,12 @@ class Todo extends Equatable {
     }
   }
 
-  static bool _completion(String value) {
+  static bool _str2completion(String value) {
     // A completed task starts with an lowercase x character.
     return value == 'x';
   }
 
-  static String? _priority(String value) {
+  static String? _str2priority(String value) {
     RegExpMatch? match = patternPriority.firstMatch(value);
     if (match != null) {
       return match.namedGroup("priority");
@@ -319,7 +534,7 @@ class Todo extends Equatable {
   }
 
   /// Trim projects, contexts and key-values from description.
-  static String _description(List<String> descriptionList) {
+  static String _str2description(List<String> descriptionList) {
     final String description = _trim(
       descriptionList
           .join(' ')
@@ -334,7 +549,7 @@ class Todo extends Equatable {
     return description;
   }
 
-  static Set<String> _projects(List<String> fullDescriptionList) {
+  static Set<String>? _str2projects(List<String> fullDescriptionList) {
     Set<String> projects = {};
     for (var project in fullDescriptionList) {
       if (patternProject.hasMatch(project)) {
@@ -342,10 +557,10 @@ class Todo extends Equatable {
       }
     }
 
-    return projects;
+    return projects.isNotEmpty ? projects : null;
   }
 
-  static Set<String> _contexts(List<String> fullDescriptionList) {
+  static Set<String>? _str2contexts(List<String> fullDescriptionList) {
     Set<String> contexts = {};
     for (var context in fullDescriptionList) {
       if (patternContext.hasMatch(context)) {
@@ -353,10 +568,10 @@ class Todo extends Equatable {
       }
     }
 
-    return contexts;
+    return contexts.isNotEmpty ? contexts : null;
   }
 
-  static Map<String, String> _keyValues(List<String> fullDescriptionList) {
+  static Map<String, String>? _str2keyValues(List<String> fullDescriptionList) {
     Map<String, String> keyValues = {};
 
     for (var keyValue in fullDescriptionList) {
@@ -367,10 +582,10 @@ class Todo extends Equatable {
       }
     }
 
-    return keyValues;
+    return keyValues.isNotEmpty ? keyValues : null;
   }
 
-  static DateTime? str2Date(String value) {
+  static DateTime? str2date(String value) {
     if (patternDate.hasMatch(value)) {
       return DateTime.parse(value);
     } else {
@@ -416,109 +631,4 @@ class Todo extends Equatable {
       return years == 1 ? '$years year ago' : '$years years ago';
     }
   }
-
-  DateTime? get dueDate {
-    if (keyValues.containsKey('due')) {
-      return str2Date(keyValues['due'] ?? '');
-    }
-
-    return null;
-  }
-
-  bool get isDescriptionEmpty => _trim(description).isEmpty;
-
-  String get formattedCompletion => completion ? 'x' : '';
-
-  String get formattedPriority => priority != null ? '($priority)' : '';
-
-  String get formattedCompletionDate => date2Str(completionDate) ?? '';
-
-  String get formattedCreationDate => date2Str(creationDate) ?? '';
-
-  Set<String> get formattedProjects => {for (var p in projects) "+$p"};
-
-  Set<String> get formattedContexts => {for (var c in contexts) "@$c"};
-
-  Set<String> get formattedKeyValues =>
-      {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
-
-  /// Returns a copy of this `todo` with the given values updated.
-  Todo copyWith({
-    int? id,
-    bool? completion,
-    String? priority,
-    DateTime? completionDate,
-    DateTime? creationDate,
-    String? description,
-    Set<String>? projects,
-    Set<String>? contexts,
-    Map<String, String>? keyValues,
-    bool? selected,
-    bool? forceCreationDate,
-    bool unsetId = false,
-    bool unsetPriority = false,
-    bool unsetCompletionDate = false,
-    bool unsetCreationDate = false,
-  }) {
-    return Todo(
-      id: id ?? (unsetId ? null : this.id),
-      completion: completion ?? this.completion,
-      priority: priority ?? (unsetPriority ? null : this.priority),
-      completionDate:
-          completionDate ?? (unsetCompletionDate ? null : this.completionDate),
-      creationDate:
-          creationDate ?? (unsetCreationDate ? null : this.creationDate),
-      description: description ?? this.description,
-      projects: projects ?? this.projects,
-      contexts: contexts ?? this.contexts,
-      keyValues: keyValues ?? this.keyValues,
-      selected: selected ?? this.selected,
-      forceCreationDate: forceCreationDate ?? this.forceCreationDate,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-        id,
-        completion,
-        completionDate,
-        priority,
-        creationDate,
-        description,
-        projects,
-        contexts,
-        keyValues,
-        selected,
-        // Exclude forceCreationDate here.
-      ];
-
-  @override
-  String toString() {
-    final List<String?> items = [
-      formattedCompletion,
-      formattedCompletionDate,
-      formattedPriority,
-      formattedCreationDate,
-      description,
-      formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
-      formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,
-      formattedKeyValues.isNotEmpty ? formattedKeyValues.join(' ') : null,
-    ]..removeWhere(
-        (value) {
-          if (value == null) {
-            return true;
-          } else {
-            if (value.isEmpty) {
-              return true;
-            }
-          }
-          return false;
-        },
-      );
-
-    return items.join(' ');
-  }
-
-  String toDebugString() =>
-      '${toString()} (DEBUG: id: $id, selected: $selected)';
 }

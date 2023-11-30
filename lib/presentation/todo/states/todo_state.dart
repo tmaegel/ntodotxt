@@ -49,7 +49,7 @@ sealed class TodoState extends Equatable {
       ];
 
   @override
-  String toString() => 'TodoState { id: ${todo.id} todo: "$todo" }';
+  String toString() => 'TodoState { todo: "$todo" }';
 }
 
 final class TodoInitial extends TodoState {
@@ -63,7 +63,7 @@ final class TodoInitial extends TodoState {
       ];
 
   @override
-  String toString() => 'TodoInitial { id: ${todo.id} todo: "$todo" }';
+  String toString() => 'TodoInitial { todo: "$todo" }';
 }
 
 final class TodoChange extends TodoState {
@@ -77,7 +77,7 @@ final class TodoChange extends TodoState {
       ];
 
   @override
-  String toString() => 'TodoChange { id: ${todo.id} todo: "$todo" }';
+  String toString() => 'TodoChange { todo: "$todo" }';
 }
 
 final class TodoSuccess extends TodoState {
@@ -91,7 +91,7 @@ final class TodoSuccess extends TodoState {
       ];
 
   @override
-  String toString() => 'TodoSuccess { id: ${todo.id} todo: "$todo" }';
+  String toString() => 'TodoSuccess { todo: "$todo" }';
 }
 
 final class TodoError extends TodoState {
@@ -109,6 +109,5 @@ final class TodoError extends TodoState {
       ];
 
   @override
-  String toString() =>
-      'TodoError { message: $message id: ${todo.id} todo: "$todo" }';
+  String toString() => 'TodoError { message: $message todo: "$todo" }';
 }

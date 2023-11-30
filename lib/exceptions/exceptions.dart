@@ -8,10 +8,14 @@ sealed class TodoException implements Exception {
 }
 
 class TodoNotFound extends TodoException {
-  final int? id;
+  final String? id;
   const TodoNotFound({
     this.id,
   }) : super('Todo with id $id could not be found');
+}
+
+class TodoMissingId extends TodoException {
+  const TodoMissingId() : super('Todo has no id key');
 }
 
 class TodoStringMalformed extends TodoException {

@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/exceptions/exceptions.dart';
 
 void main() {
   late File file;
@@ -32,7 +31,6 @@ void main() {
       });
       test("initial file with initial todos", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
         await file.writeAsString(todo.toString(), flush: true); // Add todo.
@@ -53,10 +51,8 @@ void main() {
 
     group("saveTodo()", () {
       test("create new todo", () async {
-        // Need todo with unset id here.
-        final Todo todo = Todo(
-          description: 'Code something',
-          creationDate: DateTime(2023, 11, 23),
+        final Todo todo = Todo.fromString(
+          value: '2023-11-23 Code something',
         );
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
@@ -67,7 +63,7 @@ void main() {
           repository.getTodoList(),
           emitsInOrder(
             [
-              [todo.copyWith(id: 0)], // After saving the todo should has an id.
+              [todo.copyWith()],
             ],
           ),
         );
@@ -80,9 +76,9 @@ void main() {
       });
       test("update existing todo", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
+        // Update existing todo.
         final Todo todo2 = todo.copyWith(
           description: 'Code something other',
         );
@@ -107,29 +103,67 @@ void main() {
           [todo2.toString()],
         );
       });
-      test("update non-existing todo", () async {
+      test("update/save non-existing todo", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
-        final Todo todo2 = todo.copyWith(
-          id: 1, // non-existing todo (id differ).
-          description: 'Code something other',
+        final Todo todo2 = Todo.fromString(
+          value: 'Code something other',
         );
         await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api: api);
+        repository.saveTodo(todo2);
 
-        expect(
-          () async => repository.saveTodo(todo2), // Save non-existing todo.
-          throwsA(isA<TodoNotFound>()),
+        await expectLater(
+          repository.getTodoList(),
+          emitsInOrder(
+            [
+              [
+                todo.copyWith(),
+                todo2.copyWith(),
+              ],
+            ],
+          ),
         );
 
         await repository.writeToSource();
         expect(
           await file.readAsLines(),
-          [todo.toString()],
+          [
+            todo.toString(),
+            todo2.toString(),
+          ],
+        );
+      });
+      test("partial update", () async {
+        Todo todo = Todo.fromString(
+          value: '2023-11-23 Code something',
+        );
+        // Update existing todo.
+        final Todo todo2 = todo.copyDiff(priority: 'A');
+        // Simulate changes
+        todo = todo.copyWith(description: 'Code something other');
+        await file.writeAsString(todo.toString(), flush: true); // Initial todo.
+
+        final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+        final TodoListRepository repository = TodoListRepository(api: api);
+        repository.saveTodo(todo2);
+
+        await expectLater(
+          repository.getTodoList(),
+          emitsInOrder(
+            [
+              [todo.copyWith(priority: 'A')],
+            ],
+          ),
+        );
+
+        await repository.writeToSource();
+        expect(
+          await file.readAsLines(),
+          [todo.copyWith(priority: 'A').toString()],
         );
       });
     });
@@ -137,7 +171,6 @@ void main() {
     group("deleteTodo()", () {
       test("delete existing todo", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
         await file.writeAsString(todo.toString(), flush: true); // Initial todo.
@@ -160,12 +193,10 @@ void main() {
       });
       test("delete non-existing todo", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
-        final Todo todo2 = todo.copyWith(
-          id: 1, // non-existing todo (id differ).
-          description: 'Code something other',
+        final Todo todo2 = Todo.fromString(
+          value: '2023-11-23 Code something other',
         );
         await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 
@@ -193,11 +224,9 @@ void main() {
     group("saveMultipleTodos()", () {
       test("update todos", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
         final Todo todo2 = Todo.fromString(
-          id: 1,
           value: '2023-11-23 Code something other',
         );
 
@@ -251,11 +280,9 @@ void main() {
     group("deleteMultipleTodos()", () {
       test("delete todos", () async {
         final Todo todo = Todo.fromString(
-          id: 0,
           value: '2023-11-23 Code something',
         );
         final Todo todo2 = Todo.fromString(
-          id: 1,
           value: '2023-11-23 Code something other',
         );
 

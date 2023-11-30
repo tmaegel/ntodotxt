@@ -20,7 +20,7 @@ class TodoCreatePage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        todo: const Todo.empty(),
+        todo: Todo(),
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoCreateNarrowView()
@@ -91,7 +91,7 @@ class TodoCreateNarrowView extends TodoCreateView {
             title: "Create",
           ),
           body: _buildBody(),
-          floatingActionButton: !state.todo.isDescriptionEmpty
+          floatingActionButton: state.todo.description.isNotEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
         );
@@ -124,7 +124,7 @@ class TodoCreateWideView extends TodoCreateView {
             title: "Create",
           ),
           body: _buildBody(),
-          floatingActionButton: !state.todo.isDescriptionEmpty
+          floatingActionButton: state.todo.description.isNotEmpty
               ? _buildFloatingActionButton(context, state)
               : null,
         );

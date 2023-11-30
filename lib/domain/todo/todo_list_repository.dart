@@ -1,6 +1,5 @@
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:watcher/watcher.dart';
 
 /// A repository that handles `todo` related requests.
 class TodoListRepository {
@@ -13,27 +12,28 @@ class TodoListRepository {
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList() => _api.getTodoList();
 
-  /// Watch for changes on source.
-  Stream<WatchEvent> watchSource() => _api.watchSource();
-
   /// Read [todoList] from source.
   Future<void> readFromSource() => _api.readFromSource();
 
   /// Write [todoList] to source.
   Future<void> writeToSource() => _api.writeToSource();
 
+  /// Update the state.
+  Future<void> update() => _api.update();
+
+  bool existsTodo(Todo todo) => _api.existsTodo(todo);
+
   /// Saves a [todo].
-  /// If a [todo] with the same id already exists, it will be replaced.
-  /// If the id of [todo] is null, it will be created.
+  /// If a [todo] with [id] already exists, it will be replaced.
+  /// If the [todo] with [id] already exists it will be updated/merged.
   void saveTodo(Todo todo) => _api.saveTodo(todo);
 
-  /// Saves multiple [todos] at once.
+  /// Saves multiple [todos] by [id] at once.
   void saveMultipleTodos(List<Todo> todos) => _api.saveMultipleTodos(todos);
 
-  /// Deletes the given [todo].
-  /// If the [todo] not exists, a [TodoNotFound] error is thrown.
+  /// Deletes the given [todo] by [id].
   void deleteTodo(Todo todo) => _api.deleteTodo(todo);
 
-  /// Deletes multiple [todos] at once.
+  /// Deletes multiple [todos] by [id] at once.
   void deleteMultipleTodos(List<Todo> todos) => _api.deleteMultipleTodos(todos);
 }
