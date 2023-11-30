@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -9,6 +10,7 @@ import 'package:ntodotxt/presentation/todo/states/todo.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late MemoryFileSystem fs;
   late File file;
   final Todo todo = Todo(
     priority: 'A',
@@ -20,8 +22,9 @@ void main() {
   );
 
   setUp(() async {
-    // Filewatcher does not work with MemoryFileSystem.
     file = File('/tmp/todo.test');
+    fs = MemoryFileSystem();
+    file = fs.file('todo.test');
     await file.create();
     await file.writeAsString(todo.toString(), flush: true); // Initial todo.
 

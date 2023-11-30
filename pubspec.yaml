@@ -30,6 +30,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  file: ^7.0.0
   flutter_lints: ^2.0.0
   flutter_oss_licenses: ^2.0.1
   test_cov_console: ^0.2.2

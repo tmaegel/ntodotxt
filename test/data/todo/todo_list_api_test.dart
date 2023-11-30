@@ -1,15 +1,17 @@
 import 'dart:io';
 
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
 void main() {
+  late MemoryFileSystem fs;
   late File file;
   setUp(() async {
-    // Filewatcher does not work with MemoryFileSystem.
-    file = File('/tmp/todo.test');
+    fs = MemoryFileSystem();
+    file = fs.file('todo.test');
     await file.create();
     await file.writeAsString("", flush: true); // Empty file.
   });

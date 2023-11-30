@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -9,8 +10,9 @@ import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late LocalTodoListApi api;
+  late MemoryFileSystem fs;
   late File file;
-  late TodoListRepository repository;
   final Todo todo = Todo(
     priority: 'A',
     creationDate: DateTime(2022, 11, 1),
@@ -21,17 +23,16 @@ void main() {
   );
 
   setUp(() async {
-    // Filewatcher does not work with MemoryFileSystem.
-    file = File('/tmp/todo.test');
+    fs = MemoryFileSystem();
+    file = fs.file('todo.test');
     await file.create();
     await file.writeAsString(todo.toString(), flush: true); // Initial todo.
-
-    final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-    repository = TodoListRepository(api: api);
+    api = LocalTodoListApi(todoFile: file);
   });
 
   group('Initial', () {
     test('initial state', () {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc todoListBloc = TodoListBloc(
         repository: repository,
       );
@@ -46,6 +47,7 @@ void main() {
   group('TodoListSubscriptionRequested', () {
     test('initial state when TodoListSubscriptionRequested() is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc.add(const TodoListSubscriptionRequested());
 
@@ -62,6 +64,7 @@ void main() {
     test(
         'state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -86,6 +89,7 @@ void main() {
     test(
         'state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called (not exists)',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       Todo todo2 =
           Todo(description: 'Write more tests'); // Generate new uuid (id)
@@ -115,6 +119,7 @@ void main() {
     test(
         'state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -132,6 +137,7 @@ void main() {
     test(
         'state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called (not exists)',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       Todo todo2 =
           Todo(description: 'Write more tests'); // Generate new uuid (id)
@@ -153,6 +159,7 @@ void main() {
     test(
         'state with updated selected state when TodoListSelectedAll() is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -172,6 +179,7 @@ void main() {
     test(
         'state with updated selected state when TodoListUnselectedAll() is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -193,6 +201,7 @@ void main() {
     test(
         'state with updated order property when TodoListOrderChanged(<order>) is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -212,6 +221,7 @@ void main() {
     test(
         'state with updated filter property when TodoListFilterChanged(<filter>) is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -233,6 +243,7 @@ void main() {
     test(
         'state with updated group property when TodoListGroupByChanged(<group>) is called',
         () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
