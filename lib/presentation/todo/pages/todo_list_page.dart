@@ -80,6 +80,16 @@ List<Action> appBarActions = <Action>[
   ),
 ];
 
+Action primaryAddTodoAction = Action(
+  label: 'Add todo',
+  icon: Icons.add,
+  action: (BuildContext context) {
+    context.push(
+      context.namedLocation('todo-create'),
+    );
+  },
+);
+
 Action selectionDeleteAction = Action(
   label: 'Delete',
   icon: Icons.delete,
@@ -195,11 +205,9 @@ abstract class TodoListView extends StatelessWidget {
           drawer: isNarrowLayout ? const ResponsiveNavigationDrawer() : null,
           floatingActionButton: !state.isSelected
               ? PrimaryFloatingActionButton(
-                  icon: const Icon(Icons.add),
-                  tooltip: 'Add',
-                  action: () => context.push(
-                    context.namedLocation('todo-create'),
-                  ),
+                  icon: Icon(primaryAddTodoAction.icon),
+                  tooltip: primaryAddTodoAction.label,
+                  action: () => primaryAddTodoAction.action(context),
                 )
               : null,
           bottomNavigationBar: state.isSelected

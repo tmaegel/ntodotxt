@@ -78,7 +78,9 @@ void main() {
           // TodoListTodoCompletionToggled start
           TodoListLoading(todoList: [todo]),
           // saveTodo() within TodoListTodoCompletionToggled
-          TodoListSuccess(todoList: [todo]),
+          TodoListLoading(
+            todoList: [todo.copyWith(completion: true)],
+          ),
           // TodoListTodoCompletionToggled finished
           TodoListSuccess(
             todoList: [todo.copyWith(completion: true)],
@@ -105,7 +107,9 @@ void main() {
           // TodoListTodoCompletionToggled start
           TodoListLoading(todoList: [todo]),
           // saveTodo() within TodoListTodoCompletionToggled
-          TodoListSuccess(todoList: [todo]),
+          TodoListLoading(
+            todoList: [todo, todo2.copyWith(completion: true)],
+          ),
           // TodoListTodoCompletionToggled finished
           TodoListSuccess(
             todoList: [todo, todo2.copyWith(completion: true)],
@@ -192,6 +196,101 @@ void main() {
           TodoListSuccess(todoList: [todo]),
           TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
           TodoListSuccess(todoList: [todo.copyWith(selected: false)]),
+        ]),
+      );
+    });
+  });
+
+  group('TodoListSelectionCompleted', () {
+    test(
+        'state with updated selected and completion state when TodoListSelectionCompleted() is called',
+        () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
+      final TodoListBloc bloc = TodoListBloc(repository: repository);
+      bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListSelectedAll())
+        ..add(const TodoListSelectionCompleted());
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder([
+          // Initial & TodoListSubscriptionRequested
+          TodoListSuccess(todoList: [todo]),
+          // saveTodo() within TodoListSelectedAll
+          TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
+          // TodoListSelectionCompleted start
+          TodoListLoading(todoList: [todo.copyWith(selected: true)]),
+          // saveTodo() within TodoListSelectionCompleted
+          TodoListLoading(
+            todoList: [todo.copyWith(selected: false, completion: true)],
+          ),
+          // TodoListSelectionCompleted finished
+          TodoListSuccess(
+            todoList: [todo.copyWith(selected: false, completion: true)],
+          ),
+        ]),
+      );
+    });
+  });
+
+  group('TodoListSelectionIncompleted', () {
+    test(
+        'state with updated selected and completion state when TodoListSelectionIncompleted() is called',
+        () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
+      final TodoListBloc bloc = TodoListBloc(repository: repository);
+      bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListSelectedAll())
+        ..add(const TodoListSelectionIncompleted());
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder([
+          // Initial & TodoListSubscriptionRequested
+          TodoListSuccess(todoList: [todo]),
+          // saveTodo() within TodoListSelectedAll
+          TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
+          // TodoListSelectionIncompleted start
+          TodoListLoading(todoList: [todo.copyWith(selected: true)]),
+          // saveTodo() within TodoListSelectionIncompleted
+          TodoListLoading(
+            todoList: [todo.copyWith(selected: false, completion: false)],
+          ),
+          // TodoListSelectionIncompleted finished
+          TodoListSuccess(
+            todoList: [todo.copyWith(selected: false, completion: false)],
+          ),
+        ]),
+      );
+    });
+  });
+
+  group('TodoListSelectionDeleted', () {
+    test(
+        'state without the deleted todo when TodoListSelectionDeleted() is called',
+        () async {
+      final TodoListRepository repository = TodoListRepository(api: api);
+      final TodoListBloc bloc = TodoListBloc(repository: repository);
+      bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListSelectedAll())
+        ..add(const TodoListSelectionDeleted());
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder([
+          // Initial & TodoListSubscriptionRequested
+          TodoListSuccess(todoList: [todo]),
+          // saveTodo() within TodoListSelectedAll
+          TodoListSuccess(todoList: [todo.copyWith(selected: true)]),
+          // TodoListSelectionDeleted start
+          TodoListLoading(todoList: [todo.copyWith(selected: true)]),
+          // saveTodo() within TodoListSelectionDeleted
+          const TodoListLoading(todoList: []),
+          // TodoListSelectionDeleted finished
+          const TodoListSuccess(todoList: []),
         ]),
       );
     });

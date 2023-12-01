@@ -5,6 +5,7 @@ import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/main.dart' show log;
 import 'package:rxdart/subjects.dart';
+import 'package:collection/collection.dart';
 
 abstract class TodoListApi {
   final File todoFile;
@@ -60,8 +61,29 @@ class LocalTodoListApi extends TodoListApi {
   List<Todo> get _todoList => controller.value;
 
   void updateList(List<Todo> todoList) {
-    log.fine('Update todo list');
-    _dispatch(todoList);
+    final List<Todo> mergedTodoList = [];
+    // Keep the selected state if the new ones are null.
+    final List<Todo> oldSelectedTodos =
+        _todoList.where((t) => t.selected == true).toList();
+    for (Todo todo in todoList) {
+      int index = oldSelectedTodos.indexWhere((t) => t.id == todo.id);
+      if (index == -1) {
+        mergedTodoList.add(todo.copyWith());
+      } else {
+        mergedTodoList.add(
+          todo.copyMerge(
+            todo.copyDiff(selected: true),
+          ),
+        );
+      }
+    }
+    // Update only if list does'nt match to prevent weird state changes.
+    if (const ListEquality().equals(_todoList, mergedTodoList) == false) {
+      log.fine('Update todo list.');
+      _dispatch(mergedTodoList);
+    } else {
+      log.fine('Skip update todo list. List matches with the previous one.');
+    }
   }
 
   void addToList(Todo value) {
@@ -93,9 +115,9 @@ class LocalTodoListApi extends TodoListApi {
     return [for (var t in lines) Todo.fromString(value: t)];
   }
 
-  void writeSync(String content) {
+  Future<void> write(String content) async {
     log.info('Sync-write todos to file');
-    todoFile.writeAsStringSync(content);
+    await todoFile.writeAsString(content);
   }
 
   @override
@@ -106,9 +128,7 @@ class LocalTodoListApi extends TodoListApi {
 
   @override
   Future<void> writeToSource() async {
-    // Using the sync version here.
-    // Otherwise it produces multiple MODIFY events.
-    writeSync(
+    write(
       _todoList.join(Platform.lineTerminator),
     );
   }
@@ -223,7 +243,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   Future<void> readFromSource() async {
     // Write downloaded file content directly to the file.
     final String content = await downloadFromSource();
-    writeSync(content);
+    await write(content);
     await update();
   }
 
@@ -236,7 +256,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
     // await update();
     // Using the sync version here.
     // Otherwise it produces multiple MODIFY events.
-    writeSync(
+    await write(
       _todoList.join(Platform.lineTerminator),
     );
     await uploadToSource();

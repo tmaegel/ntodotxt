@@ -397,7 +397,9 @@ final class TodoListInitial extends TodoListState {
 
   @override
   String toString() =>
-      'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+      'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+        for (var t in todoList) '$t ${t.selected}'
+      ]} }';
 }
 
 final class TodoListLoading extends TodoListState {
