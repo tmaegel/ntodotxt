@@ -1,15 +1,7 @@
-import 'dart:convert' show utf8, base64;
-import 'dart:io'
-    show
-        ContentType,
-        HttpClient,
-        HttpClientRequest,
-        HttpClientResponse,
-        HttpHeaders;
+import 'dart:convert' show utf8;
 
 import 'package:ntodotxt/main.dart' show log;
-import 'package:xml/xml.dart'
-    show XmlDocument, XmlException, XmlStringExtension;
+import 'package:webdav_client/webdav_client.dart' as webdav;
 
 class WebDAVClientException implements Exception {
   final String message;
@@ -21,23 +13,9 @@ class WebDAVClientException implements Exception {
 }
 
 class WebDAVClient {
-  final String schema;
-  final String host;
-  final int port;
-  final String baseUrl;
-  final String username;
-  final String password;
+  late final webdav.Client client;
 
-  WebDAVClient._({
-    required this.schema,
-    required this.host,
-    required this.port,
-    required this.baseUrl,
-    required this.username,
-    required this.password,
-  });
-
-  factory WebDAVClient({
+  WebDAVClient({
     String schema = 'http',
     required String host,
     required int port,
@@ -48,107 +26,109 @@ class WebDAVClient {
     if (baseUrl.endsWith('/')) {
       baseUrl = baseUrl.substring(0, baseUrl.length - 1);
     }
-
-    return WebDAVClient._(
-      schema: schema,
-      host: host,
-      port: port,
-      username: username,
+    client = webdav.newClient(
+      Uri(
+        scheme: schema,
+        host: host,
+        port: port,
+        path: '$baseUrl/$username',
+      ).toString(),
+      user: username,
       password: password,
-      baseUrl: baseUrl,
+      debug: false,
     );
+    // Set the public request headers
+    client.setHeaders({'accept-charset': 'utf-8'});
+    // Set the connection server timeout time in milliseconds.
+    client.setConnectTimeout(8000);
+    // Set send data timeout time in milliseconds.
+    client.setSendTimeout(8000);
+    // Set transfer data time in milliseconds.
+    client.setReceiveTimeout(8000);
   }
 
-  String get token => base64.encode(
-        utf8.encode('$username:$password'),
-      );
-
-  Uri serverUri(String filename) {
-    return Uri(
-      scheme: schema,
-      host: host,
-      port: port,
-      path: path(filename),
-    );
+  Future<void> ping() async {
+    try {
+      await client.ping();
+    } on Exception catch (e) {
+      log.severe(e);
+      throw const WebDAVClientException('Server cannot reached');
+    }
   }
 
-  String path(String filename) {
-    return '$baseUrl/$username/$filename';
+  Future<bool> fileExists(String filename) async {
+    if (!filename.startsWith('/')) {
+      filename = '/$filename';
+    }
+    for (webdav.File f in await listFiles()) {
+      if (f.path == filename) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<List<webdav.File>> listFiles({String path = '/'}) async {
+    if (!path.startsWith('/')) {
+      path = '/$path';
+    }
+    try {
+      return await client.readDir(path);
+    } on Exception catch (e) {
+      log.severe(e);
+      throw WebDAVClientException('Failed to list files in path $path.');
+    }
+  }
+
+  Future<void> create(String filename) async {
+    try {
+      if (!filename.startsWith('/')) {
+        filename = '/$filename';
+      }
+      if (await fileExists(filename) == false) {
+        // Create file by writing empty string.
+        await client.write(filename, utf8.encode(''));
+      }
+    } on Exception catch (e) {
+      log.severe(e);
+      throw WebDAVClientException('Failed to create the file $filename.');
+    }
+  }
+
+  Future<void> mkdir(String path) async {
+    if (!path.startsWith('/')) {
+      path = '/$path';
+    }
+    try {
+      await client.mkdir(path);
+    } on Exception catch (e) {
+      log.severe(e);
+      throw WebDAVClientException('Failed to create the directory $path.');
+    }
   }
 
   Future<String> download({
-    String targetFilename = 'todo.txt',
+    required String filename,
   }) async {
-    final HttpClient client = HttpClient();
-    final Uri url = serverUri(targetFilename);
-    log.info('Download from server $url');
-
     try {
-      HttpClientRequest request = await client.getUrl(url);
-      request.headers.contentType =
-          ContentType('text', 'plain', charset: 'utf-8');
-      request.headers.set(HttpHeaders.authorizationHeader, 'Basic $token');
+      List<int> content = await client.read(filename);
 
-      HttpClientResponse response = await request.close();
-
-      final String data = await response.transform(utf8.decoder).join();
-      try {
-        final document = XmlDocument.parse(data);
-        final error = document.getElement('d:error');
-        if (error != null) {
-          final messageTag = error.getElement('s:message');
-          if (messageTag != null) {
-            throw WebDAVClientException(messageTag.innerText);
-          } else {
-            throw const WebDAVClientException(
-                'Something went wrong while performing http request.');
-          }
-        }
-      } on XmlException {
-        // If the xml couldn't parse the response isn't xml.
-      }
-
-      return data;
-    } finally {
-      client.close();
+      return utf8.decode(content);
+    } on Exception catch (e) {
+      log.severe(e);
+      throw WebDAVClientException('Failed to download the file $filename.');
     }
   }
 
   Future<void> upload({
+    required String filename,
     required String content,
-    String targetFilename = 'todo.txt',
   }) async {
-    final HttpClient client = HttpClient();
-    final Uri url = serverUri(targetFilename);
-    log.info('Upload to server $url');
-
     try {
-      HttpClientRequest request = await client.putUrl(url);
-      request.headers.contentType =
-          ContentType('text', 'plain', charset: 'utf-8');
-      request.headers.set(HttpHeaders.authorizationHeader, 'Basic $token');
-      request.write(content);
-
-      HttpClientResponse response = await request.close();
-
-      final String data = await response.transform(utf8.decoder).join();
-      try {
-        final document = XmlDocument.parse(data);
-        final error = document.getElement('d:error');
-        if (error != null) {
-          final messageTag = error.getElement('s:message');
-          if (messageTag != null) {
-            throw WebDAVClientException(messageTag.innerText);
-          } else {
-            throw const WebDAVClientException(
-                'Something went wrong while performing http request.');
-          }
-        }
-      } on XmlException {
-        // If the xml couldn't parse the response isn't xml.
-      }
-    } finally {
-      client.close();
+      await client.write(filename, utf8.encode(content));
+    } on Exception catch (e) {
+      log.severe(e);
+      throw WebDAVClientException('Failed to upload the file $filename.');
     }
   }
 }

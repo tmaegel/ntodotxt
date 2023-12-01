@@ -69,6 +69,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     emit(state.loading());
     try {
+      await _repository.initSource();
       await _repository
           .readFromSource()
           .whenComplete(() => emit(state.success()));

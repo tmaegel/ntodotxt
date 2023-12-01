@@ -25,7 +25,7 @@ dependencies:
   shared_preferences: ^2.2.1
   url_launcher: ^6.2.1
   uuid: ^4.2.1
-  xml: ^6.4.2
+  webdav_client: ^1.2.1
 
 dev_dependencies:
   flutter_test:

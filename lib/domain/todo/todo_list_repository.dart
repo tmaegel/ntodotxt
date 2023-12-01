@@ -12,14 +12,13 @@ class TodoListRepository {
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList() => _api.getTodoList();
 
+  Future<void> initSource() => _api.initSource();
+
   /// Read [todoList] from source.
   Future<void> readFromSource() => _api.readFromSource();
 
   /// Write [todoList] to source.
   Future<void> writeToSource() => _api.writeToSource();
-
-  /// Update the state.
-  Future<void> update() => _api.update();
 
   bool existsTodo(Todo todo) => _api.existsTodo(todo);
 

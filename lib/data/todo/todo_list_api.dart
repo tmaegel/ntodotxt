@@ -12,17 +12,18 @@ abstract class TodoListApi {
 
   const TodoListApi({required this.todoFile});
 
+  String get filename => todoFile.uri.pathSegments.last;
+
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
+
+  Future<void> initSource();
 
   /// Read [todoList] from source.
   Future<void> readFromSource();
 
   /// Write [todoList] to source.
   Future<void> writeToSource();
-
-  /// Update the state.
-  Future<void> update();
 
   bool existsTodo(Todo todo);
 
@@ -124,20 +125,19 @@ class LocalTodoListApi extends TodoListApi {
   Stream<List<Todo>> getTodoList() => controller.asBroadcastStream();
 
   @override
-  Future<void> readFromSource() async => await update();
-
-  @override
-  Future<void> writeToSource() async {
-    write(
-      _todoList.join(Platform.lineTerminator),
-    );
+  Future<void> initSource() async {
+    if (await todoFile.exists() == false) {
+      await todoFile.create();
+    }
   }
 
-  /// Only update the state based on the file content.
-  /// This function is necessary because the readFromSource
-  /// function can change with other inheritances.
   @override
-  Future<void> update() async => updateList(await read());
+  Future<void> readFromSource() async => updateList(await read());
+
+  @override
+  Future<void> writeToSource() async => write(
+        _todoList.join(Platform.lineTerminator),
+      );
 
   @override
   bool existsTodo(Todo todo) =>
@@ -240,36 +240,31 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   }
 
   @override
+  Future<void> initSource() async => await client.create(filename);
+
+  @override
   Future<void> readFromSource() async {
     // Write downloaded file content directly to the file.
-    final String content = await downloadFromSource();
-    await write(content);
-    await update();
+    await write(await downloadFromSource());
+    super.readFromSource();
   }
 
   @override
   Future<void> writeToSource() async {
-    // Read and update file/state from remote source manually before write the changes.
-    // Otherwise it is possible that some states are lost in the ListView.
-    // @todo: The problem still exists in edit/create mode.
-    // await readFromSource();
-    // await update();
-    // Using the sync version here.
-    // Otherwise it produces multiple MODIFY events.
-    await write(
-      _todoList.join(Platform.lineTerminator),
-    );
+    super.writeToSource();
+    // Upload written file content to remote.
     await uploadToSource();
   }
 
   Future<String> downloadFromSource() async {
     log.info('Download todos from server');
-    return await client.download();
+    return await client.download(filename: filename);
   }
 
   Future<void> uploadToSource() async {
     log.info('Upload todos to server');
     await client.upload(
+      filename: filename,
       content: _todoList.join(Platform.lineTerminator),
     );
   }
