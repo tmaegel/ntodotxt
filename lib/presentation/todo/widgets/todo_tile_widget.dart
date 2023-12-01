@@ -15,7 +15,7 @@ class TodoTile extends StatelessWidget {
     required this.onLongPress,
     this.selected = false,
     Key? key,
-  }) : super(key: PageStorageKey<String>(todo.id!));
+  }) : super(key: PageStorageKey<String>(todo.id));
 
   @override
   Widget build(BuildContext context) {

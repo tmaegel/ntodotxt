@@ -69,7 +69,7 @@ class TodoSearchTile extends StatelessWidget {
   TodoSearchTile({
     required this.todo,
     Key? key,
-  }) : super(key: PageStorageKey<String>(todo.id!));
+  }) : super(key: PageStorageKey<String>(todo.id));
 
   @override
   Widget build(BuildContext context) {
