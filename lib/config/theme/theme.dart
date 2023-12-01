@@ -22,6 +22,10 @@ final ThemeData lightTheme = light.copyWith(
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
   ),
+  scrollbarTheme: dark.scrollbarTheme.copyWith(
+    radius: Radius.zero,
+    thickness: MaterialStateProperty.all(4.0),
+  ),
   inputDecorationTheme: light.inputDecorationTheme.copyWith(
     filled: false,
     focusedBorder: UnderlineInputBorder(
@@ -59,6 +63,10 @@ final ThemeData darkTheme = dark.copyWith(
   listTileTheme: dark.listTileTheme.copyWith(
     selectedColor: dark.textTheme.bodySmall?.color,
     selectedTileColor: PlatformInfo.isAppOS ? Colors.red : dark.hoverColor,
+  ),
+  scrollbarTheme: dark.scrollbarTheme.copyWith(
+    radius: Radius.zero,
+    thickness: MaterialStateProperty.all(4.0),
   ),
   inputDecorationTheme: dark.inputDecorationTheme.copyWith(
     filled: false,
