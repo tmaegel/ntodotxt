@@ -69,7 +69,7 @@ void main() {
         ),
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing base URL'), findsOneWidget);
     });
     testWidgets('Missing username', (tester) async {
@@ -80,7 +80,7 @@ void main() {
         ),
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing username'), findsOneWidget);
     });
     testWidgets('Missing password', (tester) async {
@@ -91,7 +91,7 @@ void main() {
         ),
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing password'), findsOneWidget);
     });
     testWidgets('Missing server address', (tester) async {
@@ -102,7 +102,7 @@ void main() {
         ),
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing server address'), findsOneWidget);
     });
     testWidgets('Missing protocol', (tester) async {
@@ -120,7 +120,7 @@ void main() {
         "localhost",
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing protocol'), findsOneWidget);
     });
     testWidgets('Missing server port (http)', (tester) async {
@@ -138,7 +138,7 @@ void main() {
         "http://localhost",
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing server port'), findsOneWidget);
     });
     testWidgets('Missing server port (https)', (tester) async {
@@ -156,7 +156,7 @@ void main() {
         "https://localhost",
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Missing server port'), findsOneWidget);
     });
     testWidgets('Invalid format (port is string)', (tester) async {
@@ -174,7 +174,7 @@ void main() {
         "https://localhost:abc",
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Invalid format'), findsOneWidget);
     });
     testWidgets('Invalid format (multiple ports)', (tester) async {
@@ -192,7 +192,7 @@ void main() {
         "https://localhost:80:90",
       );
       await tester.tap(find.text('Login'));
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(find.text('Invalid format'), findsOneWidget);
     });
   });
