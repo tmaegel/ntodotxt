@@ -88,18 +88,7 @@ class TodoList extends StatelessWidget {
             title: section,
             children: [
               for (var todo in todoList)
-                TodoTile(
-                  todo: todo,
-                  selected: todo.selected,
-                  onTap: () {
-                    isSelected
-                        ? _toggleSelectionAction(context, todo)
-                        : _viewAction(context, todo);
-                  },
-                  onChange: (bool? completion) =>
-                      _toggleCompletionAction(context, todo, completion),
-                  onLongPress: () => _toggleSelectionAction(context, todo),
-                ),
+                _buildTodoTile(context, todo, isSelected),
             ],
           ),
         );
@@ -107,5 +96,20 @@ class TodoList extends StatelessWidget {
     }
 
     return items;
+  }
+
+  TodoTile _buildTodoTile(BuildContext context, Todo todo, bool isSelected) {
+    return TodoTile(
+      todo: todo,
+      selected: todo.selected,
+      onTap: () {
+        isSelected
+            ? _toggleSelectionAction(context, todo)
+            : _viewAction(context, todo);
+      },
+      onChange: (bool? completion) =>
+          _toggleCompletionAction(context, todo, completion),
+      onLongPress: () => _toggleSelectionAction(context, todo),
+    );
   }
 }

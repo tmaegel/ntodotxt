@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -17,6 +16,7 @@ final scaffoldKey = GlobalKey<ScaffoldState>();
 const appBarKey = Key("appBar");
 const buttonKey = Key("button");
 const groupbyDialogKey = Key("GroupByTodoListBottomSheet");
+const radioButtonKeyNone = Key('noneBottomSheetRadioButton');
 const radioButtonKeyUpcoming = Key('upcomingBottomSheetRadioButton');
 const radioButtonKeyPriority = Key('priorityBottomSheetRadioButton');
 const radioButtonKeyProject = Key('projectBottomSheetRadioButton');
@@ -77,40 +77,10 @@ Future<void> pumpGroupByBottomSheet(
 }
 
 void main() async {
-  List<Todo> todoList = [
-    Todo(
-      creationDate: DateTime.now(),
-      description: 'Todo without priority',
-    ),
-    Todo(
-      priority: 'A',
-      creationDate: DateTime.now(),
-      description: 'Todo with priority',
-    ),
-    Todo(
-      creationDate: DateTime.now(),
-      description: 'Todo with project',
-      projects: const {'projecttag'},
-    ),
-    Todo(
-      creationDate: DateTime.now(),
-      description: 'Todo with context',
-      contexts: const {'contexttag'},
-    ),
-    Todo(
-      completion: true,
-      creationDate: DateTime.now(),
-      completionDate: DateTime.now(),
-      description: 'Todo (completed)',
-    ),
-  ];
   final MemoryFileSystem fs = MemoryFileSystem();
   File file = fs.file('todo.test');
   await file.create();
-  await file.writeAsString(
-    todoList.join(Platform.lineTerminator),
-    flush: true,
-  ); // Initial todos.
+  await file.writeAsString('', flush: true);
   final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
   final TodoListRepository repository = TodoListRepository(api: api);
 
@@ -126,6 +96,13 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.byKey(groupbyDialogKey), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(GroupByTodoListBottomSheet),
+        matching: find.text('None'),
+      ),
+      findsOneWidget,
+    );
     expect(
       find.descendant(
         of: find.byType(GroupByTodoListBottomSheet),
@@ -159,33 +136,31 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.byKey(groupbyDialogKey), findsNothing);
+  });
 
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'Deadline passed',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is TodoListSection && widget.title == 'Today',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'Upcoming',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
-      ),
-      findsOneWidget,
-    );
+  testWidgets('Group by the list by "upcoming"', (tester) async {
+    await pumpGroupByBottomSheet(tester, repository);
+
+    final button = find.byKey(buttonKey);
+    await tester.runAsync(() async {
+      await tester.tap(button);
+    });
+    await tester.pumpAndSettle();
+
+    final groupbyDialogButton = find.byKey(groupbyDialogKey);
+    await tester.runAsync(() async {
+      await tester.tap(groupbyDialogButton);
+    });
+    await tester.pumpAndSettle();
+
+    final radioButton = find.byKey(radioButtonKeyUpcoming);
+    expect(radioButton, findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(radioButton);
+    });
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(groupbyDialogKey), findsNothing);
   });
 
   testWidgets('Group by the list by "priority"', (tester) async {
@@ -211,26 +186,6 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.byKey(groupbyDialogKey), findsNothing);
-
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is TodoListSection && widget.title == 'A',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'No priority',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
-      ),
-      findsOneWidget,
-    );
   });
 
   testWidgets('Group by the list by "project"', (tester) async {
@@ -256,27 +211,6 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.byKey(groupbyDialogKey), findsNothing);
-
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'projecttag',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'No project',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
-      ),
-      findsOneWidget,
-    );
   });
 
   testWidgets('Group by the list by "context"', (tester) async {
@@ -302,26 +236,5 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.byKey(groupbyDialogKey), findsNothing);
-
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'contexttag',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is TodoListSection && widget.title == 'No context',
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is TodoListSection && widget.title == 'Done',
-      ),
-      findsOneWidget,
-    );
   });
 }

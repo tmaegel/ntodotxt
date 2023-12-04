@@ -21,6 +21,7 @@ enum TodoListOrder {
 }
 
 enum TodoListGroupBy {
+  none,
   upcoming,
   priority,
   project,
@@ -104,6 +105,18 @@ extension TodoOrder on TodoListOrder {
 }
 
 extension TodoGroupBy on TodoListGroupBy {
+  Map<String, Iterable<Todo>> groupByNone({
+    required Iterable<Todo> todoList,
+  }) {
+    Map<String, Iterable<Todo>> groups = {
+      'Undone': todoList.where((t) => !t.completion),
+      'Done': todoList.where((t) => t.completion),
+    };
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
+
+    return groups;
+  }
+
   Map<String, Iterable<Todo>> groupByUpcoming({
     required Iterable<Todo> todoList,
   }) {
@@ -131,9 +144,11 @@ extension TodoGroupBy on TodoListGroupBy {
       'No deadline': incompletedTodoList.where(
         (t) => t.dueDate == null,
       ),
+      'Done': todoList.where((t) => t.completion),
     };
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
-    return _appendCompleted(groups: groups, todoList: todoList);
+    return groups;
   }
 
   Map<String, Iterable<Todo>?> groupByPriority({
@@ -144,12 +159,12 @@ extension TodoGroupBy on TodoListGroupBy {
     for (var p in sections) {
       final Iterable<Todo> items =
           todoList.where((t) => t.priority == p && !t.completion);
-      if (items.isNotEmpty) {
-        groups[p ?? 'No priority'] = items;
-      }
+      groups[p ?? 'No priority'] = items;
     }
+    groups['Done'] = todoList.where((t) => t.completion);
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
-    return _appendCompleted(groups: groups, todoList: todoList);
+    return groups;
   }
 
   Map<String, Iterable<Todo>> groupByProject({
@@ -169,8 +184,10 @@ extension TodoGroupBy on TodoListGroupBy {
         groups[p ?? 'No project'] = items;
       }
     }
+    groups['Done'] = todoList.where((t) => t.completion);
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
-    return _appendCompleted(groups: groups, todoList: todoList);
+    return groups;
   }
 
   Map<String, Iterable<Todo>> groupByContext({
@@ -190,19 +207,8 @@ extension TodoGroupBy on TodoListGroupBy {
         groups[c ?? 'No context'] = items;
       }
     }
-
-    return _appendCompleted(groups: groups, todoList: todoList);
-  }
-
-  Map<String, Iterable<Todo>> _appendCompleted({
-    required Map<String, Iterable<Todo>> groups,
-    required Iterable<Todo> todoList,
-  }) {
-    // Add completed items last.
-    final Iterable<Todo> completedItems = todoList.where((t) => t.completion);
-    if (completedItems.isNotEmpty) {
-      groups['Done'] = completedItems;
-    }
+    groups['Done'] = todoList.where((t) => t.completion);
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
     return groups;
   }
@@ -217,7 +223,7 @@ sealed class TodoListState extends Equatable {
   const TodoListState({
     this.filter = TodoListFilter.all,
     this.order = TodoListOrder.ascending,
-    this.group = TodoListGroupBy.upcoming,
+    this.group = TodoListGroupBy.none,
     this.todoList = const [],
   });
 
@@ -281,6 +287,10 @@ sealed class TodoListState extends Equatable {
 
   Map<String, Iterable<Todo>?> get groupedByTodoList {
     switch (group) {
+      case TodoListGroupBy.none:
+        return group.groupByNone(
+          todoList: filteredTodoList,
+        );
       case TodoListGroupBy.upcoming:
         return group.groupByUpcoming(
           todoList: filteredTodoList,
@@ -301,8 +311,8 @@ sealed class TodoListState extends Equatable {
           sections: contexts,
         );
       default:
-        // Default is upcoming.
-        return group.groupByUpcoming(
+        // Default is none.
+        return group.groupByNone(
           todoList: filteredTodoList,
         );
     }

@@ -22,7 +22,7 @@ final class SettingsState extends Equatable {
   final String todoOrder;
 
   /// Group todos by criteria.
-  /// Defaults to 'upcoming'.
+  /// Defaults to 'none'.
   final String todoGrouping;
 
   const SettingsState({
@@ -31,7 +31,7 @@ final class SettingsState extends Equatable {
     this.autoArchive = false,
     this.todoFilter = 'all',
     this.todoOrder = 'ascending',
-    this.todoGrouping = 'upcoming',
+    this.todoGrouping = 'none',
   });
 
   SettingsState copyWith({

@@ -24,8 +24,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
             ),
             group: TodoListGroupBy.values.byName(
               prefs == null
-                  ? 'upcoming'
-                  : prefs.getString('todoGrouping') ?? 'upcoming',
+                  ? 'none'
+                  : prefs.getString('todoGrouping') ?? 'none',
             ),
           ),
         ) {
@@ -70,8 +70,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     emit(state.loading());
     try {
       await _repository.initSource();
+      await _repository.readFromSource();
       await _repository
-          .readFromSource()
+          .writeToSource()
           .whenComplete(() => emit(state.success()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

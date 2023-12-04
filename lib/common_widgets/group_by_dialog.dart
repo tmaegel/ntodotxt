@@ -8,6 +8,7 @@ class GroupByTodoListBottomSheet extends StatelessWidget {
 
   const GroupByTodoListBottomSheet({super.key})
       : items = const {
+          'None': TodoListGroupBy.none,
           'Upcoming': TodoListGroupBy.upcoming,
           'Priority': TodoListGroupBy.priority,
           'Project': TodoListGroupBy.project,
@@ -54,6 +55,7 @@ class GroupBySettingsDialog extends StatelessWidget {
 
   const GroupBySettingsDialog({super.key})
       : items = const {
+          'None': TodoListGroupBy.none,
           'Upcoming': TodoListGroupBy.upcoming,
           'Priority': TodoListGroupBy.priority,
           'Project': TodoListGroupBy.project,

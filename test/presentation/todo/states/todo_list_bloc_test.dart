@@ -39,7 +39,7 @@ void main() {
       expect(todoListBloc.state is TodoListInitial, true);
       expect(todoListBloc.state.filter, TodoListFilter.all);
       expect(todoListBloc.state.order, TodoListOrder.ascending);
-      expect(todoListBloc.state.group, TodoListGroupBy.upcoming);
+      expect(todoListBloc.state.group, TodoListGroupBy.none);
       expect(todoListBloc.state.todoList, []);
     });
   });
@@ -351,7 +351,7 @@ void main() {
       await expectLater(
         bloc.stream,
         emitsInOrder([
-          TodoListSuccess(group: TodoListGroupBy.upcoming, todoList: [todo]),
+          TodoListSuccess(group: TodoListGroupBy.none, todoList: [todo]),
           TodoListSuccess(group: TodoListGroupBy.context, todoList: [todo]),
         ]),
       );

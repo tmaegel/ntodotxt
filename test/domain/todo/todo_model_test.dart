@@ -857,6 +857,27 @@ void main() {
     });
   });
 
+  group("todo dueDate", () {
+    test("unset", () {
+      final todo = Todo.fromString(
+        value: "2022-11-01 Write some tests",
+      );
+      expect(todo.dueDate, null);
+    });
+    test("set", () {
+      final todo = Todo.fromString(
+        value: "2022-11-01 Write some tests due:2023-12-31",
+      );
+      expect(todo.dueDate, DateTime(2023, 12, 31));
+    });
+    test("set but invalid", () {
+      final todo = Todo.fromString(
+        value: "2022-11-01 Write some tests due:yyyy-mm-dd",
+      );
+      expect(todo.dueDate, null);
+    });
+  });
+
   group("todo toString()", () {
     test("full todo", () {
       const String value =
