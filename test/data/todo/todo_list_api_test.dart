@@ -52,7 +52,7 @@ void main() {
     });
 
     group("saveTodo()", () {
-      test("create new todo", () async {
+      test("create new todo without id", () async {
         final Todo todo = Todo.fromString(
           value: '2023-11-23 Code something',
         );
@@ -73,7 +73,33 @@ void main() {
         await repository.writeToSource();
         expect(
           await file.readAsLines(),
-          [todo.toString()],
+          ['2023-11-23 Code something id:${todo.id}'],
+        );
+      });
+
+      test("create new todo with id", () async {
+        final Todo todo = Todo.fromString(
+          value:
+              '2023-11-23 Code something id:d181bdf4-3c0b-483c-a350-62db3c19ff36',
+        );
+
+        final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
+        final TodoListRepository repository = TodoListRepository(api: api);
+        repository.saveTodo(todo);
+
+        await expectLater(
+          repository.getTodoList(),
+          emitsInOrder(
+            [
+              [todo.copyWith()],
+            ],
+          ),
+        );
+
+        await repository.writeToSource();
+        expect(
+          await file.readAsLines(),
+          ['2023-11-23 Code something id:d181bdf4-3c0b-483c-a350-62db3c19ff36'],
         );
       });
       test("update existing todo", () async {

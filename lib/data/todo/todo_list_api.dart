@@ -240,7 +240,10 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   }
 
   @override
-  Future<void> initSource() async => await client.create(filename);
+  Future<void> initSource() async {
+    await super.initSource();
+    await client.create(filename);
+  }
 
   @override
   Future<void> readFromSource() async {

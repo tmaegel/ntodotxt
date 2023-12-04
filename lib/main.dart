@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
-import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
@@ -23,8 +22,6 @@ const FlutterSecureStorage secureStorage = FlutterSecureStorage(
   iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   aOptions: AndroidOptions(encryptedSharedPreferences: true),
 );
-late final SharedPreferences prefs;
-late final String cacheDirectory;
 
 void main() async {
   Logger.root.level = Level.FINE; // defaults to Level.INFO
@@ -39,16 +36,22 @@ void main() async {
   Bloc.observer = SimpleBlocObserver();
 
   log.info('Get users cache directory');
-  cacheDirectory = (await getApplicationCacheDirectory()).path;
+  final String cacheDirectory = (await getApplicationCacheDirectory()).path;
+  final File todoFile =
+      File('$cacheDirectory${Platform.pathSeparator}todo.txt');
 
   log.info('Setup shared preferences');
-  prefs = await SharedPreferences.getInstance();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   log.info('Check initial login and backend status');
-  final LoginState initialLoginState = await LoginCubit.init(secureStorage);
+  final LoginState initialLoginState = await LoginCubit.init();
 
   log.info('Run app');
-  runApp(AuthenticationWrapper(initialLoginState: initialLoginState));
+  runApp(LoginWrapper(
+    prefs: prefs,
+    todoFile: todoFile,
+    initialLoginState: initialLoginState,
+  ));
 }
 
 class SimpleBlocObserver extends BlocObserver {
@@ -74,14 +77,21 @@ class SimpleBlocObserver extends BlocObserver {
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  final SharedPreferences prefs;
+
+  const App({
+    required this.prefs,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingsCubit>(
-          create: (BuildContext context) => SettingsCubit(prefs: prefs),
+          create: (BuildContext context) => SettingsCubit(
+            prefs: prefs,
+          ),
         ),
         BlocProvider<TodoListBloc>(
           create: (context) => TodoListBloc(
@@ -107,81 +117,5 @@ class App extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class AuthenticationWrapper extends StatelessWidget {
-  final LoginState initialLoginState;
-
-  const AuthenticationWrapper({
-    required this.initialLoginState,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => LoginCubit(
-        storage: secureStorage,
-        state: initialLoginState,
-      ),
-      child: BlocConsumer<LoginCubit, LoginState>(
-        listenWhen: (LoginState previous, LoginState current) =>
-            current is LoginError,
-        listener: (BuildContext context, LoginState state) {
-          if (state is LoginError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                content: Text(state.message),
-              ),
-            );
-          }
-        },
-        buildWhen: (previousState, state) =>
-            (previousState is Logout && state is! Logout) ||
-            (previousState is! Logout && state is Logout),
-        builder: (BuildContext context, LoginState state) {
-          if (state is Logout) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: ThemeMode.system,
-              home: const LoginPage(),
-            );
-          } else {
-            return RepositoryProvider(
-              create: (BuildContext context) {
-                log.info('Create repository');
-                return TodoListRepository(api: _createApi(state));
-              },
-              child: const App(),
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  TodoListApi _createApi(LoginState loginState) {
-    final File file = File('$cacheDirectory${Platform.pathSeparator}todo.txt');
-    switch (loginState) {
-      case LoginOffline():
-        log.info('Use local backend');
-        return LocalTodoListApi(todoFile: file);
-      case LoginWebDAV():
-        log.info('Use local+webdav backend');
-        return WebDAVTodoListApi(
-          todoFile: file,
-          server: loginState.server,
-          baseUrl: loginState.baseUrl,
-          username: loginState.username,
-          password: loginState.password,
-        );
-      default:
-        log.info('Fallback to local backend');
-        return LocalTodoListApi(todoFile: file);
-    }
   }
 }

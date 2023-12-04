@@ -1,7 +1,92 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
+import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
+import 'package:ntodotxt/data/todo/todo_list_api.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/main.dart' show App, log;
 import 'package:ntodotxt/presentation/login/states/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class LoginWrapper extends StatelessWidget {
+  final SharedPreferences prefs;
+  final File todoFile;
+  final LoginState initialLoginState;
+
+  const LoginWrapper({
+    required this.prefs,
+    required this.todoFile,
+    required this.initialLoginState,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (BuildContext context) => LoginCubit(
+        state: initialLoginState,
+      ),
+      child: BlocConsumer<LoginCubit, LoginState>(
+        listenWhen: (LoginState previous, LoginState current) =>
+            current is LoginError,
+        listener: (BuildContext context, LoginState state) {
+          if (state is LoginError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                content: Text(state.message),
+              ),
+            );
+          }
+        },
+        buildWhen: (previousState, state) =>
+            (previousState is Logout && state is! Logout) ||
+            (previousState is! Logout && state is Logout),
+        builder: (BuildContext context, LoginState state) {
+          if (state is Logout) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: lightTheme,
+              darkTheme: darkTheme,
+              themeMode: ThemeMode.system,
+              home: const LoginPage(),
+            );
+          } else {
+            return RepositoryProvider(
+              create: (BuildContext context) {
+                log.info('Create repository');
+                return TodoListRepository(api: _createApi(state));
+              },
+              child: App(prefs: prefs),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  TodoListApi _createApi(LoginState loginState) {
+    switch (loginState) {
+      case LoginOffline():
+        log.info('Use local backend');
+        return LocalTodoListApi(todoFile: todoFile);
+      case LoginWebDAV():
+        log.info('Use local+webdav backend');
+        return WebDAVTodoListApi(
+          todoFile: todoFile,
+          server: loginState.server,
+          baseUrl: loginState.baseUrl,
+          username: loginState.username,
+          password: loginState.password,
+        );
+      default:
+        log.info('Fallback to local backend');
+        return LocalTodoListApi(todoFile: todoFile);
+    }
+  }
+}
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});

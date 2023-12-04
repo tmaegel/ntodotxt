@@ -1,27 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ntodotxt/main.dart' show secureStorage;
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  final FlutterSecureStorage storage;
-
   LoginCubit({
-    required this.storage,
-    // Pass initial state ti prevent screen flicker in start.
+    // Pass initial state to prevent screen flicker in start.
     required LoginState state,
   }) : super(state);
 
   // To detect the initial authentication state before initializing the cubit.
-  static Future<LoginState> init(FlutterSecureStorage storage) async {
-    String? backendFromStorage = await storage.read(key: 'backend');
+  static Future<LoginState> init() async {
+    String? backendFromsecureStorage = await secureStorage.read(key: 'backend');
     Backend backend;
 
-    if (backendFromStorage == null) {
+    if (backendFromsecureStorage == null) {
       return const Logout();
     }
 
     try {
-      backend = Backend.values.byName(backendFromStorage);
+      backend = Backend.values.byName(backendFromsecureStorage);
     } on Exception {
       return const Logout();
     }
@@ -33,10 +30,10 @@ class LoginCubit extends Cubit<LoginState> {
       return const LoginOffline();
     }
     if (backend == Backend.webdav) {
-      String? server = await storage.read(key: 'server');
-      String? baseUrl = await storage.read(key: 'baseUrl');
-      String? username = await storage.read(key: 'username');
-      String? password = await storage.read(key: 'password');
+      String? server = await secureStorage.read(key: 'server');
+      String? baseUrl = await secureStorage.read(key: 'baseUrl');
+      String? username = await secureStorage.read(key: 'username');
+      String? password = await secureStorage.read(key: 'password');
       if (server != null &&
           baseUrl != null &&
           username != null &&
@@ -62,7 +59,7 @@ class LoginCubit extends Cubit<LoginState> {
       'password',
     ];
     for (var attr in attrs) {
-      await storage.delete(key: attr);
+      await secureStorage.delete(key: attr);
     }
   }
 
@@ -82,7 +79,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> loginOffline() async {
     try {
       await resetSecureStorage();
-      await storage.write(key: 'backend', value: Backend.offline.name);
+      await secureStorage.write(key: 'backend', value: Backend.offline.name);
       emit(const LoginOffline());
     } on Exception catch (e) {
       emit(LoginError(message: e.toString()));
@@ -97,11 +94,11 @@ class LoginCubit extends Cubit<LoginState> {
   }) async {
     try {
       await resetSecureStorage();
-      await storage.write(key: 'backend', value: Backend.webdav.name);
-      await storage.write(key: 'server', value: server);
-      await storage.write(key: 'baseUrl', value: baseUrl);
-      await storage.write(key: 'username', value: username);
-      await storage.write(key: 'password', value: password);
+      await secureStorage.write(key: 'backend', value: Backend.webdav.name);
+      await secureStorage.write(key: 'server', value: server);
+      await secureStorage.write(key: 'baseUrl', value: baseUrl);
+      await secureStorage.write(key: 'username', value: username);
+      await secureStorage.write(key: 'password', value: password);
       emit(
         LoginWebDAV(
           server: server,
