@@ -13,16 +13,19 @@ import 'package:ntodotxt/presentation/todo/widgets/todo_detail_items.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoCreatePage extends StatelessWidget {
+  final Todo? _todo;
+
   const TodoCreatePage({
+    Todo? todo,
     super.key,
-  });
+  }) : _todo = todo;
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (context) => TodoBloc(
-        todo: Todo(),
+        todo: _todo ?? Todo(),
       ),
       child: screenWidth < maxScreenWidthCompact
           ? const TodoCreateNarrowView()
