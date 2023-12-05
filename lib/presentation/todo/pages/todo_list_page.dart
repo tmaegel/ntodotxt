@@ -10,7 +10,9 @@ import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/constants/screen.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_list_widget.dart';
 
 class Action {

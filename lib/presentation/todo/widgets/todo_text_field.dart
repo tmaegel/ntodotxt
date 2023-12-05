@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class TodoFullStringTextField extends StatelessWidget {
   const TodoFullStringTextField({super.key});

@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/presentation/todo/states/todo.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
 abstract class TodoTagSection extends StatelessWidget {

@@ -5,7 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

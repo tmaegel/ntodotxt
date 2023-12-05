@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class GroupByTodoListBottomSheet extends StatelessWidget {
   final Map<String, TodoListGroupBy> items;
