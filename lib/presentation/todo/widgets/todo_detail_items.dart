@@ -89,8 +89,11 @@ class TodoPriorityTags extends TodoTagSection {
 }
 
 class TodoProjectTags extends TodoTagSection {
+  final Set<String> availableTags;
+
   const TodoProjectTags({
     super.leadingIcon = const Icon(Icons.rocket_launch_outlined),
+    this.availableTags = const {},
     super.key,
   });
 
@@ -108,7 +111,9 @@ class TodoProjectTags extends TodoTagSection {
       context: context,
       child: BlocProvider.value(
         value: BlocProvider.of<TodoBloc>(context),
-        child: const TodoProjectTagDialog(),
+        child: TodoProjectTagDialog(
+          availableTags: availableTags,
+        ),
       ),
     );
   }
@@ -144,8 +149,11 @@ class TodoProjectTags extends TodoTagSection {
 }
 
 class TodoContextTags extends TodoTagSection {
+  final Set<String> availableTags;
+
   const TodoContextTags({
     super.leadingIcon = const Icon(Icons.tag),
+    this.availableTags = const {},
     super.key,
   });
 
@@ -163,7 +171,9 @@ class TodoContextTags extends TodoTagSection {
       context: context,
       child: BlocProvider.value(
         value: BlocProvider.of<TodoBloc>(context),
-        child: const TodoContextTagDialog(),
+        child: TodoContextTagDialog(
+          availableTags: availableTags,
+        ),
       ),
     );
   }
@@ -199,8 +209,11 @@ class TodoContextTags extends TodoTagSection {
 }
 
 class TodoKeyValueTags extends TodoTagSection {
+  final Set<String> availableTags;
+
   const TodoKeyValueTags({
     super.leadingIcon = const Icon(Icons.join_inner_outlined),
+    this.availableTags = const {},
     super.key,
   });
 
@@ -218,7 +231,9 @@ class TodoKeyValueTags extends TodoTagSection {
       context: context,
       child: BlocProvider.value(
         value: BlocProvider.of<TodoBloc>(context),
-        child: const TodoKeyValueTagDialog(),
+        child: TodoKeyValueTagDialog(
+          availableTags: availableTags,
+        ),
       ),
     );
   }

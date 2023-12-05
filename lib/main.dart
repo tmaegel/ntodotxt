@@ -103,7 +103,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: Builder(
-        builder: (context) {
+        builder: (BuildContext context) {
           return MaterialApp.router(
             title: 'ntodotxt',
             debugShowCheckedModeBanner: false, // Remove the debug banner

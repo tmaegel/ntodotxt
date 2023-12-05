@@ -3,17 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 
 class TodoTagDialog extends StatefulWidget {
   final String tagName;
+  final Set<String> availableTags;
 
   const TodoTagDialog({
     required this.tagName,
+    this.availableTags = const {},
     super.key,
   });
-
-  Set<String> availableTags(BuildContext context) => {};
 
   void onSubmit(BuildContext context, List<String> values) {}
 
@@ -44,12 +43,11 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
-    final Set<String> availableTags = widget.availableTags(context);
     return BottomSheet(
       enableDrag: false,
       showDragHandle: false,
       onClosing: () {},
-      builder: (context) {
+      builder: (BuildContext context) {
         return ListView(
           shrinkWrap: true,
           padding: const EdgeInsets.symmetric(
@@ -93,12 +91,12 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
                 },
               ),
             ),
-            if (availableTags.isNotEmpty)
+            if (widget.availableTags.isNotEmpty)
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: GenericChipGroup(
                   children: [
-                    for (var t in availableTags)
+                    for (var t in widget.availableTags)
                       GenericChoiceChip(
                         label: Text(t),
                         selected: selectedTags.contains(t),
@@ -127,18 +125,9 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
 class TodoProjectTagDialog extends TodoTagDialog {
   const TodoProjectTagDialog({
     super.tagName = 'project',
-    super.key,
+    super.availableTags,
+    super.key = const Key('addProjectTagDialog'),
   });
-
-  @override
-  Set<String> availableTags(BuildContext context) {
-    return context
-        .read<TodoListBloc>()
-        .state
-        .projects
-        .where((p) => !context.read<TodoBloc>().state.todo.projects.contains(p))
-        .toSet();
-  }
 
   @override
   void onSubmit(BuildContext context, List<String> values) {
@@ -155,18 +144,9 @@ class _TodoProjectTagDialogState
 class TodoContextTagDialog extends TodoTagDialog {
   const TodoContextTagDialog({
     super.tagName = 'context',
-    super.key,
+    super.availableTags,
+    super.key = const Key('addContextTagDialog'),
   });
-
-  @override
-  Set<String> availableTags(BuildContext context) {
-    return context
-        .read<TodoListBloc>()
-        .state
-        .contexts
-        .where((c) => !context.read<TodoBloc>().state.todo.contexts.contains(c))
-        .toSet();
-  }
 
   @override
   void onSubmit(BuildContext context, List<String> values) {
@@ -183,21 +163,9 @@ class _TodoContextTagDialogState
 class TodoKeyValueTagDialog extends TodoTagDialog {
   const TodoKeyValueTagDialog({
     super.tagName = 'key:value',
-    super.key,
+    super.availableTags,
+    super.key = const Key('addKeyValueTagDialog'),
   });
-
-  @override
-  Set<String> availableTags(BuildContext context) {
-    final Set<String> allKeyValues =
-        context.read<TodoListBloc>().state.keyValues;
-    final Set<String> formattedKeyValues =
-        context.read<TodoBloc>().state.todo.formattedKeyValues;
-    return allKeyValues
-        .where(
-          (c) => !formattedKeyValues.contains(c) && !c.startsWith('due:'),
-        )
-        .toSet();
-  }
 
   @override
   void onSubmit(BuildContext context, List<String> values) {
