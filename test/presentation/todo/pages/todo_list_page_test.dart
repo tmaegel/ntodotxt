@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file/memory.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart'
     show LoginWrapper;
@@ -261,7 +262,7 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            // "x 2023-12-03 2023-12-02 TodoA",
+            "x 2023-12-03 2023-12-02 TodoA",
             "1970-01-01 TodoB due:1970-01-01",
             "2023-12-02 TodoC due:$today",
             "2023-12-02 TodoD due:$tomorrow",
@@ -279,7 +280,10 @@ void main() {
       });
 
       testWidgets('check sections', (tester) async {
-        // @todo: Can not find "Done" section. It works in production (manual testing).
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
         await tester.pumpWidget(
           LoginWrapper(
             prefs: prefs,
@@ -289,14 +293,14 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(4)); // 5
+        expect(find.byType(TodoListSection), findsNWidgets(5));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
         expect(todoListSections.elementAt(0).title, "Deadline passed");
         expect(todoListSections.elementAt(1).title, "Today");
         expect(todoListSections.elementAt(2).title, "Upcoming");
         expect(todoListSections.elementAt(3).title, "No deadline");
-        // expect(todoListSections.elementAt(4).title, "Done");
+        expect(todoListSections.elementAt(4).title, "Done");
 
         expect(
           find.descendant(
@@ -326,13 +330,13 @@ void main() {
           ),
           findsOneWidget,
         );
-        // expect(
-        //   find.descendant(
-        //     of: find.byWidget(todoListSections.elementAt(4)),
-        //     matching: find.text('TodoA'), // 'TodoA' is done.
-        //   ),
-        //   findsOneWidget,
-        // );
+        expect(
+          find.descendant(
+            of: find.byWidget(todoListSections.elementAt(4)),
+            matching: find.text('TodoA'), // 'TodoA' is done.
+          ),
+          findsOneWidget,
+        );
       });
     });
 

@@ -6,17 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsCubit extends Cubit<SettingsState> {
   final SharedPreferences prefs;
 
-  SettingsCubit({required this.prefs}) : super(const SettingsState()) {
+  SettingsCubit({
+    required this.prefs,
+  }) : super(const SettingsState()) {
     loadPrefs();
   }
 
   void loadPrefs() {
     emit(
       state.copyWith(
-        // Todo
-        todoFilename: prefs.getString('todoFilename'),
-        doneFilename: prefs.getString('doneFilename'),
-        autoArchive: prefs.getBool('autoArchive'),
         // Display
         todoFilter: prefs.getString('todoFilter'),
         todoOrder: prefs.getString('todoOrder'),
@@ -27,9 +25,6 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   void resetSettings() {
     final List<String> settings = [
-      'todoFilename',
-      'doneFilename',
-      'autoArchive',
       'todoFilter',
       'todoOrder',
       'todoGrouping',
@@ -38,29 +33,6 @@ class SettingsCubit extends Cubit<SettingsState> {
       prefs.remove(setting);
     }
     emit(const SettingsState());
-  }
-
-  void updateTodoFilename(String? value) {
-    if (value != null) {
-      if (value.isNotEmpty) {
-        prefs.setString('todoFilename', value);
-        emit(state.copyWith(todoFilename: value));
-      }
-    }
-  }
-
-  void updateDoneFilename(String? value) {
-    if (value != null) {
-      if (value.isNotEmpty) {
-        prefs.setString('doneFilename', value);
-        emit(state.copyWith(doneFilename: value));
-      }
-    }
-  }
-
-  void toggleAutoArchive(bool value) {
-    prefs.setBool('autoArchive', value);
-    emit(state.copyWith(autoArchive: value));
   }
 
   void updateTodoFilter(TodoListFilter? value) {

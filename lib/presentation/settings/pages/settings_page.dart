@@ -6,7 +6,8 @@ import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
-import 'package:ntodotxt/presentation/settings/states/settings.dart';
+import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
+import 'package:ntodotxt/presentation/settings/states/settings_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -38,33 +39,6 @@ class SettingsView extends StatelessWidget {
         builder: (BuildContext context, SettingsState state) {
       return ListView(
         children: [
-          ListTile(
-            title: Text(
-              'Todo',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          ListTile(
-            title: const Text("Todo filename (default: todo.txt)"),
-            subtitle: Text(state.todoFilename),
-            onTap: () async => context.read<SettingsCubit>().updateTodoFilename(
-                  await _askedForTextInput(
-                      context: context,
-                      label: "Enter filename",
-                      value: state.todoFilename),
-                ),
-          ),
-          ListTile(
-            title: const Text("Done filename (default: done.txt)"),
-            subtitle: Text(state.doneFilename),
-            onTap: () async => context.read<SettingsCubit>().updateDoneFilename(
-                  await _askedForTextInput(
-                      context: context,
-                      label: "Enter filename",
-                      value: state.doneFilename),
-                ),
-          ),
-          const Divider(),
           ListTile(
             title: Text(
               'Display',
@@ -109,16 +83,6 @@ class SettingsView extends StatelessWidget {
                     ),
                   );
             },
-          ),
-          ListTile(
-            title: const Text("Auto archiving"),
-            subtitle:
-                const Text("Automatically move done todos to the done file."),
-            trailing: Switch(
-              value: state.autoArchive,
-              onChanged: (bool value) =>
-                  context.read<SettingsCubit>().toggleAutoArchive(value),
-            ),
           ),
           const Divider(),
           ListTile(

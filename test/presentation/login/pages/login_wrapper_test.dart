@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/main.dart' show App;
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
-import 'package:ntodotxt/presentation/login/states/login.dart';
+import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
