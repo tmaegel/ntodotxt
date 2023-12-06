@@ -13,31 +13,26 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late LocalTodoListApi api;
+  late TodoListRepository repository;
   late MemoryFileSystem fs;
   late File file;
-  final Todo todo = Todo(
-    priority: 'A',
-    creationDate: DateTime(2022, 11, 1),
-    description: 'Write some tests',
-    projects: const {'project1'},
-    contexts: const {'context1'},
-    keyValues: const {'foo': 'bar'},
-  );
+  late Todo todo;
 
   setUp(() async {
     fs = MemoryFileSystem();
     file = fs.file('todo.test');
     await file.create();
-    await file.writeAsString(todo.toString(), flush: true); // Initial todo.
-    api = LocalTodoListApi(todoFile: file);
   });
 
   group('Initial', () {
+    setUp(() async {
+      await file.writeAsString('', flush: true); // Empty file
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+
     test('initial state', () {
-      final TodoListRepository repository = TodoListRepository(api: api);
-      final TodoListBloc todoListBloc = TodoListBloc(
-        repository: repository,
-      );
+      final TodoListBloc todoListBloc = TodoListBloc(repository: repository);
       expect(todoListBloc.state is TodoListInitial, true);
       expect(todoListBloc.state.filter, TodoListFilter.all);
       expect(todoListBloc.state.order, TodoListOrder.ascending);
@@ -47,9 +42,14 @@ void main() {
   });
 
   group('TodoListSubscriptionRequested', () {
-    test('initial state when TodoListSubscriptionRequested() is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+
+    test('initial state', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc.add(const TodoListSubscriptionRequested());
 
@@ -62,70 +62,397 @@ void main() {
     });
   });
 
-  group('TodoListTodoCompletionToggled', () {
-    test(
-        'state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
-      final TodoListBloc bloc = TodoListBloc(repository: repository);
-      bloc
-        ..add(const TodoListSubscriptionRequested())
-        ..add(TodoListTodoCompletionToggled(todo: todo, completion: true));
+  group('TodoListTodoSubmitted', () {
+    group('completion', () {
+      setUp(() async {
+        todo = Todo(
+          completion: false,
+          description: 'Write some tests',
+        );
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(completion: true),
+          ));
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          // Initial & TodoListSubscriptionRequested
-          TodoListSuccess(todoList: [todo]),
-          // TodoListTodoCompletionToggled start
-          TodoListLoading(todoList: [todo]),
-          // saveTodo() within TodoListTodoCompletionToggled
-          TodoListLoading(
-            todoList: [todo.copyWith(completion: true)],
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [todo.copyWith(completion: true)],
+            ),
           ),
-          // TodoListTodoCompletionToggled finished
-          TodoListSuccess(
-            todoList: [todo.copyWith(completion: true)],
-          ),
-        ]),
-      );
+        );
+      });
     });
-    test(
-        'state with updated completion state when TodoListTodoCompletionToggled(<todo>, <completion>) is called (not exists)',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
-      final TodoListBloc bloc = TodoListBloc(repository: repository);
-      Todo todo2 =
-          Todo(description: 'Write more tests'); // Generate new uuid (id)
-      bloc
-        ..add(const TodoListSubscriptionRequested())
-        ..add(TodoListTodoCompletionToggled(todo: todo2, completion: true));
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          // Initial & TodoListSubscriptionRequested
-          TodoListSuccess(todoList: [todo]),
-          // TodoListTodoCompletionToggled start
-          TodoListLoading(todoList: [todo]),
-          // saveTodo() within TodoListTodoCompletionToggled
-          TodoListLoading(
-            todoList: [todo, todo2.copyWith(completion: true)],
+    group('priority', () {
+      setUp(() async {
+        todo = Todo(
+          priority: Priority.A,
+          description: 'Write some tests',
+        );
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(priority: Priority.B),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [todo.copyWith(priority: Priority.B)],
+            ),
           ),
-          // TodoListTodoCompletionToggled finished
-          TodoListSuccess(
-            todoList: [todo, todo2.copyWith(completion: true)],
+        );
+      });
+      test('unset', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(priority: Priority.none),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [todo.copyWith(priority: Priority.none)],
+            ),
           ),
-        ]),
-      );
+        );
+      });
+    });
+
+    group('description', () {
+      setUp(() async {
+        todo = Todo(description: 'Write some tests');
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(description: 'Write more tests'),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [todo.copyWith(description: 'Write more tests')],
+            ),
+          ),
+        );
+      });
+    });
+
+    group('projects', () {
+      setUp(() async {
+        todo =
+            Todo(projects: const {'project1'}, description: 'Write some tests');
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(projects: const {'project1', 'project2'}),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [
+                todo.copyWith(
+                  description: 'Write some tests',
+                  projects: const {'project1', 'project2'},
+                )
+              ],
+            ),
+          ),
+        );
+      });
+      test('unset', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(todo: todo.copyWith(projects: const {})));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [
+                todo.copyWith(
+                  description: 'Write some tests',
+                  projects: const {},
+                )
+              ],
+            ),
+          ),
+        );
+      });
+    });
+
+    group('contexts', () {
+      setUp(() async {
+        todo =
+            Todo(contexts: const {'context1'}, description: 'Write some tests');
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(contexts: const {'context1', 'context2'}),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [
+                todo.copyWith(
+                  description: 'Write some tests',
+                  contexts: const {'context1', 'context2'},
+                )
+              ],
+            ),
+          ),
+        );
+      });
+      test('unset', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(todo: todo.copyWith(contexts: const {})));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [
+                todo.copyWith(
+                  description: 'Write some tests',
+                  contexts: const {},
+                )
+              ],
+            ),
+          ),
+        );
+      });
+    });
+
+    group('key values', () {
+      setUp(() async {
+        todo = Todo(
+            keyValues: const {'foo': 'bar'}, description: 'Write some tests');
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(keyValues: const {'foo': 'bar', 'key': 'val'}),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [
+                todo.copyWith(
+                  description: 'Write some tests',
+                  keyValues: const {'foo': 'bar', 'key': 'val'},
+                )
+              ],
+            ),
+          ),
+        );
+      });
+      test('unset', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoSubmitted(
+            todo: todo.copyWith(keyValues: const {}),
+          ));
+
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            TodoListSuccess(
+              todoList: [
+                todo.copyWith(
+                  description: 'Write some tests',
+                  keyValues: {},
+                )
+              ],
+            ),
+          ),
+        );
+      });
+    });
+  });
+
+  group('TodoListTodoDeleted', () {});
+
+  group('TodoListTodoCompletionToggled', () {
+    group('toggle to completed', () {
+      setUp(() async {
+        todo = Todo(description: 'Write some tests');
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('set', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoCompletionToggled(todo: todo, completion: true));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            // Initial & TodoListSubscriptionRequested
+            TodoListSuccess(todoList: [todo]),
+            // TodoListTodoCompletionToggled start
+            TodoListLoading(todoList: [todo]),
+            // saveTodo() within TodoListTodoCompletionToggled
+            TodoListLoading(
+              todoList: [todo.copyWith(completion: true)],
+            ),
+            // TodoListTodoCompletionToggled finished
+            TodoListSuccess(
+              todoList: [todo.copyWith(completion: true)],
+            ),
+          ]),
+        );
+      });
+      test('set (not exists)', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        Todo todo2 =
+            Todo(description: 'Write more tests'); // Generate new uuid (id)
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoCompletionToggled(todo: todo2, completion: true));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            // Initial & TodoListSubscriptionRequested
+            TodoListSuccess(todoList: [todo]),
+            // TodoListTodoCompletionToggled start
+            TodoListLoading(todoList: [todo]),
+            // saveTodo() within TodoListTodoCompletionToggled
+            TodoListLoading(
+              todoList: [todo, todo2.copyWith(completion: true)],
+            ),
+            // TodoListTodoCompletionToggled finished
+            TodoListSuccess(
+              todoList: [todo, todo2.copyWith(completion: true)],
+            ),
+          ]),
+        );
+      });
+    });
+
+    group('toggle to incompleted', () {
+      setUp(() async {
+        todo = Todo(completion: true, description: 'Write some tests');
+        await file.writeAsString(todo.toString(), flush: true);
+        api = LocalTodoListApi(todoFile: file);
+        repository = TodoListRepository(api: api);
+      });
+      test('unset', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoCompletionToggled(todo: todo, completion: false));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            // Initial & TodoListSubscriptionRequested
+            TodoListSuccess(todoList: [todo]),
+            // TodoListTodoCompletionToggled start
+            TodoListLoading(todoList: [todo]),
+            // saveTodo() within TodoListTodoCompletionToggled
+            TodoListLoading(
+              todoList: [todo.copyWith(completion: false)],
+            ),
+            // TodoListTodoCompletionToggled finished
+            TodoListSuccess(
+              todoList: [todo.copyWith(completion: false)],
+            ),
+          ]),
+        );
+      });
+      test('unset (not exists)', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        Todo todo2 =
+            Todo(description: 'Write more tests'); // Generate new uuid (id)
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(TodoListTodoCompletionToggled(todo: todo2, completion: false));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            // Initial & TodoListSubscriptionRequested
+            TodoListSuccess(todoList: [todo]),
+            // TodoListTodoCompletionToggled start
+            TodoListLoading(todoList: [todo]),
+            // saveTodo() within TodoListTodoCompletionToggled
+            TodoListLoading(
+              todoList: [todo, todo2.copyWith(completion: false)],
+            ),
+            // TodoListTodoCompletionToggled finished
+            TodoListSuccess(
+              todoList: [todo, todo2.copyWith(completion: false)],
+            ),
+          ]),
+        );
+      });
     });
   });
 
   group('TodoListTodoSelectedToggled', () {
-    test(
-        'state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+    test('set', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -140,10 +467,7 @@ void main() {
         ]),
       );
     });
-    test(
-        'state with updated selected state when TodoListTodoSelectedToggled(<todo>) is called (not exists)',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    test('set (not exists)', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       Todo todo2 =
           Todo(description: 'Write more tests'); // Generate new uuid (id)
@@ -162,10 +486,13 @@ void main() {
   });
 
   group('TodoListSelectedAll', () {
-    test(
-        'state with updated selected state when TodoListSelectedAll() is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+    test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -182,10 +509,13 @@ void main() {
   });
 
   group('TodoListUnselectedAll', () {
-    test(
-        'state with updated selected state when TodoListUnselectedAll() is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+    test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -204,10 +534,13 @@ void main() {
   });
 
   group('TodoListSelectionCompleted', () {
-    test(
-        'state with updated selected and completion state when TodoListSelectionCompleted() is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+    test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -237,10 +570,13 @@ void main() {
   });
 
   group('TodoListSelectionIncompleted', () {
-    test(
-        'state with updated selected and completion state when TodoListSelectionIncompleted() is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+    test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -270,10 +606,13 @@ void main() {
   });
 
   group('TodoListSelectionDeleted', () {
-    test(
-        'state without the deleted todo when TodoListSelectionDeleted() is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
+    });
+    test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
         ..add(const TodoListSubscriptionRequested())
@@ -298,65 +637,64 @@ void main() {
     });
   });
 
-  group('TodoListOrderChanged', () {
-    test(
-        'state with updated order property when TodoListOrderChanged(<order>) is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
-      final TodoListBloc bloc = TodoListBloc(repository: repository);
-      bloc
-        ..add(const TodoListSubscriptionRequested())
-        ..add(const TodoListOrderChanged(order: TodoListOrder.descending));
-
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          TodoListSuccess(order: TodoListOrder.ascending, todoList: [todo]),
-          TodoListSuccess(order: TodoListOrder.descending, todoList: [todo]),
-        ]),
-      );
+  group('TodoList behaviour', () {
+    setUp(() async {
+      todo = Todo(description: 'Write some tests');
+      await file.writeAsString(todo.toString(), flush: true);
+      api = LocalTodoListApi(todoFile: file);
+      repository = TodoListRepository(api: api);
     });
-  });
+    group('TodoListOrderChanged', () {
+      test('call', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(const TodoListOrderChanged(order: TodoListOrder.descending));
 
-  group('TodoListFilterChanged', () {
-    test(
-        'state with updated filter property when TodoListFilterChanged(<filter>) is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
-      final TodoListBloc bloc = TodoListBloc(repository: repository);
-      bloc
-        ..add(const TodoListSubscriptionRequested())
-        ..add(
-            const TodoListFilterChanged(filter: TodoListFilter.completedOnly));
-
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          TodoListSuccess(filter: TodoListFilter.all, todoList: [todo]),
-          TodoListSuccess(
-              filter: TodoListFilter.completedOnly, todoList: [todo]),
-        ]),
-      );
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            TodoListSuccess(order: TodoListOrder.ascending, todoList: [todo]),
+            TodoListSuccess(order: TodoListOrder.descending, todoList: [todo]),
+          ]),
+        );
+      });
     });
-  });
 
-  group('TodoListGroupByChanged', () {
-    test(
-        'state with updated group property when TodoListGroupByChanged(<group>) is called',
-        () async {
-      final TodoListRepository repository = TodoListRepository(api: api);
-      final TodoListBloc bloc = TodoListBloc(repository: repository);
-      bloc
-        ..add(const TodoListSubscriptionRequested())
-        ..add(const TodoListGroupByChanged(group: TodoListGroupBy.context));
+    group('TodoListFilterChanged', () {
+      test('call', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(const TodoListFilterChanged(
+              filter: TodoListFilter.completedOnly));
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          TodoListSuccess(group: TodoListGroupBy.none, todoList: [todo]),
-          TodoListSuccess(group: TodoListGroupBy.context, todoList: [todo]),
-        ]),
-      );
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            TodoListSuccess(filter: TodoListFilter.all, todoList: [todo]),
+            TodoListSuccess(
+                filter: TodoListFilter.completedOnly, todoList: [todo]),
+          ]),
+        );
+      });
+    });
+
+    group('TodoListGroupByChanged', () {
+      test('call', () async {
+        final TodoListBloc bloc = TodoListBloc(repository: repository);
+        bloc
+          ..add(const TodoListSubscriptionRequested())
+          ..add(const TodoListGroupByChanged(group: TodoListGroupBy.context));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            TodoListSuccess(group: TodoListGroupBy.none, todoList: [todo]),
+            TodoListSuccess(group: TodoListGroupBy.context, todoList: [todo]),
+          ]),
+        );
+      });
     });
   });
 }

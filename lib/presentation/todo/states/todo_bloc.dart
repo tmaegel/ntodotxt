@@ -61,7 +61,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) {
     try {
-      final Todo todo = state.todo.copyWith(priority: '');
+      final Todo todo = state.todo.copyWith(priority: Priority.none);
       emit(state.change(todo: todo));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

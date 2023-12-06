@@ -83,7 +83,7 @@ class TodoSearchTile extends StatelessWidget {
 
   Widget? _buildSubtitle() {
     if (todo.creationDate == null &&
-        todo.priority == null &&
+        todo.priority == Priority.none &&
         todo.projects.isEmpty &&
         todo.contexts.isEmpty &&
         todo.keyValues.isEmpty) {
@@ -95,10 +95,10 @@ class TodoSearchTile extends StatelessWidget {
       spacing: 0.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: <Widget>[
-        if (todo.priority != null)
+        if (todo.priority != Priority.none)
           Padding(
             padding: const EdgeInsets.only(right: 4.0),
-            child: Text(todo.formattedPriority),
+            child: Text(todo.fmtPriority),
           ),
         if (todo.creationDate != null)
           Padding(
@@ -108,14 +108,14 @@ class TodoSearchTile extends StatelessWidget {
         if (todo.projects.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(right: 4.0),
-            child: Text(todo.formattedProjects.join(' ')),
+            child: Text(todo.fmtProjects.join(' ')),
           ),
         if (todo.contexts.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(right: 4.0),
-            child: Text(todo.formattedContexts.join(' ')),
+            child: Text(todo.fmtContexts.join(' ')),
           ),
-        if (todo.keyValues.isNotEmpty) Text(todo.formattedKeyValues.join(' ')),
+        if (todo.keyValues.isNotEmpty) Text(todo.fmtKeyValues.join(' ')),
       ],
     );
   }

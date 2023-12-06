@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 
 sealed class TodoEvent extends Equatable {
   const TodoEvent();
@@ -26,7 +27,7 @@ final class TodoDescriptionChanged extends TodoEvent {
 }
 
 final class TodoPriorityAdded extends TodoEvent {
-  final String priority;
+  final Priority priority;
 
   const TodoPriorityAdded(this.priority);
 

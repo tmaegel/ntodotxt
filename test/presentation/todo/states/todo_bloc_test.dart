@@ -86,7 +86,7 @@ void main() {
       test('set', () async {
         todo = Todo(description: 'Write some tests');
         final TodoBloc bloc = TodoBloc(todo: todo);
-        bloc.add(const TodoPriorityAdded('A'));
+        bloc.add(const TodoPriorityAdded(Priority.A));
 
         await expectLater(
           bloc.stream,
@@ -94,7 +94,28 @@ void main() {
             TodoChange(
               todo: Todo(
                 id: todo.id,
-                priority: 'A',
+                priority: Priority.A,
+                description: todo.description,
+              ),
+            )
+          ]),
+        );
+      });
+      test('set (update)', () async {
+        todo = Todo(
+          priority: Priority.A,
+          description: 'Write some tests',
+        );
+        final TodoBloc bloc = TodoBloc(todo: todo);
+        bloc.add(const TodoPriorityAdded(Priority.B));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            TodoChange(
+              todo: Todo(
+                id: todo.id,
+                priority: Priority.B,
                 description: todo.description,
               ),
             )
@@ -104,7 +125,7 @@ void main() {
     });
     group('TodoPriorityRemoved', () {
       test('unset', () async {
-        todo = Todo(priority: 'A', description: 'Write some tests');
+        todo = Todo(priority: Priority.A, description: 'Write some tests');
         final TodoBloc bloc = TodoBloc(todo: todo);
         bloc.add(const TodoPriorityRemoved());
 
@@ -114,6 +135,25 @@ void main() {
             TodoChange(
               todo: Todo(
                 id: todo.id,
+                priority: Priority.none,
+                description: todo.description,
+              ),
+            )
+          ]),
+        );
+      });
+      test('unset (not set)', () async {
+        todo = Todo(description: 'Write some tests');
+        final TodoBloc bloc = TodoBloc(todo: todo);
+        bloc.add(const TodoPriorityRemoved());
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            TodoChange(
+              todo: Todo(
+                id: todo.id,
+                priority: Priority.none,
                 description: todo.description,
               ),
             )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
@@ -24,21 +25,21 @@ class TodoFullStringTextField extends StatelessWidget {
               runSpacing: 0.0, // gap between lines
               children: <Widget>[
                 if (state.todo.completion == true)
-                  _buildText(context, state.todo.formattedCompletion),
+                  _buildText(context, state.todo.fmtCompletion),
                 if (state.todo.completionDate != null)
-                  _buildText(context, state.todo.formattedCompletionDate),
-                if (state.todo.priority != null)
-                  _buildText(context, state.todo.formattedPriority),
+                  _buildText(context, state.todo.fmtCompletionDate),
+                if (state.todo.priority != Priority.none)
+                  _buildText(context, state.todo.fmtPriority),
                 if (state.todo.creationDate != null)
-                  _buildText(context, state.todo.formattedCreationDate),
+                  _buildText(context, state.todo.fmtCreationDate),
                 IntrinsicWidth(
                     child: TodoDescriptionTextField(focusNode: focusNode)),
                 if (state.todo.projects.isNotEmpty)
-                  _buildText(context, state.todo.formattedProjects.join(' ')),
+                  _buildText(context, state.todo.fmtProjects.join(' ')),
                 if (state.todo.contexts.isNotEmpty)
-                  _buildText(context, state.todo.formattedContexts.join(' ')),
+                  _buildText(context, state.todo.fmtContexts.join(' ')),
                 if (state.todo.keyValues.isNotEmpty)
-                  _buildText(context, state.todo.formattedKeyValues.join(' ')),
+                  _buildText(context, state.todo.fmtKeyValues.join(' ')),
               ],
             ),
           ),

@@ -95,7 +95,7 @@ void main() {
         tester.view.devicePixelRatio = 1.0;
 
         await tester.pumpWidget(TodoEditPageMaterialApp(
-          todo: Todo(priority: 'A', description: 'Code something'),
+          todo: Todo(priority: Priority.A, description: 'Code something'),
         ));
         await tester.pump();
 

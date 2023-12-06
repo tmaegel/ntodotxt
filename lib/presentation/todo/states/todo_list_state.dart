@@ -48,12 +48,12 @@ extension TodoFilter on TodoListFilter {
   }
 
   /// Return todo list filtered by priority.
-  Iterable<Todo> applyPriority(Iterable<Todo> todoList, String? priority) {
+  Iterable<Todo> applyPriority(Iterable<Todo> todoList, Priority? priority) {
     return todoList.where((todo) => (priority == todo.priority));
   }
 
   Iterable<Todo> applyPriorityExcludeCompleted(
-      Iterable<Todo> todoList, String? priority) {
+      Iterable<Todo> todoList, Priority? priority) {
     return todoList
         .where((todo) => (priority == todo.priority && !todo.completion));
   }
@@ -153,13 +153,17 @@ extension TodoGroupBy on TodoListGroupBy {
 
   Map<String, Iterable<Todo>?> groupByPriority({
     required Iterable<Todo> todoList,
-    required Set<String?> sections,
+    required Set<Priority> sections,
   }) {
     Map<String, Iterable<Todo>> groups = {};
     for (var p in sections) {
       final Iterable<Todo> items =
           todoList.where((t) => t.priority == p && !t.completion);
-      groups[p ?? 'No priority'] = items;
+      if (p == Priority.none) {
+        groups['No priority'] = items;
+      } else {
+        groups[p.name] = items;
+      }
     }
     groups['Done'] = todoList.where((t) => t.completion);
     groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
@@ -227,9 +231,10 @@ sealed class TodoListState extends Equatable {
     this.todoList = const [],
   });
 
-  /// Returns a list with all priorities including 'no priority' of all todos.
-  Set<String?> get priorities {
-    Set<String?> priorities = {};
+  /// Returns a list with all priorities
+  /// including 'Priority.none' of all todos.
+  Set<Priority> get priorities {
+    Set<Priority> priorities = {};
     for (var todo in filteredTodoList) {
       priorities.add(todo.priority);
     }
@@ -261,7 +266,7 @@ sealed class TodoListState extends Equatable {
   Set<String> get keyValues {
     Set<String> keyValues = {};
     for (var todo in filteredTodoList) {
-      keyValues.addAll(todo.formattedKeyValues);
+      keyValues.addAll(todo.fmtKeyValues);
     }
 
     return order.sort(keyValues).toSet();

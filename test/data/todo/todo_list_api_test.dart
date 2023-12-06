@@ -170,7 +170,7 @@ void main() {
         final Todo todo = Todo.fromString(value: todoStr);
         final Todo todo2 = Todo.fromString(value: todoStr2);
         // Get diff for changes.
-        final Todo todoDiff = todo.copyDiff(priority: 'A');
+        final Todo todoDiff = todo.copyDiff(priority: Priority.A);
         // Simulate changes
         await file.writeAsString(todoStr2, flush: true);
 
@@ -181,7 +181,7 @@ void main() {
         await expectLater(
           repository.getTodoList(),
           emitsInOrder([
-            [todo2.copyWith(priority: 'A')],
+            [todo2.copyWith(priority: Priority.A)],
           ]),
         );
 

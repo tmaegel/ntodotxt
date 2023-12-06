@@ -31,11 +31,14 @@ void main() {
     group("priority", () {
       test("no initial priority", () {
         final todo = Todo(description: 'Write some tests');
-        expect(todo.priority, null);
+        expect(todo.priority, Priority.none);
       });
       test("with initial priority", () {
-        final todo = Todo(priority: 'A', description: 'Write some tests');
-        expect(todo.priority, 'A');
+        final todo = Todo(
+          priority: Priority.A,
+          description: 'Write some tests',
+        );
+        expect(todo.priority, Priority.A);
       });
     });
 
@@ -90,12 +93,14 @@ void main() {
     group("keyValues", () {
       test("no initial keyValues", () {
         final Todo todo = Todo(description: 'Write some tests');
-        expect(todo.keyValues, {'id': todo.id});
+        expect(todo.keyValues, {});
       });
       test("with initial keyValues", () {
         final Todo todo = Todo(
-            description: 'Write some tests', keyValues: const {'key': 'value'});
-        expect(todo.keyValues, {'key': 'value', 'id': todo.id});
+          description: 'Write some tests',
+          keyValues: const {'key': 'value'},
+        );
+        expect(todo.keyValues, {'key': 'value'});
       });
     });
 
@@ -139,13 +144,16 @@ void main() {
     group("priority", () {
       test("set priority", () {
         final Todo todo = Todo(description: 'Write some tests');
-        final todo2 = todo.copyWith(priority: 'A');
-        expect(todo2.priority, 'A');
+        final todo2 = todo.copyWith(priority: Priority.A);
+        expect(todo2.priority, Priority.A);
       });
       test("unset priority", () {
-        final Todo todo = Todo(priority: 'A', description: 'Write some tests');
-        final todo2 = todo.copyWith(priority: '');
-        expect(todo2.priority, null);
+        final Todo todo = Todo(
+          priority: Priority.A,
+          description: 'Write some tests',
+        );
+        final todo2 = todo.copyWith(priority: Priority.none);
+        expect(todo2.priority, Priority.none);
       });
     });
 
@@ -194,13 +202,13 @@ void main() {
       test("set keyValues", () {
         final Todo todo = Todo(description: 'Write some tests');
         final todo2 = todo.copyWith(keyValues: const {'key': 'value'});
-        expect(todo2.keyValues, {'key': 'value', 'id': todo.id});
+        expect(todo2.keyValues, {'key': 'value'});
       });
       test("unset keyValues", () {
         final Todo todo =
             Todo(description: 'Write some tests', keyValues: const {});
         final todo2 = todo.copyWith(contexts: const {});
-        expect(todo2.keyValues, {'id': todo.id});
+        expect(todo2.keyValues, {});
       });
     });
 
@@ -221,12 +229,15 @@ void main() {
   group("todo copyDiff()", () {
     test("copy explizit set attributes but keep creationDate if set", () {
       final DateTime now = DateTime.now();
-      final Todo todo = Todo(priority: 'A', description: 'Write some tests');
+      final Todo todo = Todo(
+        priority: Priority.A,
+        description: 'Write some tests',
+      );
       final Todo todo2 = todo.copyDiff(completion: true);
       expect(todo2.completion, true);
       expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
       expect(todo2.creationDate, DateTime(now.year, now.month, now.day));
-      expect(todo2.priority, null);
+      expect(todo2.priority, Priority.none);
       expect(todo2.description, '');
     });
   });
@@ -236,7 +247,7 @@ void main() {
       final DateTime now = DateTime.now();
       Todo todo = Todo(
         completion: false,
-        priority: 'A',
+        priority: Priority.A,
         creationDate: now,
         description: 'Write some tests',
         projects: const {'project1'},
@@ -246,7 +257,7 @@ void main() {
       );
       final Todo diff = todo.copyDiff(completion: true);
       todo = todo.copyWith(
-        priority: 'B',
+        priority: Priority.B,
         description: 'Write more tests',
         projects: const {'project2'},
         contexts: const {'context2'},
@@ -254,11 +265,11 @@ void main() {
         selected: true,
       );
       final Todo todo2 = diff.copyMerge(todo);
-      expect(todo2.priority, 'B');
+      expect(todo2.priority, Priority.B);
       expect(todo2.description, 'Write more tests');
       expect(todo2.projects, {'project2'});
       expect(todo2.contexts, {'context2'});
-      expect(todo2.keyValues, {'key2': 'value2', 'id': todo.id});
+      expect(todo2.keyValues, {'key2': 'value2'});
       expect(todo2.selected, true);
       expect(todo2.completion, true);
       expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
@@ -324,81 +335,81 @@ void main() {
       group("with priority", () {
         test("incompleted short todo (RangeError)", () {
           final todo = Todo.fromString(value: "(A) Todo");
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
         });
         test("incompleted simple todo (RangeError)", () {
           final todo = Todo.fromString(value: "(A) Write some tests");
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
         });
         test("incompleted full todo", () {
           final todo = Todo.fromString(
             value:
                 "(A) 2022-11-16 Write some tests +project @context due:2022-12-31",
           );
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
         });
         test("completed short todo (RangeError)", () {
           final todo = Todo.fromString(value: "x 2022-11-16 (A) Todo");
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
         });
         test("completed simple todo", () {
           final todo =
               Todo.fromString(value: "x 2022-11-16 (A) Write some tests");
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
         });
         test("completed full todo", () {
           final todo = Todo.fromString(
             value:
                 "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
           );
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
         });
       });
       group("without priority", () {
         test("incompleted short todo (RangeError)", () {
           final todo = Todo.fromString(value: "Todo");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("incompleted simple todo", () {
           final todo = Todo.fromString(value: "Write some tests");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("incompleted full todo", () {
           final todo = Todo.fromString(
               value:
                   "2022-11-16 Write some tests +project @context due:2022-12-31");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("completed short todo (RangeError)", () {
           final todo = Todo.fromString(value: "x 2022-11-16 Todo");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("completed simple todo", () {
           final todo = Todo.fromString(value: "x 2022-11-16 Write some tests");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("completed full todo", () {
           final todo = Todo.fromString(
             value:
                 "x 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
           );
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("missing parenthesis", () {
           final todo = Todo.fromString(value: "A Write some tests");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("missing whitespace", () {
           final todo = Todo.fromString(value: "(A)Write some tests");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("wrong priority sign", () {
           final todo = Todo.fromString(value: "(a) Write some tests");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
         test("wrong position", () {
           final todo = Todo.fromString(value: "Write some tests (A)");
-          expect(todo.priority, null);
+          expect(todo.priority, Priority.none);
         });
       });
     });
@@ -494,7 +505,7 @@ void main() {
           final todo = Todo.fromString(
             value: "(A) 2022-11-16 2022-11-01 Write some tests",
           );
-          expect(todo.priority, "A");
+          expect(todo.priority, Priority.A);
           expect(todo.completionDate, null);
           expect(todo.creationDate, DateTime.parse("2022-11-16"));
           expect(todo.description, "2022-11-01 Write some tests");
@@ -637,69 +648,69 @@ void main() {
     group("todo key values", () {
       test("no key value tag", () {
         final todo = Todo.fromString(value: "Write some tests");
-        expect(todo.keyValues, {"id": todo.id});
+        expect(todo.keyValues, {});
       });
       test("single key value tag", () {
         final todo = Todo.fromString(value: "Write some tests key:value");
-        expect(todo.keyValues, {"key": "value", "id": todo.id});
+        expect(todo.keyValues, {"key": "value"});
       });
       test("multiple key value tags", () {
         final todo =
             Todo.fromString(value: "Write some tests key1:value1 key2:value2");
-        expect(todo.keyValues,
-            {"key1": "value1", "key2": "value2", "id": todo.id});
+        expect(todo.keyValues, {"key1": "value1", "key2": "value2"});
       });
       test("multiple key value tags (not in sequence)", () {
         final todo =
             Todo.fromString(value: "Write some key1:value1 tests key2:value2");
-        expect(todo.keyValues,
-            {"key1": "value1", "key2": "value2", "id": todo.id});
+        expect(todo.keyValues, {"key1": "value1", "key2": "value2"});
       });
       test("key value tag with a special name", () {
         final todo =
             Todo.fromString(value: "Write some tests key-@_123:value_@123");
-        expect(todo.keyValues, {"key-@_123": "value_@123", "id": todo.id});
+        expect(todo.keyValues, {"key-@_123": "value_@123"});
       });
       test("key value tag with a name in capital letters", () {
         final todo = Todo.fromString(value: "Write some tests Key:Value");
-        expect(todo.keyValues, {"key": "value", "id": todo.id});
+        expect(todo.keyValues, {
+          "key": "value",
+        });
       });
       test("key value tag with key value duplication", () {
         final todo =
             Todo.fromString(value: "Write some tests key:value key:value");
-        expect(todo.keyValues, {"key": "value", "id": todo.id});
+        expect(todo.keyValues, {"key": "value"});
       });
       test("invalid key value tag", () {
         final todo =
             Todo.fromString(value: "Write some tests key1:value1:invalid");
-        expect(todo.keyValues, {"id": todo.id});
+        expect(todo.keyValues, {});
       });
       test("incompleted full todo", () {
         final todo = Todo.fromString(
           value: "2022-11-01 Write some tests +project @context due:2022-12-31",
         );
-        expect(todo.keyValues, {"due": "2022-12-31", "id": todo.id});
+        expect(todo.keyValues, {"due": "2022-12-31"});
       });
       test("incompleted with priority full todo", () {
         final todo = Todo.fromString(
           value:
               "(A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
-        expect(todo.keyValues, {"due": "2022-12-31", "id": todo.id});
+        expect(todo.keyValues, {"due": "2022-12-31"});
       });
       test("completed full todo", () {
         final todo = Todo.fromString(
           value:
               "x 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
-        expect(todo.keyValues, {"due": "2022-12-31", "id": todo.id});
+        expect(todo.keyValues, {"due": "2022-12-31"});
       });
       test("completed with priority full todo", () {
         final todo = Todo.fromString(
           value:
               "x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31",
         );
-        expect(todo.keyValues, {"due": "2022-12-31", "id": todo.id});
+        expect(todo.keyValues, {"due": "2022-12-31"});
       });
     });
 

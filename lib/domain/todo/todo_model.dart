@@ -2,6 +2,30 @@ import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 import 'package:uuid/uuid.dart';
 
+enum Priority { none, A, B, C, D, E, F }
+
+extension Priorities on Priority {
+  static Set<Priority> get priorities => {
+        for (var p in Priority.values)
+          if (p != Priority.none) p,
+      };
+
+  static Set<String> get priorityNames => {
+        for (var p in Priority.values)
+          if (p != Priority.none) p.name,
+      };
+
+  static Priority byName(String name) {
+    try {
+      return Priority.values.byName(name);
+    } on Exception {
+      // Returns Priortity.none
+    }
+
+    return Priority.none;
+  }
+}
+
 ///
 /// Structure of a valid todo string
 /// with some modification (https://github.com/todotxt/todo.txt/discussions/52)
@@ -42,6 +66,9 @@ class Todo extends Equatable {
   static final RegExp patternProject = RegExp(r'^\+\S+$');
   static final RegExp patternContext = RegExp(r'^\@\S+$');
   static final RegExp patternKeyValue = RegExp(r'^\S+:\S+$');
+  static final RegExp patternId = RegExp(r'^id:\S+$');
+
+  final String id;
 
   /// Whether the [Todo] is completed.
   /// Defaults to null (unset).
@@ -50,7 +77,7 @@ class Todo extends Equatable {
   /// The priority of the [Todo].
   /// Priorities are A, B, C, ...
   /// Defaults to null (empty, unset).
-  final String? _priority;
+  final Priority? _priority;
 
   /// The completion date of the [Todo].
   /// Defaults to null (unset).
@@ -81,45 +108,38 @@ class Todo extends Equatable {
   /// Defaults to null (unset).
   final bool? _selected;
 
-  /// Returns the uniqzue [id] of the [Todo]
-  /// stored in the [keyValues].
-  String get id {
-    if (keyValues.containsKey('id')) {
-      if (keyValues['id'] != null) {
-        return keyValues['id']!;
-      }
-    }
-
-    final String id = const Uuid().v4().toString();
-    keyValues['id'] = id;
-
-    return id;
-  }
+  String get fmtId => 'id:$id';
 
   /// Whether the [Todo] is completed.
   /// Defaults to false.
   bool get completion => _completion ?? false;
 
+  String get fmtCompletion => completion ? 'x' : '';
+
   /// The priority of the [Todo].
   /// Allowed values are A, B, C, ... or null (no empty string).
   /// Empty string value is used to reset the priority.
-  String? get priority {
-    if (_priority != null) {
-      if (_priority!.isNotEmpty) {
-        return _priority;
-      }
+  Priority get priority => _priority ?? Priority.none;
+
+  String get fmtPriority {
+    if (priority == Priority.none) {
+      return '';
     }
 
-    return null;
+    return '(${priority.name})';
   }
 
   /// The completion date of the [Todo].
   /// Defaults to null.
   DateTime? get completionDate => _completionDate;
 
+  String get fmtCompletionDate => date2Str(completionDate) ?? '';
+
   /// The creation date of the [Todo].
   /// Defaults to null.
   DateTime? get creationDate => _creationDate;
+
+  String get fmtCreationDate => date2Str(creationDate) ?? '';
 
   /// The description of the [Todo].
   /// Returns the description or an empty string (if null).
@@ -129,13 +149,20 @@ class Todo extends Equatable {
   /// Defaults to an empty [Set].
   Set<String> get projects => _projects ?? const {};
 
+  Set<String> get fmtProjects => {for (var p in projects) "+$p"};
+
   /// The list of contexts of the [Todo].
   /// Defaults to an empty [Set].
   Set<String> get contexts => _contexts ?? const {};
 
+  Set<String> get fmtContexts => {for (var c in contexts) "@$c"};
+
   /// The list of key value pairs of the [Todo].
   /// Defaults to an empty [Map].
   Map<String, String> get keyValues => _keyValues ?? const {};
+
+  Set<String> get fmtKeyValues =>
+      {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
 
   /// Flag that indicates whether the [Todo]
   /// was selected in the list.
@@ -150,34 +177,16 @@ class Todo extends Equatable {
     return null;
   }
 
-  String get formattedCompletion => completion ? 'x' : '';
-
-  String get formattedPriority {
-    if (priority != null) {
-      return '($priority)';
-    }
-
-    return '';
+  String get fmtDueDate {
+    final String? dueDateStr = date2Str(dueDate);
+    return dueDateStr != null ? 'due:$dueDateStr' : '';
   }
-
-  String get formattedCompletionDate => date2Str(completionDate) ?? '';
-
-  String get formattedCreationDate => date2Str(creationDate) ?? '';
-
-  Set<String> get formattedProjects => {for (var p in projects) "+$p"};
-
-  Set<String> get formattedContexts => {for (var c in contexts) "@$c"};
-
-  Set<String> get formattedKeyValues => {
-        // Exclude id from key-values.
-        for (var k in keyValues.keys)
-          if (k != 'id') "$k:${keyValues[k]}"
-      };
 
   // Core todo constructor with validation logic.
   Todo._({
+    required this.id,
     bool? completion,
-    String? priority,
+    Priority? priority,
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
@@ -222,16 +231,11 @@ class Todo extends Equatable {
       }
     }
     // Validate key value tags.
-    if (keyValues == null) {
-      throw const TodoMissingId();
-    } else {
+    if (keyValues != null) {
       for (MapEntry<String, String> kv in keyValues.entries) {
         if (!patternWord.hasMatch(kv.key) || !patternWord.hasMatch(kv.value)) {
           throw TodoInvalidKeyValueTag(tag: '${kv.key}:${kv.value}');
         }
-      }
-      if (!keyValues.containsKey('id')) {
-        throw const TodoMissingId();
       }
     }
   }
@@ -240,7 +244,7 @@ class Todo extends Equatable {
   factory Todo({
     String? id,
     bool? completion,
-    String? priority,
+    Priority? priority,
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
@@ -280,22 +284,15 @@ class Todo extends Equatable {
         for (var c in contexts) c.toLowerCase(),
       };
     }
-    if (keyValues == null) {
-      // To make each todo unique store an id as key-value pair is necessary.
-      keyValues = {};
-      keyValues['id'] = id ?? const Uuid().v4().toString();
-    } else {
+    if (keyValues != null) {
       keyValues = {
         for (MapEntry<String, String> kv in keyValues.entries)
           kv.key.toLowerCase(): kv.value.toLowerCase()
       };
-      // To make each todo unique store an id as key-value pair is necessary.
-      if (!keyValues.containsKey('id')) {
-        keyValues['id'] = id ?? const Uuid().v4().toString();
-      }
     }
 
     return Todo._(
+      id: id ?? const Uuid().v4().toString(),
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -314,7 +311,7 @@ class Todo extends Equatable {
   }) {
     final todoStr = _trim(value); // Trim first.
     bool completion;
-    String? priority;
+    Priority? priority;
     DateTime? completionDate;
     DateTime? creationDate;
     List<String>? fullDescriptionList;
@@ -325,7 +322,7 @@ class Todo extends Equatable {
       completionDate = str2date(_todoStringElementAt(todoStr, 1));
       priority = _str2priority(_todoStringElementAt(todoStr, 2));
       // x <completionDate> [<priority>] [<creationDate>] <fullDescription>
-      if (priority == null) {
+      if (priority == Priority.none) {
         creationDate = str2date(_todoStringElementAt(todoStr, 2));
       } else {
         creationDate = str2date(_todoStringElementAt(todoStr, 3));
@@ -333,7 +330,7 @@ class Todo extends Equatable {
     } else {
       priority = _str2priority(_todoStringElementAt(todoStr, 0));
       // [<priority>] [<creationDate>] <fullDescription>
-      if (priority == null) {
+      if (priority == Priority.none) {
         // The provided date is the creation date (todo incompleted).
         creationDate = str2date(_todoStringElementAt(todoStr, 0));
       } else {
@@ -347,13 +344,14 @@ class Todo extends Equatable {
     // Get beginning of description.
     int descriptionIndex = 0;
     for (var prop in [completion, completionDate, priority, creationDate]) {
-      if (prop != null && prop != false) {
+      if (prop != null && prop != false && prop != Priority.none) {
         descriptionIndex += 1;
       }
     }
     fullDescriptionList = _fullDescriptionList(todoStr, descriptionIndex);
 
     return Todo(
+      id: _str2Id(fullDescriptionList) ?? const Uuid().v4().toString(),
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -368,7 +366,7 @@ class Todo extends Equatable {
   /// A regular copyWith function.
   Todo copyWith({
     bool? completion,
-    String? priority,
+    Priority? priority,
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
@@ -396,7 +394,7 @@ class Todo extends Equatable {
   /// The other values remain to null.
   Todo copyDiff({
     bool? completion,
-    String? priority,
+    Priority? priority,
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
@@ -434,17 +432,14 @@ class Todo extends Equatable {
       description: _description ?? todo.description,
       projects: _projects ?? todo.projects,
       contexts: _contexts ?? todo.contexts,
-      keyValues: _keyValues == null
-          ? todo.keyValues
-          : (_keyValues!.length == 1 && _keyValues!.containsKey('id'))
-              ? todo.keyValues
-              : _keyValues,
+      keyValues: _keyValues ?? todo.keyValues,
       selected: _selected ?? todo.selected,
     );
   }
 
   @override
   List<Object?> get props => [
+        id,
         completion,
         completionDate,
         priority,
@@ -458,18 +453,15 @@ class Todo extends Equatable {
 
   @override
   String toString() {
-    final Set<String> keyValuesStringSet = {
-      for (var k in keyValues.keys) "$k:${keyValues[k]}"
-    };
     final List<String?> items = [
-      formattedCompletion,
-      formattedCompletionDate,
-      formattedPriority,
-      formattedCreationDate,
+      fmtCompletion,
+      fmtCompletionDate,
+      fmtPriority,
+      fmtCreationDate,
       description,
-      formattedProjects.isNotEmpty ? formattedProjects.join(' ') : null,
-      formattedContexts.isNotEmpty ? formattedContexts.join(' ') : null,
-      keyValuesStringSet.isNotEmpty ? keyValuesStringSet.join(' ') : null,
+      fmtProjects.isNotEmpty ? fmtProjects.join(' ') : null,
+      fmtContexts.isNotEmpty ? fmtContexts.join(' ') : null,
+      fmtKeyValues.isNotEmpty ? '${fmtKeyValues.join(' ')} $fmtId' : fmtId,
     ]..removeWhere(
         (value) {
           if (value == null) {
@@ -523,20 +515,23 @@ class Todo extends Equatable {
     return value == 'x';
   }
 
-  static String? _str2priority(String value) {
+  static Priority _str2priority(String value) {
     RegExpMatch? match = patternPriority.firstMatch(value);
     if (match != null) {
-      return match.namedGroup("priority");
-    } else {
-      // Priority is optional.
-      return null;
+      String? priority = match.namedGroup("priority");
+      if (priority != null) {
+        return Priorities.byName(priority);
+      }
     }
+
+    // Priority is optional.
+    return Priority.none;
   }
 
   /// Trim projects, contexts and key-values from description.
-  static String _str2description(List<String> descriptionList) {
+  static String _str2description(List<String> strList) {
     final String description = _trim(
-      descriptionList
+      strList
           .join(' ')
           .replaceAll(RegExp(r'\+\S+'), '')
           .replaceAll(RegExp(r'\@\S+'), '')
@@ -549,9 +544,9 @@ class Todo extends Equatable {
     return description;
   }
 
-  static Set<String>? _str2projects(List<String> fullDescriptionList) {
+  static Set<String>? _str2projects(List<String> strList) {
     Set<String> projects = {};
-    for (var project in fullDescriptionList) {
+    for (var project in strList) {
       if (patternProject.hasMatch(project)) {
         projects.add(project.substring(1)); // strip the leading '+'
       }
@@ -560,9 +555,9 @@ class Todo extends Equatable {
     return projects.isNotEmpty ? projects : null;
   }
 
-  static Set<String>? _str2contexts(List<String> fullDescriptionList) {
+  static Set<String>? _str2contexts(List<String> strList) {
     Set<String> contexts = {};
-    for (var context in fullDescriptionList) {
+    for (var context in strList) {
       if (patternContext.hasMatch(context)) {
         contexts.add(context.substring(1)); // strip the leading '@'
       }
@@ -571,18 +566,30 @@ class Todo extends Equatable {
     return contexts.isNotEmpty ? contexts : null;
   }
 
-  static Map<String, String>? _str2keyValues(List<String> fullDescriptionList) {
+  static Map<String, String>? _str2keyValues(List<String> strList) {
     Map<String, String> keyValues = {};
 
-    for (var keyValue in fullDescriptionList) {
+    for (var keyValue in strList) {
       if (patternKeyValue.hasMatch(keyValue)) {
         final List<String> splittedKeyValue = keyValue.split(":");
         if (splittedKeyValue.length > 2) continue;
+        if (splittedKeyValue[0] == 'id') continue; // Exclude id here.
         keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
       }
     }
 
     return keyValues.isNotEmpty ? keyValues : null;
+  }
+
+  static String? _str2Id(List<String> strList) {
+    for (var item in strList) {
+      if (patternId.hasMatch(item)) {
+        final List<String> splittedId = item.split(":");
+        return splittedId[1];
+      }
+    }
+
+    return null;
   }
 
   static DateTime? str2date(String value) {

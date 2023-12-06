@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/constants/todo.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
@@ -57,7 +56,7 @@ class TodoPriorityTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoPriorityAdded(value));
+      context.read<TodoBloc>().add(TodoPriorityAdded(Priorities.byName(value)));
     } else {
       context.read<TodoBloc>().add(const TodoPriorityRemoved());
     }
@@ -79,8 +78,8 @@ class TodoPriorityTags extends TodoTagSection {
           ),
           title: _buildChips(
             context: context,
-            tags: priorities,
-            selectedTags: {state.todo.priority},
+            tags: Priorities.priorityNames,
+            selectedTags: {state.todo.priority.name},
           ),
         );
       },
@@ -255,8 +254,8 @@ class TodoKeyValueTags extends TodoTagSection {
           ),
           title: _buildChips(
             context: context,
-            tags: state.todo.formattedKeyValues,
-            selectedTags: state.todo.formattedKeyValues,
+            tags: state.todo.fmtKeyValues,
+            selectedTags: state.todo.fmtKeyValues,
           ),
           trailing: IconButton(
             icon: const Icon(Icons.add),
@@ -320,7 +319,7 @@ class TodoCompletionDateItem extends StatelessWidget {
           ),
           title: Text(
             state.todo.completionDate != null
-                ? state.todo.formattedCompletionDate
+                ? state.todo.fmtCompletionDate
                 : 'no completion date',
           ),
         );
@@ -348,7 +347,7 @@ class TodoCreationDateItem extends StatelessWidget {
           ),
           title: Text(
             state.todo.creationDate != null
-                ? state.todo.formattedCreationDate
+                ? state.todo.fmtCreationDate
                 : Todo.date2Str(DateTime.now())!,
           ),
         );

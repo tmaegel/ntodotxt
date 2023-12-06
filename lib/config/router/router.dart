@@ -104,7 +104,7 @@ class AppRouter {
                         .state
                         .keyValues
                         .where((c) =>
-                            !todo.formattedKeyValues.contains(c) &&
+                            !todo.fmtKeyValues.contains(c) &&
                             !c.startsWith('due:'))
                         .toSet(),
                   );
