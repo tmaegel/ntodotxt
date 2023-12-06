@@ -346,6 +346,61 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
+      testWidgets('remove', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+            keyValues: const {'due': '2023-12-31'},
+          ),
+        ));
+        await tester.pump();
+
+        Finder todoDueDateTileFinder = find.ancestor(
+          of: find.byTooltip('Due date'),
+          matching: find.byType(ListTile),
+        );
+        expect(todoDueDateTileFinder, findsOneWidget);
+
+        Finder todoKeyValuesTileFinder = find.ancestor(
+          of: find.byTooltip('Key values'),
+          matching: find.byType(ListTile),
+        );
+        expect(todoKeyValuesTileFinder, findsOneWidget);
+
+        Finder addUnsetDueDateFinder = find.descendant(
+          of: todoDueDateTileFinder,
+          matching: find.byTooltip('Unset due date'),
+        );
+        expect(addUnsetDueDateFinder, findsOneWidget);
+        await tester.tap(addUnsetDueDateFinder); // Unset due date button.
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: todoDueDateTileFinder,
+            matching: find.byWidgetPredicate(
+              (Widget widget) => widget is Text && widget.data == 'no due date',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: todoKeyValuesTileFinder,
+            matching:
+                find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
     });
 
     group('project', () {
