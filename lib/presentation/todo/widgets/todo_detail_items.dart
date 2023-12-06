@@ -268,38 +268,6 @@ class TodoKeyValueTags extends TodoTagSection {
   }
 }
 
-class TodoCompletionItem extends StatelessWidget {
-  const TodoCompletionItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
-      buildWhen: (TodoState previousState, TodoState state) {
-        return previousState.todo.completion != state.todo.completion;
-      },
-      builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          minLeadingWidth: 40,
-          leading: const Tooltip(
-            message: 'Completion',
-            child: Icon(Icons.check_circle_outline),
-          ),
-          trailing: Checkbox(
-            value: state.todo.completion,
-            onChanged: (bool? completion) {
-              context.read<TodoBloc>().add(
-                    TodoCompletionToggled(completion ?? false),
-                  );
-            },
-          ),
-          title: Text(state.todo.completion ? 'Completed' : 'Incompleted'),
-        );
-      },
-    );
-  }
-}
-
 class TodoCompletionDateItem extends StatelessWidget {
   const TodoCompletionDateItem({super.key});
 
@@ -320,7 +288,18 @@ class TodoCompletionDateItem extends StatelessWidget {
           title: Text(
             state.todo.completionDate != null
                 ? state.todo.fmtCompletionDate
-                : 'no completion date',
+                : 'Incompleted',
+          ),
+          trailing: Tooltip(
+            message: state.todo.completion == true ? 'Undone' : 'Done',
+            child: Checkbox(
+              value: state.todo.completion,
+              onChanged: (bool? completion) {
+                context.read<TodoBloc>().add(
+                      TodoCompletionToggled(completion ?? false),
+                    );
+              },
+            ),
           ),
         );
       },

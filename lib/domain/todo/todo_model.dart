@@ -278,12 +278,14 @@ class Todo extends Equatable {
 
     if (projects != null) {
       projects = {
-        for (var p in projects) p.toLowerCase(),
+        for (var p in projects)
+          p.startsWith('+') ? p.substring(1).toLowerCase() : p.toLowerCase(),
       };
     }
     if (contexts != null) {
       contexts = {
-        for (var c in contexts) c.toLowerCase(),
+        for (var c in contexts)
+          c.startsWith('@') ? c.substring(1).toLowerCase() : c.toLowerCase(),
       };
     }
     if (keyValues != null) {

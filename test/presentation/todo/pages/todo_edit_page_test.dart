@@ -27,67 +27,6 @@ Future safeTapByFinder(WidgetTester tester, Finder finder) async {
 
 void main() {
   group('Todo edit', () {
-    group('completion', () {
-      testWidgets('set', (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 1600);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(TodoEditPageMaterialApp(
-          todo: Todo(completion: true, description: 'Code something'),
-        ));
-        await tester.pump();
-
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Completion'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
-        expect(
-          find.descendant(
-            of: todoAttrTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Checkbox && widget.value == true,
-            ),
-          ),
-          findsOneWidget,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('unset', (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 1600);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(TodoEditPageMaterialApp(
-          todo: Todo(completion: false, description: 'Code something'),
-        ));
-        await tester.pump();
-
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Completion'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
-        expect(
-          find.descendant(
-            of: todoAttrTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Checkbox && widget.value == false,
-            ),
-          ),
-          findsOneWidget,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-    });
-
     group('priority', () {
       testWidgets('set', (tester) async {
         // Increase size to ensure all elements in list are visible.
@@ -153,7 +92,7 @@ void main() {
       });
     });
 
-    group('completion date', () {
+    group('completion & completion date', () {
       testWidgets('set', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
@@ -172,6 +111,15 @@ void main() {
           matching: find.byType(ListTile),
         );
         expect(todoAttrTileFinder, findsOneWidget);
+        expect(
+          find.descendant(
+            of: todoAttrTileFinder,
+            matching: find.byWidgetPredicate(
+              (Widget widget) => widget is Checkbox && widget.value == true,
+            ),
+          ),
+          findsOneWidget,
+        );
         expect(
           find.descendant(
             of: todoAttrTileFinder,
@@ -205,8 +153,16 @@ void main() {
           find.descendant(
             of: todoAttrTileFinder,
             matching: find.byWidgetPredicate(
-              (Widget widget) =>
-                  widget is Text && widget.data == 'no completion date',
+              (Widget widget) => widget is Checkbox && widget.value == false,
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: todoAttrTileFinder,
+            matching: find.byWidgetPredicate(
+              (Widget widget) => widget is Text && widget.data == 'Incompleted',
             ),
           ),
           findsOneWidget,
