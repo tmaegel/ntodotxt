@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
-import 'package:uuid/uuid.dart';
 
 enum Priority { none, A, B, C, D, E, F }
 
@@ -296,7 +297,7 @@ class Todo extends Equatable {
     }
 
     return Todo._(
-      id: id ?? const Uuid().v4().toString(),
+      id: id ?? Todo.genId(),
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -375,7 +376,7 @@ class Todo extends Equatable {
     }
 
     return Todo(
-      id: id ?? (_str2Id(fullDescriptionList) ?? const Uuid().v4().toString()),
+      id: id ?? (_str2Id(fullDescriptionList) ?? Todo.genId()),
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -497,6 +498,13 @@ class Todo extends Equatable {
     }
 
     return todoStr;
+  }
+
+  static String genId({int len = 10}) {
+    final Random r = Random();
+    const chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
   }
 
   static String _trim(String value) {

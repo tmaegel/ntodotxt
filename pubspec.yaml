@@ -24,7 +24,6 @@ dependencies:
   rxdart: ^0.27.7
   shared_preferences: ^2.2.1
   url_launcher: ^6.2.1
-  uuid: ^4.2.1
   webdav_client: ^1.2.1
 
 dev_dependencies:
