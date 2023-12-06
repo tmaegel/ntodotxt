@@ -1,11 +1,20 @@
 import 'package:equatable/equatable.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 
 sealed class TodoEvent extends Equatable {
   const TodoEvent();
 
   @override
   List<Object?> get props => [];
+}
+
+final class TodoRefreshed extends TodoEvent {
+  final Todo todo;
+
+  const TodoRefreshed(this.todo);
+
+  @override
+  List<Object> get props => [todo];
 }
 
 final class TodoCompletionToggled extends TodoEvent {

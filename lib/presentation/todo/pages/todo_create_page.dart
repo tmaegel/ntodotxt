@@ -49,7 +49,7 @@ class TodoCreatePage extends StatelessWidget {
             builder: (BuildContext context, TodoState state) {
               return Scaffold(
                 appBar: const MainAppBar(
-                  title: "Create",
+                  title: "Add",
                 ),
                 body: _buildBody(),
                 floatingActionButton: state.todo.description.isNotEmpty
@@ -82,7 +82,7 @@ class TodoCreatePage extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-              const TodoFullStringTextField(),
+              const TodoStringTextField(),
               const Divider(),
               const TodoPriorityTags(),
               const TodoCreationDateItem(),
@@ -90,6 +90,7 @@ class TodoCreatePage extends StatelessWidget {
               TodoProjectTags(availableTags: availableProjectTags),
               TodoContextTags(availableTags: availableContextTags),
               TodoKeyValueTags(availableTags: availableKeyValueTags),
+              const SizedBox(height: 80),
             ],
           ),
         ),

@@ -8,6 +8,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   TodoBloc({
     required Todo todo,
   }) : super(TodoInitial(todo: todo)) {
+    on<TodoRefreshed>(_onRefreshed);
     on<TodoCompletionToggled>(_onCompletionToggled);
     on<TodoDescriptionChanged>(_onDescriptionChanged);
     on<TodoPriorityAdded>(_onPriorityAdded);
@@ -18,6 +19,18 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     on<TodoContextRemoved>(_onContextRemoved);
     on<TodoKeyValuesAdded>(_onKeyValueAdded);
     on<TodoKeyValueRemoved>(_onKeyValueRemoved);
+  }
+
+  void _onRefreshed(
+    TodoRefreshed event,
+    Emitter<TodoState> emit,
+  ) {
+    try {
+      final Todo todo = event.todo.copyWith();
+      emit(state.change(todo: todo));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void _onCompletionToggled(

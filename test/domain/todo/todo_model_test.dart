@@ -750,119 +750,67 @@ void main() {
         });
       });
 
-      group("edge cases", () {
+      group("empty description", () {
         test("completed with projects", () {
-          expect(
-            () => Todo.fromString(value: "x 2022-11-16 +project1 +project2"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo =
+              Todo.fromString(value: "x 2022-11-16 +project1 +project2");
+          expect(todo.description, "");
         });
         test("completed with contexts", () {
-          expect(
-            () => Todo.fromString(value: "x 2022-11-16 @context1 @context2"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo =
+              Todo.fromString(value: "x 2022-11-16 @context1 @context2");
+          expect(todo.description, "");
         });
         test("completed with key-values", () {
-          expect(
-            () => Todo.fromString(value: "x 2022-11-16 key1:val1 key2:val2"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo =
+              Todo.fromString(value: "x 2022-11-16 key1:val1 key2:val2");
+          expect(todo.description, "");
         });
         test("completed with all kind of tags", () {
-          expect(
-            () => Todo.fromString(
-                value: "x 2022-11-16 +project @context key:val"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo =
+              Todo.fromString(value: "x 2022-11-16 +project @context key:val");
+          expect(todo.description, "");
         });
         test("completed", () {
-          expect(
-            () => Todo.fromString(value: "x 2022-11-16"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "x 2022-11-16");
+          expect(todo.description, "");
         });
         test("completed with priority", () {
-          expect(
-            () => Todo.fromString(value: "x 2022-11-16 (A)"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "x 2022-11-16 (A)");
+          expect(todo.description, "");
         });
         test("completed with priority and creation date", () {
-          expect(
-            () => Todo.fromString(value: "x 2022-11-16 (A) 2022-11-01"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo =
+              Todo.fromString(value: "x 2022-11-16 (A) 2022-11-01");
+          expect(todo.description, "");
         });
         test("incompleted with projects", () {
-          expect(
-            () => Todo.fromString(value: "+project1 +project2"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "+project1 +project2");
+          expect(todo.description, "");
         });
         test("incompleted with contexts", () {
-          expect(
-            () => Todo.fromString(value: "@context1 @context2"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "@context1 @context2");
+          expect(todo.description, "");
         });
         test("incompleted with key-values", () {
-          expect(
-            () => Todo.fromString(value: "key1:val1 key2:val2"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "key1:val1 key2:val2");
+          expect(todo.description, "");
         });
         test("incompleted with all kind of tags", () {
-          expect(
-            () => Todo.fromString(value: "+project @context key:val"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "+project @context key:val");
+          expect(todo.description, "");
         });
         test("incompleted", () {
-          expect(
-            () => Todo.fromString(value: ""),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "");
+          expect(todo.description, "");
         });
         test("incompleted with priority", () {
-          expect(
-            () => Todo.fromString(value: "(A)"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "(A)");
+          expect(todo.description, "");
         });
         test("incompleted with priority and creation date", () {
-          expect(
-            () => Todo.fromString(value: "(A) 2022-11-01"),
-            throwsA(
-              isA<TodoStringMalformed>(),
-            ),
-          );
+          final Todo todo = Todo.fromString(value: "(A) 2022-11-01");
+          expect(todo.description, "");
         });
       });
     });

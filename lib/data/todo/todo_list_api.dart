@@ -96,7 +96,9 @@ class LocalTodoListApi extends TodoListApi {
   void _dispatch(List<Todo> todoList) {
     controller.add(todoList);
     log.finest(
-      'Updated todos ${[for (var todo in _todoList) todo.toDebugString()]}',
+      'Updated todos ${[
+        for (var todo in _todoList) todo.toString(debug: true)
+      ]}',
     );
   }
 

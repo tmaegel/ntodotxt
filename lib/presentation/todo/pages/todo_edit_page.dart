@@ -106,7 +106,7 @@ class TodoEditPage extends StatelessWidget {
         Expanded(
           child: ListView(
             children: [
-              const TodoFullStringTextField(),
+              const TodoStringTextField(),
               const Divider(),
               const TodoPriorityTags(),
               const TodoCompletionItem(),
@@ -116,6 +116,7 @@ class TodoEditPage extends StatelessWidget {
               TodoProjectTags(availableTags: availableProjectTags),
               TodoContextTags(availableTags: availableContextTags),
               TodoKeyValueTags(availableTags: availableKeyValueTags),
+              const SizedBox(height: 80),
             ],
           ),
         ),

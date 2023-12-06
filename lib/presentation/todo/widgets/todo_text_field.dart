@@ -1,101 +1,65 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Todo;
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_event.dart'
+    show TodoRefreshed;
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
-class TodoFullStringTextField extends StatelessWidget {
-  const TodoFullStringTextField({super.key});
+class Debouncer {
+  Timer? _timer;
+  final int milliseconds;
 
-  @override
-  Widget build(BuildContext context) {
-    final FocusNode focusNode = FocusNode();
-    return BlocBuilder<TodoBloc, TodoState>(
-      builder: (BuildContext context, TodoState state) {
-        return GestureDetector(
-          onTap: () => focusNode
-              .requestFocus(), // Focus text field if click on container.
-          child: Container(
-            // Only if color is defined, the focus handler works.
-            color: Colors.transparent,
-            padding: const EdgeInsets.all(16),
-            child: Wrap(
-              spacing: 4.0, // gap between adjacent chips
-              runSpacing: 0.0, // gap between lines
-              children: <Widget>[
-                if (state.todo.completion == true)
-                  _buildText(context, state.todo.fmtCompletion),
-                if (state.todo.completionDate != null)
-                  _buildText(context, state.todo.fmtCompletionDate),
-                if (state.todo.priority != Priority.none)
-                  _buildText(context, state.todo.fmtPriority),
-                if (state.todo.creationDate != null)
-                  _buildText(context, state.todo.fmtCreationDate),
-                IntrinsicWidth(
-                    child: TodoDescriptionTextField(focusNode: focusNode)),
-                if (state.todo.projects.isNotEmpty)
-                  _buildText(context, state.todo.fmtProjects.join(' ')),
-                if (state.todo.contexts.isNotEmpty)
-                  _buildText(context, state.todo.fmtContexts.join(' ')),
-                if (state.todo.keyValues.isNotEmpty)
-                  _buildText(context, state.todo.fmtKeyValues.join(' ')),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+  Debouncer({required this.milliseconds});
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 
-  Widget _buildText(BuildContext context, String value) {
-    return Text(
-      value,
-      style: Theme.of(context).textTheme.titleMedium,
-    );
+  void dispose() {
+    _timer?.cancel();
+    _timer = null;
   }
 }
 
-class TodoDescriptionTextField extends StatefulWidget {
-  final FocusNode focusNode;
-
-  const TodoDescriptionTextField({required this.focusNode, super.key});
+class TodoStringTextField extends StatefulWidget {
+  const TodoStringTextField({super.key});
 
   @override
-  State<TodoDescriptionTextField> createState() =>
-      _TodoDescriptionTextFieldState();
+  State<TodoStringTextField> createState() => _TodoStringTextFieldState();
 }
 
-class _TodoDescriptionTextFieldState extends State<TodoDescriptionTextField> {
+class _TodoStringTextFieldState extends State<TodoStringTextField> {
   late GlobalKey<FormFieldState> _textFormKey;
   late TextEditingController _controller;
+  late Debouncer _debouncer;
 
   @override
   void initState() {
     super.initState();
     _textFormKey = GlobalKey<FormFieldState>();
     _controller = TextEditingController();
+    _debouncer = Debouncer(milliseconds: 1000);
   }
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _controller.dispose();
+    _debouncer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoBloc, TodoState>(
-      buildWhen: (TodoState previousState, TodoState state) {
-        // Rebuild if description has changed only.
-        return previousState.todo.description != state.todo.description;
-      },
       builder: (BuildContext context, TodoState state) {
-        _controller.text = state.todo.description; // Initial value.
+        _controller.text = state.todo.toString(includeId: false);
         return TextFormField(
           key: _textFormKey,
-          focusNode: widget.focusNode,
           controller: _controller,
           minLines: 1,
           maxLines: 5,
@@ -103,7 +67,7 @@ class _TodoDescriptionTextFieldState extends State<TodoDescriptionTextField> {
           decoration: const InputDecoration(
             isDense: true,
             filled: false,
-            contentPadding: EdgeInsets.zero,
+            contentPadding: EdgeInsets.all(16),
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -111,9 +75,15 @@ class _TodoDescriptionTextFieldState extends State<TodoDescriptionTextField> {
             disabledBorder: InputBorder.none,
           ),
           onChanged: (value) {
-            context
-                .read<TodoBloc>()
-                .add(TodoDescriptionChanged(_controller.text));
+            _debouncer.run(
+              () {
+                final Todo todo = Todo.fromString(
+                  id: state.todo.id, // Pass current id.
+                  value: _controller.text,
+                );
+                context.read<TodoBloc>().add(TodoRefreshed(todo));
+              },
+            );
           },
         );
       },
