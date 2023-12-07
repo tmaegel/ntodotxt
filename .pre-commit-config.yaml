@@ -4,11 +4,9 @@ fail_fast: true
 
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: "v4.4.0"
+    rev: "v4.5.0"
     hooks:
       - id: check-added-large-files
-      - id: check-ast
-      - id: check-byte-order-marker
       - id: check-case-conflict
       - id: pretty-format-json
         args: ["--autofix", "--indent=4", "--no-sort-keys"]
@@ -18,14 +16,25 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-xml
-      - id: requirements-txt-fixer
-      - id: debug-statements
       - id: destroyed-symlinks
       - id: detect-private-key
       - id: trailing-whitespace
+      - id: double-quote-string-fixer
 
   - repo: local
     hooks:
+      - id: dart format
+        name: dart format
+        language: system
+        entry: dart format
+        files: \.dart$
+
+      - id: flutter analyze
+        name: flutter analyze
+        language: system
+        entry: flutter analyze --fatal-infos --fatal-warnings
+        files: \.dart$
+
       - id: flutter test
         name: flutter test
         language: system
