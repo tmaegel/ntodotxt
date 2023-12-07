@@ -227,23 +227,23 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(2));
+        expect(find.byType(TodoListSection), findsNWidgets(1));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, "Undone");
-        expect(todoListSections.elementAt(1).title, "Done");
+        expect(todoListSections.elementAt(0).title, "All");
 
         expect(
           find.descendant(
             of: find.byWidget(todoListSections.elementAt(0)),
-            matching: find.text('TodoA'), // 'TodoA' is undone.
+            matching:
+                find.text('TodoA'), // 'TodoA' is undone but in group 'All'.
           ),
           findsOneWidget,
         );
         expect(
           find.descendant(
-            of: find.byWidget(todoListSections.elementAt(1)),
-            matching: find.text('TodoB'), // 'TodoB' is done
+            of: find.byWidget(todoListSections.elementAt(0)),
+            matching: find.text('TodoB'), // 'TodoB' is done but in group 'All'.
           ),
           findsOneWidget,
         );
@@ -293,14 +293,13 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(5));
+        expect(find.byType(TodoListSection), findsNWidgets(4));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
         expect(todoListSections.elementAt(0).title, "Deadline passed");
         expect(todoListSections.elementAt(1).title, "Today");
         expect(todoListSections.elementAt(2).title, "Upcoming");
         expect(todoListSections.elementAt(3).title, "No deadline");
-        expect(todoListSections.elementAt(4).title, "Done");
 
         expect(
           find.descendant(
@@ -332,8 +331,9 @@ void main() {
         );
         expect(
           find.descendant(
-            of: find.byWidget(todoListSections.elementAt(4)),
-            matching: find.text('TodoA'), // 'TodoA' is done.
+            of: find.byWidget(todoListSections.elementAt(3)),
+            matching:
+                find.text('TodoA'), // 'TodoA' is done but has no deadline.
           ),
           findsOneWidget,
         );
@@ -372,13 +372,12 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(4));
+        expect(find.byType(TodoListSection), findsNWidgets(3));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
         expect(todoListSections.elementAt(0).title, "E");
         expect(todoListSections.elementAt(1).title, "F");
         expect(todoListSections.elementAt(2).title, "No priority");
-        expect(todoListSections.elementAt(3).title, "Done");
 
         expect(
           find.descendant(
@@ -403,8 +402,9 @@ void main() {
         );
         expect(
           find.descendant(
-            of: find.byWidget(todoListSections.elementAt(3)),
-            matching: find.text('TodoA'), // 'TodoA' is done.
+            of: find.byWidget(todoListSections.elementAt(2)),
+            matching:
+                find.text('TodoA'), // 'TodoA' is done but has no priority.
           ),
           findsOneWidget,
         );
@@ -443,13 +443,12 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(4));
+        expect(find.byType(TodoListSection), findsNWidgets(3));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
         expect(todoListSections.elementAt(0).title, "project1");
         expect(todoListSections.elementAt(1).title, "project2");
         expect(todoListSections.elementAt(2).title, "No project");
-        expect(todoListSections.elementAt(3).title, "Done");
 
         expect(
           find.descendant(
@@ -474,8 +473,8 @@ void main() {
         );
         expect(
           find.descendant(
-            of: find.byWidget(todoListSections.elementAt(3)),
-            matching: find.text('TodoC'), // 'TodoC' is done.
+            of: find.byWidget(todoListSections.elementAt(2)),
+            matching: find.text('TodoC'), // 'TodoC' is done but has no project.
           ),
           findsOneWidget,
         );
@@ -514,13 +513,12 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(4));
+        expect(find.byType(TodoListSection), findsNWidgets(3));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
         expect(todoListSections.elementAt(0).title, "context1");
         expect(todoListSections.elementAt(1).title, "context2");
         expect(todoListSections.elementAt(2).title, "No context");
-        expect(todoListSections.elementAt(3).title, "Done");
 
         expect(
           find.descendant(
@@ -545,8 +543,8 @@ void main() {
         );
         expect(
           find.descendant(
-            of: find.byWidget(todoListSections.elementAt(3)),
-            matching: find.text('TodoC'), // 'TodoC' is done.
+            of: find.byWidget(todoListSections.elementAt(2)),
+            matching: find.text('TodoC'), // 'TodoC' is done but has no context.
           ),
           findsOneWidget,
         );

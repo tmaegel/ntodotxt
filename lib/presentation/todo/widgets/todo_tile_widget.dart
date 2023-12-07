@@ -28,7 +28,10 @@ class TodoTile extends StatelessWidget {
       ),
       title: Text(
         todo.description,
-        style: Theme.of(context).textTheme.titleMedium,
+        style: TextStyle(
+          decoration: todo.completion ? TextDecoration.lineThrough : null,
+          decorationThickness: 2.0,
+        ),
       ),
       subtitle: _buildSubtitle(),
       onTap: () => onTap(),
@@ -55,10 +58,15 @@ class TodoTile extends StatelessWidget {
             padding: const EdgeInsets.only(right: 4.0),
             child: Text(todo.fmtPriority),
           ),
-        if (todo.creationDate != null)
+        if (todo.creationDate != null && todo.completion == false)
           Padding(
             padding: const EdgeInsets.only(right: 4.0),
             child: Text(Todo.differenceToToday(todo.creationDate!)),
+          ),
+        if (todo.completionDate != null && todo.completion == true)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Text(Todo.differenceToToday(todo.completionDate!)),
           ),
         if (todo.projects.isNotEmpty)
           Padding(

@@ -75,7 +75,13 @@ class TodoSearchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       key: key,
-      title: Text(todo.description),
+      title: Text(
+        todo.description,
+        style: TextStyle(
+          decoration: todo.completion ? TextDecoration.lineThrough : null,
+          decorationThickness: 2.0,
+        ),
+      ),
       subtitle: _buildSubtitle(),
       onTap: () => _onTapAction(context),
     );
@@ -100,10 +106,15 @@ class TodoSearchTile extends StatelessWidget {
             padding: const EdgeInsets.only(right: 4.0),
             child: Text(todo.fmtPriority),
           ),
-        if (todo.creationDate != null)
+        if (todo.creationDate != null && todo.completion == false)
           Padding(
             padding: const EdgeInsets.only(right: 4.0),
             child: Text(Todo.differenceToToday(todo.creationDate!)),
+          ),
+        if (todo.completionDate != null && todo.completion == true)
+          Padding(
+            padding: const EdgeInsets.only(right: 4.0),
+            child: Text(Todo.differenceToToday(todo.completionDate!)),
           ),
         if (todo.projects.isNotEmpty)
           Padding(

@@ -108,11 +108,7 @@ extension TodoGroupBy on TodoListGroupBy {
   Map<String, Iterable<Todo>> groupByNone({
     required Iterable<Todo> todoList,
   }) {
-    Map<String, Iterable<Todo>> groups = {
-      'Undone': todoList.where((t) => !t.completion),
-      'Done': todoList.where((t) => t.completion),
-    };
-    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
+    Map<String, Iterable<Todo>> groups = {'All': todoList};
 
     return groups;
   }
@@ -120,31 +116,28 @@ extension TodoGroupBy on TodoListGroupBy {
   Map<String, Iterable<Todo>> groupByUpcoming({
     required Iterable<Todo> todoList,
   }) {
-    final Iterable<Todo> incompletedTodoList =
-        todoList.where((t) => !t.completion);
     Map<String, Iterable<Todo>> groups = {
-      'Deadline passed': incompletedTodoList.where(
+      'Deadline passed': todoList.where(
         (t) {
           DateTime? due = t.dueDate;
           return (due != null && Todo.compareToToday(due) < 0) ? true : false;
         },
       ),
-      'Today': incompletedTodoList.where(
+      'Today': todoList.where(
         (t) {
           DateTime? due = t.dueDate;
           return (due != null && Todo.compareToToday(due) == 0) ? true : false;
         },
       ),
-      'Upcoming': incompletedTodoList.where(
+      'Upcoming': todoList.where(
         (t) {
           DateTime? due = t.dueDate;
           return (due != null && Todo.compareToToday(due) > 0) ? true : false;
         },
       ),
-      'No deadline': incompletedTodoList.where(
+      'No deadline': todoList.where(
         (t) => t.dueDate == null,
       ),
-      'Done': todoList.where((t) => t.completion),
     };
     groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
@@ -157,15 +150,13 @@ extension TodoGroupBy on TodoListGroupBy {
   }) {
     Map<String, Iterable<Todo>> groups = {};
     for (var p in sections) {
-      final Iterable<Todo> items =
-          todoList.where((t) => t.priority == p && !t.completion);
+      final Iterable<Todo> items = todoList.where((t) => t.priority == p);
       if (p == Priority.none) {
         groups['No priority'] = items;
       } else {
         groups[p.name] = items;
       }
     }
-    groups['Done'] = todoList.where((t) => t.completion);
     groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
     return groups;
@@ -180,15 +171,14 @@ extension TodoGroupBy on TodoListGroupBy {
     for (var p in [...sections, null]) {
       Iterable<Todo> items;
       if (p == null) {
-        items = todoList.where((t) => t.projects.isEmpty && !t.completion);
+        items = todoList.where((t) => t.projects.isEmpty);
       } else {
-        items = todoList.where((t) => t.projects.contains(p) && !t.completion);
+        items = todoList.where((t) => t.projects.contains(p));
       }
       if (items.isNotEmpty) {
         groups[p ?? 'No project'] = items;
       }
     }
-    groups['Done'] = todoList.where((t) => t.completion);
     groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
     return groups;
@@ -203,15 +193,14 @@ extension TodoGroupBy on TodoListGroupBy {
     for (var c in [...sections, null]) {
       Iterable<Todo> items;
       if (c == null) {
-        items = todoList.where((t) => t.contexts.isEmpty && !t.completion);
+        items = todoList.where((t) => t.contexts.isEmpty);
       } else {
-        items = todoList.where((t) => t.contexts.contains(c) && !t.completion);
+        items = todoList.where((t) => t.contexts.contains(c));
       }
       if (items.isNotEmpty) {
         groups[c ?? 'No context'] = items;
       }
     }
-    groups['Done'] = todoList.where((t) => t.completion);
     groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
     return groups;
