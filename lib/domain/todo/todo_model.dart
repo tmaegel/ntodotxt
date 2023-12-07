@@ -62,7 +62,8 @@ extension Priorities on Priority {
 ///
 class Todo extends Equatable {
   static final RegExp patternWord = RegExp(r'^\S+$');
-  static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-Z])\)$');
+  // Limit priorities from A-F.
+  static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-F])\)$');
   static final RegExp patternDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static final RegExp patternProject = RegExp(r'^\+\S+$');
   static final RegExp patternContext = RegExp(r'^\@\S+$');
@@ -182,6 +183,19 @@ class Todo extends Equatable {
   String get fmtDueDate {
     final String? dueDateStr = date2Str(dueDate);
     return dueDateStr != null ? 'due:$dueDateStr' : '';
+  }
+
+  /// Return cursor position at the end of the description.
+  int get descriptionCursorPos {
+    final List<String> items = [
+      fmtCompletion,
+      fmtCompletionDate,
+      fmtPriority,
+      fmtCreationDate,
+      description,
+    ]..removeWhere((value) => value.isEmpty);
+
+    return items.join(' ').length;
   }
 
   // Core todo constructor with validation logic.
@@ -311,8 +325,9 @@ class Todo extends Equatable {
   }
 
   factory Todo.fromString({
-    String? id,
     required String value,
+    // Bypass some attributes,
+    String? byPassId,
   }) {
     final todoStr = _trim(value);
 
@@ -376,7 +391,7 @@ class Todo extends Equatable {
     }
 
     return Todo(
-      id: id ?? (_str2Id(fullDescriptionList) ?? Todo.genId()),
+      id: byPassId ?? (_str2Id(fullDescriptionList) ?? Todo.genId()),
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -477,7 +492,10 @@ class Todo extends Equatable {
       ];
 
   @override
-  String toString({bool includeId = true, bool debug = false}) {
+  String toString({
+    bool includeId = true,
+    bool debug = false,
+  }) {
     final List<String> items = [
       fmtCompletion,
       fmtCompletionDate,
@@ -487,17 +505,11 @@ class Todo extends Equatable {
       if (fmtProjects.isNotEmpty) fmtProjects.join(' '),
       if (fmtContexts.isNotEmpty) fmtContexts.join(' '),
       if (fmtKeyValues.isNotEmpty) fmtKeyValues.join(' '),
+      if (includeId) fmtId,
+      if (debug) 'sel:$selected',
     ]..removeWhere((value) => value.isEmpty);
 
-    String todoStr = items.join(' ');
-    if (includeId) {
-      todoStr = '$todoStr $fmtId';
-    }
-    if (debug) {
-      todoStr = '$todoStr sel:$selected';
-    }
-
-    return todoStr;
+    return items.join(' ');
   }
 
   static String genId({int len = 10}) {
@@ -505,6 +517,53 @@ class Todo extends Equatable {
     const chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
+  }
+
+  static DateTime? str2date(String value) {
+    if (patternDate.hasMatch(value)) {
+      return DateTime.parse(value);
+    } else {
+      return null;
+    }
+  }
+
+  static String? date2Str(DateTime? date) {
+    if (date == null) {
+      return null;
+    }
+    return "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+
+  static int compareToToday(DateTime date) {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    return date.compareTo(today);
+  }
+
+  static String differenceToToday(DateTime date) {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final Duration difference = today.difference(date);
+    final int days = difference.inDays;
+
+    if (days < 0) {
+      return 'In future'; // In real this should never the case.
+    } else if (days == 0) {
+      return 'Today';
+    } else if (days == 1) {
+      return 'Yesterday';
+    } else if (days > 1 && days <= 6) {
+      return '$days days ago';
+    } else if (days > 6 && days <= 30) {
+      final int weeks = days ~/ 7;
+      return weeks == 1 ? '$weeks week ago' : '$weeks weeks ago';
+    } else if (days > 30 && days <= 364) {
+      final int months = days ~/ 31;
+      return months == 1 ? '$months month ago' : '$months months ago';
+    } else {
+      final int years = days ~/ 365;
+      return years == 1 ? '$years year ago' : '$years years ago';
+    }
   }
 
   static String _trim(String value) {
@@ -559,7 +618,7 @@ class Todo extends Equatable {
     Set<String> projects = {};
     for (var project in strList) {
       if (patternProject.hasMatch(project)) {
-        projects.add(project.substring(1)); // strip the leading '+'
+        projects.add(project);
       }
     }
 
@@ -570,7 +629,7 @@ class Todo extends Equatable {
     Set<String> contexts = {};
     for (var context in strList) {
       if (patternContext.hasMatch(context)) {
-        contexts.add(context.substring(1)); // strip the leading '@'
+        contexts.add(context);
       }
     }
 
@@ -601,52 +660,5 @@ class Todo extends Equatable {
     }
 
     return null;
-  }
-
-  static DateTime? str2date(String value) {
-    if (patternDate.hasMatch(value)) {
-      return DateTime.parse(value);
-    } else {
-      return null;
-    }
-  }
-
-  static String? date2Str(DateTime? date) {
-    if (date == null) {
-      return null;
-    }
-    return "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-  }
-
-  static int compareToToday(DateTime date) {
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
-    return date.compareTo(today);
-  }
-
-  static String differenceToToday(DateTime date) {
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
-    final Duration difference = today.difference(date);
-    final int days = difference.inDays;
-
-    if (days < 0) {
-      return 'In future'; // In real this should never the case.
-    } else if (days == 0) {
-      return 'Today';
-    } else if (days == 1) {
-      return 'Yesterday';
-    } else if (days > 1 && days <= 6) {
-      return '$days days ago';
-    } else if (days > 6 && days <= 30) {
-      final int weeks = days ~/ 7;
-      return weeks == 1 ? '$weeks week ago' : '$weeks weeks ago';
-    } else if (days > 30 && days <= 364) {
-      final int months = days ~/ 31;
-      return months == 1 ? '$months month ago' : '$months months ago';
-    } else {
-      final int years = days ~/ 365;
-      return years == 1 ? '$years year ago' : '$years years ago';
-    }
   }
 }

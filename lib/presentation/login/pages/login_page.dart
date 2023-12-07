@@ -237,6 +237,7 @@ class WebDAVLoginView extends StatelessWidget {
                   decoration: const InputDecoration(
                     labelText: 'Password',
                   ),
+                  obscureText: true,
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Missing password';

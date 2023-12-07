@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Todo;
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
@@ -42,7 +43,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
     super.initState();
     _textFormKey = GlobalKey<FormFieldState>();
     _controller = TextEditingController();
-    _debouncer = Debouncer(milliseconds: 1000);
+    _debouncer = Debouncer(milliseconds: 750);
   }
 
   @override
@@ -63,6 +64,13 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
           controller: _controller,
           minLines: 1,
           maxLines: 5,
+          enableInteractiveSelection: true,
+          enableSuggestions: false,
+          enableIMEPersonalizedLearning: false,
+          keyboardType: TextInputType.text,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp(r"\n")),
+          ],
           style: Theme.of(context).textTheme.titleMedium,
           decoration: const InputDecoration(
             isDense: true,
@@ -74,16 +82,23 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
             errorBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
           ),
-          onChanged: (value) {
+          onChanged: (String value) {
             _debouncer.run(
               () {
                 final Todo todo = Todo.fromString(
-                  id: state.todo.id, // Pass current id.
+                  byPassId: state.todo.id, // Bypass current id.
                   value: _controller.text,
                 );
                 context.read<TodoBloc>().add(TodoRefreshed(todo));
               },
             );
+          },
+          onTapOutside: (event) {
+            final Todo todo = Todo.fromString(
+              byPassId: state.todo.id, // Bypass current id.
+              value: _controller.text,
+            );
+            context.read<TodoBloc>().add(TodoRefreshed(todo));
           },
         );
       },
