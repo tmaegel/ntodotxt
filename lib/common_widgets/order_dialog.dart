@@ -16,7 +16,7 @@ class OrderTodoListBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
-      key: const Key("OrderTodoListBottomSheet"),
+      key: const Key('OrderTodoListBottomSheet'),
       enableDrag: false,
       showDragHandle: false,
       onClosing: () {},
@@ -60,7 +60,7 @@ class OrderSettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      key: const Key("OrderSettingsDialog"),
+      key: const Key('OrderSettingsDialog'),
       child: ListView.builder(
         shrinkWrap: true,
         padding: const EdgeInsets.symmetric(

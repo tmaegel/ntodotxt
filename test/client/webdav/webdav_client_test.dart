@@ -10,9 +10,9 @@ void main() {
   const String filename = 'test.txt';
   setUp(() async {});
 
-  group("WebDAVClient", () {
-    group("ping()", () {
-      test("successful ping", () async {
+  group('WebDAVClient', () {
+    group('ping()', () {
+      test('successful ping', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,
@@ -25,7 +25,7 @@ void main() {
           fail('An exception was thrown: $e');
         }
       });
-      test("failed ping", () async {
+      test('failed ping', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: 9999,
@@ -41,8 +41,8 @@ void main() {
       });
     });
 
-    group("fileExists()", () {
-      test("file exists", () async {
+    group('fileExists()', () {
+      test('file exists', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,
@@ -58,7 +58,7 @@ void main() {
           fail('An exception was thrown: $e');
         }
       });
-      test("file not exists", () async {
+      test('file not exists', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,
@@ -76,8 +76,8 @@ void main() {
       });
     });
 
-    group("upload()", () {
-      test("successful file upload", () async {
+    group('upload()', () {
+      test('successful file upload', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,
@@ -90,7 +90,7 @@ void main() {
           fail('An exception was thrown.');
         }
       });
-      test("exception while file upload", () async {
+      test('exception while file upload', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,
@@ -105,8 +105,8 @@ void main() {
         );
       });
     });
-    group("download()", () {
-      test("successful file download", () async {
+    group('download()', () {
+      test('successful file download', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,
@@ -119,7 +119,7 @@ void main() {
           fail('An exception was thrown.');
         }
       });
-      test("exception while file download", () async {
+      test('exception while file download', () async {
         WebDAVClient client = WebDAVClient(
             host: host,
             port: port,

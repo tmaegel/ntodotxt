@@ -17,7 +17,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(
-        title: "Settings",
+        title: 'Settings',
         leadingAction: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => _cancelAction(context),
@@ -46,7 +46,7 @@ class SettingsView extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text("Filter"),
+            title: const Text('Filter'),
             subtitle: Text(state.todoFilter),
             onTap: () async {
               context.read<SettingsCubit>().updateTodoFilter(
@@ -59,7 +59,7 @@ class SettingsView extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text("Order"),
+            title: const Text('Order'),
             subtitle: Text(state.todoOrder),
             onTap: () async {
               context.read<SettingsCubit>().updateTodoOrder(
@@ -72,7 +72,7 @@ class SettingsView extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text("Group by"),
+            title: const Text('Group by'),
             subtitle: Text(state.todoGrouping),
             onTap: () async {
               context.read<SettingsCubit>().updateTodoGrouping(
@@ -92,13 +92,13 @@ class SettingsView extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text("Backup settings"),
-            subtitle: const Text("Backup app settings to file."),
+            title: const Text('Backup settings'),
+            subtitle: const Text('Backup app settings to file.'),
             onTap: () {},
           ),
           ListTile(
-            title: const Text("Restore settings"),
-            subtitle: const Text("Restore app settings from file."),
+            title: const Text('Restore settings'),
+            subtitle: const Text('Restore app settings from file.'),
             onTap: () {},
           ),
           const Divider(),
@@ -109,7 +109,7 @@ class SettingsView extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text("Reset settings"),
+            title: const Text('Reset settings'),
             subtitle: const Text(
                 'Resets setting to the defaults. Login data and todos are preserved.'),
             onTap: () {
@@ -117,7 +117,7 @@ class SettingsView extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text("Logout"),
+            title: const Text('Logout'),
             subtitle: const Text(
                 'Disconnects the connection to the backend. Settings and todos are preserved.'),
             onTap: () {
@@ -126,13 +126,14 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: const Text('About'),
-            onTap: () => context.pushNamed("app-info"),
+            onTap: () => context.pushNamed('app-info'),
           ),
         ],
       );
     });
   }
 
+  // ignore: unused_element
   Future<String?> _askedForTextInput({
     required BuildContext context,
     required String label,

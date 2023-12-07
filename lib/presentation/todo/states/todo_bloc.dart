@@ -147,7 +147,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         if (!Todo.patternKeyValue.hasMatch(kv)) {
           throw TodoInvalidKeyValueTag(tag: kv);
         }
-        final List<String> splittedKeyValue = kv.split(":");
+        final List<String> splittedKeyValue = kv.split(':');
         if (splittedKeyValue.length == 2) {
           keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
         }
@@ -168,7 +168,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         throw TodoInvalidKeyValueTag(tag: event.keyValue);
       }
       Map<String, String> keyValues = {...state.todo.keyValues};
-      final List<String> splittedKeyValue = event.keyValue.split(":");
+      final List<String> splittedKeyValue = event.keyValue.split(':');
       if (splittedKeyValue.length == 2) {
         keyValues.remove(splittedKeyValue[0]);
       }

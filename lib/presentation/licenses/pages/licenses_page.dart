@@ -10,7 +10,7 @@ class LicenceListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(
-        title: "Licenses",
+        title: 'Licenses',
         leadingAction: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),

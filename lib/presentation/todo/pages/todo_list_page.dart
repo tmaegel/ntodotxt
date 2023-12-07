@@ -180,7 +180,7 @@ abstract class TodoListView extends StatelessWidget {
       builder: (BuildContext context, TodoListState state) {
         return Scaffold(
           appBar: MainAppBar(
-            title: "Todos",
+            title: 'Todos',
             toolbar: Row(
               children: [
                 IconButton(

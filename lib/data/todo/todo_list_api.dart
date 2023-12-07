@@ -217,7 +217,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   }) {
     late WebDAVClient client;
     final RegExp exp =
-        RegExp(r"(?<schema>^(http|https)):\/\/(?<host>\w+):(?<port>\d+)$");
+        RegExp(r'(?<schema>^(http|https)):\/\/(?<host>\w+):(?<port>\d+)$');
     final RegExpMatch? match = exp.firstMatch(server);
     if (match != null) {
       String schema = match.namedGroup('schema')!;

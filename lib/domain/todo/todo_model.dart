@@ -153,20 +153,20 @@ class Todo extends Equatable {
   /// Defaults to an empty [Set].
   Set<String> get projects => _projects ?? const {};
 
-  Set<String> get fmtProjects => {for (var p in projects) "+$p"};
+  Set<String> get fmtProjects => {for (var p in projects) '+$p'};
 
   /// The list of contexts of the [Todo].
   /// Defaults to an empty [Set].
   Set<String> get contexts => _contexts ?? const {};
 
-  Set<String> get fmtContexts => {for (var c in contexts) "@$c"};
+  Set<String> get fmtContexts => {for (var c in contexts) '@$c'};
 
   /// The list of key value pairs of the [Todo].
   /// Defaults to an empty [Map].
   Map<String, String> get keyValues => _keyValues ?? const {};
 
   Set<String> get fmtKeyValues =>
-      {for (var k in keyValues.keys) "$k:${keyValues[k]}"};
+      {for (var k in keyValues.keys) '$k:${keyValues[k]}'};
 
   /// Flag that indicates whether the [Todo]
   /// was selected in the list.
@@ -590,7 +590,7 @@ class Todo extends Equatable {
   static Priority _str2priority(String value) {
     RegExpMatch? match = patternPriority.firstMatch(value);
     if (match != null) {
-      String? priority = match.namedGroup("priority");
+      String? priority = match.namedGroup('priority');
       if (priority != null) {
         return Priorities.byName(priority);
       }
@@ -641,7 +641,7 @@ class Todo extends Equatable {
 
     for (var keyValue in strList) {
       if (patternKeyValue.hasMatch(keyValue)) {
-        final List<String> splittedKeyValue = keyValue.split(":");
+        final List<String> splittedKeyValue = keyValue.split(':');
         if (splittedKeyValue.length > 2) continue;
         if (splittedKeyValue[0] == 'id') continue; // Exclude id here.
         keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
@@ -654,7 +654,7 @@ class Todo extends Equatable {
   static String? _str2Id(List<String> strList) {
     for (var item in strList) {
       if (patternId.hasMatch(item)) {
-        final List<String> splittedId = item.split(":");
+        final List<String> splittedId = item.split(':');
         return splittedId[1];
       }
     }

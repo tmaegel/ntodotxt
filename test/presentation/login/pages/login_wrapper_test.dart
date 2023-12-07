@@ -22,7 +22,7 @@ void main() {
     fs = MemoryFileSystem();
     file = fs.file('todo.test');
     await file.create();
-    await file.writeAsString("", flush: true); // Empty file.
+    await file.writeAsString('', flush: true); // Empty file.
   });
 
   group('Logout', () {
@@ -117,7 +117,7 @@ void main() {
           of: find.text('Server'),
           matching: find.byType(TextFormField),
         ),
-        "localhost",
+        'localhost',
       );
       await tester.tap(find.text('Login'));
       await tester.pump();
@@ -135,7 +135,7 @@ void main() {
           of: find.text('Server'),
           matching: find.byType(TextFormField),
         ),
-        "http://localhost",
+        'http://localhost',
       );
       await tester.tap(find.text('Login'));
       await tester.pump();
@@ -153,7 +153,7 @@ void main() {
           of: find.text('Server'),
           matching: find.byType(TextFormField),
         ),
-        "https://localhost",
+        'https://localhost',
       );
       await tester.tap(find.text('Login'));
       await tester.pump();
@@ -171,7 +171,7 @@ void main() {
           of: find.text('Server'),
           matching: find.byType(TextFormField),
         ),
-        "https://localhost:abc",
+        'https://localhost:abc',
       );
       await tester.tap(find.text('Login'));
       await tester.pump();
@@ -189,7 +189,7 @@ void main() {
           of: find.text('Server'),
           matching: find.byType(TextFormField),
         ),
-        "https://localhost:80:90",
+        'https://localhost:80:90',
       );
       await tester.tap(find.text('Login'));
       await tester.pump();

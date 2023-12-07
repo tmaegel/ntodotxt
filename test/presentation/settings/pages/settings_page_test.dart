@@ -85,7 +85,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byKey(const Key("OrderSettingsDialog")), findsOneWidget);
+        expect(find.byKey(const Key('OrderSettingsDialog')), findsOneWidget);
         await tester.tap(
           find.byKey(Key('${TodoListOrder.descending.name}DialogRadioButton')),
         );
@@ -146,7 +146,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byKey(const Key("FilterSettingsDialog")), findsOneWidget);
+        expect(find.byKey(const Key('FilterSettingsDialog')), findsOneWidget);
         await tester.tap(
           find.byKey(
               Key('${TodoListFilter.completedOnly.name}DialogRadioButton')),
@@ -208,7 +208,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byKey(const Key("GroupBySettingsDialog")), findsOneWidget);
+        expect(find.byKey(const Key('GroupBySettingsDialog')), findsOneWidget);
         await tester.tap(
           find.byKey(Key('${TodoListGroupBy.priority.name}DialogRadioButton')),
         );

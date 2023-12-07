@@ -69,7 +69,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
           enableIMEPersonalizedLearning: false,
           keyboardType: TextInputType.text,
           inputFormatters: [
-            FilteringTextInputFormatter.deny(RegExp(r"\n")),
+            FilteringTextInputFormatter.deny(RegExp(r'\n')),
           ],
           style: Theme.of(context).textTheme.titleMedium,
           decoration: const InputDecoration(

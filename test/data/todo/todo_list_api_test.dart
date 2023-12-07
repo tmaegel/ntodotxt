@@ -13,12 +13,12 @@ void main() {
     fs = MemoryFileSystem();
     file = fs.file('todo.test');
     await file.create();
-    await file.writeAsString("", flush: true); // Empty file.
+    await file.writeAsString('', flush: true); // Empty file.
   });
 
-  group("LocalTodoListApi", () {
-    group("init()", () {
-      test("initial file is empty", () async {
+  group('LocalTodoListApi', () {
+    group('init()', () {
+      test('initial file is empty', () async {
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api: api);
 
@@ -29,7 +29,7 @@ void main() {
           ]),
         );
       });
-      test("initial file with initial todo", () async {
+      test('initial file with initial todo', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         await file.writeAsString(todoStr, flush: true);
@@ -44,19 +44,19 @@ void main() {
           ]),
         );
       });
-      test("initial file with multiple initial todos", () async {
+      test('initial file with multiple initial todos', () async {
         List<String> todoListStr = [
-          "x 2023-12-03 2023-12-02 TodoA id:1",
-          "1970-01-01 TodoB due:1970-01-01 id:2",
-          "2023-12-02 TodoC due:2023-12-04 id:3",
-          "2023-12-02 TodoD due:2023-12-05 id:4",
-          "2023-11-11 TodoE id:5",
+          'x 2023-12-03 2023-12-02 TodoA id:1',
+          '1970-01-01 TodoB due:1970-01-01 id:2',
+          '2023-12-02 TodoC due:2023-12-04 id:3',
+          '2023-12-02 TodoD due:2023-12-05 id:4',
+          '2023-11-11 TodoE id:5',
         ];
         List<Todo> todoList = [
           for (var s in todoListStr) Todo.fromString(value: s)
         ];
 
-        await file.writeAsString(todoListStr.join("\n"), flush: true);
+        await file.writeAsString(todoListStr.join('\n'), flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api: api);
@@ -78,8 +78,8 @@ void main() {
       });
     });
 
-    group("saveTodo()", () {
-      test("create new todo without id", () async {
+    group('saveTodo()', () {
+      test('create new todo without id', () async {
         const String todoStr = '2023-11-23 Code something';
         final Todo todo = Todo.fromString(value: todoStr);
 
@@ -98,7 +98,7 @@ void main() {
         expect(await file.readAsLines(), ['$todoStr id:${todo.id}']);
       });
 
-      test("create new todo with id", () async {
+      test('create new todo with id', () async {
         const String todoStr =
             '2023-11-23 Code something id:d181bdf4-3c0b-483c-a350-62db3c19ff36';
         final Todo todo = Todo.fromString(value: todoStr);
@@ -117,7 +117,7 @@ void main() {
         await repository.writeToSource();
         expect(await file.readAsLines(), [todoStr]);
       });
-      test("update existing todo", () async {
+      test('update existing todo', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         // Update existing todo.
@@ -143,7 +143,7 @@ void main() {
           ['2023-11-23 Code something other id:1'],
         );
       });
-      test("update/save non-existing todo", () async {
+      test('update/save non-existing todo', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         const String todoStr2 = '2023-11-23 Code something other id:2';
@@ -164,7 +164,7 @@ void main() {
         await repository.writeToSource();
         expect(await file.readAsLines(), [todoStr, todoStr2]);
       });
-      test("partial update", () async {
+      test('partial update', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         const String todoStr2 = '2023-11-23 Code something other id:1';
         final Todo todo = Todo.fromString(value: todoStr);
@@ -190,8 +190,8 @@ void main() {
       });
     });
 
-    group("deleteTodo()", () {
-      test("delete existing todo", () async {
+    group('deleteTodo()', () {
+      test('delete existing todo', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         await file.writeAsString(todoStr, flush: true);
@@ -210,7 +210,7 @@ void main() {
         await repository.writeToSource();
         expect(await file.readAsLines(), []);
       });
-      test("delete non-existing todo", () async {
+      test('delete non-existing todo', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         const String todoStr2 = '2023-11-23 Code something other id:2';
@@ -233,8 +233,8 @@ void main() {
       });
     });
 
-    group("saveMultipleTodos()", () {
-      test("update todos", () async {
+    group('saveMultipleTodos()', () {
+      test('update todos', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         const String todoStr2 = '2023-11-23 Code something other id:2';
@@ -285,8 +285,8 @@ void main() {
       });
     });
 
-    group("deleteMultipleTodos()", () {
-      test("delete todos", () async {
+    group('deleteMultipleTodos()', () {
+      test('delete todos', () async {
         const String todoStr = '2023-11-23 Code something id:1';
         final Todo todo = Todo.fromString(value: todoStr);
         const String todoStr2 = '2023-11-23 Code something other id:2';

@@ -11,7 +11,7 @@ class AppInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(
-        title: "About",
+        title: 'About',
         leadingAction: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => _cancelAction(context),
@@ -25,7 +25,7 @@ class AppInfoPage extends StatelessWidget {
 }
 
 class AppInfoView extends StatelessWidget {
-  static const String repoUrl = "https://github.com/tmaegel/ntodo-txt";
+  static const String repoUrl = 'https://github.com/tmaegel/ntodo-txt';
 
   const AppInfoView({super.key});
 
@@ -66,7 +66,7 @@ class AppInfoView extends StatelessWidget {
           leading: const Icon(Icons.shield_outlined),
           title: const Text('Licence'),
           subtitle: const Text('MIT License'),
-          onTap: () => context.pushNamed("licenses"),
+          onTap: () => context.pushNamed('licenses'),
         ),
       ],
     );

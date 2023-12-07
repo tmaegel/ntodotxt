@@ -43,13 +43,13 @@ class TodoCreatePage extends StatelessWidget {
                   ),
                 );
               } else if (state is TodoSuccess) {
-                context.pushNamed("todo-list");
+                context.pushNamed('todo-list');
               }
             },
             builder: (BuildContext context, TodoState state) {
               return Scaffold(
                 appBar: const MainAppBar(
-                  title: "Add",
+                  title: 'Add',
                 ),
                 body: _buildBody(),
                 floatingActionButton: state.todo.description.isNotEmpty
@@ -68,7 +68,7 @@ class TodoCreatePage extends StatelessWidget {
       icon: const Icon(Icons.save),
       tooltip: 'Save',
       action: () {
-        context.goNamed("todo-list");
+        context.goNamed('todo-list');
         context
             .read<TodoListBloc>()
             .add(TodoListTodoSubmitted(todo: state.todo));

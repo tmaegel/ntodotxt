@@ -56,7 +56,7 @@ class TodoList extends StatelessWidget {
   }
 
   void _viewAction(BuildContext context, Todo todo) {
-    context.pushNamed("todo-edit", extra: todo);
+    context.pushNamed('todo-edit', extra: todo);
   }
 
   void _toggleCompletionAction(

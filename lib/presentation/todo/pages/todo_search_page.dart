@@ -132,6 +132,6 @@ class TodoSearchTile extends StatelessWidget {
   }
 
   void _onTapAction(BuildContext context) {
-    context.pushNamed("todo-edit", extra: todo);
+    context.pushNamed('todo-edit', extra: todo);
   }
 }

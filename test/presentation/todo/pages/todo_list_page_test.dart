@@ -23,10 +23,10 @@ void main() {
       await file.create();
       await file.writeAsString(
         [
-          "2023-12-02 TodoC",
-          "2023-12-02 TodoA",
-          "2023-12-02 TodoB",
-        ].join("\n"),
+          '2023-12-02 TodoC',
+          '2023-12-02 TodoA',
+          '2023-12-02 TodoB',
+        ].join('\n'),
         flush: true,
       );
     });
@@ -55,9 +55,9 @@ void main() {
         expect(find.byType(TodoTile), findsNWidgets(3));
         Iterable<TodoTile> todoTiles =
             tester.widgetList<TodoTile>(find.byType(TodoTile));
-        expect(todoTiles.elementAt(0).todo.description, "TodoA");
-        expect(todoTiles.elementAt(1).todo.description, "TodoB");
-        expect(todoTiles.elementAt(2).todo.description, "TodoC");
+        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
+        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
+        expect(todoTiles.elementAt(2).todo.description, 'TodoC');
       });
     });
 
@@ -85,9 +85,9 @@ void main() {
         expect(find.byType(TodoTile), findsNWidgets(3));
         Iterable<TodoTile> todoTiles =
             tester.widgetList<TodoTile>(find.byType(TodoTile));
-        expect(todoTiles.elementAt(0).todo.description, "TodoC");
-        expect(todoTiles.elementAt(1).todo.description, "TodoB");
-        expect(todoTiles.elementAt(2).todo.description, "TodoA");
+        expect(todoTiles.elementAt(0).todo.description, 'TodoC');
+        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
+        expect(todoTiles.elementAt(2).todo.description, 'TodoA');
       });
     });
   });
@@ -98,10 +98,10 @@ void main() {
       await file.create();
       await file.writeAsString(
         [
-          "x 2023-12-04 2023-12-02 TodoC",
-          "2023-12-02 TodoA",
-          "x 2023-12-03 2023-12-02 TodoB",
-        ].join("\n"),
+          'x 2023-12-04 2023-12-02 TodoC',
+          '2023-12-02 TodoA',
+          'x 2023-12-03 2023-12-02 TodoB',
+        ].join('\n'),
         flush: true,
       );
     });
@@ -130,9 +130,9 @@ void main() {
         expect(find.byType(TodoTile), findsNWidgets(3));
         Iterable<TodoTile> todoTiles =
             tester.widgetList<TodoTile>(find.byType(TodoTile));
-        expect(todoTiles.elementAt(0).todo.description, "TodoA");
-        expect(todoTiles.elementAt(1).todo.description, "TodoB");
-        expect(todoTiles.elementAt(2).todo.description, "TodoC");
+        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
+        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
+        expect(todoTiles.elementAt(2).todo.description, 'TodoC');
       });
     });
 
@@ -160,8 +160,8 @@ void main() {
         expect(find.byType(TodoTile), findsNWidgets(2));
         Iterable<TodoTile> todoTiles =
             tester.widgetList<TodoTile>(find.byType(TodoTile));
-        expect(todoTiles.elementAt(0).todo.description, "TodoB");
-        expect(todoTiles.elementAt(1).todo.description, "TodoC");
+        expect(todoTiles.elementAt(0).todo.description, 'TodoB');
+        expect(todoTiles.elementAt(1).todo.description, 'TodoC');
       });
     });
 
@@ -189,7 +189,7 @@ void main() {
         expect(find.byType(TodoTile), findsNWidgets(1));
         Iterable<TodoTile> todoTiles =
             tester.widgetList<TodoTile>(find.byType(TodoTile));
-        expect(todoTiles.elementAt(0).todo.description, "TodoA");
+        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
       });
     });
   });
@@ -203,9 +203,9 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            "x 2023-13-04 2023-12-02 TodoB",
-            "2023-12-02 TodoA",
-          ].join("\n"),
+            'x 2023-13-04 2023-12-02 TodoB',
+            '2023-12-02 TodoA',
+          ].join('\n'),
           flush: true,
         );
         // Mock shared preferences.
@@ -230,7 +230,7 @@ void main() {
         expect(find.byType(TodoListSection), findsNWidgets(1));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, "All");
+        expect(todoListSections.elementAt(0).title, 'All');
 
         expect(
           find.descendant(
@@ -262,12 +262,12 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            "x 2023-12-03 2023-12-02 TodoA",
-            "1970-01-01 TodoB due:1970-01-01",
-            "2023-12-02 TodoC due:$today",
-            "2023-12-02 TodoD due:$tomorrow",
-            "2023-12-02 TodoE",
-          ].join("\n"),
+            'x 2023-12-03 2023-12-02 TodoA',
+            '1970-01-01 TodoB due:1970-01-01',
+            '2023-12-02 TodoC due:$today',
+            '2023-12-02 TodoD due:$tomorrow',
+            '2023-12-02 TodoE',
+          ].join('\n'),
           flush: true,
         );
         // Mock shared preferences.
@@ -296,10 +296,10 @@ void main() {
         expect(find.byType(TodoListSection), findsNWidgets(4));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, "Deadline passed");
-        expect(todoListSections.elementAt(1).title, "Today");
-        expect(todoListSections.elementAt(2).title, "Upcoming");
-        expect(todoListSections.elementAt(3).title, "No deadline");
+        expect(todoListSections.elementAt(0).title, 'Deadline passed');
+        expect(todoListSections.elementAt(1).title, 'Today');
+        expect(todoListSections.elementAt(2).title, 'Upcoming');
+        expect(todoListSections.elementAt(3).title, 'No deadline');
 
         expect(
           find.descendant(
@@ -346,11 +346,11 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            "x 2023-13-04 2023-12-02 TodoA",
-            "(E) 2023-12-02 TodoB",
-            "(F) 2023-12-02 TodoC",
-            "2023-12-02 TodoD",
-          ].join("\n"),
+            'x 2023-13-04 2023-12-02 TodoA',
+            '(E) 2023-12-02 TodoB',
+            '(F) 2023-12-02 TodoC',
+            '2023-12-02 TodoD',
+          ].join('\n'),
           flush: true,
         );
         // Mock shared preferences.
@@ -375,9 +375,9 @@ void main() {
         expect(find.byType(TodoListSection), findsNWidgets(3));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, "E");
-        expect(todoListSections.elementAt(1).title, "F");
-        expect(todoListSections.elementAt(2).title, "No priority");
+        expect(todoListSections.elementAt(0).title, 'E');
+        expect(todoListSections.elementAt(1).title, 'F');
+        expect(todoListSections.elementAt(2).title, 'No priority');
 
         expect(
           find.descendant(
@@ -417,11 +417,11 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            "x 2023-13-04 2023-12-02 TodoC",
-            "2023-12-02 TodoA +project1",
-            "2023-12-02 TodoB +project2",
-            "2023-12-02 TodoD",
-          ].join("\n"),
+            'x 2023-13-04 2023-12-02 TodoC',
+            '2023-12-02 TodoA +project1',
+            '2023-12-02 TodoB +project2',
+            '2023-12-02 TodoD',
+          ].join('\n'),
           flush: true,
         );
         // Mock shared preferences.
@@ -446,9 +446,9 @@ void main() {
         expect(find.byType(TodoListSection), findsNWidgets(3));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, "project1");
-        expect(todoListSections.elementAt(1).title, "project2");
-        expect(todoListSections.elementAt(2).title, "No project");
+        expect(todoListSections.elementAt(0).title, 'project1');
+        expect(todoListSections.elementAt(1).title, 'project2');
+        expect(todoListSections.elementAt(2).title, 'No project');
 
         expect(
           find.descendant(
@@ -487,11 +487,11 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            "x 2023-13-04 2023-12-02 TodoC",
-            "2023-12-02 TodoA @context1",
-            "2023-12-02 TodoB @context2",
-            "2023-12-02 TodoD",
-          ].join("\n"),
+            'x 2023-13-04 2023-12-02 TodoC',
+            '2023-12-02 TodoA @context1',
+            '2023-12-02 TodoB @context2',
+            '2023-12-02 TodoD',
+          ].join('\n'),
           flush: true,
         );
         // Mock shared preferences.
@@ -516,9 +516,9 @@ void main() {
         expect(find.byType(TodoListSection), findsNWidgets(3));
         Iterable<TodoListSection> todoListSections =
             tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, "context1");
-        expect(todoListSections.elementAt(1).title, "context2");
-        expect(todoListSections.elementAt(2).title, "No context");
+        expect(todoListSections.elementAt(0).title, 'context1');
+        expect(todoListSections.elementAt(1).title, 'context2');
+        expect(todoListSections.elementAt(2).title, 'No context');
 
         expect(
           find.descendant(

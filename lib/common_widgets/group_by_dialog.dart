@@ -19,7 +19,7 @@ class GroupByTodoListBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
-      key: const Key("GroupByTodoListBottomSheet"),
+      key: const Key('GroupByTodoListBottomSheet'),
       enableDrag: false,
       showDragHandle: false,
       onClosing: () {},
@@ -66,7 +66,7 @@ class GroupBySettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      key: const Key("GroupBySettingsDialog"),
+      key: const Key('GroupBySettingsDialog'),
       child: ListView.builder(
         shrinkWrap: true,
         padding: const EdgeInsets.symmetric(

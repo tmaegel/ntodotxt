@@ -375,7 +375,7 @@ void main() {
           of: addProjectTagDialogFinder,
           matching: find.byType(TextFormField),
         ),
-        "project1",
+        'project1',
       );
       await safeTapByFinder(
         tester,
@@ -546,7 +546,7 @@ void main() {
           of: addContextTagDialogFinder,
           matching: find.byType(TextFormField),
         ),
-        "context1",
+        'context1',
       );
       await safeTapByFinder(
         tester,
@@ -717,7 +717,7 @@ void main() {
           of: addKeyValueTagDialogFinder,
           matching: find.byType(TextFormField),
         ),
-        "foo:bar",
+        'foo:bar',
       );
       await safeTapByFinder(
         tester,

@@ -17,7 +17,7 @@ class FilterTodoListBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
-      key: const Key("FilterTodoListBottomSheet"),
+      key: const Key('FilterTodoListBottomSheet'),
       enableDrag: false,
       showDragHandle: false,
       onClosing: () {},
@@ -62,7 +62,7 @@ class FilterSettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      key: const Key("FilterSettingsDialog"),
+      key: const Key('FilterSettingsDialog'),
       child: ListView.builder(
         shrinkWrap: true,
         padding: const EdgeInsets.symmetric(

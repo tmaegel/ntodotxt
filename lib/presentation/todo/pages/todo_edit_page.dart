@@ -43,13 +43,13 @@ class TodoEditPage extends StatelessWidget {
                   ),
                 );
               } else if (state is TodoSuccess) {
-                context.goNamed("todo-list");
+                context.goNamed('todo-list');
               }
             },
             builder: (BuildContext context, TodoState state) {
               return Scaffold(
                 appBar: MainAppBar(
-                  title: "Edit",
+                  title: 'Edit',
                   toolbar: _buildToolBar(context, state),
                 ),
                 body: _buildBody(),
@@ -69,7 +69,7 @@ class TodoEditPage extends StatelessWidget {
       icon: const Icon(Icons.save),
       tooltip: 'Save',
       action: () {
-        context.goNamed("todo-list");
+        context.goNamed('todo-list');
         context
             .read<TodoListBloc>()
             .add(TodoListTodoSubmitted(todo: state.todo));
@@ -84,7 +84,7 @@ class TodoEditPage extends StatelessWidget {
           tooltip: 'Delete',
           icon: const Icon(Icons.delete),
           onPressed: () {
-            context.goNamed("todo-list");
+            context.goNamed('todo-list');
             context
                 .read<TodoListBloc>()
                 .add(TodoListTodoDeleted(todo: state.todo));
