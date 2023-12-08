@@ -29,4 +29,4 @@ tbd
 
 ## Requirements
 
-- (Nextcloud)[https://nextcloud.com/] instance or other webdav server running **cloud sync only**
+- [Nextcloud](https://nextcloud.com/) instance or other webdav server running (**cloud-sync only**)
