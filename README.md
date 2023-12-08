@@ -1,6 +1,7 @@
 # ntodotxt
 
-![CI](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml/badge.svg)
+[![CI](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml/badge.svg)](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **This app is still under active development and not released, yet.**
 
