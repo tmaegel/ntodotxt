@@ -38,4 +38,4 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Run test
-        run: flutter test flutter test --exclude-tags=client
+        run: flutter test --exclude-tags=client
