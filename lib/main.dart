@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
+import 'package:ntodotxt/bloc_observer.dart' show GenericBlocObserver;
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
@@ -34,7 +35,7 @@ void main() async {
 
   log.info('Setup bloc oberserver');
   WidgetsFlutterBinding.ensureInitialized();
-  Bloc.observer = SimpleBlocObserver();
+  Bloc.observer = GenericBlocObserver();
 
   log.info('Get users cache directory');
   final String cacheDirectory = (await getApplicationCacheDirectory()).path;
@@ -53,28 +54,6 @@ void main() async {
     todoFile: todoFile,
     initialLoginState: initialLoginState,
   ));
-}
-
-class SimpleBlocObserver extends BlocObserver {
-  @override
-  void onChange(BlocBase bloc, Change change) {
-    super.onChange(bloc, change);
-    log.fine(
-        'STATE CHANGE: ${change.currentState.runtimeType} > ${change.nextState.runtimeType}');
-    log.finer('${bloc.runtimeType} $change');
-  }
-
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    log.finest('${bloc.runtimeType} $transition');
-  }
-
-  @override
-  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    log.fine('${bloc.runtimeType} $error $stackTrace');
-    super.onError(bloc, error, stackTrace);
-  }
 }
 
 class App extends StatelessWidget {

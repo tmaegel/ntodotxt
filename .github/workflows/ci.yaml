@@ -38,4 +38,11 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Run test
-        run: flutter test --exclude-tags=client
+        run: flutter test --coverage --exclude-tags=client
+
+      - name: Check test coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v2
+        with:
+          path: '/coverage/lcov.info'
+          exclude: '**/*_observer.dart'
+          min_coverage: 50
