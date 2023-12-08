@@ -26,7 +26,7 @@ repos:
       - id: dart format
         name: dart format
         language: system
-        entry: dart format
+        entry: dart format --set-exit-if-changed
         files: \.dart$
 
       - id: flutter analyze
