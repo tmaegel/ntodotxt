@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml/badge.svg)](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
-[![Flutter](https://img.shields.io/badge/_Flutter_-[flutter-version]-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter/tree/[flutter-version])
+[![Flutter](https://img.shields.io/badge/_Flutter_-3.16.3-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter)
 
 **This app is still under active development and not released, yet.**
 
@@ -30,5 +30,3 @@ tbd
 ## Requirements
 
 - (Nextcloud)[https://nextcloud.com/] instance or other webdav server running **cloud sync only**
-
-[flutter-version]: 3.16.3
