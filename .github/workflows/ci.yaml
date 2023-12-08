@@ -36,7 +36,7 @@ jobs:
           dart pub global activate very_good_cli
           dart pub global run very_good_cli:very_good packages check licenses \
             --dependency-type='direct-main,transitive' \
-            --allowed='MIT,BSD-3-Clause,BSD-2-Clause,Apache-2.0'
+            --allowed='MIT,BSD-3-Clause,BSD-2-Clause,Apache-2.0,Zlib'
 
       - name: Analyze code (lint)
         run: flutter analyze --fatal-infos --fatal-warnings
