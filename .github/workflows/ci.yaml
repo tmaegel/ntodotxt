@@ -43,6 +43,6 @@ jobs:
       - name: Check test coverage
         uses: VeryGoodOpenSource/very_good_coverage@v2
         with:
-          path: '/coverage/lcov.info'
+          path: '${{ github.workspace }}/coverage/lcov.info'
           exclude: '**/*_observer.dart'
           min_coverage: 50
