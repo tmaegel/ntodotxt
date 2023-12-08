@@ -24,13 +24,13 @@ jobs:
           channel: 'stable'
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
-        run: flutter --version
+      - run: flutter --version
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Analyze code (lint)
-      - run: flutter analyze --fatal-infos --fatal-warnings
+        run: flutter analyze --fatal-infos --fatal-warnings
 
       - name: Analyze code (format)
         run: dart format --set-exit-if-changed .
