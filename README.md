@@ -1,7 +1,8 @@
 # ntodotxt
 
 [![CI](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml/badge.svg)](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
+[![Flutter](https://img.shields.io/badge/_Flutter_-[flutter-version]-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter/tree/[flutter-version])
 
 **This app is still under active development and not released, yet.**
 
@@ -21,7 +22,7 @@ tbd
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
 - [ ] Build and publish to Microsoft Store (Windows)
 - [ ] Manage saved filters (ordering, filter by project, context and priorities)
-- [ ] [Recurring}(https://c306.net/t/topydo-docs/#Recurrence) tasks
+- [ ] [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
 - [ ] Add language localization
 - [ ] Archiving of all completed todos (done.txt)
 - [ ] Increase test coverage
@@ -29,3 +30,5 @@ tbd
 ## Requirements
 
 - (Nextcloud)[https://nextcloud.com/] instance or other webdav server running **cloud sync only**
+
+[flutter-version]: 3.16.3
