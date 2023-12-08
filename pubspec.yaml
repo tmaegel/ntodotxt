@@ -18,7 +18,7 @@ dependencies:
   flex_color_scheme: ^7.3.1
   flutter_bloc: ^8.1.3
   flutter_secure_storage: ^9.0.0
-  go_router: ^11.0.0
+  go_router: ^12.1.3
   logging: ^1.2.0
   path_provider: ^2.0.11
   rxdart: ^0.27.7
@@ -30,7 +30,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   file: ^7.0.0
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   flutter_oss_licenses: ^2.0.1
   test_cov_console: ^0.2.2
 
