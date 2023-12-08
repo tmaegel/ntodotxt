@@ -43,7 +43,9 @@ abstract class TodoListApi {
 }
 
 class LocalTodoListApi extends TodoListApi {
-  LocalTodoListApi({required super.todoFile}) {
+  LocalTodoListApi({
+    required super.todoFile,
+  }) {
     // Use synchronize versions here.
     if (todoFile.existsSync() == false) {
       log.fine('File ${todoFile.path} does not exist. Creating.');
@@ -204,9 +206,9 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   final WebDAVClient client;
 
   WebDAVTodoListApi._({
-    required File todoFile,
+    required super.todoFile,
     required this.client,
-  }) : super(todoFile: todoFile);
+  });
 
   factory WebDAVTodoListApi({
     required File todoFile,
