@@ -66,7 +66,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           draft: true
-          owner: tmaegel
+          owner: ${{ github.repository_owner }}
           artifacts: >
             build/app/outputs/bundle/release/app-release.aab,
             build/app/outputs/flutter-apk/app-release.apk,
