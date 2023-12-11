@@ -7,6 +7,7 @@ import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/main.dart' show App, log;
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,12 +35,7 @@ class LoginWrapper extends StatelessWidget {
             current is LoginError,
         listener: (BuildContext context, LoginState state) {
           if (state is LoginError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                content: Text(state.message),
-              ),
-            );
+            SnackBarHandler.error(context, state.message);
           }
         },
         buildWhen: (previousState, state) =>

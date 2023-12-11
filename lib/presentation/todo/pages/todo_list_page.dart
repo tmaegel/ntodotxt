@@ -9,6 +9,7 @@ import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -97,12 +98,7 @@ Action selectionDeleteAction = Action(
   icon: Icons.delete,
   action: (BuildContext context) {
     context.read<TodoListBloc>().add(const TodoListSelectionDeleted());
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        content: const Text('Todos deleted.'),
-      ),
-    );
+    SnackBarHandler.info(context, 'Todos deleted.');
   },
 );
 
@@ -111,12 +107,7 @@ Action selectionMarkAsDoneAction = Action(
   icon: Icons.done_all,
   action: (BuildContext context) {
     context.read<TodoListBloc>().add(const TodoListSelectionCompleted());
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        content: const Text('Mark todos as done.'),
-      ),
-    );
+    SnackBarHandler.info(context, 'Mark todos as done.');
   },
 );
 
@@ -125,12 +116,7 @@ Action selectionMarkAsUndoneAction = Action(
   icon: Icons.remove_done,
   action: (BuildContext context) {
     context.read<TodoListBloc>().add(const TodoListSelectionIncompleted());
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        content: const Text('Mark todos as undone.'),
-      ),
-    );
+    SnackBarHandler.info(context, 'Mark todos as undone.');
   },
 );
 
@@ -144,12 +130,7 @@ class TodoListPage extends StatelessWidget {
       listener: (BuildContext context, TodoListState state) {
         // Catch errors on the highes possible layer.
         if (state is TodoListError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              content: Text(state.message),
-            ),
-          );
+          SnackBarHandler.error(context, state.message);
         }
       },
       child: screenWidth < maxScreenWidthCompact

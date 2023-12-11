@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -120,12 +121,7 @@ class TodoEditPage extends StatelessWidget {
             context
                 .read<TodoListBloc>()
                 .add(TodoListTodoDeleted(todo: state.todo));
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                content: const Text('Todo deleted.'),
-              ),
-            );
+            SnackBarHandler.info(context, 'Todo deleted');
           },
         ),
       ],

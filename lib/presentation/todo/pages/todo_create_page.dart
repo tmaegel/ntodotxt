@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -36,12 +37,7 @@ class TodoCreatePage extends StatelessWidget {
           return BlocConsumer<TodoBloc, TodoState>(
             listener: (BuildContext context, TodoState state) {
               if (state is TodoError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    content: Text(state.message),
-                  ),
-                );
+                SnackBarHandler.error(context, state.message);
               } else if (state is TodoSuccess) {
                 context.pushNamed('todo-list');
               }
