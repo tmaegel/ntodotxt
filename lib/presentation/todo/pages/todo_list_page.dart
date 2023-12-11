@@ -8,7 +8,7 @@ import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
-import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';

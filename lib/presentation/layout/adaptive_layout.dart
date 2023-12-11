@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
-import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/app.dart';
 
 class AdaptiveLayout extends StatelessWidget {
   // The widget to display in the body of the Scaffold.

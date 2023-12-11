@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/constants/screen.dart';
+import 'package:ntodotxt/constants/app.dart';
 
 class DrawerDestination {
   final String label;
