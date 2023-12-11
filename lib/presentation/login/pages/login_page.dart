@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
@@ -91,30 +93,38 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(MediaQuery.of(context).size.height),
-            child: const TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.cloud_outlined),
-                  text: 'WebDAV',
-                ),
-                Tab(
-                  icon: Icon(Icons.cloud_off),
-                  text: 'Offline',
-                ),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 150,
+              child: PrimaryFloatingActionButton(
+                icon: const Icon(Icons.cloud_off),
+                tooltip: 'Use this app offline',
+                label: 'Offline',
+                action: () => context.read<LoginCubit>().loginOffline(),
+              ),
             ),
-          ),
-          body: TabBarView(
-            children: [
-              WebDAVLoginView(),
-              const LocalLoginView(),
-            ],
-          ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: 150,
+              child: PrimaryFloatingActionButton(
+                icon: const Icon(Icons.cloud_outlined),
+                tooltip: 'Login via WebDAV',
+                label: 'WebDAV',
+                action: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return WebDAVLoginView();
+                      },
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -157,97 +167,96 @@ class WebDAVLoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 48.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: serverTextFieldController,
-                  decoration: const InputDecoration(
-                    labelText: 'Server',
-                    hintText: 'http[s]://<server>:<port>',
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Missing server address';
-                    }
-                    if (!value.startsWith('http://') &&
-                        !value.startsWith('https://')) {
-                      return 'Missing protocol';
-                    }
-                    final strippedValue = value
-                        .replaceAll('http://', '')
-                        .replaceAll('https://', '');
-                    if (strippedValue.split(':').length < 2) {
-                      return 'Missing server port';
-                    }
-                    if (!RegExp(
-                            r'(?<proto>^(http|https):\/\/)(?<host>\w+):(?<port>\d+)$')
-                        .hasMatch(value)) {
-                      return 'Invalid format';
-                    }
-                    return null;
-                  },
+      appBar: MainAppBar(
+        title: 'Login - WebDAV',
+        leadingAction: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: Form(
+        key: formKey,
+        child: ListView(
+          children: [
+            ListTile(
+              title: TextFormField(
+                controller: serverTextFieldController,
+                decoration: const InputDecoration(
+                  labelText: 'Server',
+                  hintText: 'http[s]://<server>:<port>',
                 ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Missing server address';
+                  }
+                  if (!value.startsWith('http://') &&
+                      !value.startsWith('https://')) {
+                    return 'Missing protocol';
+                  }
+                  final strippedValue = value
+                      .replaceAll('http://', '')
+                      .replaceAll('https://', '');
+                  if (strippedValue.split(':').length < 2) {
+                    return 'Missing server port';
+                  }
+                  if (!RegExp(
+                          r'(?<proto>^(http|https):\/\/)(?<host>\w+):(?<port>\d+)$')
+                      .hasMatch(value)) {
+                    return 'Invalid format';
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: baseUrlTextFieldController,
-                  decoration: const InputDecoration(
-                    labelText: 'Base URL',
-                    hintText: 'e.g. /remote.php/dav/files',
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Missing base URL';
-                    }
-                    return null;
-                  },
+            ),
+            ListTile(
+              title: TextFormField(
+                controller: baseUrlTextFieldController,
+                decoration: const InputDecoration(
+                  labelText: 'Base URL',
+                  hintText: 'e.g. /remote.php/dav/files',
                 ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Missing base URL';
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: usernameTextFieldController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                  ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Missing username';
-                    }
-                    return null;
-                  },
+            ),
+            ListTile(
+              title: TextFormField(
+                controller: usernameTextFieldController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
                 ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Missing username';
+                  }
+                  return null;
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: passwordTextFieldController,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                  ),
-                  obscureText: true,
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Missing password';
-                    }
-                    return null;
-                  },
+            ),
+            ListTile(
+              title: TextFormField(
+                controller: passwordTextFieldController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
                 ),
+                obscureText: true,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Missing password';
+                  }
+                  return null;
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: PrimaryFloatingActionButton(
-        icon: const Icon(Icons.login),
+        icon: const Icon(Icons.cloud_outlined),
         tooltip: 'Login',
         label: 'Login',
         action: () {
@@ -262,7 +271,6 @@ class WebDAVLoginView extends StatelessWidget {
           }
         },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

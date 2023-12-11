@@ -22,6 +22,7 @@ final ThemeData lightTheme = light.copyWith(
   ),
   expansionTileTheme: light.expansionTileTheme.copyWith(
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
+    tilePadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
   ),
   listTileTheme: light.listTileTheme.copyWith(
     // It is not recommended to set dense to true
@@ -29,6 +30,7 @@ final ThemeData lightTheme = light.copyWith(
     dense: true,
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
+    contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     radius: Radius.zero,
@@ -72,13 +74,15 @@ final ThemeData darkTheme = dark.copyWith(
   ),
   expansionTileTheme: dark.expansionTileTheme.copyWith(
     collapsedBackgroundColor: dark.appBarTheme.backgroundColor,
+    tilePadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
   ),
   listTileTheme: dark.listTileTheme.copyWith(
     // It is not recommended to set dense to true
     // when ThemeData.useMaterial3 is true.
     dense: true,
     selectedColor: dark.textTheme.bodySmall?.color,
-    selectedTileColor: PlatformInfo.isAppOS ? Colors.red : dark.hoverColor,
+    selectedTileColor: dark.hoverColor,
+    contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     radius: Radius.zero,
