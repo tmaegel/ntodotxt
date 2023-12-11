@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-12-11
+
+### Added
+
+- Add swipe (left/right) action to toggle the completion of todo
+
+### Changed
+
+- Minor style adjustments to the theme and layout
+
+## Fixed
+
+- Hide tags (projects, contexts, key values) in the tag modal/dialog if already present in todo
+- Toggle filter/order/group by if tapping on the label
+- Notification bars are floating
+
 ## [0.1.0] - 2023-12-08
 
 ### Added
@@ -14,4 +30,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Intiial release
 
 [unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.1.0...HEAD
+[0.2.0]: https://github.com/tmaegel/ntodotxt/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/tmaegel/ntodotxt/releases/tag/v0.1.0
