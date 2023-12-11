@@ -52,10 +52,42 @@ class TodoEditPage extends StatelessWidget {
                   title: 'Edit',
                   toolbar: _buildToolBar(context, state),
                 ),
-                body: _buildBody(),
                 floatingActionButton: state.todo.description.isNotEmpty
                     ? _buildFloatingActionButton(context, state)
                     : null,
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          const TodoStringTextField(),
+                          const Divider(),
+                          const TodoPriorityTags(),
+                          const TodoCreationDateItem(),
+                          const TodoCompletionDateItem(),
+                          const TodoDueDateItem(),
+                          TodoProjectTags(
+                            availableTags: availableProjectTags
+                                .where((p) => !state.todo.projects.contains(p))
+                                .toSet(),
+                          ),
+                          TodoContextTags(
+                            availableTags: availableContextTags
+                                .where((c) => !state.todo.contexts.contains(c))
+                                .toSet(),
+                          ),
+                          TodoKeyValueTags(
+                            availableTags: availableKeyValueTags
+                                .where((kv) =>
+                                    !state.todo.fmtKeyValues.contains(kv))
+                                .toSet(),
+                          ),
+                          const SizedBox(height: 80),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           );
@@ -95,29 +127,6 @@ class TodoEditPage extends StatelessWidget {
               ),
             );
           },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBody() {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            children: [
-              const TodoStringTextField(),
-              const Divider(),
-              const TodoPriorityTags(),
-              const TodoCreationDateItem(),
-              const TodoCompletionDateItem(),
-              const TodoDueDateItem(),
-              TodoProjectTags(availableTags: availableProjectTags),
-              TodoContextTags(availableTags: availableContextTags),
-              TodoKeyValueTags(availableTags: availableKeyValueTags),
-              const SizedBox(height: 80),
-            ],
-          ),
         ),
       ],
     );
