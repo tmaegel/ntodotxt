@@ -87,24 +87,7 @@ class SettingsView extends StatelessWidget {
           const Divider(),
           ListTile(
             title: Text(
-              'Import & Export',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          ListTile(
-            title: const Text('Backup settings'),
-            subtitle: const Text('Backup app settings to file.'),
-            onTap: () {},
-          ),
-          ListTile(
-            title: const Text('Restore settings'),
-            subtitle: const Text('Restore app settings from file.'),
-            onTap: () {},
-          ),
-          const Divider(),
-          ListTile(
-            title: Text(
-              'Others',
+              'Reset',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
@@ -123,6 +106,13 @@ class SettingsView extends StatelessWidget {
             onTap: () {
               context.read<LoginCubit>().logout();
             },
+          ),
+          const Divider(),
+          ListTile(
+            title: Text(
+              'Others',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
           ),
           ListTile(
             title: const Text('About'),

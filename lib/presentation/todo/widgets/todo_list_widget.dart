@@ -7,34 +7,6 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tile_widget.dart';
 
-class TodoListSection extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  TodoListSection({
-    required this.title,
-    required this.children,
-    Key? key,
-  }) : super(key: PageStorageKey<String>(title));
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      key: key,
-      initiallyExpanded: true,
-      shape: const Border(),
-      title: Padding(
-        padding: const EdgeInsets.only(left: 5.0),
-        child: Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-      ),
-      children: children,
-    );
-  }
-}
-
 class TodoList extends StatelessWidget {
   const TodoList({super.key});
 
@@ -90,7 +62,7 @@ class TodoList extends StatelessWidget {
             title: section,
             children: [
               for (var todo in todoList)
-                _buildTodoTile(context, todo, isSelected),
+                _buildTodoListTile(context, todo, isSelected),
             ],
           ),
         );
@@ -100,8 +72,9 @@ class TodoList extends StatelessWidget {
     return items;
   }
 
-  TodoTile _buildTodoTile(BuildContext context, Todo todo, bool isSelected) {
-    return TodoTile(
+  TodoListTile _buildTodoListTile(
+      BuildContext context, Todo todo, bool isSelected) {
+    return TodoListTile(
       todo: todo,
       selected: todo.selected,
       onTap: () {

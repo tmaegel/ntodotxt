@@ -16,14 +16,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(title),
-      actions: toolbar != null ? <Widget>[_buildToolBar(context)] : null,
-    );
-  }
-
-  Widget _buildToolBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16.0),
-      child: toolbar,
+      actions: toolbar != null ? <Widget>[toolbar!] : null,
     );
   }
 

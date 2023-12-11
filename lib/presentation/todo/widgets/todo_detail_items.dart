@@ -71,7 +71,6 @@ class TodoPriorityTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: Tooltip(
             message: 'Priority',
             child: leadingIcon,
@@ -126,7 +125,6 @@ class TodoProjectTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: Tooltip(
             message: 'Projects',
             child: leadingIcon,
@@ -186,7 +184,6 @@ class TodoContextTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: Tooltip(
             message: 'Contexts',
             child: leadingIcon,
@@ -247,7 +244,6 @@ class TodoKeyValueTags extends TodoTagSection {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: Tooltip(
             message: 'Key values',
             child: leadingIcon,
@@ -280,7 +276,6 @@ class TodoCompletionDateItem extends StatelessWidget {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: const Tooltip(
             message: 'Completion date',
             child: Icon(Icons.event_available),
@@ -319,7 +314,6 @@ class TodoCreationDateItem extends StatelessWidget {
       builder: (BuildContext context, TodoState state) {
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: const Tooltip(
             message: 'Creation date',
             child: Icon(Icons.edit_calendar),
@@ -349,7 +343,6 @@ class TodoDueDateItem extends StatelessWidget {
         final String? dueDate = Todo.date2Str(state.todo.dueDate);
         return ListTile(
           key: key,
-          minLeadingWidth: 40,
           leading: const Tooltip(
             message: 'Due date',
             child: Icon(Icons.event),

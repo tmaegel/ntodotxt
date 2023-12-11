@@ -1,14 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
-class TodoTile extends StatelessWidget {
+class TodoListSection extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  TodoListSection({
+    required this.title,
+    required this.children,
+    Key? key,
+  }) : super(key: PageStorageKey<String>(title));
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      key: key,
+      initiallyExpanded: true,
+      shape: const Border(),
+      tilePadding: const EdgeInsets.only(left: 18.0, right: 12),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      children: children,
+    );
+  }
+}
+
+class TodoListTile extends StatelessWidget {
   final Todo todo;
   final Function onTap;
   final Function(bool?) onChange;
   final Function onLongPress;
   final bool selected;
 
-  TodoTile({
+  TodoListTile({
     required this.todo,
     required this.onTap,
     required this.onChange,
@@ -22,16 +48,17 @@ class TodoTile extends StatelessWidget {
     return ListTile(
       key: key,
       selected: selected,
-      leading: Checkbox(
-        value: todo.completion,
-        onChanged: (bool? completion) => onChange(completion),
-      ),
+      contentPadding: const EdgeInsets.only(left: 18.0, right: 0.0),
       title: Text(
         todo.description,
         style: TextStyle(
           decoration: todo.completion ? TextDecoration.lineThrough : null,
           decorationThickness: 2.0,
         ),
+      ),
+      trailing: Checkbox(
+        value: todo.completion,
+        onChanged: (bool? completion) => onChange(completion),
       ),
       subtitle: _buildSubtitle(),
       onTap: () => onTap(),

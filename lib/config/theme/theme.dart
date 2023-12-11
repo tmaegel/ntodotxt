@@ -8,6 +8,7 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
+    titleSpacing: 0.0,
     backgroundColor: Colors.transparent,
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
@@ -19,6 +20,9 @@ final ThemeData lightTheme = light.copyWith(
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
   ),
   listTileTheme: light.listTileTheme.copyWith(
+    // It is not recommended to set dense to true
+    // when ThemeData.useMaterial3 is true.
+    dense: true,
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
   ),
@@ -50,6 +54,7 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
+    titleSpacing: 0.0,
     backgroundColor: Colors.transparent,
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
@@ -61,6 +66,9 @@ final ThemeData darkTheme = dark.copyWith(
     collapsedBackgroundColor: dark.appBarTheme.backgroundColor,
   ),
   listTileTheme: dark.listTileTheme.copyWith(
+    // It is not recommended to set dense to true
+    // when ThemeData.useMaterial3 is true.
+    dense: true,
     selectedColor: dark.textTheme.bodySmall?.color,
     selectedTileColor: PlatformInfo.isAppOS ? Colors.red : dark.hoverColor,
   ),

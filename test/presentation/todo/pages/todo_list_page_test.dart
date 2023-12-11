@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart'
     show LoginWrapper;
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_list_widget.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tile_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,9 +51,9 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoTile), findsNWidgets(3));
-        Iterable<TodoTile> todoTiles =
-            tester.widgetList<TodoTile>(find.byType(TodoTile));
+        expect(find.byType(TodoListTile), findsNWidgets(3));
+        Iterable<TodoListTile> todoTiles =
+            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
         expect(todoTiles.elementAt(0).todo.description, 'TodoA');
         expect(todoTiles.elementAt(1).todo.description, 'TodoB');
         expect(todoTiles.elementAt(2).todo.description, 'TodoC');
@@ -82,9 +81,9 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoTile), findsNWidgets(3));
-        Iterable<TodoTile> todoTiles =
-            tester.widgetList<TodoTile>(find.byType(TodoTile));
+        expect(find.byType(TodoListTile), findsNWidgets(3));
+        Iterable<TodoListTile> todoTiles =
+            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
         expect(todoTiles.elementAt(0).todo.description, 'TodoC');
         expect(todoTiles.elementAt(1).todo.description, 'TodoB');
         expect(todoTiles.elementAt(2).todo.description, 'TodoA');
@@ -127,9 +126,9 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoTile), findsNWidgets(3));
-        Iterable<TodoTile> todoTiles =
-            tester.widgetList<TodoTile>(find.byType(TodoTile));
+        expect(find.byType(TodoListTile), findsNWidgets(3));
+        Iterable<TodoListTile> todoTiles =
+            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
         expect(todoTiles.elementAt(0).todo.description, 'TodoA');
         expect(todoTiles.elementAt(1).todo.description, 'TodoB');
         expect(todoTiles.elementAt(2).todo.description, 'TodoC');
@@ -157,9 +156,9 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoTile), findsNWidgets(2));
-        Iterable<TodoTile> todoTiles =
-            tester.widgetList<TodoTile>(find.byType(TodoTile));
+        expect(find.byType(TodoListTile), findsNWidgets(2));
+        Iterable<TodoListTile> todoTiles =
+            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
         expect(todoTiles.elementAt(0).todo.description, 'TodoB');
         expect(todoTiles.elementAt(1).todo.description, 'TodoC');
       });
@@ -186,9 +185,9 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(TodoTile), findsNWidgets(1));
-        Iterable<TodoTile> todoTiles =
-            tester.widgetList<TodoTile>(find.byType(TodoTile));
+        expect(find.byType(TodoListTile), findsNWidgets(1));
+        Iterable<TodoListTile> todoTiles =
+            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
         expect(todoTiles.elementAt(0).todo.description, 'TodoA');
       });
     });

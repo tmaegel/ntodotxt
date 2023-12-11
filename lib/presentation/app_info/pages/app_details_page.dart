@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
+import 'package:ntodotxt/constants/app.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,35 +35,30 @@ class AppInfoView extends StatelessWidget {
     return ListView(
       children: [
         ListTile(
-          minLeadingWidth: 40,
           leading: const Icon(Icons.update),
           title: const Text('ntodotxt'),
-          subtitle: const Text('Version 0.0.1'),
+          subtitle: const Text('Version $version'),
           onTap: () => _openUrl('$repoUrl/blob/main/CHANGELOG.md'),
         ),
         ListTile(
-          minLeadingWidth: 40,
           leading: const Icon(Icons.code),
           title: const Text('Source code'),
           subtitle: const Text(repoUrl),
           onTap: () => _openUrl(repoUrl),
         ),
         ListTile(
-          minLeadingWidth: 40,
           leading: const Icon(Icons.bug_report_outlined),
           title: const Text('Issue tracker'),
           subtitle: const Text('$repoUrl/issues'),
           onTap: () => _openUrl('$repoUrl/issues'),
         ),
         ListTile(
-          minLeadingWidth: 40,
           leading: const Icon(Icons.email_outlined),
           title: const Text('Contact me'),
           subtitle: const Text('mail@tonimaegel.de'),
           onTap: () => _openUrl('mailto:mail@tonimaegel.de'),
         ),
         ListTile(
-          minLeadingWidth: 40,
           leading: const Icon(Icons.shield_outlined),
           title: const Text('Licence'),
           subtitle: const Text('MIT License'),
