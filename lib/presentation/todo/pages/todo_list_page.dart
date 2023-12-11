@@ -175,7 +175,7 @@ abstract class TodoListView extends StatelessWidget {
     return BlocBuilder<TodoListBloc, TodoListState>(
       buildWhen: (TodoListState previousState, TodoListState state) {
         // Rebuild if selection has changed only.
-        return previousState.isSelected != state.isSelected;
+        return previousState.isAnySelected != state.isAnySelected;
       },
       builder: (BuildContext context, TodoListState state) {
         return Scaffold(
@@ -205,14 +205,14 @@ abstract class TodoListView extends StatelessWidget {
             ),
           ),
           drawer: isNarrowLayout ? const ResponsiveNavigationDrawer() : null,
-          floatingActionButton: !state.isSelected
+          floatingActionButton: !state.isAnySelected
               ? PrimaryFloatingActionButton(
                   icon: Icon(primaryAddTodoAction.icon),
                   tooltip: primaryAddTodoAction.label,
                   action: () => primaryAddTodoAction.action(context),
                 )
               : null,
-          bottomNavigationBar: state.isSelected
+          bottomNavigationBar: state.isAnySelected
               ? PrimaryBottomAppBar(
                   children: [
                     IconButton(

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 
 class TodoListSection extends StatelessWidget {
   final String title;
@@ -17,7 +21,6 @@ class TodoListSection extends StatelessWidget {
       key: key,
       initiallyExpanded: true,
       shape: const Border(),
-      tilePadding: const EdgeInsets.only(left: 18.0, right: 12),
       title: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall,
@@ -29,26 +32,61 @@ class TodoListSection extends StatelessWidget {
 
 class TodoListTile extends StatelessWidget {
   final Todo todo;
-  final Function onTap;
-  final Function(bool?) onChange;
-  final Function onLongPress;
-  final bool selected;
+  final bool isAnySelected;
 
   TodoListTile({
     required this.todo,
-    required this.onTap,
-    required this.onChange,
-    required this.onLongPress,
-    this.selected = false,
+    this.isAnySelected = false,
     Key? key,
   }) : super(key: PageStorageKey<String>(todo.id));
 
   @override
   Widget build(BuildContext context) {
+    // Allow swiping if no todo is selected only.
+    if (isAnySelected) {
+      return _buildTile(context);
+    } else {
+      return Dismissible(
+        key: ValueKey<String>(todo.id),
+        background: Container(
+          color: Theme.of(context).colorScheme.primary,
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Icon(Icons.done),
+              ),
+              Text(todo.completion == true ? 'Undone' : 'Done'),
+              const Expanded(child: SizedBox()),
+            ],
+          ),
+        ),
+        secondaryBackground: Container(
+          color: Theme.of(context).colorScheme.primary,
+          child: Row(
+            children: [
+              const Expanded(child: SizedBox()),
+              Text(todo.completion == true ? 'Undone' : 'Done'),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Icon(Icons.done),
+              ),
+            ],
+          ),
+        ),
+        onDismissed: (DismissDirection direction) => context
+            .read<TodoListBloc>()
+            .add(TodoListTodoCompletionToggled(
+                todo: todo, completion: !todo.completion)),
+        child: _buildTile(context),
+      );
+    }
+  }
+
+  Widget _buildTile(BuildContext context) {
     return ListTile(
       key: key,
-      selected: selected,
-      contentPadding: const EdgeInsets.only(left: 18.0, right: 0.0),
+      selected: todo.selected,
       title: Text(
         todo.description,
         style: TextStyle(
@@ -56,13 +94,17 @@ class TodoListTile extends StatelessWidget {
           decorationThickness: 2.0,
         ),
       ),
-      trailing: Checkbox(
-        value: todo.completion,
-        onChanged: (bool? completion) => onChange(completion),
-      ),
       subtitle: _buildSubtitle(),
-      onTap: () => onTap(),
-      onLongPress: () => onLongPress(),
+      onTap: () {
+        if (isAnySelected) {
+          context.read<TodoListBloc>().add(TodoListTodoSelectedToggled(
+              todo: todo, selected: !todo.selected));
+        } else {
+          context.pushNamed('todo-edit', extra: todo);
+        }
+      },
+      onLongPress: () => context.read<TodoListBloc>().add(
+          TodoListTodoSelectedToggled(todo: todo, selected: !todo.selected)),
     );
   }
 

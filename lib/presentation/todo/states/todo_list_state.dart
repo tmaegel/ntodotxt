@@ -262,7 +262,7 @@ sealed class TodoListState extends Equatable {
   }
 
   /// Returns true if at least one todo is selected, otherwise false.
-  bool get isSelected =>
+  bool get isAnySelected =>
       todoList.firstWhereOrNull((todo) => todo.selected) != null;
 
   /// Returns true if selected todos are completed only.
