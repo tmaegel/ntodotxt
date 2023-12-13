@@ -66,6 +66,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           owner: ${{ github.repository_owner }}
+          body: 'See [CHANGELOG](https://github.com/tmaegel/ntodotxt/blob/main/CHANGELOG.md)'
           artifacts: >
             build/app/outputs/bundle/release/app-release.aab,
             build/app/outputs/flutter-apk/app-release.apk,
