@@ -6,6 +6,7 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
+import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/saved_filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/saved_filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/saved_filter/states/filter_list_event.dart';
@@ -31,7 +32,12 @@ class FilterCreateEditPage extends StatelessWidget {
       create: (BuildContext context) => FilterCubit(
         filter: filter ?? const Filter(),
       ),
-      child: BlocBuilder<FilterCubit, FilterState>(
+      child: BlocConsumer<FilterCubit, FilterState>(
+        listener: (BuildContext context, FilterState state) {
+          if (state is FilterError) {
+            SnackBarHandler.error(context, state.message);
+          }
+        },
         builder: (BuildContext context, FilterState state) {
           return Scaffold(
             appBar: MainAppBar(

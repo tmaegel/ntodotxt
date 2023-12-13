@@ -8,7 +8,7 @@ import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/main.dart' show App, log;
-import 'package:ntodotxt/misc.dart';
+import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';

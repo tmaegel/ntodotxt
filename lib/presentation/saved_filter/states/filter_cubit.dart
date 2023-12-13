@@ -8,83 +8,119 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit({
     required Filter filter,
-  }) : super(FilterState(filter: filter));
+  }) : super(FilterSuccess(filter: filter));
 
   void updateName(String name) {
-    emit(state.copyWith(
-      filter: state.filter.copyWith(name: name),
-    ));
+    try {
+      emit(state.success(
+        filter: state.filter.copyWith(name: name),
+      ));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void updateOrder(TodoListOrder order) {
-    emit(state.copyWith(
-      filter: state.filter.copyWith(order: order),
-    ));
+    try {
+      emit(state.success(
+        filter: state.filter.copyWith(order: order),
+      ));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void updateGroupBy(TodoListGroupBy groupBy) {
-    emit(state.copyWith(
-      filter: state.filter.copyWith(groupBy: groupBy),
-    ));
+    try {
+      emit(state.success(
+        filter: state.filter.copyWith(groupBy: groupBy),
+      ));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void addPriority(Priority priority) {
-    emit(
-      state.copyWith(
-        filter: state.filter.copyWith(
-          priorities: {...state.filter.priorities, priority},
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            priorities: {...state.filter.priorities, priority},
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void removePriority(Priority priority) {
-    emit(
-      state.copyWith(
-        filter: state.filter.copyWith(
-          priorities: {...state.filter.priorities}..remove(priority),
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            priorities: {...state.filter.priorities}..remove(priority),
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void addProject(String project) {
-    emit(
-      state.copyWith(
-        filter: state.filter.copyWith(
-          projects: {...state.filter.projects, project},
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            projects: {...state.filter.projects, project},
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void removeProject(String project) {
-    emit(
-      state.copyWith(
-        filter: state.filter.copyWith(
-          projects: {...state.filter.projects}..remove(project),
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            projects: {...state.filter.projects}..remove(project),
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void addContext(String context) {
-    emit(
-      state.copyWith(
-        filter: state.filter.copyWith(
-          contexts: {...state.filter.contexts, context},
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            contexts: {...state.filter.contexts, context},
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 
   void removeContext(String context) {
-    emit(
-      state.copyWith(
-        filter: state.filter.copyWith(
-          contexts: {...state.filter.contexts}..remove(context),
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            contexts: {...state.filter.contexts}..remove(context),
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 }
