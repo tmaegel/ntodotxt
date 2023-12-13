@@ -8,24 +8,7 @@ sealed class TodoState extends Equatable {
     required this.todo,
   });
 
-  /// Initial state.
-  TodoState copyWith({
-    Todo? todo,
-  }) {
-    return TodoInitial(
-      todo: todo ?? this.todo,
-    );
-  }
-
-  TodoState change({
-    Todo? todo,
-  }) {
-    return TodoChange(
-      todo: todo ?? this.todo,
-    );
-  }
-
-  TodoState success({
+  TodoSuccess success({
     Todo? todo,
   }) {
     return TodoSuccess(
@@ -33,7 +16,7 @@ sealed class TodoState extends Equatable {
     );
   }
 
-  TodoState error({
+  TodoError error({
     required String message,
     Todo? todo,
   }) {
@@ -44,40 +27,12 @@ sealed class TodoState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         todo,
       ];
 
   @override
-  String toString() => 'TodoState { todo: "$todo" }';
-}
-
-final class TodoInitial extends TodoState {
-  const TodoInitial({
-    required super.todo,
-  });
-
-  @override
-  List<Object?> get props => [
-        todo,
-      ];
-
-  @override
-  String toString() => 'TodoInitial { todo: "$todo" }';
-}
-
-final class TodoChange extends TodoState {
-  const TodoChange({
-    required super.todo,
-  });
-
-  @override
-  List<Object?> get props => [
-        todo,
-      ];
-
-  @override
-  String toString() => 'TodoChange { todo: "$todo" }';
+  String toString() => 'TodoState { todo: $todo }';
 }
 
 final class TodoSuccess extends TodoState {
@@ -85,8 +40,16 @@ final class TodoSuccess extends TodoState {
     required super.todo,
   });
 
+  TodoSuccess copyWith({
+    Todo? todo,
+  }) {
+    return TodoSuccess(
+      todo: todo ?? this.todo,
+    );
+  }
+
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         todo,
       ];
 
@@ -102,8 +65,18 @@ final class TodoError extends TodoState {
     required super.todo,
   });
 
+  TodoError copyWith({
+    String? message,
+    Todo? todo,
+  }) {
+    return TodoError(
+      message: message ?? this.message,
+      todo: todo ?? this.todo,
+    );
+  }
+
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         message,
         todo,
       ];

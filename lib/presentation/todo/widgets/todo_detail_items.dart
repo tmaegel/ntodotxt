@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
@@ -56,15 +55,15 @@ class TodoPriorityTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoPriorityAdded(Priorities.byName(value)));
+      context.read<TodoCubit>().setPriority(Priorities.byName(value));
     } else {
-      context.read<TodoBloc>().add(const TodoPriorityRemoved());
+      context.read<TodoCubit>().unsetPriority();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return previousState.todo.priority != state.todo.priority;
       },
@@ -98,9 +97,9 @@ class TodoProjectTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoProjectsAdded([value]));
+      context.read<TodoCubit>().addMultipleProjects([value]);
     } else {
-      context.read<TodoBloc>().add(TodoProjectRemoved(value));
+      context.read<TodoCubit>().removeProject(value);
     }
   }
 
@@ -108,7 +107,7 @@ class TodoProjectTags extends TodoTagSection {
     _showDialog(
       context: context,
       child: BlocProvider.value(
-        value: BlocProvider.of<TodoBloc>(context),
+        value: BlocProvider.of<TodoCubit>(context),
         child: TodoProjectTagDialog(
           availableTags: availableTags,
         ),
@@ -118,7 +117,7 @@ class TodoProjectTags extends TodoTagSection {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return previousState.todo.projects != state.todo.projects;
       },
@@ -157,9 +156,9 @@ class TodoContextTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoContextsAdded([value]));
+      context.read<TodoCubit>().addMultipleContexts([value]);
     } else {
-      context.read<TodoBloc>().add(TodoContextRemoved(value));
+      context.read<TodoCubit>().removeContext(value);
     }
   }
 
@@ -167,7 +166,7 @@ class TodoContextTags extends TodoTagSection {
     _showDialog(
       context: context,
       child: BlocProvider.value(
-        value: BlocProvider.of<TodoBloc>(context),
+        value: BlocProvider.of<TodoCubit>(context),
         child: TodoContextTagDialog(
           availableTags: availableTags,
         ),
@@ -177,7 +176,7 @@ class TodoContextTags extends TodoTagSection {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return previousState.todo.contexts != state.todo.contexts;
       },
@@ -216,9 +215,9 @@ class TodoKeyValueTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoBloc>().add(TodoKeyValuesAdded([value]));
+      context.read<TodoCubit>().addMultipleKeyValues([value]);
     } else {
-      context.read<TodoBloc>().add(TodoKeyValueRemoved(value));
+      context.read<TodoCubit>().removeKeyValue(value);
     }
   }
 
@@ -226,7 +225,7 @@ class TodoKeyValueTags extends TodoTagSection {
     _showDialog(
       context: context,
       child: BlocProvider.value(
-        value: BlocProvider.of<TodoBloc>(context),
+        value: BlocProvider.of<TodoCubit>(context),
         child: TodoKeyValueTagDialog(
           availableTags: availableTags,
         ),
@@ -236,7 +235,7 @@ class TodoKeyValueTags extends TodoTagSection {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return mapEquals(previousState.todo.keyValues, state.todo.keyValues) ==
             false;
@@ -269,7 +268,7 @@ class TodoCompletionDateItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return previousState.todo.completionDate != state.todo.completionDate;
       },
@@ -289,11 +288,8 @@ class TodoCompletionDateItem extends StatelessWidget {
             message: state.todo.completion == true ? 'Undone' : 'Done',
             child: Checkbox(
               value: state.todo.completion,
-              onChanged: (bool? completion) {
-                context.read<TodoBloc>().add(
-                      TodoCompletionToggled(completion ?? false),
-                    );
-              },
+              onChanged: (bool? completion) =>
+                  context.read<TodoCubit>().toggleCompletion(),
             ),
           ),
         );
@@ -307,7 +303,7 @@ class TodoCreationDateItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return previousState.todo.creationDate != state.todo.creationDate;
       },
@@ -334,7 +330,7 @@ class TodoDueDateItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
         return mapEquals(previousState.todo.keyValues, state.todo.keyValues) ==
             false;
@@ -353,11 +349,8 @@ class TodoDueDateItem extends StatelessWidget {
               : IconButton(
                   icon: const Icon(Icons.remove),
                   tooltip: 'Unset due date',
-                  onPressed: () {
-                    context.read<TodoBloc>().add(
-                          TodoKeyValueRemoved('due:$dueDate'),
-                        );
-                  },
+                  onPressed: () =>
+                      context.read<TodoCubit>().removeKeyValue('due:$dueDate'),
                 ),
           onTap: () => _pickDateDialog(context),
         );
@@ -377,9 +370,9 @@ class TodoDueDateItem extends StatelessWidget {
         if (date != null) {
           final String? formattedDate = Todo.date2Str(date);
           if (formattedDate != null) {
-            context.read<TodoBloc>().add(
-                  TodoKeyValuesAdded(['due:$formattedDate']),
-                );
+            context.read<TodoCubit>().addMultipleKeyValues(
+              ['due:$formattedDate'],
+            );
           }
         }
       },

@@ -68,7 +68,8 @@ class Todo extends Equatable {
   static final RegExp patternProject = RegExp(r'^\+\S+$');
   static final RegExp patternContext = RegExp(r'^\@\S+$');
   // Prevent +, @ at the beginning and additional ':' within.
-  static final RegExp patternKeyValue = RegExp(r'^[^\+\@]\S[^:]+:\S[^:]+$');
+  static final RegExp patternKeyValue =
+      RegExp(r'^([^\+\@].*[^:\s]):(.*[^:\s])$'); // @todo: a:b failed
   static final RegExp patternId = RegExp(r'^id:[a-zA-Z0-9\-]+$');
 
   /// Unique [id]

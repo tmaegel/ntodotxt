@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_event.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 
 class TodoTagDialog extends StatefulWidget {
   final String tagName;
@@ -131,7 +130,7 @@ class TodoProjectTagDialog extends TodoTagDialog {
 
   @override
   void onSubmit(BuildContext context, List<String> values) {
-    context.read<TodoBloc>().add(TodoProjectsAdded(values));
+    context.read<TodoCubit>().addMultipleProjects(values);
   }
 
   @override
@@ -150,7 +149,7 @@ class TodoContextTagDialog extends TodoTagDialog {
 
   @override
   void onSubmit(BuildContext context, List<String> values) {
-    context.read<TodoBloc>().add(TodoContextsAdded(values));
+    context.read<TodoCubit>().addMultipleContexts(values);
   }
 
   @override
@@ -169,7 +168,7 @@ class TodoKeyValueTagDialog extends TodoTagDialog {
 
   @override
   void onSubmit(BuildContext context, List<String> values) {
-    context.read<TodoBloc>().add(TodoKeyValuesAdded(values));
+    context.read<TodoCubit>().addMultipleKeyValues(values);
   }
 
   @override

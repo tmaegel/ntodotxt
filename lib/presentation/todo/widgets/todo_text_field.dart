@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Todo;
-import 'package:ntodotxt/presentation/todo/states/todo_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_event.dart'
-    show TodoRefreshed;
+import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 
 class Debouncer {
@@ -56,7 +54,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoBloc, TodoState>(
+    return BlocBuilder<TodoCubit, TodoState>(
       builder: (BuildContext context, TodoState state) {
         _controller.text = state.todo.toString(includeId: false);
         return TextFormField(
@@ -90,7 +88,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
                   byPassId: state.todo.id, // Bypass current id.
                   value: _controller.text,
                 );
-                context.read<TodoBloc>().add(TodoRefreshed(todo));
+                context.read<TodoCubit>().updateTodo(todo);
               },
             );
           },
@@ -99,7 +97,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
               byPassId: state.todo.id, // Bypass current id.
               value: _controller.text,
             );
-            context.read<TodoBloc>().add(TodoRefreshed(todo));
+            context.read<TodoCubit>().updateTodo(todo);
           },
         );
       },
