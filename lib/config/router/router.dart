@@ -9,8 +9,7 @@ import 'package:ntodotxt/presentation/licenses/pages/licenses_page.dart';
 import 'package:ntodotxt/presentation/saved_filter/pages/filter_create_edit_page.dart';
 import 'package:ntodotxt/presentation/saved_filter/pages/filter_list_page.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_create_page.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 
@@ -75,7 +74,7 @@ class AppRouter {
                       context.read<TodoListBloc>().state.contexts;
                   Set<String> keyValues =
                       context.read<TodoListBloc>().state.keyValues;
-                  return TodoCreatePage(
+                  return TodoCreateEditPage(
                     availableProjectTags: projects,
                     availableContextTags: contexts,
                     availableKeyValueTags: keyValues
@@ -97,7 +96,7 @@ class AppRouter {
                       context.read<TodoListBloc>().state.contexts;
                   Set<String> keyValues =
                       context.read<TodoListBloc>().state.keyValues;
-                  return TodoEditPage(
+                  return TodoCreateEditPage(
                     todo: todo,
                     availableProjectTags: projects
                         .where(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
 
-class TodoEditPageMaterialApp extends StatelessWidget {
+class TodoCreateEditPageMaterialApp extends StatelessWidget {
   final Todo todo;
 
-  const TodoEditPageMaterialApp({
+  const TodoCreateEditPageMaterialApp({
     required this.todo,
     super.key,
   });
@@ -14,7 +14,7 @@ class TodoEditPageMaterialApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: TodoEditPage(todo: todo),
+      home: TodoCreateEditPage(todo: todo),
     );
   }
 }
@@ -33,7 +33,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(priority: Priority.A, description: 'Code something'),
         ));
         await tester.pump();
@@ -65,7 +65,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(priority: null, description: 'Code something'),
         ));
         await tester.pump();
@@ -101,7 +101,7 @@ void main() {
         final DateTime now = DateTime.now();
         final String today =
             '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(completion: true, description: 'Code something'),
         ));
         await tester.pump();
@@ -139,7 +139,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(completion: false, description: 'Code something'),
         ));
         await tester.pump();
@@ -180,7 +180,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
               creationDate: DateTime(2023, 12, 5),
               description: 'Code something'),
@@ -214,7 +214,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
             description: 'Code something',
             keyValues: const {'due': '2023-12-31'},
@@ -262,7 +262,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(description: 'Code something'),
         ));
         await tester.pump();
@@ -307,7 +307,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
             description: 'Code something',
             keyValues: const {'due': '2023-12-31'},
@@ -365,7 +365,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
             description: 'Code something',
             projects: const {'project1'},
@@ -399,7 +399,7 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(TodoEditPageMaterialApp(
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
             description: 'Code something',
           ),
@@ -430,7 +430,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(description: 'Code something'),
       ));
       await tester.pump();
@@ -489,7 +489,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
           projects: const {'project1'},
@@ -537,7 +537,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
           contexts: const {'context1'},
@@ -571,7 +571,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
         ),
@@ -601,7 +601,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(description: 'Code something'),
       ));
       await tester.pump();
@@ -660,7 +660,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
           contexts: const {'context1'},
@@ -708,7 +708,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
           keyValues: const {'foo': 'bar'},
@@ -742,7 +742,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
         ),
@@ -772,7 +772,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(description: 'Code something'),
       ));
       await tester.pump();
@@ -831,7 +831,7 @@ void main() {
       tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoEditPageMaterialApp(
+      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
         todo: Todo(
           description: 'Code something',
           keyValues: const {'foo': 'bar'},
