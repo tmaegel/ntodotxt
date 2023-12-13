@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/oss_licenses.dart';
 
@@ -8,15 +7,9 @@ class LicenceListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        title: 'Licenses',
-        leadingAction: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: const LicenseListView(),
+    return const Scaffold(
+      appBar: MainAppBar(title: 'Licenses'),
+      body: LicenseListView(),
     );
   }
 }
@@ -64,13 +57,7 @@ class LicenceDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(
-        title: title,
-        leadingAction: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      appBar: MainAppBar(title: title),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(16.0),

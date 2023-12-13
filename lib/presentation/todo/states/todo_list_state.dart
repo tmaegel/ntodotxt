@@ -29,6 +29,20 @@ enum TodoListGroupBy {
 }
 
 extension TodoFilter on TodoListFilter {
+  static Set<TodoListFilter> get types => {
+        for (var f in TodoListFilter.values) f,
+      };
+
+  static TodoListFilter byName(String name) {
+    try {
+      return TodoListFilter.values.byName(name);
+    } on Exception {
+      // Returns TodoListFilter.all
+    }
+
+    return TodoListFilter.all;
+  }
+
   bool _apply(Todo todo) {
     switch (this) {
       case TodoListFilter.all:
@@ -65,6 +79,20 @@ extension TodoFilter on TodoListFilter {
 }
 
 extension TodoOrder on TodoListOrder {
+  static Set<TodoListOrder> get types => {
+        for (var t in TodoListOrder.values) t,
+      };
+
+  static TodoListOrder byName(String name) {
+    try {
+      return TodoListOrder.values.byName(name);
+    } on Exception {
+      // Returns TodoListOrder.ascending
+    }
+
+    return TodoListOrder.ascending;
+  }
+
   // A negative integer if a is smaller than b,
   // zero if a is equal to b, and
   // a positive integer if a is greater than b.
@@ -105,6 +133,20 @@ extension TodoOrder on TodoListOrder {
 }
 
 extension TodoGroupBy on TodoListGroupBy {
+  static Set<TodoListGroupBy> get types => {
+        for (var g in TodoListGroupBy.values) g,
+      };
+
+  static TodoListGroupBy byName(String name) {
+    try {
+      return TodoListGroupBy.values.byName(name);
+    } on Exception {
+      // Returns TodoListGroupBy.none
+    }
+
+    return TodoListGroupBy.none;
+  }
+
   Map<String, Iterable<Todo>> groupByNone({
     required Iterable<Todo> todoList,
   }) {

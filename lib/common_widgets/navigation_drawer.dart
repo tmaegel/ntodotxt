@@ -21,9 +21,9 @@ const List<DrawerDestination> primaryDestinations = <DrawerDestination>[
     selectedIcon: Icon(Icons.checklist),
   ),
   DrawerDestination(
-    label: 'Views',
-    icon: Icon(Icons.favorite_outline),
-    selectedIcon: Icon(Icons.favorite),
+    label: 'Filters',
+    icon: Icon(Icons.filter_alt_outlined),
+    selectedIcon: Icon(Icons.filter_alt),
   ),
 ];
 
@@ -36,7 +36,12 @@ const List<DrawerDestination> secondaryDestinations = <DrawerDestination>[
 ];
 
 class ResponsiveNavigationDrawer extends StatefulWidget {
-  const ResponsiveNavigationDrawer({super.key});
+  final int? selectedIndex;
+
+  const ResponsiveNavigationDrawer({
+    this.selectedIndex,
+    super.key,
+  });
 
   @override
   State<ResponsiveNavigationDrawer> createState() =>
@@ -45,7 +50,7 @@ class ResponsiveNavigationDrawer extends StatefulWidget {
 
 class _ResponsiveNavigationDrawerState
     extends State<ResponsiveNavigationDrawer> {
-  int selectedIndex = 0;
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +63,10 @@ class _ResponsiveNavigationDrawerState
       surfaceTintColor: !isNarrowLayout
           ? Theme.of(context).appBarTheme.backgroundColor
           : null,
-      selectedIndex: selectedIndex, // First destination is selected.
+      selectedIndex: widget.selectedIndex ?? _selectedIndex,
       children: <Widget>[
         const Padding(
-          padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
+          padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
           child: SizedBox(),
         ),
         ...primaryDestinations.map(
@@ -74,7 +79,7 @@ class _ResponsiveNavigationDrawerState
           },
         ),
         const Padding(
-          padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
+          padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
           child: Divider(),
         ),
         ...secondaryDestinations.map(
@@ -90,15 +95,15 @@ class _ResponsiveNavigationDrawerState
       onDestinationSelected: (int index) {
         switch (index) {
           case 0: // Manage todos
-            _setState(index);
+            setState(() => _selectedIndex = index);
             context.go(context.namedLocation('todo-list'));
             break;
-          case 1: // Manage shortcuts
-            _setState(index);
-            // context.push(context.namedLocation('shortcut-list'));
+          case 1: // Manage filters
+            setState(() => _selectedIndex = index);
+            context.push(context.namedLocation('filter-list'));
             break;
           case 2: // Settings
-            _setState(index);
+            setState(() => _selectedIndex = index);
             context.push(context.namedLocation('settings'));
             break;
           default:
@@ -109,11 +114,5 @@ class _ResponsiveNavigationDrawerState
         }
       },
     );
-  }
-
-  void _setState(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
   }
 }

@@ -12,14 +12,8 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       builder: (BuildContext context, TodoListState state) {
-        return Column(
-          children: [
-            Expanded(
-              child: ListView(
-                children: _buildExpandedListView(context, state),
-              ),
-            ),
-          ],
+        return ListView(
+          children: _buildExpandedListView(context, state),
         );
       },
     );

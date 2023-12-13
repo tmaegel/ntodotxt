@@ -75,7 +75,8 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
           decoration: const InputDecoration(
             isDense: true,
             filled: false,
-            contentPadding: EdgeInsets.all(16),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,

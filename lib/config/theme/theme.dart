@@ -8,7 +8,6 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
-    titleSpacing: 0.0,
     backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
@@ -21,6 +20,7 @@ final ThemeData lightTheme = light.copyWith(
     shape: const StadiumBorder(),
   ),
   expansionTileTheme: light.expansionTileTheme.copyWith(
+    shape: const Border(),
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
     tilePadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
   ),
@@ -60,7 +60,6 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
-    titleSpacing: 0.0,
     backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
@@ -73,6 +72,7 @@ final ThemeData darkTheme = dark.copyWith(
     shape: const StadiumBorder(),
   ),
   expansionTileTheme: dark.expansionTileTheme.copyWith(
+    shape: const Border(),
     collapsedBackgroundColor: dark.appBarTheme.backgroundColor,
     tilePadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
   ),

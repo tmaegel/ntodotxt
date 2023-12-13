@@ -15,19 +15,11 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        title: 'Settings',
-        leadingAction: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => _cancelAction(context),
-        ),
-      ),
-      body: const SettingsView(),
+    return const Scaffold(
+      appBar: MainAppBar(title: 'Settings'),
+      body: SettingsView(),
     );
   }
-
-  void _cancelAction(BuildContext context) => context.pop();
 }
 
 class SettingsView extends StatelessWidget {

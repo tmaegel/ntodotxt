@@ -10,19 +10,11 @@ class AppInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        title: 'About',
-        leadingAction: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => _cancelAction(context),
-        ),
-      ),
-      body: const AppInfoView(),
+    return const Scaffold(
+      appBar: MainAppBar(title: 'About'),
+      body: AppInfoView(),
     );
   }
-
-  void _cancelAction(BuildContext context) => context.pop();
 }
 
 class AppInfoView extends StatelessWidget {

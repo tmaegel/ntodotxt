@@ -1,22 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:ntodotxt/constants/app.dart' show maxScreenWidthCompact;
+import 'package:ntodotxt/misc.dart' show PlatformInfo;
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final IconButton? leadingAction;
   final Widget? toolbar;
 
   const MainAppBar({
     required this.title,
-    this.leadingAction,
     this.toolbar,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return AppBar(
+      automaticallyImplyLeading: screenWidth < maxScreenWidthCompact,
+      titleSpacing: screenWidth < maxScreenWidthCompact ? 0.0 : null,
       title: Text(title),
-      actions: toolbar != null ? <Widget>[toolbar!] : null,
+      actions: toolbar != null
+          ? <Widget>[
+              PlatformInfo.isDesktopOS
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: toolbar!,
+                    )
+                  : toolbar!,
+            ]
+          : null,
     );
   }
 

@@ -50,36 +50,29 @@ class TodoCreatePage extends StatelessWidget {
                 floatingActionButton: state.todo.description.isNotEmpty
                     ? _buildFloatingActionButton(context, state)
                     : null,
-                body: Column(
+                body: ListView(
                   children: [
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          const TodoStringTextField(),
-                          const Divider(),
-                          const TodoPriorityTags(),
-                          const TodoCreationDateItem(),
-                          const TodoDueDateItem(),
-                          TodoProjectTags(
-                            availableTags: availableProjectTags
-                                .where((p) => !state.todo.projects.contains(p))
-                                .toSet(),
-                          ),
-                          TodoContextTags(
-                            availableTags: availableContextTags
-                                .where((c) => !state.todo.contexts.contains(c))
-                                .toSet(),
-                          ),
-                          TodoKeyValueTags(
-                            availableTags: availableKeyValueTags
-                                .where((kv) =>
-                                    !state.todo.fmtKeyValues.contains(kv))
-                                .toSet(),
-                          ),
-                          const SizedBox(height: 80),
-                        ],
-                      ),
+                    const TodoStringTextField(),
+                    const Divider(),
+                    const TodoPriorityTags(),
+                    const TodoCreationDateItem(),
+                    const TodoDueDateItem(),
+                    TodoProjectTags(
+                      availableTags: availableProjectTags
+                          .where((p) => !state.todo.projects.contains(p))
+                          .toSet(),
                     ),
+                    TodoContextTags(
+                      availableTags: availableContextTags
+                          .where((c) => !state.todo.contexts.contains(c))
+                          .toSet(),
+                    ),
+                    TodoKeyValueTags(
+                      availableTags: availableKeyValueTags
+                          .where((kv) => !state.todo.fmtKeyValues.contains(kv))
+                          .toSet(),
+                    ),
+                    const SizedBox(height: 80),
                   ],
                 ),
               );

@@ -20,9 +20,12 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   go_router: ^12.1.3
   logging: ^1.2.0
+  path: ^1.8.3
   path_provider: ^2.0.11
   rxdart: ^0.27.7
   shared_preferences: ^2.2.1
+  sqflite_common_ffi: ^2.3.1
+  sqlite3_flutter_libs: ^0.5.18
   url_launcher: ^6.2.1
   webdav_client: ^1.2.1
 

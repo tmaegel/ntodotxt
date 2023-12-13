@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/app_info/pages/app_details_page.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/licenses/pages/licenses_page.dart';
+import 'package:ntodotxt/presentation/saved_filter/pages/filter_create_edit_page.dart';
+import 'package:ntodotxt/presentation/saved_filter/pages/filter_list_page.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_edit_page.dart';
@@ -59,23 +62,26 @@ class AppRouter {
             path: '/todo',
             name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
-              return const TodoListPage();
+              return TodoListPage();
             },
             routes: <RouteBase>[
               GoRoute(
                 path: 'todo/create',
                 name: 'todo-create',
                 builder: (BuildContext context, GoRouterState state) {
+                  Set<String> projects =
+                      context.read<TodoListBloc>().state.projects;
+                  Set<String> contexts =
+                      context.read<TodoListBloc>().state.contexts;
+                  Set<String> keyValues =
+                      context.read<TodoListBloc>().state.keyValues;
                   return TodoCreatePage(
-                    availableProjectTags:
-                        context.read<TodoListBloc>().state.projects,
-                    availableContextTags:
-                        context.read<TodoListBloc>().state.contexts,
-                    availableKeyValueTags: context
-                        .read<TodoListBloc>()
-                        .state
-                        .keyValues
-                        .where((c) => !c.startsWith('due:'))
+                    availableProjectTags: projects,
+                    availableContextTags: contexts,
+                    availableKeyValueTags: keyValues
+                        .where(
+                          (c) => !c.startsWith('due:'),
+                        )
                         .toSet(),
                   );
                 },
@@ -85,28 +91,62 @@ class AppRouter {
                 name: 'todo-edit',
                 builder: (BuildContext context, GoRouterState state) {
                   Todo todo = state.extra as Todo;
+                  Set<String> projects =
+                      context.read<TodoListBloc>().state.projects;
+                  Set<String> contexts =
+                      context.read<TodoListBloc>().state.contexts;
+                  Set<String> keyValues =
+                      context.read<TodoListBloc>().state.keyValues;
                   return TodoEditPage(
                     todo: todo,
-                    availableProjectTags: context
-                        .read<TodoListBloc>()
-                        .state
-                        .projects
-                        .where((p) => !todo.projects.contains(p))
+                    availableProjectTags: projects
+                        .where(
+                          (p) => !todo.projects.contains(p),
+                        )
                         .toSet(),
-                    availableContextTags: context
-                        .read<TodoListBloc>()
-                        .state
-                        .contexts
-                        .where((c) => !todo.contexts.contains(c))
+                    availableContextTags: contexts
+                        .where(
+                          (c) => !todo.contexts.contains(c),
+                        )
                         .toSet(),
-                    availableKeyValueTags: context
-                        .read<TodoListBloc>()
-                        .state
-                        .keyValues
-                        .where((c) =>
-                            !todo.fmtKeyValues.contains(c) &&
-                            !c.startsWith('due:'))
+                    availableKeyValueTags: keyValues
+                        .where(
+                          (c) =>
+                              !todo.fmtKeyValues.contains(c) &&
+                              !c.startsWith('due:'),
+                        )
                         .toSet(),
+                  );
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/filter',
+            name: 'filter-list',
+            builder: (BuildContext context, GoRouterState state) {
+              return const FilterListPage();
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'filter/create',
+                name: 'filter-create',
+                builder: (BuildContext context, GoRouterState state) {
+                  return FilterCreateEditPage(
+                    projects: context.read<TodoListBloc>().state.projects,
+                    contexts: context.read<TodoListBloc>().state.contexts,
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'filter/edit',
+                name: 'filter-edit',
+                builder: (BuildContext context, GoRouterState state) {
+                  Filter filter = state.extra as Filter;
+                  return FilterCreateEditPage(
+                    filter: filter,
+                    projects: context.read<TodoListBloc>().state.projects,
+                    contexts: context.read<TodoListBloc>().state.contexts,
                   );
                 },
               ),
