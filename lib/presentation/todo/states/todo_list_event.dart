@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/domain/todo/todo_model.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 sealed class TodoListEvent extends Equatable {
   const TodoListEvent();
@@ -86,7 +87,7 @@ final class TodoListSelectionDeleted extends TodoListEvent {
 }
 
 final class TodoListOrderChanged extends TodoListEvent {
-  final TodoListOrder? order;
+  final ListOrder? order;
 
   const TodoListOrderChanged({
     required this.order,
@@ -97,7 +98,7 @@ final class TodoListOrderChanged extends TodoListEvent {
 }
 
 final class TodoListFilterChanged extends TodoListEvent {
-  final TodoListFilter? filter;
+  final ListFilter? filter;
 
   const TodoListFilterChanged({
     required this.filter,
@@ -107,13 +108,13 @@ final class TodoListFilterChanged extends TodoListEvent {
   List<Object?> get props => [filter];
 }
 
-final class TodoListGroupByChanged extends TodoListEvent {
-  final TodoListGroupBy? groupBy;
+final class TodoListGroupChanged extends TodoListEvent {
+  final ListGroup? group;
 
-  const TodoListGroupByChanged({
-    required this.groupBy,
+  const TodoListGroupChanged({
+    required this.group,
   });
 
   @override
-  List<Object?> get props => [groupBy];
+  List<Object?> get props => [group];
 }

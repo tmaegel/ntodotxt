@@ -7,19 +7,21 @@ import 'package:logging/logging.dart';
 import 'package:ntodotxt/bloc_observer.dart' show GenericBlocObserver;
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
-import 'package:ntodotxt/domain/filter/filter_repository.dart';
+import 'package:ntodotxt/data/filter/filter_controller.dart'
+    show FilterController;
+import 'package:ntodotxt/domain/filter/filter_repository.dart'
+    show FilterRepository;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final Logger log = Logger('ntodotxt');
@@ -58,25 +60,18 @@ void main() async {
   final File todoFile =
       File('$cacheDirectory${Platform.pathSeparator}todo.txt');
 
-  log.info('Setup shared preferences');
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-
   log.info('Check initial login and backend status');
   final LoginState initialLoginState = await LoginCubit.init();
 
   log.info('Run app');
   runApp(LoginWrapper(
-    prefs: prefs,
     todoFile: todoFile,
     initialLoginState: initialLoginState,
   ));
 }
 
 class App extends StatelessWidget {
-  final SharedPreferences prefs;
-
   const App({
-    required this.prefs,
     super.key,
   });
 
@@ -90,21 +85,20 @@ class App extends StatelessWidget {
       },
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<SettingsCubit>(
-            create: (BuildContext context) => SettingsCubit(
-              prefs: prefs,
-            ),
+          BlocProvider<DefaultFilterCubit>(
+            create: (BuildContext context) => DefaultFilterCubit(),
           ),
+          // Is required to retrieve general information from the
+          // unfiltered todo list.
           BlocProvider<TodoListBloc>(
             create: (context) => TodoListBloc(
-              prefs: prefs,
               repository: context.read<TodoListRepository>(),
             )
               ..add(const TodoListSubscriptionRequested())
               ..add(const TodoListSynchronizationRequested()),
           ),
           BlocProvider<FilterListBloc>(
-            create: (context) => FilterListBloc(
+            create: (BuildContext context) => FilterListBloc(
               context.read<FilterRepository>(),
             )..add(const FilterListSubscriped()),
           ),

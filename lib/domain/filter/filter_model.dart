@@ -1,7 +1,245 @@
 import 'package:equatable/equatable.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoListFilter, TodoListGroupBy, TodoListOrder;
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
+
+enum ListOrder {
+  ascending,
+  descending,
+}
+
+enum ListFilter {
+  all,
+  completedOnly,
+  incompletedOnly,
+}
+
+enum ListGroup {
+  none,
+  upcoming,
+  priority,
+  project,
+  context,
+}
+
+extension Order on ListOrder {
+  static Set<ListOrder> get types => {
+        for (var t in ListOrder.values) t,
+      };
+
+  static ListOrder byName(String name) {
+    try {
+      return ListOrder.values.byName(name);
+    } on Exception {
+      // Returns ListOrder.ascending
+    }
+
+    return ListOrder.ascending;
+  }
+
+  // A negative integer if a is smaller than b,
+  // zero if a is equal to b, and
+  // a positive integer if a is greater than b.
+  int _sort<T>(T a, T b) {
+    switch (this) {
+      case ListOrder.ascending:
+        return ascending(a, b);
+      // return a.toString().compareTo(b.toString());
+      case ListOrder.descending:
+        return descending(a, b);
+      default:
+        // Default is ascending.
+        return ascending(a, b);
+    }
+  }
+
+  int ascending<T>(T a, T b) {
+    if (a == null) {
+      return 1;
+    }
+    if (b == null) {
+      return -1;
+    }
+    return a.toString().compareTo(b.toString());
+  }
+
+  int descending<T>(T a, T b) {
+    if (a == null) {
+      return -1;
+    }
+    if (b == null) {
+      return 1;
+    }
+    return b.toString().compareTo(a.toString());
+  }
+
+  Iterable<T> sort<T>(Iterable<T> todoList) => todoList.toList()..sort(_sort);
+}
+
+extension Filters on ListFilter {
+  static Set<ListFilter> get types => {
+        for (var f in ListFilter.values) f,
+      };
+
+  static ListFilter byName(String name) {
+    try {
+      return ListFilter.values.byName(name);
+    } on Exception {
+      // Returns ListFilter.all
+    }
+
+    return ListFilter.all;
+  }
+
+  bool _apply(Todo todo) {
+    switch (this) {
+      case ListFilter.all:
+        return true;
+      case ListFilter.completedOnly:
+        return todo.completion;
+      case ListFilter.incompletedOnly:
+        return !todo.completion;
+      default:
+        // Default is all.
+        return true;
+    }
+  }
+
+  Iterable<Todo> apply(Iterable<Todo> todoList) {
+    return todoList.where(_apply);
+  }
+
+  /// Return todo list filtered by priority.
+  Iterable<Todo> applyPriority(Iterable<Todo> todoList, Priority? priority) {
+    return todoList.where((todo) => (priority == todo.priority));
+  }
+
+  Iterable<Todo> applyPriorityExcludeCompleted(
+      Iterable<Todo> todoList, Priority? priority) {
+    return todoList
+        .where((todo) => (priority == todo.priority && !todo.completion));
+  }
+
+  /// Return todo list filtered by completion state.
+  Iterable<Todo> applyCompletion(Iterable<Todo> todoList, bool completion) {
+    return todoList.where((todo) => (todo.completion == completion));
+  }
+}
+
+extension Groups on ListGroup {
+  static Set<ListGroup> get types => {
+        for (var g in ListGroup.values) g,
+      };
+
+  static ListGroup byName(String name) {
+    try {
+      return ListGroup.values.byName(name);
+    } on Exception {
+      // Returns ListGroup.none
+    }
+
+    return ListGroup.none;
+  }
+
+  Map<String, Iterable<Todo>> groupByNone({
+    required Iterable<Todo> todoList,
+  }) {
+    Map<String, Iterable<Todo>> groups = {'All': todoList};
+
+    return groups;
+  }
+
+  Map<String, Iterable<Todo>> groupByUpcoming({
+    required Iterable<Todo> todoList,
+  }) {
+    Map<String, Iterable<Todo>> groups = {
+      'Deadline passed': todoList.where(
+        (t) {
+          DateTime? due = t.dueDate;
+          return (due != null && Todo.compareToToday(due) < 0) ? true : false;
+        },
+      ),
+      'Today': todoList.where(
+        (t) {
+          DateTime? due = t.dueDate;
+          return (due != null && Todo.compareToToday(due) == 0) ? true : false;
+        },
+      ),
+      'Upcoming': todoList.where(
+        (t) {
+          DateTime? due = t.dueDate;
+          return (due != null && Todo.compareToToday(due) > 0) ? true : false;
+        },
+      ),
+      'No deadline': todoList.where(
+        (t) => t.dueDate == null,
+      ),
+    };
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
+
+    return groups;
+  }
+
+  Map<String, Iterable<Todo>> groupByPriority({
+    required Iterable<Todo> todoList,
+    required Set<Priority> sections,
+  }) {
+    Map<String, Iterable<Todo>> groups = {};
+    for (var p in sections) {
+      final Iterable<Todo> items = todoList.where((t) => t.priority == p);
+      if (p == Priority.none) {
+        groups['No priority'] = items;
+      } else {
+        groups[p.name] = items;
+      }
+    }
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
+
+    return groups;
+  }
+
+  Map<String, Iterable<Todo>> groupByProject({
+    required Iterable<Todo> todoList,
+    required Set<String?> sections,
+  }) {
+    Map<String, Iterable<Todo>> groups = {};
+    // Consider also todos without projects.
+    for (var p in [...sections, null]) {
+      Iterable<Todo> items;
+      if (p == null) {
+        items = todoList.where((t) => t.projects.isEmpty);
+      } else {
+        items = todoList.where((t) => t.projects.contains(p));
+      }
+      if (items.isNotEmpty) {
+        groups[p ?? 'No project'] = items;
+      }
+    }
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
+
+    return groups;
+  }
+
+  Map<String, Iterable<Todo>> groupByContext({
+    required Iterable<Todo> todoList,
+    required Set<String?> sections,
+  }) {
+    Map<String, Iterable<Todo>> groups = {};
+    // Consider also todos without contexts.
+    for (var c in [...sections, null]) {
+      Iterable<Todo> items;
+      if (c == null) {
+        items = todoList.where((t) => t.contexts.isEmpty);
+      } else {
+        items = todoList.where((t) => t.contexts.contains(c));
+      }
+      if (items.isNotEmpty) {
+        groups[c ?? 'No context'] = items;
+      }
+    }
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
+
+    return groups;
+  }
+}
 
 class Filter extends Equatable {
   final int? id;
@@ -9,9 +247,9 @@ class Filter extends Equatable {
   final Set<Priority> priorities;
   final Set<String> projects;
   final Set<String> contexts;
-  final TodoListOrder order;
-  final TodoListFilter filter;
-  final TodoListGroupBy groupBy;
+  final ListOrder order;
+  final ListFilter filter;
+  final ListGroup group;
 
   const Filter({
     this.id,
@@ -19,9 +257,9 @@ class Filter extends Equatable {
     this.priorities = const {},
     this.projects = const {},
     this.contexts = const {},
-    this.order = TodoListOrder.ascending,
-    this.filter = TodoListFilter.all,
-    this.groupBy = TodoListGroupBy.none,
+    this.order = ListOrder.ascending,
+    this.filter = ListFilter.all,
+    this.group = ListGroup.none,
   });
 
   static String get tableRepr {
@@ -33,7 +271,7 @@ class Filter extends Equatable {
       `contexts` TEXT,
       `order` TEXT,
       `filter` TEXT,
-      `groupBy` TEXT
+      `group` TEXT
     )''';
   }
 
@@ -43,9 +281,9 @@ class Filter extends Equatable {
     Set<Priority>? priorities,
     Set<String>? projects,
     Set<String>? contexts,
-    TodoListOrder? order,
-    TodoListFilter? filter,
-    TodoListGroupBy? groupBy,
+    ListOrder? order,
+    ListFilter? filter,
+    ListGroup? group,
   }) {
     return Filter(
       id: id ?? this.id,
@@ -55,7 +293,7 @@ class Filter extends Equatable {
       contexts: contexts ?? this.contexts,
       order: order ?? this.order,
       filter: filter ?? this.filter,
-      groupBy: groupBy ?? this.groupBy,
+      group: group ?? this.group,
     );
   }
 
@@ -71,13 +309,13 @@ class Filter extends Equatable {
       'contexts': contexts.join(','),
       'order': order.name,
       'filter': filter.name,
-      'groupBy': groupBy.name,
+      'group': group.name,
     };
   }
 
   @override
   String toString() {
-    return 'Filter { id: $id, name: $name order: ${order.name} filter: ${filter.name} groupBy: ${groupBy.name} priorities: ${[
+    return 'Filter { id: $id, name: $name order: ${order.name} filter: ${filter.name} group: ${group.name} priorities: ${[
       for (var p in priorities) p.name
     ]} projects: ${[for (var p in projects) p]} contexts: ${[
       for (var c in contexts) c
@@ -93,6 +331,6 @@ class Filter extends Equatable {
         contexts,
         order,
         filter,
-        groupBy,
+        group,
       ];
 }

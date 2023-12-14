@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart' show ListFilter;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart'
+    show TodoListBloc;
 
 class FilterTodoListBottomSheet extends StatelessWidget {
-  final Map<String, TodoListFilter> items;
+  final Map<String, ListFilter> items;
 
   const FilterTodoListBottomSheet({super.key})
       : items = const {
-          'All': TodoListFilter.all,
-          'Completed only': TodoListFilter.completedOnly,
-          'Incompleted only': TodoListFilter.incompletedOnly,
+          'All': ListFilter.all,
+          'Completed only': ListFilter.completedOnly,
+          'Incompleted only': ListFilter.incompletedOnly,
         };
 
   @override
@@ -28,8 +29,8 @@ class FilterTodoListBottomSheet extends StatelessWidget {
           itemCount: items.length,
           itemBuilder: (BuildContext context, int index) {
             String key = items.keys.elementAt(index);
-            TodoListFilter value = items[key]!;
-            return RadioListTile<TodoListFilter>(
+            ListFilter value = items[key]!;
+            return RadioListTile<ListFilter>(
               key: Key('${value.name}BottomSheetRadioButton'),
               contentPadding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
@@ -38,7 +39,7 @@ class FilterTodoListBottomSheet extends StatelessWidget {
               title: Text(key),
               value: value,
               groupValue: context.read<TodoListBloc>().state.filter.filter,
-              onChanged: (TodoListFilter? value) {
+              onChanged: (ListFilter? value) {
                 Navigator.pop(
                   context,
                   value ?? context.read<TodoListBloc>().state.filter.filter,
@@ -53,13 +54,13 @@ class FilterTodoListBottomSheet extends StatelessWidget {
 }
 
 class FilterSettingsDialog extends StatelessWidget {
-  final Map<String, TodoListFilter> items;
+  final Map<String, ListFilter> items;
 
   const FilterSettingsDialog({super.key})
       : items = const {
-          'All': TodoListFilter.all,
-          'Completed only': TodoListFilter.completedOnly,
-          'Incompleted only': TodoListFilter.incompletedOnly,
+          'All': ListFilter.all,
+          'Completed only': ListFilter.completedOnly,
+          'Incompleted only': ListFilter.incompletedOnly,
         };
 
   @override
@@ -72,8 +73,8 @@ class FilterSettingsDialog extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           String key = items.keys.elementAt(index);
-          TodoListFilter value = items[key]!;
-          return RadioListTile<TodoListFilter>(
+          ListFilter value = items[key]!;
+          return RadioListTile<ListFilter>(
             key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
@@ -81,10 +82,8 @@ class FilterSettingsDialog extends StatelessWidget {
             ),
             value: value,
             title: Text(key),
-            groupValue: TodoListFilter.values.byName(
-              context.read<SettingsCubit>().state.todoFilter,
-            ),
-            onChanged: (TodoListFilter? value) => Navigator.pop(context, value),
+            groupValue: context.read<DefaultFilterCubit>().state.filter,
+            onChanged: (ListFilter? value) => Navigator.pop(context, value),
           );
         },
       ),

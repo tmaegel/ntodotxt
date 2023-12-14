@@ -6,18 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/main.dart' show App;
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  late SharedPreferences prefs;
   late MemoryFileSystem fs;
   late File file;
 
   setUp(() async {
-    // Mock shared preferences.
-    SharedPreferences.setMockInitialValues({});
-    prefs = await SharedPreferences.getInstance();
-
     // Create in-memory file.
     fs = MemoryFileSystem();
     file = fs.file('todo.test');
@@ -29,7 +23,6 @@ void main() {
     testWidgets('show login screen if state is Logout', (tester) async {
       await tester.pumpWidget(
         LoginWrapper(
-          prefs: prefs,
           todoFile: file,
           initialLoginState: const Logout(),
         ),
@@ -42,7 +35,6 @@ void main() {
     testWidgets('show app screen if state is LoginOffline', (tester) async {
       await tester.pumpWidget(
         LoginWrapper(
-          prefs: prefs,
           todoFile: file,
           initialLoginState: const LoginOffline(),
         ),

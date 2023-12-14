@@ -4,21 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show Filter, Filters, Groups, ListFilter, ListGroup, ListOrder, Order;
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show
-        TodoFilter,
-        TodoGroupBy,
-        TodoListFilter,
-        TodoListGroupBy,
-        TodoListOrder,
-        TodoOrder;
 
 class FilterCreateEditPage extends StatelessWidget {
   final Filter? filter;
@@ -79,7 +72,7 @@ class FilterCreateEditPage extends StatelessWidget {
                     ListTile(
                       title: GenericChipGroup(
                         children: [
-                          for (var t in TodoOrder.types)
+                          for (var t in Order.types)
                             GenericChoiceChip(
                               label: Text(t.name),
                               selected: state.filter.order == t,
@@ -90,7 +83,7 @@ class FilterCreateEditPage extends StatelessWidget {
                                   // If unselected fallback to the default.
                                   context
                                       .read<FilterCubit>()
-                                      .updateOrder(TodoListOrder.ascending);
+                                      .updateOrder(ListOrder.ascending);
                                 }
                               },
                             ),
@@ -105,7 +98,7 @@ class FilterCreateEditPage extends StatelessWidget {
                     ListTile(
                       title: GenericChipGroup(
                         children: [
-                          for (var t in TodoFilter.types)
+                          for (var t in Filters.types)
                             GenericChoiceChip(
                               label: Text(t.name),
                               selected: state.filter.filter == t,
@@ -116,7 +109,33 @@ class FilterCreateEditPage extends StatelessWidget {
                                   // If unselected fallback to the default.
                                   context
                                       .read<FilterCubit>()
-                                      .updateFilter(TodoListFilter.all);
+                                      .updateFilter(ListFilter.all);
+                                }
+                              },
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                FilterListSection(
+                  title: 'Group by',
+                  children: [
+                    ListTile(
+                      title: GenericChipGroup(
+                        children: [
+                          for (var g in Groups.types)
+                            GenericChoiceChip(
+                              label: Text(g.name),
+                              selected: state.filter.group == g,
+                              onSelected: (bool selected) {
+                                if (selected) {
+                                  context.read<FilterCubit>().updateGroupBy(g);
+                                } else {
+                                  // If unselected fallback to the default.
+                                  context
+                                      .read<FilterCubit>()
+                                      .updateGroupBy(ListGroup.none);
                                 }
                               },
                             ),
@@ -192,32 +211,6 @@ class FilterCreateEditPage extends StatelessWidget {
                                   context.read<FilterCubit>().addContext(c);
                                 } else {
                                   context.read<FilterCubit>().removeContext(c);
-                                }
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                FilterListSection(
-                  title: 'Group by',
-                  children: [
-                    ListTile(
-                      title: GenericChipGroup(
-                        children: [
-                          for (var g in TodoGroupBy.types)
-                            GenericChoiceChip(
-                              label: Text(g.name),
-                              selected: state.filter.groupBy == g,
-                              onSelected: (bool selected) {
-                                if (selected) {
-                                  context.read<FilterCubit>().updateGroupBy(g);
-                                } else {
-                                  // If unselected fallback to the default.
-                                  context
-                                      .read<FilterCubit>()
-                                      .updateGroupBy(TodoListGroupBy.none);
                                 }
                               },
                             ),

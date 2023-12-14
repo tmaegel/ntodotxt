@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show Filter, ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -38,9 +39,9 @@ void main() {
       expect(
         todoListBloc.state.filter,
         const Filter(
-          order: TodoListOrder.ascending,
-          filter: TodoListFilter.all,
-          groupBy: TodoListGroupBy.none,
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
         ),
       );
       expect(todoListBloc.state.todoList, []);
@@ -650,22 +651,22 @@ void main() {
       api = LocalTodoListApi(todoFile: file);
       repository = TodoListRepository(api: api);
     });
-    group('TodoListOrderChanged', () {
+    group('ListOrderChanged', () {
       test('call', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListOrderChanged(order: TodoListOrder.descending));
+          ..add(const TodoListOrderChanged(order: ListOrder.descending));
 
         await expectLater(
           bloc.stream,
           emitsInOrder([
             TodoListSuccess(
-              filter: const Filter(order: TodoListOrder.ascending),
+              filter: const Filter(order: ListOrder.ascending),
               todoList: [todo],
             ),
             TodoListSuccess(
-              filter: const Filter(order: TodoListOrder.descending),
+              filter: const Filter(order: ListOrder.descending),
               todoList: [todo],
             ),
           ]),
@@ -673,23 +674,22 @@ void main() {
       });
     });
 
-    group('TodoListFilterChanged', () {
+    group('ListFilterChanged', () {
       test('call', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListFilterChanged(
-              filter: TodoListFilter.completedOnly));
+          ..add(const TodoListFilterChanged(filter: ListFilter.completedOnly));
 
         await expectLater(
           bloc.stream,
           emitsInOrder([
             TodoListSuccess(
-              filter: const Filter(filter: TodoListFilter.all),
+              filter: const Filter(filter: ListFilter.all),
               todoList: [todo],
             ),
             TodoListSuccess(
-              filter: const Filter(filter: TodoListFilter.completedOnly),
+              filter: const Filter(filter: ListFilter.completedOnly),
               todoList: [todo],
             ),
           ]),
@@ -697,22 +697,22 @@ void main() {
       });
     });
 
-    group('TodoListGroupByChanged', () {
+    group('ListGroupChanged', () {
       test('call', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListGroupByChanged(groupBy: TodoListGroupBy.context));
+          ..add(const TodoListGroupChanged(group: ListGroup.context));
 
         await expectLater(
           bloc.stream,
           emitsInOrder([
             TodoListSuccess(
-              filter: const Filter(groupBy: TodoListGroupBy.none),
+              filter: const Filter(group: ListGroup.none),
               todoList: [todo],
             ),
             TodoListSuccess(
-              filter: const Filter(groupBy: TodoListGroupBy.context),
+              filter: const Filter(group: ListGroup.context),
               todoList: [todo],
             ),
           ]),

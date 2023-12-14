@@ -5,10 +5,11 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_state.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_state.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -27,8 +28,8 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (BuildContext context, SettingsState state) {
+    return BlocBuilder<DefaultFilterCubit, DefaultFilterState>(
+        builder: (BuildContext context, DefaultFilterState state) {
       return ListView(
         children: [
           ListTile(
@@ -38,24 +39,11 @@ class SettingsView extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Filter'),
-            subtitle: Text(state.todoFilter),
+            title: const Text('Default order'),
+            subtitle: Text(state.order.name),
             onTap: () async {
-              context.read<SettingsCubit>().updateTodoFilter(
-                    await showDialog<TodoListFilter?>(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const FilterSettingsDialog(),
-                    ),
-                  );
-            },
-          ),
-          ListTile(
-            title: const Text('Order'),
-            subtitle: Text(state.todoOrder),
-            onTap: () async {
-              context.read<SettingsCubit>().updateTodoOrder(
-                    await showDialog<TodoListOrder?>(
+              context.read<DefaultFilterCubit>().updateTodoOrder(
+                    await showDialog<ListOrder?>(
                       context: context,
                       builder: (BuildContext context) =>
                           const OrderSettingsDialog(),
@@ -64,11 +52,24 @@ class SettingsView extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Group by'),
-            subtitle: Text(state.todoGrouping),
+            title: const Text('Default filter'),
+            subtitle: Text(state.filter.name),
             onTap: () async {
-              context.read<SettingsCubit>().updateTodoGrouping(
-                    await showDialog<TodoListGroupBy?>(
+              context.read<DefaultFilterCubit>().updateTodoFilter(
+                    await showDialog<ListFilter?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const FilterSettingsDialog(),
+                    ),
+                  );
+            },
+          ),
+          ListTile(
+            title: const Text('Default grouping'),
+            subtitle: Text(state.group.name),
+            onTap: () async {
+              context.read<DefaultFilterCubit>().updateTodoGrouping(
+                    await showDialog<ListGroup?>(
                       context: context,
                       builder: (BuildContext context) =>
                           const GroupBySettingsDialog(),
@@ -88,7 +89,7 @@ class SettingsView extends StatelessWidget {
             subtitle: const Text(
                 'Resets setting to the defaults. Login data and todos are preserved.'),
             onTap: () {
-              context.read<SettingsCubit>().resetSettings();
+              context.read<DefaultFilterCubit>().resetSettings();
             },
           ),
           ListTile(

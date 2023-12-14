@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class ActionWrapper {
   final String label;
@@ -42,7 +43,7 @@ List<ActionWrapper> appBarActions = <ActionWrapper>[
     action: (BuildContext context) async {
       context.read<TodoListBloc>().add(
             TodoListOrderChanged(
-              order: await showModalBottomSheet<TodoListOrder?>(
+              order: await showModalBottomSheet<ListOrder?>(
                 context: context,
                 builder: (BuildContext context) =>
                     const OrderTodoListBottomSheet(),
@@ -56,7 +57,7 @@ List<ActionWrapper> appBarActions = <ActionWrapper>[
     action: (BuildContext context) async {
       context.read<TodoListBloc>().add(
             TodoListFilterChanged(
-              filter: await showModalBottomSheet<TodoListFilter?>(
+              filter: await showModalBottomSheet<ListFilter?>(
                 context: context,
                 builder: (BuildContext context) =>
                     const FilterTodoListBottomSheet(),
@@ -69,8 +70,8 @@ List<ActionWrapper> appBarActions = <ActionWrapper>[
     label: 'Group by',
     action: (BuildContext context) async {
       context.read<TodoListBloc>().add(
-            TodoListGroupByChanged(
-              groupBy: await showModalBottomSheet<TodoListGroupBy?>(
+            TodoListGroupChanged(
+              group: await showModalBottomSheet<ListGroup?>(
                 context: context,
                 builder: (BuildContext context) =>
                     const GroupByTodoListBottomSheet(),

@@ -4,32 +4,17 @@ import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final TodoListRepository _repository;
 
   TodoListBloc({
-    SharedPreferences? prefs,
     required TodoListRepository repository,
+    Filter? filter,
   })  : _repository = repository,
         super(
           TodoListInitial(
-            filter: Filter(
-              filter: TodoListFilter.values.byName(
-                prefs == null ? 'all' : prefs.getString('todoFilter') ?? 'all',
-              ),
-              order: TodoListOrder.values.byName(
-                prefs == null
-                    ? 'ascending'
-                    : prefs.getString('todoOrder') ?? 'ascending',
-              ),
-              groupBy: TodoListGroupBy.values.byName(
-                prefs == null
-                    ? 'none'
-                    : prefs.getString('todoGrouping') ?? 'none',
-              ),
-            ),
+            filter: filter ?? const Filter(),
           ),
         ) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
@@ -45,7 +30,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListSelectionDeleted>(_onTodoListSelectionDeleted);
     on<TodoListOrderChanged>(_onTodoListOrderChanged);
     on<TodoListFilterChanged>(_onTodoListFilterChanged);
-    on<TodoListGroupByChanged>(_onTodoListGroupByChanged);
+    on<TodoListGroupChanged>(_onTodoListGroupChanged);
   }
 
   Future<void> _onTodoListSubscriptionRequested(
@@ -288,14 +273,14 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     }
   }
 
-  void _onTodoListGroupByChanged(
-    TodoListGroupByChanged event,
+  void _onTodoListGroupChanged(
+    TodoListGroupChanged event,
     Emitter<TodoListState> emit,
   ) {
     try {
       emit(
         state.success(
-          filter: state.filter.copyWith(groupBy: event.groupBy),
+          filter: state.filter.copyWith(group: event.group),
         ),
       );
     } on Exception catch (e) {

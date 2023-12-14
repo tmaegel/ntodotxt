@@ -1,9 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show Filter, ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoListFilter, TodoListGroupBy, TodoListOrder;
 
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit({
@@ -20,7 +19,7 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  void updateOrder(TodoListOrder order) {
+  void updateOrder(ListOrder order) {
     try {
       emit(state.success(
         filter: state.filter.copyWith(order: order),
@@ -30,7 +29,7 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  void updateFilter(TodoListFilter filter) {
+  void updateFilter(ListFilter filter) {
     try {
       emit(state.success(
         filter: state.filter.copyWith(filter: filter),
@@ -40,10 +39,10 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  void updateGroupBy(TodoListGroupBy groupBy) {
+  void updateGroupBy(ListGroup group) {
     try {
       emit(state.success(
-        filter: state.filter.copyWith(groupBy: groupBy),
+        filter: state.filter.copyWith(group: group),
       ));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

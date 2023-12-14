@@ -11,15 +11,12 @@ import 'package:ntodotxt/main.dart' show App, log;
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginWrapper extends StatelessWidget {
-  final SharedPreferences prefs;
   final File todoFile;
   final LoginState initialLoginState;
 
   const LoginWrapper({
-    required this.prefs,
     required this.todoFile,
     required this.initialLoginState,
     super.key,
@@ -57,7 +54,7 @@ class LoginWrapper extends StatelessWidget {
                 log.info('Create repository');
                 return TodoListRepository(api: _createApi(state));
               },
-              child: App(prefs: prefs),
+              child: const App(),
             );
           }
         },

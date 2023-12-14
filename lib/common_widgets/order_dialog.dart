@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart' show ListOrder;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart'
+    show TodoListBloc;
 
 class OrderTodoListBottomSheet extends StatelessWidget {
-  final Map<String, TodoListOrder> items;
+  final Map<String, ListOrder> items;
 
   const OrderTodoListBottomSheet({super.key})
       : items = const {
-          'Ascending': TodoListOrder.ascending,
-          'Descending': TodoListOrder.descending,
+          'Ascending': ListOrder.ascending,
+          'Descending': ListOrder.descending,
         };
 
   @override
@@ -27,8 +28,8 @@ class OrderTodoListBottomSheet extends StatelessWidget {
           itemCount: items.length,
           itemBuilder: (BuildContext context, int index) {
             String key = items.keys.elementAt(index);
-            TodoListOrder value = items[key]!;
-            return RadioListTile<TodoListOrder>(
+            ListOrder value = items[key]!;
+            return RadioListTile<ListOrder>(
               key: Key('${value.name}BottomSheetRadioButton'),
               contentPadding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
@@ -37,7 +38,7 @@ class OrderTodoListBottomSheet extends StatelessWidget {
               title: Text(key),
               value: value,
               groupValue: context.read<TodoListBloc>().state.filter.order,
-              onChanged: (TodoListOrder? value) {
+              onChanged: (ListOrder? value) {
                 Navigator.pop(
                   context,
                   value ?? context.read<TodoListBloc>().state.filter.order,
@@ -52,12 +53,12 @@ class OrderTodoListBottomSheet extends StatelessWidget {
 }
 
 class OrderSettingsDialog extends StatelessWidget {
-  final Map<String, TodoListOrder> items;
+  final Map<String, ListOrder> items;
 
   const OrderSettingsDialog({super.key})
       : items = const {
-          'Ascending': TodoListOrder.ascending,
-          'Descending': TodoListOrder.descending,
+          'Ascending': ListOrder.ascending,
+          'Descending': ListOrder.descending,
         };
 
   @override
@@ -70,8 +71,8 @@ class OrderSettingsDialog extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           String key = items.keys.elementAt(index);
-          TodoListOrder value = items[key]!;
-          return RadioListTile<TodoListOrder>(
+          ListOrder value = items[key]!;
+          return RadioListTile<ListOrder>(
             key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
@@ -79,10 +80,8 @@ class OrderSettingsDialog extends StatelessWidget {
             ),
             value: value,
             title: Text(key),
-            groupValue: TodoListOrder.values.byName(
-              context.read<SettingsCubit>().state.todoOrder,
-            ),
-            onChanged: (TodoListOrder? value) => Navigator.pop(context, value),
+            groupValue: context.read<DefaultFilterCubit>().state.order,
+            onChanged: (ListOrder? value) => Navigator.pop(context, value),
           );
         },
       ),

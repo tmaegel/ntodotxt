@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPageBlocProvider extends StatelessWidget {
@@ -52,7 +53,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Order' &&
-                (widget.subtitle as Text).data == TodoListOrder.ascending.name,
+                (widget.subtitle as Text).data == ListOrder.ascending.name,
           ),
           findsOneWidget,
         );
@@ -66,7 +67,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Order' &&
-                (widget.subtitle as Text).data == TodoListOrder.descending.name,
+                (widget.subtitle as Text).data == ListOrder.descending.name,
           ),
           findsOneWidget,
         );
@@ -80,14 +81,14 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Order' &&
-                (widget.subtitle as Text).data == TodoListOrder.ascending.name,
+                (widget.subtitle as Text).data == ListOrder.ascending.name,
           ),
         );
         await tester.pump();
 
         expect(find.byKey(const Key('OrderSettingsDialog')), findsOneWidget);
         await tester.tap(
-          find.byKey(Key('${TodoListOrder.descending.name}DialogRadioButton')),
+          find.byKey(Key('${ListOrder.descending.name}DialogRadioButton')),
         );
         await tester.pump();
 
@@ -96,7 +97,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Order' &&
-                (widget.subtitle as Text).data == TodoListOrder.descending.name,
+                (widget.subtitle as Text).data == ListOrder.descending.name,
           ),
           findsOneWidget,
         );
@@ -112,7 +113,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Filter' &&
-                (widget.subtitle as Text).data == TodoListFilter.all.name,
+                (widget.subtitle as Text).data == ListFilter.all.name,
           ),
           findsOneWidget,
         );
@@ -126,8 +127,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Filter' &&
-                (widget.subtitle as Text).data ==
-                    TodoListFilter.completedOnly.name,
+                (widget.subtitle as Text).data == ListFilter.completedOnly.name,
           ),
           findsOneWidget,
         );
@@ -141,15 +141,14 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Filter' &&
-                (widget.subtitle as Text).data == TodoListFilter.all.name,
+                (widget.subtitle as Text).data == ListFilter.all.name,
           ),
         );
         await tester.pump();
 
         expect(find.byKey(const Key('FilterSettingsDialog')), findsOneWidget);
         await tester.tap(
-          find.byKey(
-              Key('${TodoListFilter.completedOnly.name}DialogRadioButton')),
+          find.byKey(Key('${ListFilter.completedOnly.name}DialogRadioButton')),
         );
         await tester.pump();
 
@@ -158,8 +157,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Filter' &&
-                (widget.subtitle as Text).data ==
-                    TodoListFilter.completedOnly.name,
+                (widget.subtitle as Text).data == ListFilter.completedOnly.name,
           ),
           findsOneWidget,
         );
@@ -175,7 +173,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Group by' &&
-                (widget.subtitle as Text).data == TodoListGroupBy.none.name,
+                (widget.subtitle as Text).data == ListGroup.none.name,
           ),
           findsOneWidget,
         );
@@ -189,7 +187,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Group by' &&
-                (widget.subtitle as Text).data == TodoListGroupBy.priority.name,
+                (widget.subtitle as Text).data == ListGroup.priority.name,
           ),
           findsOneWidget,
         );
@@ -203,14 +201,14 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Group by' &&
-                (widget.subtitle as Text).data == TodoListGroupBy.none.name,
+                (widget.subtitle as Text).data == ListGroup.none.name,
           ),
         );
         await tester.pump();
 
         expect(find.byKey(const Key('GroupBySettingsDialog')), findsOneWidget);
         await tester.tap(
-          find.byKey(Key('${TodoListGroupBy.priority.name}DialogRadioButton')),
+          find.byKey(Key('${ListGroup.priority.name}DialogRadioButton')),
         );
         await tester.pump();
 
@@ -219,7 +217,7 @@ void main() {
             (Widget widget) =>
                 widget is ListTile &&
                 (widget.title as Text).data == 'Group by' &&
-                (widget.subtitle as Text).data == TodoListGroupBy.priority.name,
+                (widget.subtitle as Text).data == ListGroup.priority.name,
           ),
           findsOneWidget,
         );

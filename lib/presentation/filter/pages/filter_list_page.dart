@@ -29,12 +29,7 @@ class FilterListPage extends StatelessWidget {
           body: ListView.builder(
             itemCount: state.filterList.length,
             itemBuilder: (BuildContext context, int index) {
-              Filter filter = state.filterList[index];
-              return ListTile(
-                title: Text(filter.name),
-                subtitle: _buildSubtitle(filter),
-                onTap: () => context.pushNamed('filter-edit', extra: filter),
-              );
+              return FilterListTile(filter: state.filterList[index]);
             },
           ),
           floatingActionButton: PrimaryFloatingActionButton(
@@ -46,14 +41,38 @@ class FilterListPage extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildSubtitle(Filter filter) {
+class FilterListTile extends StatelessWidget {
+  final Filter filter;
+
+  const FilterListTile({
+    required this.filter,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      key: ValueKey<int>(filter.id!),
+      title: Text(filter.name),
+      subtitle: _buildSubtitle(),
+      onTap: () => context.pushNamed('todo-list', extra: filter),
+      trailing: IconButton(
+        icon: const Icon(Icons.edit),
+        tooltip: 'Edit',
+        onPressed: () => context.pushNamed('filter-edit', extra: filter),
+      ),
+    );
+  }
+
+  Widget _buildSubtitle() {
     int i = 0;
     List<Widget> children = [];
     final List<String> items = [
       filter.order.name,
       filter.filter.name,
-      filter.groupBy.name,
+      filter.group.name,
       [for (Priority p in filter.priorities) p.name].join(' '),
       [for (String p in filter.projects) '+$p'].join(' '),
       [for (String c in filter.contexts) '@$c'].join(' '),

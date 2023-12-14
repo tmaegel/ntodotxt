@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart' show ListGroup;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart'
+    show TodoListBloc;
 
 class GroupByTodoListBottomSheet extends StatelessWidget {
-  final Map<String, TodoListGroupBy> items;
+  final Map<String, ListGroup> items;
 
   const GroupByTodoListBottomSheet({super.key})
       : items = const {
-          'None': TodoListGroupBy.none,
-          'Upcoming': TodoListGroupBy.upcoming,
-          'Priority': TodoListGroupBy.priority,
-          'Project': TodoListGroupBy.project,
-          'Context': TodoListGroupBy.context,
+          'None': ListGroup.none,
+          'Upcoming': ListGroup.upcoming,
+          'Priority': ListGroup.priority,
+          'Project': ListGroup.project,
+          'Context': ListGroup.context,
         };
 
   @override
@@ -30,8 +31,8 @@ class GroupByTodoListBottomSheet extends StatelessWidget {
           itemCount: items.length,
           itemBuilder: (BuildContext context, int index) {
             String key = items.keys.elementAt(index);
-            TodoListGroupBy value = items[key]!;
-            return RadioListTile<TodoListGroupBy>(
+            ListGroup value = items[key]!;
+            return RadioListTile<ListGroup>(
               key: Key('${value.name}BottomSheetRadioButton'),
               contentPadding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
@@ -39,11 +40,11 @@ class GroupByTodoListBottomSheet extends StatelessWidget {
               ),
               title: Text(key),
               value: value,
-              groupValue: context.read<TodoListBloc>().state.filter.groupBy,
-              onChanged: (TodoListGroupBy? value) {
+              groupValue: context.read<TodoListBloc>().state.filter.group,
+              onChanged: (ListGroup? value) {
                 Navigator.pop(
                   context,
-                  value ?? context.read<TodoListBloc>().state.filter.groupBy,
+                  value ?? context.read<TodoListBloc>().state.filter.group,
                 );
               },
             );
@@ -55,15 +56,15 @@ class GroupByTodoListBottomSheet extends StatelessWidget {
 }
 
 class GroupBySettingsDialog extends StatelessWidget {
-  final Map<String, TodoListGroupBy> items;
+  final Map<String, ListGroup> items;
 
   const GroupBySettingsDialog({super.key})
       : items = const {
-          'None': TodoListGroupBy.none,
-          'Upcoming': TodoListGroupBy.upcoming,
-          'Priority': TodoListGroupBy.priority,
-          'Project': TodoListGroupBy.project,
-          'Context': TodoListGroupBy.context,
+          'None': ListGroup.none,
+          'Upcoming': ListGroup.upcoming,
+          'Priority': ListGroup.priority,
+          'Project': ListGroup.project,
+          'Context': ListGroup.context,
         };
 
   @override
@@ -76,8 +77,8 @@ class GroupBySettingsDialog extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           String key = items.keys.elementAt(index);
-          TodoListGroupBy value = items[key]!;
-          return RadioListTile<TodoListGroupBy>(
+          ListGroup value = items[key]!;
+          return RadioListTile<ListGroup>(
             key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
@@ -85,11 +86,8 @@ class GroupBySettingsDialog extends StatelessWidget {
             ),
             value: value,
             title: Text(key),
-            groupValue: TodoListGroupBy.values.byName(
-              context.read<SettingsCubit>().state.todoGrouping,
-            ),
-            onChanged: (TodoListGroupBy? value) =>
-                Navigator.pop(context, value),
+            groupValue: context.read<DefaultFilterCubit>().state.group,
+            onChanged: (ListGroup? value) => Navigator.pop(context, value),
           );
         },
       ),

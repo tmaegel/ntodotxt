@@ -2,17 +2,56 @@ import 'dart:io';
 
 import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ntodotxt/presentation/login/pages/login_page.dart'
-    show LoginWrapper;
-import 'package:ntodotxt/presentation/login/states/login_state.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_tile_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ntodotxt/data/todo/todo_list_api.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart'
+    show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+
+class TodoListPageMaterialApp extends StatelessWidget {
+  final File todoFile;
+  final Filter? filter;
+
+  const TodoListPageMaterialApp({
+    required this.todoFile,
+    this.filter,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RepositoryProvider(
+      create: (BuildContext context) {
+        return TodoListRepository(
+          api: LocalTodoListApi(todoFile: todoFile),
+        );
+      },
+      child: Builder(
+        builder: (BuildContext context) {
+          return BlocProvider(
+            create: (BuildContext context) => TodoListBloc(
+              repository: context.read<TodoListRepository>(),
+            )
+              ..add(const TodoListSubscriptionRequested())
+              ..add(const TodoListSynchronizationRequested()),
+            child: MaterialApp(
+              home: TodoListPage(filter: filter),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 
 void main() {
   final MemoryFileSystem fs = MemoryFileSystem();
-  late SharedPreferences prefs;
   late File file;
+  late Filter filter;
 
   setUp(() async {});
 
@@ -32,23 +71,18 @@ void main() {
 
     group('ascending', () {
       setUp(() async {
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'none',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        );
       });
 
-      testWidgets('by settings', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+      testWidgets('by filter', (tester) async {
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
@@ -62,23 +96,18 @@ void main() {
 
     group('descending', () {
       setUp(() async {
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'descending',
-          'todoGrouping': 'none',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.descending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        );
       });
 
-      testWidgets('by settings', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+      testWidgets('by filter', (tester) async {
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
@@ -107,23 +136,18 @@ void main() {
 
     group('all', () {
       setUp(() async {
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'none',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        );
       });
 
-      testWidgets('by settings', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+      testWidgets('by filter', (tester) async {
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
@@ -137,23 +161,18 @@ void main() {
 
     group('completed only', () {
       setUp(() async {
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'completedOnly',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'none',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.completedOnly,
+          group: ListGroup.none,
+        );
       });
 
-      testWidgets('by settings', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+      testWidgets('by filter', (tester) async {
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
         expect(find.byType(TodoListTile), findsNWidgets(2));
@@ -166,23 +185,18 @@ void main() {
 
     group('incompleted only', () {
       setUp(() async {
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'incompletedOnly',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'none',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.incompletedOnly,
+          group: ListGroup.none,
+        );
       });
 
-      testWidgets('by settings', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+      testWidgets('by filter', (tester) async {
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
         expect(find.byType(TodoListTile), findsNWidgets(1));
@@ -207,29 +221,24 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'none',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        );
       });
 
       testWidgets('check sections', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(1));
-        Iterable<TodoListSection> todoListSections =
-            tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, 'All');
+        expect(find.byType(ExpansionTile), findsNWidgets(1));
+        Iterable<ExpansionTile> todoListSections =
+            tester.widgetList<ExpansionTile>(find.byType(ExpansionTile));
+        expect((todoListSections.elementAt(0).title as Text).data, 'All');
 
         expect(
           find.descendant(
@@ -269,13 +278,11 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'upcoming',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.upcoming,
+        );
       });
 
       testWidgets('check sections', (tester) async {
@@ -283,22 +290,21 @@ void main() {
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(4));
-        Iterable<TodoListSection> todoListSections =
-            tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, 'Deadline passed');
-        expect(todoListSections.elementAt(1).title, 'Today');
-        expect(todoListSections.elementAt(2).title, 'Upcoming');
-        expect(todoListSections.elementAt(3).title, 'No deadline');
+        expect(find.byType(ExpansionTile), findsNWidgets(4));
+        Iterable<ExpansionTile> todoListSections =
+            tester.widgetList<ExpansionTile>(find.byType(ExpansionTile));
+        expect((todoListSections.elementAt(0).title as Text).data,
+            'Deadline passed');
+        expect((todoListSections.elementAt(1).title as Text).data, 'Today');
+        expect((todoListSections.elementAt(2).title as Text).data, 'Upcoming');
+        expect(
+            (todoListSections.elementAt(3).title as Text).data, 'No deadline');
 
         expect(
           find.descendant(
@@ -352,31 +358,27 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'priority',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.priority,
+        );
       });
 
       testWidgets('check sections', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(3));
-        Iterable<TodoListSection> todoListSections =
-            tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, 'E');
-        expect(todoListSections.elementAt(1).title, 'F');
-        expect(todoListSections.elementAt(2).title, 'No priority');
+        expect(find.byType(ExpansionTile), findsNWidgets(3));
+        Iterable<ExpansionTile> todoListSections =
+            tester.widgetList<ExpansionTile>(find.byType(ExpansionTile));
+        expect((todoListSections.elementAt(0).title as Text).data, 'E');
+        expect((todoListSections.elementAt(1).title as Text).data, 'F');
+        expect(
+            (todoListSections.elementAt(2).title as Text).data, 'No priority');
 
         expect(
           find.descendant(
@@ -423,31 +425,27 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'project',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.project,
+        );
       });
 
       testWidgets('check sections', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(3));
-        Iterable<TodoListSection> todoListSections =
-            tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, 'project1');
-        expect(todoListSections.elementAt(1).title, 'project2');
-        expect(todoListSections.elementAt(2).title, 'No project');
+        expect(find.byType(ExpansionTile), findsNWidgets(3));
+        Iterable<ExpansionTile> todoListSections =
+            tester.widgetList<ExpansionTile>(find.byType(ExpansionTile));
+        expect((todoListSections.elementAt(0).title as Text).data, 'project1');
+        expect((todoListSections.elementAt(1).title as Text).data, 'project2');
+        expect(
+            (todoListSections.elementAt(2).title as Text).data, 'No project');
 
         expect(
           find.descendant(
@@ -493,31 +491,27 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoFilter': 'all',
-          'todoOrder': 'ascending',
-          'todoGrouping': 'context',
-        });
-        prefs = await SharedPreferences.getInstance();
+        filter = const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.context,
+        );
       });
 
       testWidgets('check sections', (tester) async {
-        await tester.pumpWidget(
-          LoginWrapper(
-            prefs: prefs,
-            todoFile: file,
-            initialLoginState: const LoginOffline(),
-          ),
-        );
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: filter,
+        ));
         await tester.pump();
 
-        expect(find.byType(TodoListSection), findsNWidgets(3));
-        Iterable<TodoListSection> todoListSections =
-            tester.widgetList<TodoListSection>(find.byType(TodoListSection));
-        expect(todoListSections.elementAt(0).title, 'context1');
-        expect(todoListSections.elementAt(1).title, 'context2');
-        expect(todoListSections.elementAt(2).title, 'No context');
+        expect(find.byType(ExpansionTile), findsNWidgets(3));
+        Iterable<ExpansionTile> todoListSections =
+            tester.widgetList<ExpansionTile>(find.byType(ExpansionTile));
+        expect((todoListSections.elementAt(0).title as Text).data, 'context1');
+        expect((todoListSections.elementAt(1).title as Text).data, 'context2');
+        expect(
+            (todoListSections.elementAt(2).title as Text).data, 'No context');
 
         expect(
           find.descendant(

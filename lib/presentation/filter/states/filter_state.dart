@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 
 sealed class FilterState extends Equatable {
   final Filter filter;
