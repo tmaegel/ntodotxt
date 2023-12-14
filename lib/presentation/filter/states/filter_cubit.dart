@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/presentation/saved_filter/states/filter_state.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
     show TodoListFilter, TodoListGroupBy, TodoListOrder;
 

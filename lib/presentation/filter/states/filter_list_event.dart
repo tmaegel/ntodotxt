@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
 
 sealed class FilterListEvent extends Equatable {
   const FilterListEvent();

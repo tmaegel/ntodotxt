@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/app_info/pages/app_details_page.dart';
+import 'package:ntodotxt/presentation/filter/pages/filter_create_edit_page.dart';
+import 'package:ntodotxt/presentation/filter/pages/filter_list_page.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
 import 'package:ntodotxt/presentation/licenses/pages/licenses_page.dart';
-import 'package:ntodotxt/presentation/saved_filter/pages/filter_create_edit_page.dart';
-import 'package:ntodotxt/presentation/saved_filter/pages/filter_list_page.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';

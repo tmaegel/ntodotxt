@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_repository.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
     show TodoListFilter, TodoListGroupBy, TodoListOrder;
@@ -18,7 +18,7 @@ void main() {
   setUp(() async {
     controller = FilterController(inMemoryDatabasePath);
     repository = FilterRepository(controller);
-    await (await controller.database).delete('saved_filters'); // Clear
+    await (await controller.database).delete('filters'); // Clear
   });
 
   group('list()', () {
@@ -36,7 +36,7 @@ void main() {
         filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
-      await (await controller.database).insert('saved_filters', model.toMap());
+      await (await controller.database).insert('filters', model.toMap());
       expect(await repository.list(), [model]);
     });
   });
@@ -64,7 +64,7 @@ void main() {
         filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
-      await (await controller.database).insert('saved_filters', model.toMap());
+      await (await controller.database).insert('filters', model.toMap());
       expect(await repository.insert(model) > 0, isTrue);
     });
     test('ignore id', () async {
@@ -108,7 +108,7 @@ void main() {
         groupBy: TodoListGroupBy.priority,
       );
       Filter model2 = model1.copyWith(name: 'updated name');
-      await (await controller.database).insert('saved_filters', model1.toMap());
+      await (await controller.database).insert('filters', model1.toMap());
       expect(await repository.update(model2) > 0, isTrue);
     });
     test('missing id', () async {
@@ -150,7 +150,7 @@ void main() {
         filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
-      await (await controller.database).insert('saved_filters', model.toMap());
+      await (await controller.database).insert('filters', model.toMap());
       expect(await repository.delete(model) > 0, isTrue);
     });
     test('missing id', () async {

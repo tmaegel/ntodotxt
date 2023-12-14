@@ -25,7 +25,7 @@ class Filter extends Equatable {
   });
 
   static String get tableRepr {
-    return '''CREATE TABLE saved_filters(
+    return '''CREATE TABLE filters(
       `id` INTEGER PRIMARY KEY,
       `name` TEXT,
       `priorities` TEXT,

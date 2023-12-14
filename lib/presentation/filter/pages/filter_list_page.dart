@@ -6,10 +6,10 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/constants/app.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/presentation/saved_filter/states/filter_list_bloc.dart';
-import 'package:ntodotxt/presentation/saved_filter/states/filter_list_state.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
 class FilterListPage extends StatelessWidget {
   const FilterListPage({super.key});

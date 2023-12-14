@@ -4,13 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
-import 'package:ntodotxt/presentation/saved_filter/states/filter_cubit.dart';
-import 'package:ntodotxt/presentation/saved_filter/states/filter_list_bloc.dart';
-import 'package:ntodotxt/presentation/saved_filter/states/filter_list_event.dart';
-import 'package:ntodotxt/presentation/saved_filter/states/filter_state.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
     show
         TodoFilter,

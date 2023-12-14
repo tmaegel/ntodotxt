@@ -1,4 +1,4 @@
-import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priorities;
 import 'package:ntodotxt/main.dart' show log;
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
@@ -78,7 +78,7 @@ class FilterController extends DatabaseController {
     try {
       final Database db = await database;
       // Query the table for all The Dogs.
-      maps = await db.query('saved_filters');
+      maps = await db.query('filters');
     } on Exception {
       rethrow;
     } finally {
@@ -115,7 +115,7 @@ class FilterController extends DatabaseController {
       Map<String, dynamic> modelMap = model.toMap();
       modelMap['id'] = null; // Ignore id in insert mode.
       id = await db.insert(
-        'saved_filters',
+        'filters',
         modelMap,
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
@@ -133,7 +133,7 @@ class FilterController extends DatabaseController {
     try {
       final Database db = await database;
       id = await db.update(
-        'saved_filters',
+        'filters',
         model.toMap(),
         // Ensure that the model has a matching id.
         where: 'id = ?',
@@ -155,7 +155,7 @@ class FilterController extends DatabaseController {
       final Database db = await database;
       // Remove the Dog from the database.
       id = await db.delete(
-        'saved_filters',
+        'filters',
         // Ensure that the model has a matching id.
         where: 'id = ?',
         // Pass the models id as a whereArg to prevent SQL injection.
