@@ -34,76 +34,72 @@ class TodoCreateEditPage extends StatelessWidget {
       create: (context) => TodoCubit(
         todo: todo ?? Todo(),
       ),
-      child: Builder(
-        builder: (BuildContext context) {
-          return BlocConsumer<TodoCubit, TodoState>(
-            listener: (BuildContext context, TodoState state) {
-              if (state is TodoError) {
-                SnackBarHandler.error(context, state.message);
-              }
-            },
-            builder: (BuildContext context, TodoState state) {
-              return Scaffold(
-                appBar: MainAppBar(
-                  title: createMode ? 'Add' : 'Edit',
-                  toolbar: createMode
-                      ? null
-                      : Row(
-                          children: <Widget>[
-                            IconButton(
-                              tooltip: 'Delete',
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                context.goNamed('todo-list');
-                                context
-                                    .read<TodoListBloc>()
-                                    .add(TodoListTodoDeleted(todo: state.todo));
-                                SnackBarHandler.info(context, 'Todo deleted');
-                              },
-                            ),
-                          ],
+      child: BlocConsumer<TodoCubit, TodoState>(
+        listener: (BuildContext context, TodoState state) {
+          if (state is TodoError) {
+            SnackBarHandler.error(context, state.message);
+          }
+        },
+        builder: (BuildContext context, TodoState state) {
+          return Scaffold(
+            appBar: MainAppBar(
+              title: createMode ? 'Add' : 'Edit',
+              toolbar: createMode
+                  ? null
+                  : Row(
+                      children: <Widget>[
+                        IconButton(
+                          tooltip: 'Delete',
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            context.goNamed('todo-list');
+                            context
+                                .read<TodoListBloc>()
+                                .add(TodoListTodoDeleted(todo: state.todo));
+                            SnackBarHandler.info(context, 'Todo deleted');
+                          },
                         ),
+                      ],
+                    ),
+            ),
+            floatingActionButton: state.todo.description.isEmpty
+                ? null
+                : PrimaryFloatingActionButton(
+                    icon: const Icon(Icons.save),
+                    tooltip: 'Save',
+                    action: () {
+                      context.goNamed('todo-list');
+                      context
+                          .read<TodoListBloc>()
+                          .add(TodoListTodoSubmitted(todo: state.todo));
+                    },
+                  ),
+            body: ListView(
+              children: [
+                const TodoStringTextField(),
+                const Divider(),
+                const TodoPriorityTags(),
+                const TodoCreationDateItem(),
+                if (!createMode) const TodoCompletionDateItem(),
+                const TodoDueDateItem(),
+                TodoProjectTags(
+                  availableTags: availableProjectTags
+                      .where((p) => !state.todo.projects.contains(p))
+                      .toSet(),
                 ),
-                floatingActionButton: state.todo.description.isEmpty
-                    ? null
-                    : PrimaryFloatingActionButton(
-                        icon: const Icon(Icons.save),
-                        tooltip: 'Save',
-                        action: () {
-                          context.goNamed('todo-list');
-                          context
-                              .read<TodoListBloc>()
-                              .add(TodoListTodoSubmitted(todo: state.todo));
-                        },
-                      ),
-                body: ListView(
-                  children: [
-                    const TodoStringTextField(),
-                    const Divider(),
-                    const TodoPriorityTags(),
-                    const TodoCreationDateItem(),
-                    if (!createMode) const TodoCompletionDateItem(),
-                    const TodoDueDateItem(),
-                    TodoProjectTags(
-                      availableTags: availableProjectTags
-                          .where((p) => !state.todo.projects.contains(p))
-                          .toSet(),
-                    ),
-                    TodoContextTags(
-                      availableTags: availableContextTags
-                          .where((c) => !state.todo.contexts.contains(c))
-                          .toSet(),
-                    ),
-                    TodoKeyValueTags(
-                      availableTags: availableKeyValueTags
-                          .where((kv) => !state.todo.fmtKeyValues.contains(kv))
-                          .toSet(),
-                    ),
-                    const SizedBox(height: 80),
-                  ],
+                TodoContextTags(
+                  availableTags: availableContextTags
+                      .where((c) => !state.todo.contexts.contains(c))
+                      .toSet(),
                 ),
-              );
-            },
+                TodoKeyValueTags(
+                  availableTags: availableKeyValueTags
+                      .where((kv) => !state.todo.fmtKeyValues.contains(kv))
+                      .toSet(),
+                ),
+                const SizedBox(height: 80),
+              ],
+            ),
           );
         },
       ),

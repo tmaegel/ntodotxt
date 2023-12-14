@@ -19,27 +19,32 @@ class FilterRepository {
   Future<int> delete(Filter model) => controller.delete(model);
 }
 
-class DataBaseController {
+class DatabaseController {
   static Database? _database;
+  final String path;
 
-  static Future<Database> instance(String path) async {
+  DatabaseController(this.path);
+
+  Future<Database> get instance async {
     if (_database != null) {
       return _database!;
     } else {
       // Set the version. This executes the onCreate function and provides a
       // path to perform database upgrades and downgrades.
-      _database = await _open(path);
+      _database = await _open();
       return _database!;
     }
   }
 
-  static Future close() async {
+  Future<void> close() async {
+    log.info('Close database $path');
     if (_database != null) {
-      return _database!.close();
+      _database!.close();
     }
+    _database = null;
   }
 
-  static Future<Database> _open(String path) async {
+  Future<Database> _open() async {
     // Change the default factory. On iOS/Android, if not using `sqlite_flutter_lib`
     // you can forget this step, it will use the sqlite version available on the system.
     databaseFactoryOrNull = databaseFactoryFfi;
@@ -63,19 +68,22 @@ class DataBaseController {
   }
 }
 
-class FilterController extends DataBaseController {
-  final String dbPath;
+class FilterController extends DatabaseController {
+  FilterController(super.path);
 
-  FilterController(this.dbPath);
-
-  Future<Database> get database async =>
-      await DataBaseController.instance(dbPath);
+  Future<Database> get database async => await instance;
 
   Future<List<Filter>> list() async {
-    final Database db = await database;
-
-    // Query the table for all The Dogs.
-    final List<Map<String, dynamic>> maps = await db.query('saved_filters');
+    late final List<Map<String, dynamic>> maps;
+    try {
+      final Database db = await database;
+      // Query the table for all The Dogs.
+      maps = await db.query('saved_filters');
+    } on Exception {
+      rethrow;
+    } finally {
+      close();
+    }
 
     return List.generate(maps.length, (i) {
       return Filter(
@@ -100,40 +108,64 @@ class FilterController extends DataBaseController {
   }
 
   Future<int> insert(Filter model) async {
-    final Database db = await database;
+    late final int id;
+    try {
+      final Database db = await database;
+      Map<String, dynamic> modelMap = model.toMap();
+      modelMap['id'] = null; // Ignore id in insert mode.
+      id = await db.insert(
+        'saved_filters',
+        modelMap,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    } on Exception {
+      rethrow;
+    } finally {
+      close();
+    }
 
-    Map<String, dynamic> modelMap = model.toMap();
-    modelMap['id'] = null; // Ignore id in insert mode.
-    return await db.insert(
-      'saved_filters',
-      modelMap,
-      conflictAlgorithm: ConflictAlgorithm.ignore,
-    );
+    return id;
   }
 
   Future<int> update(Filter model) async {
-    final Database db = await database;
+    late final int id;
+    try {
+      final Database db = await database;
+      id = await db.update(
+        'saved_filters',
+        model.toMap(),
+        // Ensure that the model has a matching id.
+        where: 'id = ?',
+        // Pass the models id as a whereArg to prevent SQL injection.
+        whereArgs: [model.id],
+      );
+    } on Exception {
+      rethrow;
+    } finally {
+      close();
+    }
 
-    return await db.update(
-      'saved_filters',
-      model.toMap(),
-      // Ensure that the model has a matching id.
-      where: 'id = ?',
-      // Pass the models id as a whereArg to prevent SQL injection.
-      whereArgs: [model.id],
-    );
+    return id;
   }
 
   Future<int> delete(Filter model) async {
-    final Database db = await database;
+    late final int id;
+    try {
+      final Database db = await database;
+      // Remove the Dog from the database.
+      id = await db.delete(
+        'saved_filters',
+        // Ensure that the model has a matching id.
+        where: 'id = ?',
+        // Pass the models id as a whereArg to prevent SQL injection.
+        whereArgs: [model.id],
+      );
+    } on Exception {
+      rethrow;
+    } finally {
+      close();
+    }
 
-    // Remove the Dog from the database.
-    return await db.delete(
-      'saved_filters',
-      // Ensure that the model has a matching id.
-      where: 'id = ?',
-      // Pass the models id as a whereArg to prevent SQL injection.
-      whereArgs: [model.id],
-    );
+    return id;
   }
 }
