@@ -3,7 +3,7 @@ import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/saved_filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoListGroupBy, TodoListOrder;
+    show TodoListFilter, TodoListGroupBy, TodoListOrder;
 
 class FilterCubit extends Cubit<FilterState> {
   FilterCubit({
@@ -24,6 +24,16 @@ class FilterCubit extends Cubit<FilterState> {
     try {
       emit(state.success(
         filter: state.filter.copyWith(order: order),
+      ));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  void updateFilter(TodoListFilter filter) {
+    try {
+      emit(state.success(
+        filter: state.filter.copyWith(filter: filter),
       ));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

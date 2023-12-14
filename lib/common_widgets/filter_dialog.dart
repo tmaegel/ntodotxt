@@ -37,11 +37,11 @@ class FilterTodoListBottomSheet extends StatelessWidget {
               ),
               title: Text(key),
               value: value,
-              groupValue: context.read<TodoListBloc>().state.filter,
+              groupValue: context.read<TodoListBloc>().state.filter.filter,
               onChanged: (TodoListFilter? value) {
                 Navigator.pop(
                   context,
-                  value ?? context.read<TodoListBloc>().state.filter,
+                  value ?? context.read<TodoListBloc>().state.filter.filter,
                 );
               },
             );

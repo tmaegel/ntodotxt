@@ -4,7 +4,7 @@ import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/saved_filter/filter_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoListGroupBy, TodoListOrder;
+    show TodoListFilter, TodoListGroupBy, TodoListOrder;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -33,6 +33,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       await (await controller.database).insert('saved_filters', model.toMap());
@@ -48,6 +49,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       expect(await repository.insert(model) > 0, isTrue);
@@ -59,6 +61,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       await (await controller.database).insert('saved_filters', model.toMap());
@@ -72,6 +75,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       expect(await repository.insert(model) > 0, isTrue);
@@ -87,6 +91,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       expect(await repository.update(model), 0);
@@ -99,6 +104,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       Filter model2 = model1.copyWith(name: 'updated name');
@@ -112,6 +118,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       expect(await repository.update(model), 0);
@@ -127,6 +134,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       expect(await repository.delete(model), 0);
@@ -139,6 +147,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       await (await controller.database).insert('saved_filters', model.toMap());
@@ -151,6 +160,7 @@ void main() {
         projects: {'project1', 'project2'},
         contexts: {'context1', 'context2'},
         order: TodoListOrder.ascending,
+        filter: TodoListFilter.all,
         groupBy: TodoListGroupBy.priority,
       );
       expect(await repository.delete(model), 0);

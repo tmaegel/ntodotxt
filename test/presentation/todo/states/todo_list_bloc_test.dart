@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
+import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -34,9 +35,14 @@ void main() {
     test('initial state', () {
       final TodoListBloc todoListBloc = TodoListBloc(repository: repository);
       expect(todoListBloc.state is TodoListInitial, true);
-      expect(todoListBloc.state.filter, TodoListFilter.all);
-      expect(todoListBloc.state.order, TodoListOrder.ascending);
-      expect(todoListBloc.state.group, TodoListGroupBy.none);
+      expect(
+        todoListBloc.state.filter,
+        const Filter(
+          order: TodoListOrder.ascending,
+          filter: TodoListFilter.all,
+          groupBy: TodoListGroupBy.none,
+        ),
+      );
       expect(todoListBloc.state.todoList, []);
     });
   });
@@ -654,8 +660,14 @@ void main() {
         await expectLater(
           bloc.stream,
           emitsInOrder([
-            TodoListSuccess(order: TodoListOrder.ascending, todoList: [todo]),
-            TodoListSuccess(order: TodoListOrder.descending, todoList: [todo]),
+            TodoListSuccess(
+              filter: const Filter(order: TodoListOrder.ascending),
+              todoList: [todo],
+            ),
+            TodoListSuccess(
+              filter: const Filter(order: TodoListOrder.descending),
+              todoList: [todo],
+            ),
           ]),
         );
       });
@@ -672,9 +684,14 @@ void main() {
         await expectLater(
           bloc.stream,
           emitsInOrder([
-            TodoListSuccess(filter: TodoListFilter.all, todoList: [todo]),
             TodoListSuccess(
-                filter: TodoListFilter.completedOnly, todoList: [todo]),
+              filter: const Filter(filter: TodoListFilter.all),
+              todoList: [todo],
+            ),
+            TodoListSuccess(
+              filter: const Filter(filter: TodoListFilter.completedOnly),
+              todoList: [todo],
+            ),
           ]),
         );
       });
@@ -685,13 +702,19 @@ void main() {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListGroupByChanged(group: TodoListGroupBy.context));
+          ..add(const TodoListGroupByChanged(groupBy: TodoListGroupBy.context));
 
         await expectLater(
           bloc.stream,
           emitsInOrder([
-            TodoListSuccess(group: TodoListGroupBy.none, todoList: [todo]),
-            TodoListSuccess(group: TodoListGroupBy.context, todoList: [todo]),
+            TodoListSuccess(
+              filter: const Filter(groupBy: TodoListGroupBy.none),
+              todoList: [todo],
+            ),
+            TodoListSuccess(
+              filter: const Filter(groupBy: TodoListGroupBy.context),
+              todoList: [todo],
+            ),
           ]),
         );
       });

@@ -48,25 +48,32 @@ class FilterListPage extends StatelessWidget {
   }
 
   Widget _buildSubtitle(Filter filter) {
-    const String delimiter = '/';
+    int i = 0;
     List<Widget> children = [];
-    for (String attr in [
+    final List<String> items = [
       filter.order.name,
-      delimiter,
+      filter.filter.name,
       filter.groupBy.name,
-      delimiter,
       [for (Priority p in filter.priorities) p.name].join(' '),
-      delimiter,
       [for (String p in filter.projects) '+$p'].join(' '),
-      delimiter,
       [for (String c in filter.contexts) '@$c'].join(' '),
-    ]) {
+    ]..removeWhere((value) => value.isEmpty);
+    for (String attr in items) {
+      i++;
       children.add(
         Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: Text(attr),
         ),
       );
+      if (attr.isNotEmpty && i < items.length) {
+        children.add(
+          const Padding(
+            padding: EdgeInsets.only(right: 4.0),
+            child: Text('/'),
+          ),
+        );
+      }
     }
 
     return Wrap(

@@ -2,7 +2,7 @@ import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priorities;
 import 'package:ntodotxt/main.dart' show log;
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoGroupBy, TodoOrder;
+    show TodoFilter, TodoGroupBy, TodoOrder;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FilterRepository {
@@ -102,6 +102,7 @@ class FilterController extends DatabaseController {
             if (c != null && c.isNotEmpty) c,
         },
         order: TodoOrder.byName(maps[i]['order']),
+        filter: TodoFilter.byName(maps[i]['filter']),
         groupBy: TodoGroupBy.byName(maps[i]['groupBy']),
       );
     });

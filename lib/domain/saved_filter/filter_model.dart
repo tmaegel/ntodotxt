@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoListGroupBy, TodoListOrder;
+    show TodoListFilter, TodoListGroupBy, TodoListOrder;
 
 class Filter extends Equatable {
   final int? id;
@@ -10,6 +10,7 @@ class Filter extends Equatable {
   final Set<String> projects;
   final Set<String> contexts;
   final TodoListOrder order;
+  final TodoListFilter filter;
   final TodoListGroupBy groupBy;
 
   const Filter({
@@ -19,6 +20,7 @@ class Filter extends Equatable {
     this.projects = const {},
     this.contexts = const {},
     this.order = TodoListOrder.ascending,
+    this.filter = TodoListFilter.all,
     this.groupBy = TodoListGroupBy.none,
   });
 
@@ -30,6 +32,7 @@ class Filter extends Equatable {
       `projects` TEXT,
       `contexts` TEXT,
       `order` TEXT,
+      `filter` TEXT,
       `groupBy` TEXT
     )''';
   }
@@ -41,6 +44,7 @@ class Filter extends Equatable {
     Set<String>? projects,
     Set<String>? contexts,
     TodoListOrder? order,
+    TodoListFilter? filter,
     TodoListGroupBy? groupBy,
   }) {
     return Filter(
@@ -50,6 +54,7 @@ class Filter extends Equatable {
       projects: projects ?? this.projects,
       contexts: contexts ?? this.contexts,
       order: order ?? this.order,
+      filter: filter ?? this.filter,
       groupBy: groupBy ?? this.groupBy,
     );
   }
@@ -65,13 +70,14 @@ class Filter extends Equatable {
       'projects': projects.join(','),
       'contexts': contexts.join(','),
       'order': order.name,
+      'filter': filter.name,
       'groupBy': groupBy.name,
     };
   }
 
   @override
   String toString() {
-    return 'Filter { id: $id, name: $name order: ${order.name} groupBy: ${groupBy.name} priorities: ${[
+    return 'Filter { id: $id, name: $name order: ${order.name} filter: ${filter.name} groupBy: ${groupBy.name} priorities: ${[
       for (var p in priorities) p.name
     ]} projects: ${[for (var p in projects) p]} contexts: ${[
       for (var c in contexts) c
@@ -86,6 +92,7 @@ class Filter extends Equatable {
         projects,
         contexts,
         order,
+        filter,
         groupBy,
       ];
 }

@@ -70,7 +70,7 @@ List<ActionWrapper> appBarActions = <ActionWrapper>[
     action: (BuildContext context) async {
       context.read<TodoListBloc>().add(
             TodoListGroupByChanged(
-              group: await showModalBottomSheet<TodoListGroupBy?>(
+              groupBy: await showModalBottomSheet<TodoListGroupBy?>(
                 context: context,
                 builder: (BuildContext context) =>
                     const GroupByTodoListBottomSheet(),

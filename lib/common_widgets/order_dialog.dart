@@ -36,11 +36,11 @@ class OrderTodoListBottomSheet extends StatelessWidget {
               ),
               title: Text(key),
               value: value,
-              groupValue: context.read<TodoListBloc>().state.order,
+              groupValue: context.read<TodoListBloc>().state.filter.order,
               onChanged: (TodoListOrder? value) {
                 Navigator.pop(
                   context,
-                  value ?? context.read<TodoListBloc>().state.order,
+                  value ?? context.read<TodoListBloc>().state.filter.order,
                 );
               },
             );

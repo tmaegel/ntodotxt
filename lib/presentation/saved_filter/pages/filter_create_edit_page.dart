@@ -12,7 +12,13 @@ import 'package:ntodotxt/presentation/saved_filter/states/filter_list_bloc.dart'
 import 'package:ntodotxt/presentation/saved_filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/saved_filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart'
-    show TodoGroupBy, TodoListGroupBy, TodoListOrder, TodoOrder;
+    show
+        TodoFilter,
+        TodoGroupBy,
+        TodoListFilter,
+        TodoListGroupBy,
+        TodoListOrder,
+        TodoOrder;
 
 class FilterCreateEditPage extends StatelessWidget {
   final Filter? filter;
@@ -85,6 +91,32 @@ class FilterCreateEditPage extends StatelessWidget {
                                   context
                                       .read<FilterCubit>()
                                       .updateOrder(TodoListOrder.ascending);
+                                }
+                              },
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                FilterListSection(
+                  title: 'Filter',
+                  children: [
+                    ListTile(
+                      title: GenericChipGroup(
+                        children: [
+                          for (var t in TodoFilter.types)
+                            GenericChoiceChip(
+                              label: Text(t.name),
+                              selected: state.filter.filter == t,
+                              onSelected: (bool selected) {
+                                if (selected) {
+                                  context.read<FilterCubit>().updateFilter(t);
+                                } else {
+                                  // If unselected fallback to the default.
+                                  context
+                                      .read<FilterCubit>()
+                                      .updateFilter(TodoListFilter.all);
                                 }
                               },
                             ),

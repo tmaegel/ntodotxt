@@ -39,11 +39,11 @@ class GroupByTodoListBottomSheet extends StatelessWidget {
               ),
               title: Text(key),
               value: value,
-              groupValue: context.read<TodoListBloc>().state.group,
+              groupValue: context.read<TodoListBloc>().state.filter.groupBy,
               onChanged: (TodoListGroupBy? value) {
                 Navigator.pop(
                   context,
-                  value ?? context.read<TodoListBloc>().state.group,
+                  value ?? context.read<TodoListBloc>().state.filter.groupBy,
                 );
               },
             );

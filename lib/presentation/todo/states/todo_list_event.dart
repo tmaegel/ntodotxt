@@ -108,12 +108,12 @@ final class TodoListFilterChanged extends TodoListEvent {
 }
 
 final class TodoListGroupByChanged extends TodoListEvent {
-  final TodoListGroupBy? group;
+  final TodoListGroupBy? groupBy;
 
   const TodoListGroupByChanged({
-    required this.group,
+    required this.groupBy,
   });
 
   @override
-  List<Object?> get props => [group];
+  List<Object?> get props => [groupBy];
 }

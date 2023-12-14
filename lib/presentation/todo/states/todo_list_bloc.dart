@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -14,18 +15,20 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   })  : _repository = repository,
         super(
           TodoListInitial(
-            filter: TodoListFilter.values.byName(
-              prefs == null ? 'all' : prefs.getString('todoFilter') ?? 'all',
-            ),
-            order: TodoListOrder.values.byName(
-              prefs == null
-                  ? 'ascending'
-                  : prefs.getString('todoOrder') ?? 'ascending',
-            ),
-            group: TodoListGroupBy.values.byName(
-              prefs == null
-                  ? 'none'
-                  : prefs.getString('todoGrouping') ?? 'none',
+            filter: Filter(
+              filter: TodoListFilter.values.byName(
+                prefs == null ? 'all' : prefs.getString('todoFilter') ?? 'all',
+              ),
+              order: TodoListOrder.values.byName(
+                prefs == null
+                    ? 'ascending'
+                    : prefs.getString('todoOrder') ?? 'ascending',
+              ),
+              groupBy: TodoListGroupBy.values.byName(
+                prefs == null
+                    ? 'none'
+                    : prefs.getString('todoGrouping') ?? 'none',
+              ),
             ),
           ),
         ) {
@@ -260,7 +263,11 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) {
     try {
-      emit(state.success(order: event.order));
+      emit(
+        state.success(
+          filter: state.filter.copyWith(order: event.order),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -271,7 +278,11 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) {
     try {
-      emit(state.success(filter: event.filter));
+      emit(
+        state.success(
+          filter: state.filter.copyWith(filter: event.filter),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -282,7 +293,11 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Emitter<TodoListState> emit,
   ) {
     try {
-      emit(state.success(group: event.group));
+      emit(
+        state.success(
+          filter: state.filter.copyWith(groupBy: event.groupBy),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

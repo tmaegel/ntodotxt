@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:ntodotxt/domain/saved_filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
 enum TodoListStatus {
@@ -250,15 +251,11 @@ extension TodoGroupBy on TodoListGroupBy {
 }
 
 sealed class TodoListState extends Equatable {
-  final TodoListFilter filter;
-  final TodoListOrder order;
-  final TodoListGroupBy group;
+  final Filter filter;
   final List<Todo> todoList;
 
   const TodoListState({
-    this.filter = TodoListFilter.all,
-    this.order = TodoListOrder.ascending,
-    this.group = TodoListGroupBy.none,
+    this.filter = const Filter(), // Default
     this.todoList = const [],
   });
 
@@ -270,7 +267,7 @@ sealed class TodoListState extends Equatable {
       priorities.add(todo.priority);
     }
 
-    return order.sort(priorities).toSet();
+    return filter.order.sort(priorities).toSet();
   }
 
   /// Returns a list with all projects of all todos.
@@ -280,7 +277,7 @@ sealed class TodoListState extends Equatable {
       projects.addAll(todo.projects);
     }
 
-    return order.sort(projects).toSet();
+    return filter.order.sort(projects).toSet();
   }
 
   /// Returns a list with all contexts of all todos.
@@ -290,7 +287,7 @@ sealed class TodoListState extends Equatable {
       contexts.addAll(todo.contexts);
     }
 
-    return order.sort(contexts).toSet();
+    return filter.order.sort(contexts).toSet();
   }
 
   /// Returns a list with all key values of all todos.
@@ -300,7 +297,7 @@ sealed class TodoListState extends Equatable {
       keyValues.addAll(todo.fmtKeyValues);
     }
 
-    return order.sort(keyValues).toSet();
+    return filter.order.sort(keyValues).toSet();
   }
 
   /// Returns true if at least one todo is selected, otherwise false.
@@ -319,88 +316,75 @@ sealed class TodoListState extends Equatable {
 
   Iterable<Todo> get unselectedTodos => todoList.where((t) => !t.selected);
 
-  Iterable<Todo> get filteredTodoList => order.sort(filter.apply(todoList));
+  Iterable<Todo> get filteredTodoList =>
+      filter.order.sort(filter.filter.apply(todoList));
 
   Map<String, Iterable<Todo>?> get groupedByTodoList {
-    switch (group) {
+    switch (filter.groupBy) {
       case TodoListGroupBy.none:
-        return group.groupByNone(
+        return filter.groupBy.groupByNone(
           todoList: filteredTodoList,
         );
       case TodoListGroupBy.upcoming:
-        return group.groupByUpcoming(
+        return filter.groupBy.groupByUpcoming(
           todoList: filteredTodoList,
         );
       case TodoListGroupBy.priority:
-        return group.groupByPriority(
+        return filter.groupBy.groupByPriority(
           todoList: filteredTodoList,
           sections: priorities,
         );
       case TodoListGroupBy.project:
-        return group.groupByProject(
+        return filter.groupBy.groupByProject(
           todoList: filteredTodoList,
           sections: projects,
         );
       case TodoListGroupBy.context:
-        return group.groupByContext(
+        return filter.groupBy.groupByContext(
           todoList: filteredTodoList,
           sections: contexts,
         );
       default:
         // Default is none.
-        return group.groupByNone(
+        return filter.groupBy.groupByNone(
           todoList: filteredTodoList,
         );
     }
   }
 
   TodoListState copyWith({
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   });
 
   TodoListState loading({
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListLoading(
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
 
   TodoListState success({
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListSuccess(
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
 
   TodoListState error({
     required String message,
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListError(
       message: message,
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
@@ -408,42 +392,32 @@ sealed class TodoListState extends Equatable {
   @override
   List<Object?> get props => [
         filter,
-        order,
-        group,
         todoList,
       ];
 
   @override
-  String toString() =>
-      'TodoListState { filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+  String toString() => 'TodoListState { filter: $filter }';
 }
 
 final class TodoListInitial extends TodoListState {
   const TodoListInitial({
     super.filter,
-    super.order,
-    super.group,
     super.todoList,
   });
 
   @override
   TodoListInitial copyWith({
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListInitial(
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
-  String toString() =>
-      'TodoListInitial { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+  String toString() => 'TodoListInitial { filter: $filter todos: ${[
         for (var t in todoList) '$t ${t.selected}'
       ]} }';
 }
@@ -451,29 +425,22 @@ final class TodoListInitial extends TodoListState {
 final class TodoListLoading extends TodoListState {
   const TodoListLoading({
     super.filter,
-    super.order,
-    super.group,
     super.todoList,
   });
 
   @override
   TodoListLoading copyWith({
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListLoading(
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
-  String toString() =>
-      'TodoListLoading { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+  String toString() => 'TodoListLoading { filter: $filter todos: ${[
         for (var t in todoList) '$t ${t.selected}'
       ]} }';
 }
@@ -481,29 +448,22 @@ final class TodoListLoading extends TodoListState {
 final class TodoListSuccess extends TodoListState {
   const TodoListSuccess({
     super.filter,
-    super.order,
-    super.group,
     super.todoList,
   });
 
   @override
   TodoListSuccess copyWith({
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListSuccess(
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
-  String toString() =>
-      'TodoListSuccess { filter: ${filter.name} order: ${order.name} group: ${group.name} todos: ${[
+  String toString() => 'TodoListSuccess { filter: $filter todos: ${[
         for (var t in todoList) '$t ${t.selected}'
       ]} }';
 }
@@ -514,24 +474,18 @@ final class TodoListError extends TodoListState {
   const TodoListError({
     required this.message,
     super.filter,
-    super.order,
-    super.group,
     super.todoList,
   });
 
   @override
   TodoListError copyWith({
     String? message,
-    TodoListFilter? filter,
-    TodoListOrder? order,
-    TodoListGroupBy? group,
+    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListError(
       message: message ?? this.message,
       filter: filter ?? this.filter,
-      order: order ?? this.order,
-      group: group ?? this.group,
       todoList: todoList ?? this.todoList,
     );
   }
@@ -540,12 +494,9 @@ final class TodoListError extends TodoListState {
   List<Object?> get props => [
         message,
         filter,
-        order,
-        group,
         todoList,
       ];
 
   @override
-  String toString() =>
-      'TodoListError { message: $message filter: ${filter.name} order: ${order.name} group: ${group.name} }';
+  String toString() => 'TodoListError { message: $message filter: $filter }';
 }
