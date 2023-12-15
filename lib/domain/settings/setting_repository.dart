@@ -7,11 +7,18 @@ class SettingRepository {
 
   SettingRepository(this.controller);
 
-  Future<List<Setting>> list() => controller.list();
+  Future<List<Setting>> list() async => await controller.list();
 
-  Future<int> insert(Setting model) => controller.insert(model);
+  Future<Setting?> get({required String key}) async =>
+      await controller.get(identifier: key);
 
-  Future<int> update(Setting model) => controller.update(model);
+  Future<int> insert(Setting model) async => await controller.insert(model);
 
-  Future<int> delete(Setting model) => controller.delete(model);
+  Future<int> update(Setting model) async => await controller.update(model);
+
+  Future<int> delete({required String key}) async =>
+      await controller.delete(identifier: key);
+
+  Future<int> updateOrInsert(Setting model) async =>
+      await controller.updateOrInsert(model);
 }

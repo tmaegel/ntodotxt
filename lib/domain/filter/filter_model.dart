@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
+import 'package:ntodotxt/domain/todo/todo_model.dart'
+    show Priorities, Priority, Todo;
 
 enum ListOrder {
   ascending,
@@ -25,11 +26,13 @@ extension Order on ListOrder {
         for (var t in ListOrder.values) t,
       };
 
-  static ListOrder byName(String name) {
-    try {
-      return ListOrder.values.byName(name);
-    } on Exception {
-      // Returns ListOrder.ascending
+  static ListOrder byName(String? name) {
+    if (name != null) {
+      try {
+        return ListOrder.values.byName(name);
+      } on Exception {
+        // Returns ListOrder.ascending
+      }
     }
 
     return ListOrder.ascending;
@@ -79,11 +82,13 @@ extension Filters on ListFilter {
         for (var f in ListFilter.values) f,
       };
 
-  static ListFilter byName(String name) {
-    try {
-      return ListFilter.values.byName(name);
-    } on Exception {
-      // Returns ListFilter.all
+  static ListFilter byName(String? name) {
+    if (name != null) {
+      try {
+        return ListFilter.values.byName(name);
+      } on Exception {
+        // Returns ListFilter.all
+      }
     }
 
     return ListFilter.all;
@@ -129,11 +134,13 @@ extension Groups on ListGroup {
         for (var g in ListGroup.values) g,
       };
 
-  static ListGroup byName(String name) {
-    try {
-      return ListGroup.values.byName(name);
-    } on Exception {
-      // Returns ListGroup.none
+  static ListGroup byName(String? name) {
+    if (name != null) {
+      try {
+        return ListGroup.values.byName(name);
+      } on Exception {
+        // Returns ListGroup.none
+      }
     }
 
     return ListGroup.none;
@@ -262,10 +269,32 @@ class Filter extends Equatable {
     this.group = ListGroup.none,
   });
 
+  factory Filter.fromMap(Map<dynamic, dynamic> map) {
+    return Filter(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      priorities: {
+        for (var p in map['priorities'].split(',')..sort())
+          if (p != null && p.isNotEmpty) Priorities.byName(p)
+      },
+      projects: {
+        for (var p in map['projects'].split(',')..sort())
+          if (p != null && p.isNotEmpty) p,
+      },
+      contexts: {
+        for (var c in map['contexts'].split(',')..sort())
+          if (c != null && c.isNotEmpty) c,
+      },
+      order: Order.byName(map['order']),
+      filter: Filters.byName(map['filter']),
+      group: Groups.byName(map['group']),
+    );
+  }
+
   static String get tableRepr {
     return '''CREATE TABLE filters(
       `id` INTEGER PRIMARY KEY,
-      `name` TEXT,
+      `name` TEXT NOT NULL,
       `priorities` TEXT,
       `projects` TEXT,
       `contexts` TEXT,

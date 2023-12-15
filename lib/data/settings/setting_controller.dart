@@ -15,16 +15,35 @@ class SettingController extends ModelController<Setting> {
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return List.generate(maps.length, (i) {
-      return Setting(
-        id: maps[i]['id'] as int,
-        key: maps[i]['key'] as String,
-        value: maps[i]['value'] as String,
-      );
+      return Setting.fromMap(maps[i]);
     });
+  }
+
+  @override
+  Future<Setting?> get({required dynamic identifier}) async {
+    Setting? model;
+    try {
+      final Database db = await database;
+      List<Map> maps = await db.query(
+        'settings',
+        columns: ['key', 'value'],
+        where: 'key = ?',
+        whereArgs: [identifier as String],
+      );
+      if (maps.isNotEmpty) {
+        model = Setting.fromMap(maps.first);
+      }
+    } on Exception {
+      rethrow;
+    } finally {
+      await close();
+    }
+
+    return model;
   }
 
   @override
@@ -32,17 +51,15 @@ class SettingController extends ModelController<Setting> {
     late final int id;
     try {
       final Database db = await database;
-      Map<String, dynamic> modelMap = model.toMap();
-      modelMap['id'] = null; // Ignore id in insert mode.
       id = await db.insert(
         'settings',
-        modelMap,
+        model.toMap(),
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return id;
@@ -57,21 +74,21 @@ class SettingController extends ModelController<Setting> {
         'settings',
         model.toMap(),
         // Ensure that the model has a matching id.
-        where: 'id = ?',
+        where: 'key = ?',
         // Pass the models id as a whereArg to prevent SQL injection.
-        whereArgs: [model.id],
+        whereArgs: [model.key],
       );
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return id;
   }
 
   @override
-  Future<int> delete(Setting model) async {
+  Future<int> delete({required dynamic identifier}) async {
     late final int id;
     try {
       final Database db = await database;
@@ -79,16 +96,24 @@ class SettingController extends ModelController<Setting> {
       id = await db.delete(
         'settings',
         // Ensure that the model has a matching id.
-        where: 'id = ?',
+        where: 'key = ?',
         // Pass the models id as a whereArg to prevent SQL injection.
-        whereArgs: [model.id],
+        whereArgs: [identifier],
       );
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
+    return id;
+  }
+
+  Future<int> updateOrInsert(Setting model) async {
+    int id = await update(model);
+    if (id == 0) {
+      id = await insert(model);
+    }
     return id;
   }
 }

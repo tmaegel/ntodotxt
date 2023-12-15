@@ -1,86 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/settings/setting_controller.dart'
+    show SettingController;
 import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show ListFilter, ListGroup, ListOrder;
-import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
-import 'package:ntodotxt/presentation/settings/states/settings_cubit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+    show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/settings/setting_repository.dart'
+    show SettingRepository;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/settings/pages/settings_page.dart'
+    show SettingsPage;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class SettingsPageBlocProvider extends StatelessWidget {
-  final SharedPreferences prefs;
+  final Filter? filter;
 
   const SettingsPageBlocProvider({
-    required this.prefs,
+    this.filter,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => SettingsCubit(
-        prefs: prefs,
-      ),
-      child: Builder(
-        builder: (BuildContext context) {
-          return const MaterialApp(
-            home: SettingsPage(),
-          );
-        },
+    return RepositoryProvider<SettingRepository>(
+      create: (BuildContext context) =>
+          SettingRepository(SettingController(inMemoryDatabasePath)),
+      child: BlocProvider(
+        create: (BuildContext context) => DefaultFilterCubit(
+          filter: filter ?? const Filter(),
+          repository: context.read<SettingRepository>(),
+        ),
+        child: Builder(
+          builder: (BuildContext context) {
+            return const MaterialApp(
+              home: SettingsPage(),
+            );
+          },
+        ),
       ),
     );
   }
 }
 
 void main() {
-  late SharedPreferences prefs;
-
-  setUp(() async {
-    // Mock shared preferences.
-    SharedPreferences.setMockInitialValues({});
-    prefs = await SharedPreferences.getInstance();
-  });
-
   group('Display settings', () {
-    setUp(() async {});
-
     group('order', () {
       testWidgets('default value', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(const SettingsPageBlocProvider());
         await tester.pump();
         expect(
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Order' &&
+                (widget.title as Text).data == 'Default order' &&
                 (widget.subtitle as Text).data == ListOrder.ascending.name,
           ),
           findsOneWidget,
         );
       });
-      testWidgets('pre-start update', (tester) async {
-        prefs.setString('todoOrder', 'descending');
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
-        await tester.pump();
-        expect(
-          find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ListTile &&
-                (widget.title as Text).data == 'Order' &&
-                (widget.subtitle as Text).data == ListOrder.descending.name,
-          ),
-          findsOneWidget,
-        );
-      });
       testWidgets('update by dialog', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(const SettingsPageBlocProvider());
         await tester.pump();
 
         await tester.tap(
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Order' &&
+                (widget.title as Text).data == 'Default order' &&
                 (widget.subtitle as Text).data == ListOrder.ascending.name,
           ),
         );
@@ -96,7 +82,7 @@ void main() {
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Order' &&
+                (widget.title as Text).data == 'Default order' &&
                 (widget.subtitle as Text).data == ListOrder.descending.name,
           ),
           findsOneWidget,
@@ -106,41 +92,27 @@ void main() {
 
     group('filter', () {
       testWidgets('default value', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(const SettingsPageBlocProvider());
         await tester.pump();
         expect(
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Filter' &&
+                (widget.title as Text).data == 'Default filter' &&
                 (widget.subtitle as Text).data == ListFilter.all.name,
           ),
           findsOneWidget,
         );
       });
-      testWidgets('pre-start update', (tester) async {
-        prefs.setString('todoFilter', 'completedOnly');
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
-        await tester.pump();
-        expect(
-          find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ListTile &&
-                (widget.title as Text).data == 'Filter' &&
-                (widget.subtitle as Text).data == ListFilter.completedOnly.name,
-          ),
-          findsOneWidget,
-        );
-      });
       testWidgets('update by dialog', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(const SettingsPageBlocProvider());
         await tester.pump();
 
         await tester.tap(
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Filter' &&
+                (widget.title as Text).data == 'Default filter' &&
                 (widget.subtitle as Text).data == ListFilter.all.name,
           ),
         );
@@ -156,7 +128,7 @@ void main() {
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Filter' &&
+                (widget.title as Text).data == 'Default filter' &&
                 (widget.subtitle as Text).data == ListFilter.completedOnly.name,
           ),
           findsOneWidget,
@@ -166,41 +138,27 @@ void main() {
 
     group('group by', () {
       testWidgets('default value', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(const SettingsPageBlocProvider());
         await tester.pump();
         expect(
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Group by' &&
+                (widget.title as Text).data == 'Default grouping' &&
                 (widget.subtitle as Text).data == ListGroup.none.name,
           ),
           findsOneWidget,
         );
       });
-      testWidgets('pre-start update', (tester) async {
-        prefs.setString('todoGrouping', 'priority');
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
-        await tester.pump();
-        expect(
-          find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ListTile &&
-                (widget.title as Text).data == 'Group by' &&
-                (widget.subtitle as Text).data == ListGroup.priority.name,
-          ),
-          findsOneWidget,
-        );
-      });
       testWidgets('update by dialog', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(const SettingsPageBlocProvider());
         await tester.pump();
 
         await tester.tap(
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Group by' &&
+                (widget.title as Text).data == 'Default grouping' &&
                 (widget.subtitle as Text).data == ListGroup.none.name,
           ),
         );
@@ -216,7 +174,7 @@ void main() {
           find.byWidgetPredicate(
             (Widget widget) =>
                 widget is ListTile &&
-                (widget.title as Text).data == 'Group by' &&
+                (widget.title as Text).data == 'Default grouping' &&
                 (widget.subtitle as Text).data == ListGroup.priority.name,
           ),
           findsOneWidget,
@@ -227,18 +185,16 @@ void main() {
 
   group('Other settings', () {
     group('reset settings', () {
-      setUp(() async {
-        // Mock shared preferences.
-        SharedPreferences.setMockInitialValues({
-          'todoOrder': 'descending',
-          'todoFilter': 'completedOnly',
-          'todoGrouping': 'priority',
-        });
-        prefs = await SharedPreferences.getInstance();
-      });
-
       testWidgets('by dialog', (tester) async {
-        await tester.pumpWidget(SettingsPageBlocProvider(prefs: prefs));
+        await tester.pumpWidget(
+          const SettingsPageBlocProvider(
+            filter: Filter(
+              order: ListOrder.descending,
+              filter: ListFilter.completedOnly,
+              group: ListGroup.project,
+            ),
+          ),
+        );
         await tester.pump();
 
         Finder settingItem = find.byWidgetPredicate(
@@ -251,9 +207,33 @@ void main() {
         await tester.tap(settingItem);
         await tester.pump();
 
-        expect(prefs.getString('todoOrder'), null);
-        expect(prefs.getString('todoFilter'), null);
-        expect(prefs.getString('todoGrouping'), null);
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is ListTile &&
+                (widget.title as Text).data == 'Default order' &&
+                (widget.subtitle as Text).data == ListOrder.ascending.name,
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is ListTile &&
+                (widget.title as Text).data == 'Default filter' &&
+                (widget.subtitle as Text).data == ListFilter.all.name,
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is ListTile &&
+                (widget.title as Text).data == 'Default grouping' &&
+                (widget.subtitle as Text).data == ListGroup.none.name,
+          ),
+          findsOneWidget,
+        );
       });
     });
   });

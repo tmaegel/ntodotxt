@@ -42,7 +42,7 @@ class SettingsView extends StatelessWidget {
             title: const Text('Default order'),
             subtitle: Text(state.order.name),
             onTap: () async {
-              context.read<DefaultFilterCubit>().updateTodoOrder(
+              await context.read<DefaultFilterCubit>().updateListOrder(
                     await showDialog<ListOrder?>(
                       context: context,
                       builder: (BuildContext context) =>
@@ -55,7 +55,7 @@ class SettingsView extends StatelessWidget {
             title: const Text('Default filter'),
             subtitle: Text(state.filter.name),
             onTap: () async {
-              context.read<DefaultFilterCubit>().updateTodoFilter(
+              await context.read<DefaultFilterCubit>().updateListFilter(
                     await showDialog<ListFilter?>(
                       context: context,
                       builder: (BuildContext context) =>
@@ -68,7 +68,7 @@ class SettingsView extends StatelessWidget {
             title: const Text('Default grouping'),
             subtitle: Text(state.group.name),
             onTap: () async {
-              context.read<DefaultFilterCubit>().updateTodoGrouping(
+              await context.read<DefaultFilterCubit>().updateListGroup(
                     await showDialog<ListGroup?>(
                       context: context,
                       builder: (BuildContext context) =>
@@ -88,17 +88,13 @@ class SettingsView extends StatelessWidget {
             title: const Text('Reset settings'),
             subtitle: const Text(
                 'Resets setting to the defaults. Login data and todos are preserved.'),
-            onTap: () {
-              context.read<DefaultFilterCubit>().resetSettings();
-            },
+            onTap: () async => await context.read<DefaultFilterCubit>().reset(),
           ),
           ListTile(
             title: const Text('Logout'),
             subtitle: const Text(
                 'Disconnects the connection to the backend. Settings and todos are preserved.'),
-            onTap: () {
-              context.read<LoginCubit>().logout();
-            },
+            onTap: () => context.read<LoginCubit>().logout(),
           ),
           const Divider(),
           ListTile(

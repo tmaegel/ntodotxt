@@ -30,7 +30,7 @@ void main() {
     setUp(() async {
       await file.writeAsString('', flush: true); // Empty file
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
 
     test('initial state', () {
@@ -53,7 +53,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
 
     test('initial state', () async {
@@ -78,7 +78,7 @@ void main() {
         );
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -107,7 +107,7 @@ void main() {
         );
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -150,7 +150,7 @@ void main() {
         todo = Todo(description: 'Write some tests');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -177,7 +177,7 @@ void main() {
             Todo(projects: const {'project1'}, description: 'Write some tests');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -229,7 +229,7 @@ void main() {
             Todo(contexts: const {'context1'}, description: 'Write some tests');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -281,7 +281,7 @@ void main() {
             keyValues: const {'foo': 'bar'}, description: 'Write some tests');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -338,7 +338,7 @@ void main() {
         todo = Todo(description: 'Write some tests');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('set', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -397,7 +397,7 @@ void main() {
         todo = Todo(completion: true, description: 'Write some tests');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
-        repository = TodoListRepository(api: api);
+        repository = TodoListRepository(api);
       });
       test('unset', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -457,7 +457,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     test('set', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -497,7 +497,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -520,7 +520,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -545,7 +545,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -581,7 +581,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -617,7 +617,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     test('call', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
@@ -649,7 +649,7 @@ void main() {
       todo = Todo(description: 'Write some tests');
       await file.writeAsString(todo.toString(), flush: true);
       api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api: api);
+      repository = TodoListRepository(api);
     });
     group('ListOrderChanged', () {
       test('call', () async {

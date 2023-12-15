@@ -4,13 +4,18 @@ import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/settings/setting_controller.dart'
+    show SettingController;
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/settings/setting_repository.dart'
+    show SettingRepository;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class TodoListPageMaterialApp extends StatelessWidget {
   final File todoFile;
@@ -24,12 +29,18 @@ class TodoListPageMaterialApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (BuildContext context) {
-        return TodoListRepository(
-          api: LocalTodoListApi(todoFile: todoFile),
-        );
-      },
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) =>
+              SettingRepository(SettingController(inMemoryDatabasePath)),
+        ),
+        RepositoryProvider<TodoListRepository>(
+          create: (BuildContext context) {
+            return TodoListRepository(LocalTodoListApi(todoFile: todoFile));
+          },
+        ),
+      ],
       child: Builder(
         builder: (BuildContext context) {
           return BlocProvider(
@@ -51,7 +62,6 @@ class TodoListPageMaterialApp extends StatelessWidget {
 void main() {
   final MemoryFileSystem fs = MemoryFileSystem();
   late File file;
-  late Filter filter;
 
   setUp(() async {});
 
@@ -70,18 +80,27 @@ void main() {
     });
 
     group('ascending', () {
-      setUp(() async {
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
-        );
-      });
+      testWidgets('default filter', (tester) async {
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+        ));
+        await tester.pump();
 
+        expect(find.byType(TodoListTile), findsNWidgets(3));
+        Iterable<TodoListTile> todoTiles =
+            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
+        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
+        expect(todoTiles.elementAt(2).todo.description, 'TodoC');
+      });
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ));
         await tester.pump();
 
@@ -95,18 +114,14 @@ void main() {
     });
 
     group('descending', () {
-      setUp(() async {
-        filter = const Filter(
-          order: ListOrder.descending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
-        );
-      });
-
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ));
         await tester.pump();
 
@@ -135,18 +150,14 @@ void main() {
     });
 
     group('all', () {
-      setUp(() async {
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
-        );
-      });
-
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ));
         await tester.pump();
 
@@ -160,18 +171,14 @@ void main() {
     });
 
     group('completed only', () {
-      setUp(() async {
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.completedOnly,
-          group: ListGroup.none,
-        );
-      });
-
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.completedOnly,
+            group: ListGroup.none,
+          ),
         ));
         await tester.pump();
 
@@ -184,18 +191,14 @@ void main() {
     });
 
     group('incompleted only', () {
-      setUp(() async {
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.incompletedOnly,
-          group: ListGroup.none,
-        );
-      });
-
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.incompletedOnly,
+            group: ListGroup.none,
+          ),
         ));
         await tester.pump();
 
@@ -221,17 +224,16 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
-        );
       });
 
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ));
         await tester.pump();
 
@@ -278,11 +280,6 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.upcoming,
-        );
       });
 
       testWidgets('check sections', (tester) async {
@@ -292,7 +289,11 @@ void main() {
 
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.upcoming,
+          ),
         ));
         await tester.pump();
 
@@ -342,6 +343,10 @@ void main() {
           ),
           findsOneWidget,
         );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
       });
     });
 
@@ -358,17 +363,16 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.priority,
-        );
       });
 
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.priority,
+          ),
         ));
         await tester.pump();
 
@@ -425,17 +429,16 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.project,
-        );
       });
 
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.project,
+          ),
         ));
         await tester.pump();
 
@@ -491,17 +494,16 @@ void main() {
           ].join('\n'),
           flush: true,
         );
-        filter = const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.context,
-        );
       });
 
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
-          filter: filter,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.context,
+          ),
         ));
         await tester.pump();
 

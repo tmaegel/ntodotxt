@@ -42,6 +42,25 @@ void main() {
     });
   });
 
+  group('get()', () {
+    test('empty', () async {
+      expect(await repository.get(id: 1), null);
+    });
+    test('filled', () async {
+      Filter model = const Filter(
+        name: 'example filter',
+        priorities: {Priority.A, Priority.B},
+        projects: {'project1', 'project2'},
+        contexts: {'context1', 'context2'},
+        order: ListOrder.ascending,
+        filter: ListFilter.all,
+        group: ListGroup.priority,
+      );
+      await (await controller.database).insert('filters', model.toMap());
+      expect(await repository.get(id: 1), model.copyWith(id: 1));
+    });
+  });
+
   group('insert()', () {
     test('empty', () async {
       Filter model = const Filter(
@@ -138,7 +157,7 @@ void main() {
         filter: ListFilter.all,
         group: ListGroup.priority,
       );
-      expect(await repository.delete(model), 0);
+      expect(await repository.delete(id: model.id!), 0);
     });
     test('filled', () async {
       Filter model = const Filter(
@@ -152,19 +171,7 @@ void main() {
         group: ListGroup.priority,
       );
       await (await controller.database).insert('filters', model.toMap());
-      expect(await repository.delete(model) > 0, isTrue);
-    });
-    test('missing id', () async {
-      Filter model = const Filter(
-        name: 'example filter',
-        priorities: {Priority.A, Priority.B},
-        projects: {'project1', 'project2'},
-        contexts: {'context1', 'context2'},
-        order: ListOrder.ascending,
-        filter: ListFilter.all,
-        group: ListGroup.priority,
-      );
-      expect(await repository.delete(model), 0);
+      expect(await repository.delete(id: model.id!) > 0, isTrue);
     });
   });
 }

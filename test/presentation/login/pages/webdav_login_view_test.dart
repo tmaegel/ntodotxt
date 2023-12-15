@@ -1,48 +1,8 @@
-import 'dart:io';
-
-import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ntodotxt/main.dart' show App;
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
-import 'package:ntodotxt/presentation/login/states/login_state.dart';
 
 void main() {
-  late MemoryFileSystem fs;
-  late File file;
-
-  setUp(() async {
-    // Create in-memory file.
-    fs = MemoryFileSystem();
-    file = fs.file('todo.test');
-    await file.create();
-    await file.writeAsString('', flush: true); // Empty file.
-  });
-
-  group('Logout', () {
-    testWidgets('show login screen if state is Logout', (tester) async {
-      await tester.pumpWidget(
-        LoginWrapper(
-          todoFile: file,
-          initialLoginState: const Logout(),
-        ),
-      );
-      expect(find.byType(LoginPage), findsOneWidget);
-    });
-  });
-
-  group('Login', () {
-    testWidgets('show app screen if state is LoginOffline', (tester) async {
-      await tester.pumpWidget(
-        LoginWrapper(
-          todoFile: file,
-          initialLoginState: const LoginOffline(),
-        ),
-      );
-      expect(find.byType(App), findsOneWidget);
-    });
-  });
-
   group('Login form validation', () {
     testWidgets('Render form', (tester) async {
       await tester.pumpWidget(

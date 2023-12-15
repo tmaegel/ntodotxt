@@ -1,28 +1,62 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show ListFilter, ListGroup, ListOrder;
+    show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
+import 'package:ntodotxt/domain/settings/setting_repository.dart'
+    show SettingRepository;
 import 'package:ntodotxt/presentation/default_filter/states/default_filter_state.dart';
 
 class DefaultFilterCubit extends Cubit<DefaultFilterState> {
-  DefaultFilterCubit() : super(const DefaultFilterState());
+  final SettingRepository _repository;
 
-  void resetSettings() {}
+  DefaultFilterCubit({
+    required Filter filter,
+    required SettingRepository repository,
+  })  : _repository = repository,
+        super(
+          DefaultFilterState(
+            order: filter.order,
+            filter: filter.filter,
+            group: filter.group,
+          ),
+        );
 
-  void updateTodoOrder(ListOrder? value) {
+  Future<void> reset() async {
+    const Filter defaultFilter = Filter();
+    emit(state.copyWith(
+      order: defaultFilter.order,
+      filter: defaultFilter.filter,
+      group: defaultFilter.group,
+    ));
+    for (var k in ['order', 'filter', 'group']) {
+      await _repository.delete(key: k);
+    }
+  }
+
+  Future<void> updateListOrder(ListOrder? value) async {
     if (value != null) {
       emit(state.copyWith(order: value));
+      await _repository.updateOrInsert(
+        Setting(key: 'order', value: value.name),
+      );
     }
   }
 
-  void updateTodoFilter(ListFilter? value) {
+  Future<void> updateListFilter(ListFilter? value) async {
     if (value != null) {
       emit(state.copyWith(filter: value));
+      await _repository.updateOrInsert(
+        Setting(key: 'filter', value: value.name),
+      );
     }
   }
 
-  void updateTodoGrouping(ListGroup? value) {
+  Future<void> updateListGroup(ListGroup? value) async {
     if (value != null) {
       emit(state.copyWith(group: value));
+      await _repository.updateOrInsert(
+        Setting(key: 'group', value: value.name),
+      );
     }
   }
 }

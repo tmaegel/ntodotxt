@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/domain/todo/todo_list_repository.dart'
+    show TodoListRepository;
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -13,9 +14,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     Filter? filter,
   })  : _repository = repository,
         super(
-          TodoListInitial(
-            filter: filter ?? const Filter(),
-          ),
+          TodoListInitial(filter: filter ?? const Filter()),
         ) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);

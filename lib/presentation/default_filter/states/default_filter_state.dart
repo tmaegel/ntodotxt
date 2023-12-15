@@ -41,5 +41,6 @@ final class DefaultFilterState extends Equatable {
       ];
 
   @override
-  String toString() => 'DefaultFilterState { }';
+  String toString() =>
+      'DefaultFilterState { order: ${order.name} filter: ${filter.name} group: ${group.name} }';
 }

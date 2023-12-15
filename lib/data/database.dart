@@ -4,7 +4,7 @@ import 'package:ntodotxt/main.dart' show log;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseController {
-  static Database? _database;
+  static Database? _database; // Singleton pattern
   final String path;
 
   DatabaseController(this.path);
@@ -23,7 +23,7 @@ class DatabaseController {
   Future<void> close() async {
     log.info('Close database $path');
     if (_database != null) {
-      _database!.close();
+      await _database!.close();
     }
     _database = null;
   }
@@ -60,9 +60,11 @@ abstract class ModelController<T> extends DatabaseController {
 
   Future<List<T>> list();
 
+  Future<T?> get({required dynamic identifier});
+
   Future<int> insert(T model);
 
   Future<int> update(T model);
 
-  Future<int> delete(T model);
+  Future<int> delete({required dynamic identifier});
 }

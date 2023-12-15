@@ -13,52 +13,62 @@ import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
 
 class LoginWrapper extends StatelessWidget {
+  final String databasePath;
   final File todoFile;
-  final LoginState initialLoginState;
 
   const LoginWrapper({
+    required this.databasePath,
     required this.todoFile,
-    required this.initialLoginState,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => LoginCubit(
-        state: initialLoginState,
-      ),
-      child: BlocConsumer<LoginCubit, LoginState>(
-        listenWhen: (LoginState previous, LoginState current) =>
-            current is LoginError,
-        listener: (BuildContext context, LoginState state) {
-          if (state is LoginError) {
-            SnackBarHandler.error(context, state.message);
-          }
-        },
-        buildWhen: (previousState, state) =>
-            (previousState is Logout && state is! Logout) ||
-            (previousState is! Logout && state is Logout),
-        builder: (BuildContext context, LoginState state) {
-          if (state is Logout) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: lightTheme,
-              darkTheme: darkTheme,
-              themeMode: ThemeMode.system,
-              home: const LoginPage(),
-            );
-          } else {
-            return RepositoryProvider(
-              create: (BuildContext context) {
-                log.info('Create repository');
-                return TodoListRepository(api: _createApi(state));
+    return FutureBuilder<LoginState>(
+      future: LoginCubit.init(),
+      builder: (BuildContext context, AsyncSnapshot<LoginState> snapshot) {
+        if (!snapshot.hasData) {
+          // While data is loading:
+          return Container();
+        } else {
+          return BlocProvider(
+            create: (BuildContext context) => LoginCubit(
+              state: snapshot.data!,
+            ),
+            child: BlocConsumer<LoginCubit, LoginState>(
+              listenWhen: (LoginState previous, LoginState current) =>
+                  current is LoginError,
+              listener: (BuildContext context, LoginState state) {
+                if (state is LoginError) {
+                  SnackBarHandler.error(context, state.message);
+                }
               },
-              child: const App(),
-            );
-          }
-        },
-      ),
+              buildWhen: (previousState, state) =>
+                  (previousState is Logout && state is! Logout) ||
+                  (previousState is! Logout && state is Logout),
+              builder: (BuildContext context, LoginState state) {
+                if (state is Logout) {
+                  return MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    theme: lightTheme,
+                    darkTheme: darkTheme,
+                    themeMode: ThemeMode.system,
+                    home: const LoginPage(),
+                  );
+                } else {
+                  return RepositoryProvider(
+                    create: (BuildContext context) {
+                      log.info('Create repository');
+                      return TodoListRepository(_createApi(state));
+                    },
+                    child: App(databasePath: databasePath),
+                  );
+                }
+              },
+            ),
+          );
+        }
+      },
     );
   }
 

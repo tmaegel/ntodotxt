@@ -10,7 +10,9 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
   final PublishSubject<List<Filter>> _controller =
       PublishSubject<List<Filter>>();
 
-  FilterListBloc(this._repository) : super(const FilterListSuccess()) {
+  FilterListBloc({required FilterRepository repository})
+      : _repository = repository,
+        super(const FilterListSuccess()) {
     on<FilterListSubscriped>(_onFilterListSubscriped);
     on<FilterCreated>(_onFilterCreated);
     on<FilterUpdated>(_onFilterUpdated);
@@ -66,7 +68,7 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
     Emitter<FilterListState> emit,
   ) async {
     try {
-      await _repository.delete(event.filter);
+      await _repository.delete(id: event.filter.id!);
       await _refresh();
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

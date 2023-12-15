@@ -1,7 +1,5 @@
 import 'package:ntodotxt/data/database.dart' show ModelController;
-import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show Filter, Filters, Groups, Order;
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priorities;
+import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FilterController extends ModelController<Filter> {
@@ -12,35 +10,48 @@ class FilterController extends ModelController<Filter> {
     late final List<Map<String, dynamic>> maps;
     try {
       final Database db = await database;
-      // Query the table for all The Dogs.
       maps = await db.query('filters');
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return List.generate(maps.length, (i) {
-      return Filter(
-        id: maps[i]['id'] as int,
-        name: maps[i]['name'] as String,
-        priorities: {
-          for (var p in maps[i]['priorities'].split(',')..sort())
-            if (p != null && p.isNotEmpty) Priorities.byName(p)
-        },
-        projects: {
-          for (var p in maps[i]['projects'].split(',')..sort())
-            if (p != null && p.isNotEmpty) p,
-        },
-        contexts: {
-          for (var c in maps[i]['contexts'].split(',')..sort())
-            if (c != null && c.isNotEmpty) c,
-        },
-        order: Order.byName(maps[i]['order']),
-        filter: Filters.byName(maps[i]['filter']),
-        group: Groups.byName(maps[i]['group']),
-      );
+      return Filter.fromMap(maps[i]);
     });
+  }
+
+  @override
+  Future<Filter?> get({required dynamic identifier}) async {
+    Filter? model;
+    try {
+      final Database db = await database;
+      List<Map> maps = await db.query(
+        'filters',
+        columns: [
+          'id',
+          'name',
+          'priorities',
+          'projects',
+          'contexts',
+          'order',
+          'filter',
+          'group',
+        ],
+        where: 'id = ?',
+        whereArgs: [identifier as int],
+      );
+      if (maps.isNotEmpty) {
+        model = Filter.fromMap(maps.first);
+      }
+    } on Exception {
+      rethrow;
+    } finally {
+      await close();
+    }
+
+    return model;
   }
 
   @override
@@ -58,7 +69,7 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return id;
@@ -80,14 +91,14 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return id;
   }
 
   @override
-  Future<int> delete(Filter model) async {
+  Future<int> delete({required dynamic identifier}) async {
     late final int id;
     try {
       final Database db = await database;
@@ -97,12 +108,12 @@ class FilterController extends ModelController<Filter> {
         // Ensure that the model has a matching id.
         where: 'id = ?',
         // Pass the models id as a whereArg to prevent SQL injection.
-        whereArgs: [model.id],
+        whereArgs: [identifier],
       );
     } on Exception {
       rethrow;
     } finally {
-      close();
+      await close();
     }
 
     return id;

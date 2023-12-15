@@ -7,11 +7,15 @@ class FilterRepository {
 
   FilterRepository(this.controller);
 
-  Future<List<Filter>> list() => controller.list();
+  Future<List<Filter>> list() async => await controller.list();
 
-  Future<int> insert(Filter model) => controller.insert(model);
+  Future<Filter?> get({required int id}) async =>
+      await controller.get(identifier: id);
 
-  Future<int> update(Filter model) => controller.update(model);
+  Future<int> insert(Filter model) async => await controller.insert(model);
 
-  Future<int> delete(Filter model) => controller.delete(model);
+  Future<int> update(Filter model) async => await controller.update(model);
+
+  Future<int> delete({required int id}) async =>
+      await controller.delete(identifier: id);
 }

@@ -20,7 +20,7 @@ void main() {
     group('init()', () {
       test('initial file is empty', () async {
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
 
         await expectLater(
           repository.getTodoList(),
@@ -35,7 +35,7 @@ void main() {
         await file.writeAsString(todoStr, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
 
         await expectLater(
           repository.getTodoList(),
@@ -59,7 +59,7 @@ void main() {
         await file.writeAsString(todoListStr.join('\n'), flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
 
         await expectLater(
           repository.getTodoList(),
@@ -84,7 +84,7 @@ void main() {
         final Todo todo = Todo.fromString(value: todoStr);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.saveTodo(todo);
 
         await expectLater(
@@ -104,7 +104,7 @@ void main() {
         final Todo todo = Todo.fromString(value: todoStr);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.saveTodo(todo);
 
         await expectLater(
@@ -127,7 +127,7 @@ void main() {
         await file.writeAsString(todoStr, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.saveTodo(todo2);
 
         await expectLater(
@@ -151,7 +151,7 @@ void main() {
         await file.writeAsString(todoStr, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.saveTodo(todo2);
 
         await expectLater(
@@ -175,7 +175,7 @@ void main() {
         await file.writeAsString(todoStr2, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.saveTodo(todoDiff);
 
         await expectLater(
@@ -197,7 +197,7 @@ void main() {
         await file.writeAsString(todoStr, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.deleteTodo(todo);
 
         await expectLater(
@@ -218,7 +218,7 @@ void main() {
         await file.writeAsString(todoStr, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
         repository.deleteTodo(todo2); // Delete non-existing todo.
 
         await expectLater(
@@ -246,7 +246,7 @@ void main() {
         );
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
 
         await expectLater(
           repository.getTodoList(),
@@ -298,7 +298,7 @@ void main() {
         );
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api: api);
+        final TodoListRepository repository = TodoListRepository(api);
 
         await expectLater(
           repository.getTodoList(),
