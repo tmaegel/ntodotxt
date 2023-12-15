@@ -39,7 +39,7 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  void updateGroupBy(ListGroup group) {
+  void updateGroup(ListGroup group) {
     try {
       emit(state.success(
         filter: state.filter.copyWith(group: group),

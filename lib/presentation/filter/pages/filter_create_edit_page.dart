@@ -130,12 +130,12 @@ class FilterCreateEditPage extends StatelessWidget {
                               selected: state.filter.group == g,
                               onSelected: (bool selected) {
                                 if (selected) {
-                                  context.read<FilterCubit>().updateGroupBy(g);
+                                  context.read<FilterCubit>().updateGroup(g);
                                 } else {
                                   // If unselected fallback to the default.
                                   context
                                       .read<FilterCubit>()
-                                      .updateGroupBy(ListGroup.none);
+                                      .updateGroup(ListGroup.none);
                                 }
                               },
                             ),
