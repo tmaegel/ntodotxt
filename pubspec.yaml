@@ -25,7 +25,7 @@ dependencies:
   rxdart: ^0.27.7
   sqflite_common_ffi: ^2.3.1
   sqlite3_flutter_libs: ^0.5.18
-  url_launcher: ^6.2.1
+  url_launcher: ^6.2.2
   webdav_client: ^1.2.1
 
 dev_dependencies:
