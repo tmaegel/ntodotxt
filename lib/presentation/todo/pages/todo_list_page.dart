@@ -213,7 +213,7 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       builder: (BuildContext context, TodoListState state) {
-        Map<String, Iterable<Todo>?> sectionList = state.groupedByTodoList;
+        Map<String, Iterable<Todo>?> sectionList = state.groupedTodoList;
         return ListView.builder(
           itemCount: sectionList.length,
           itemBuilder: (BuildContext context, int index) {

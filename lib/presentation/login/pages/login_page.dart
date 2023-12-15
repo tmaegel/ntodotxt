@@ -29,7 +29,9 @@ class LoginWrapper extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<LoginState> snapshot) {
         if (!snapshot.hasData) {
           // While data is loading:
-          return Container();
+          return const MaterialApp(
+            debugShowCheckedModeBanner: false,
+          );
         } else {
           return BlocProvider(
             create: (BuildContext context) => LoginCubit(

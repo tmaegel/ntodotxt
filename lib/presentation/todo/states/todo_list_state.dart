@@ -19,21 +19,10 @@ sealed class TodoListState extends Equatable {
     this.todoList = const [],
   });
 
-  /// Returns a list with all priorities
-  /// including 'Priority.none' of all todos.
-  Set<Priority> get priorities {
-    Set<Priority> priorities = {};
-    for (var todo in filteredTodoList) {
-      priorities.add(todo.priority);
-    }
-
-    return filter.order.sort(priorities).toSet();
-  }
-
   /// Returns a list with all projects of all todos.
   Set<String> get projects {
     Set<String> projects = {};
-    for (var todo in filteredTodoList) {
+    for (var todo in todoList) {
       projects.addAll(todo.projects);
     }
 
@@ -43,7 +32,7 @@ sealed class TodoListState extends Equatable {
   /// Returns a list with all contexts of all todos.
   Set<String> get contexts {
     Set<String> contexts = {};
-    for (var todo in filteredTodoList) {
+    for (var todo in todoList) {
       contexts.addAll(todo.contexts);
     }
 
@@ -53,7 +42,7 @@ sealed class TodoListState extends Equatable {
   /// Returns a list with all key values of all todos.
   Set<String> get keyValues {
     Set<String> keyValues = {};
-    for (var todo in filteredTodoList) {
+    for (var todo in todoList) {
       keyValues.addAll(todo.fmtKeyValues);
     }
 
@@ -68,18 +57,11 @@ sealed class TodoListState extends Equatable {
   bool get isSelectedCompleted =>
       selectedTodos.firstWhereOrNull((todo) => !todo.completion) == null;
 
-  /// Returns true if selected todos are incompleted only.
-  bool get isSelectedIncompleted =>
-      selectedTodos.firstWhereOrNull((todo) => todo.completion) == null;
-
   Iterable<Todo> get selectedTodos => todoList.where((t) => t.selected);
 
-  Iterable<Todo> get unselectedTodos => todoList.where((t) => !t.selected);
+  Iterable<Todo> get filteredTodoList => filter.apply(todoList);
 
-  Iterable<Todo> get filteredTodoList =>
-      filter.order.sort(filter.filter.apply(todoList));
-
-  Map<String, Iterable<Todo>> get groupedByTodoList {
+  Map<String, Iterable<Todo>> get groupedTodoList {
     switch (filter.group) {
       case ListGroup.none:
         return filter.group.groupByNone(
@@ -92,7 +74,7 @@ sealed class TodoListState extends Equatable {
       case ListGroup.priority:
         return filter.group.groupByPriority(
           todoList: filteredTodoList,
-          sections: priorities,
+          sections: filter.order.sort(Priority.values).toSet(),
         );
       case ListGroup.project:
         return filter.group.groupByProject(

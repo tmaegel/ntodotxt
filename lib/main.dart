@@ -105,7 +105,9 @@ class App extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<Filter> snapshot) {
           if (!snapshot.hasData) {
             // While data is loading:
-            return Container();
+            return const MaterialApp(
+              debugShowCheckedModeBanner: false,
+            );
           } else {
             return AppCore(initialFilter: snapshot.data ?? const Filter());
           }
@@ -157,7 +159,7 @@ class AppCore extends StatelessWidget {
         builder: (BuildContext context) {
           return MaterialApp.router(
             title: 'ntodotxt',
-            debugShowCheckedModeBanner: false, // Remove the debug banner
+            debugShowCheckedModeBanner: false,
             theme: lightTheme,
             darkTheme: darkTheme,
             // If you do not have a themeMode switch, uncomment this line

@@ -108,25 +108,7 @@ extension Filters on ListFilter {
     }
   }
 
-  Iterable<Todo> apply(Iterable<Todo> todoList) {
-    return todoList.where(_apply);
-  }
-
-  /// Return todo list filtered by priority.
-  Iterable<Todo> applyPriority(Iterable<Todo> todoList, Priority? priority) {
-    return todoList.where((todo) => (priority == todo.priority));
-  }
-
-  Iterable<Todo> applyPriorityExcludeCompleted(
-      Iterable<Todo> todoList, Priority? priority) {
-    return todoList
-        .where((todo) => (priority == todo.priority && !todo.completion));
-  }
-
-  /// Return todo list filtered by completion state.
-  Iterable<Todo> applyCompletion(Iterable<Todo> todoList, bool completion) {
-    return todoList.where((todo) => (todo.completion == completion));
-  }
+  Iterable<Todo> apply(Iterable<Todo> todoList) => todoList.where(_apply);
 }
 
 extension Groups on ListGroup {
@@ -302,6 +284,40 @@ class Filter extends Equatable {
       `filter` TEXT,
       `group` TEXT
     )''';
+  }
+
+  Iterable<Todo> apply(List<Todo> todoList) {
+    Iterable<Todo> filtered = filter.apply(todoList);
+    if (priorities.isNotEmpty) {
+      filtered = filtered.where(_applyPriority);
+    }
+    if (projects.isNotEmpty) {
+      filtered = filtered.where(_applyProject);
+    }
+    if (contexts.isNotEmpty) {
+      filtered = filtered.where(_applyContext);
+    }
+    return order.sort(filtered);
+  }
+
+  bool _applyPriority(Todo todo) => priorities.contains(todo.priority);
+
+  bool _applyProject(Todo todo) {
+    for (String p in projects) {
+      if (todo.projects.contains(p)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _applyContext(Todo todo) {
+    for (String c in contexts) {
+      if (todo.contexts.contains(c)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Filter copyWith({
