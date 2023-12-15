@@ -1,3 +1,5 @@
+// coverage:ignore-file
+
 import 'package:flutter_bloc/flutter_bloc.dart'
     show Bloc, BlocBase, BlocObserver, Change, Transition;
 import 'package:ntodotxt/main.dart' show log;
