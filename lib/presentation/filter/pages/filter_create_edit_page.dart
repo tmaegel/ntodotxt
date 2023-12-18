@@ -56,7 +56,7 @@ class FilterCreateEditPage extends StatelessWidget {
                               FilterUpdated(filter: state.filter),
                             );
                       }
-                      context.goNamed('filter-list');
+                      context.pop();
                     },
                   ),
                 ],

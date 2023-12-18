@@ -8,48 +8,6 @@ class LoginCubit extends Cubit<LoginState> {
     required LoginState state,
   }) : super(state);
 
-  // To detect the initial authentication state before initializing the cubit.
-  static Future<LoginState> init() async {
-    String? backendFromsecureStorage = await secureStorage.read(key: 'backend');
-    Backend backend;
-
-    if (backendFromsecureStorage == null) {
-      return const Logout();
-    }
-
-    try {
-      backend = Backend.values.byName(backendFromsecureStorage);
-    } on Exception {
-      return const Logout();
-    }
-
-    if (backend == Backend.none) {
-      return const Logout();
-    }
-    if (backend == Backend.offline) {
-      return const LoginOffline();
-    }
-    if (backend == Backend.webdav) {
-      String? server = await secureStorage.read(key: 'server');
-      String? baseUrl = await secureStorage.read(key: 'baseUrl');
-      String? username = await secureStorage.read(key: 'username');
-      String? password = await secureStorage.read(key: 'password');
-      if (server != null &&
-          baseUrl != null &&
-          username != null &&
-          password != null) {
-        return LoginWebDAV(
-          server: server,
-          baseUrl: baseUrl,
-          username: username,
-          password: password,
-        );
-      }
-    }
-
-    return const Logout();
-  }
-
   Future<void> resetSecureStorage() async {
     final List<String> attrs = [
       'backend',

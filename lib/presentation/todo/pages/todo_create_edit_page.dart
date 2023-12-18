@@ -52,7 +52,7 @@ class TodoCreateEditPage extends StatelessWidget {
                           tooltip: 'Delete',
                           icon: const Icon(Icons.delete),
                           onPressed: () {
-                            context.goNamed('todo-list');
+                            context.pop();
                             context
                                 .read<TodoListBloc>()
                                 .add(TodoListTodoDeleted(todo: state.todo));
@@ -68,7 +68,7 @@ class TodoCreateEditPage extends StatelessWidget {
                     icon: const Icon(Icons.save),
                     tooltip: 'Save',
                     action: () {
-                      context.goNamed('todo-list');
+                      context.pop();
                       context
                           .read<TodoListBloc>()
                           .add(TodoListTodoSubmitted(todo: state.todo));
