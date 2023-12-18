@@ -9,18 +9,12 @@ final ThemeData dark = CustomTheme.dark;
 
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
-  appBarTheme: light.appBarTheme.copyWith(
-    backgroundColor: Colors.transparent,
-  ),
   snackBarTheme: light.snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
     insetPadding: const EdgeInsets.all(16),
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
-  chipTheme: light.chipTheme.copyWith(
-    backgroundColor: light.dividerColor,
-    shape: const StadiumBorder(),
-  ),
+  chipTheme: light.chipTheme.copyWith(),
   expansionTileTheme: light.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
@@ -61,18 +55,12 @@ final ThemeData lightTheme = light.copyWith(
   ),
 );
 final ThemeData darkTheme = dark.copyWith(
-  appBarTheme: dark.appBarTheme.copyWith(
-    backgroundColor: Colors.transparent,
-  ),
   snackBarTheme: light.snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
     insetPadding: const EdgeInsets.all(16),
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
-  chipTheme: dark.chipTheme.copyWith(
-    backgroundColor: dark.dividerColor,
-    shape: const StadiumBorder(),
-  ),
+  chipTheme: dark.chipTheme.copyWith(),
   expansionTileTheme: dark.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: dark.appBarTheme.backgroundColor,

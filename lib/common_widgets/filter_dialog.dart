@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show ListFilter;
-import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart'
-    show TodoListBloc;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart'
+    show DefaultFilterCubit;
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
+    show FilterCubit;
 
 class FilterTodoListBottomSheet extends StatelessWidget {
+  final FilterCubit cubit;
   final Map<String, ListFilter> items;
 
-  const FilterTodoListBottomSheet({super.key})
-      : items = const {
+  const FilterTodoListBottomSheet({
+    required this.cubit,
+    super.key,
+  }) : items = const {
           'All': ListFilter.all,
           'Completed only': ListFilter.completedOnly,
           'Incompleted only': ListFilter.incompletedOnly,
@@ -22,7 +25,7 @@ class FilterTodoListBottomSheet extends StatelessWidget {
       enableDrag: false,
       showDragHandle: false,
       onClosing: () {},
-      builder: (context) {
+      builder: (BuildContext context) {
         return ListView.builder(
           shrinkWrap: true,
           padding: const EdgeInsets.all(16.0),
@@ -38,12 +41,12 @@ class FilterTodoListBottomSheet extends StatelessWidget {
               ),
               title: Text(key),
               value: value,
-              groupValue: context.read<TodoListBloc>().state.filter.filter,
+              groupValue: cubit.state.filter.filter,
               onChanged: (ListFilter? value) {
-                Navigator.pop(
-                  context,
-                  value ?? context.read<TodoListBloc>().state.filter.filter,
-                );
+                if (value != null) {
+                  cubit.updateFilter(value);
+                }
+                Navigator.pop(context);
               },
             );
           },
@@ -54,10 +57,13 @@ class FilterTodoListBottomSheet extends StatelessWidget {
 }
 
 class FilterSettingsDialog extends StatelessWidget {
+  final DefaultFilterCubit cubit;
   final Map<String, ListFilter> items;
 
-  const FilterSettingsDialog({super.key})
-      : items = const {
+  const FilterSettingsDialog({
+    required this.cubit,
+    super.key,
+  }) : items = const {
           'All': ListFilter.all,
           'Completed only': ListFilter.completedOnly,
           'Incompleted only': ListFilter.incompletedOnly,
@@ -82,8 +88,13 @@ class FilterSettingsDialog extends StatelessWidget {
             ),
             value: value,
             title: Text(key),
-            groupValue: context.read<DefaultFilterCubit>().state.filter,
-            onChanged: (ListFilter? value) => Navigator.pop(context, value),
+            groupValue: cubit.state.filter.filter,
+            onChanged: (ListFilter? value) {
+              if (value != null) {
+                cubit.updateListFilter(value);
+              }
+              Navigator.pop(context);
+            },
           );
         },
       ),

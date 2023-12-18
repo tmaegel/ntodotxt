@@ -12,6 +12,7 @@ import 'package:ntodotxt/domain/filter/filter_model.dart'
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -43,12 +44,22 @@ class TodoListPageMaterialApp extends StatelessWidget {
       ],
       child: Builder(
         builder: (BuildContext context) {
-          return BlocProvider(
-            create: (BuildContext context) => TodoListBloc(
-              repository: context.read<TodoListRepository>(),
-            )
-              ..add(const TodoListSubscriptionRequested())
-              ..add(const TodoListSynchronizationRequested()),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<DefaultFilterCubit>(
+                create: (BuildContext context) => DefaultFilterCubit(
+                  filter: filter ?? const Filter(),
+                  repository: context.read<SettingRepository>(),
+                ),
+              ),
+              BlocProvider(
+                create: (BuildContext context) => TodoListBloc(
+                  repository: context.read<TodoListRepository>(),
+                )
+                  ..add(const TodoListSubscriptionRequested())
+                  ..add(const TodoListSynchronizationRequested()),
+              ),
+            ],
             child: MaterialApp(
               home: TodoListPage(filter: filter),
             ),

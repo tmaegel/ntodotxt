@@ -74,7 +74,7 @@ extension Order on ListOrder {
     return b.toString().compareTo(a.toString());
   }
 
-  Iterable<T> sort<T>(Iterable<T> todoList) => todoList.toList()..sort(_sort);
+  Iterable<T> sort<T>(Iterable<T> list) => list.toList()..sort(_sort);
 }
 
 extension Filters on ListFilter {

@@ -105,6 +105,20 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
+  void updateProjects(Set<String> projects) {
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            projects: {...projects},
+          ),
+        ),
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
   void addContext(String context) {
     try {
       emit(
@@ -125,6 +139,20 @@ class FilterCubit extends Cubit<FilterState> {
         state.success(
           filter: state.filter.copyWith(
             contexts: {...state.filter.contexts}..remove(context),
+          ),
+        ),
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  void updateContexts(Set<String> contexts) {
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            contexts: {...contexts},
           ),
         ),
       );

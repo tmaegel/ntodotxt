@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show ListOrder;
-import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart'
-    show TodoListBloc;
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart'
+    show DefaultFilterCubit;
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
+    show FilterCubit;
 
 class OrderTodoListBottomSheet extends StatelessWidget {
+  final FilterCubit cubit;
   final Map<String, ListOrder> items;
 
-  const OrderTodoListBottomSheet({super.key})
-      : items = const {
+  const OrderTodoListBottomSheet({
+    required this.cubit,
+    super.key,
+  }) : items = const {
           'Ascending': ListOrder.ascending,
           'Descending': ListOrder.descending,
         };
@@ -21,7 +24,7 @@ class OrderTodoListBottomSheet extends StatelessWidget {
       enableDrag: false,
       showDragHandle: false,
       onClosing: () {},
-      builder: (context) {
+      builder: (BuildContext context) {
         return ListView.builder(
           shrinkWrap: true,
           padding: const EdgeInsets.all(16.0),
@@ -37,12 +40,12 @@ class OrderTodoListBottomSheet extends StatelessWidget {
               ),
               title: Text(key),
               value: value,
-              groupValue: context.read<TodoListBloc>().state.filter.order,
+              groupValue: cubit.state.filter.order,
               onChanged: (ListOrder? value) {
-                Navigator.pop(
-                  context,
-                  value ?? context.read<TodoListBloc>().state.filter.order,
-                );
+                if (value != null) {
+                  cubit.updateOrder(value);
+                }
+                Navigator.pop(context);
               },
             );
           },
@@ -53,10 +56,13 @@ class OrderTodoListBottomSheet extends StatelessWidget {
 }
 
 class OrderSettingsDialog extends StatelessWidget {
+  final DefaultFilterCubit cubit;
   final Map<String, ListOrder> items;
 
-  const OrderSettingsDialog({super.key})
-      : items = const {
+  const OrderSettingsDialog({
+    required this.cubit,
+    super.key,
+  }) : items = const {
           'Ascending': ListOrder.ascending,
           'Descending': ListOrder.descending,
         };
@@ -80,8 +86,13 @@ class OrderSettingsDialog extends StatelessWidget {
             ),
             value: value,
             title: Text(key),
-            groupValue: context.read<DefaultFilterCubit>().state.order,
-            onChanged: (ListOrder? value) => Navigator.pop(context, value),
+            groupValue: cubit.state.filter.order,
+            onChanged: (ListOrder? value) {
+              if (value != null) {
+                cubit.updateListOrder(value);
+              }
+              Navigator.pop(context);
+            },
           );
         },
       ),

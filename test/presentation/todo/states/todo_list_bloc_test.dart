@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show Filter, ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -36,14 +34,6 @@ void main() {
     test('initial state', () {
       final TodoListBloc todoListBloc = TodoListBloc(repository: repository);
       expect(todoListBloc.state is TodoListInitial, true);
-      expect(
-        todoListBloc.state.filter,
-        const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
-        ),
-      );
       expect(todoListBloc.state.todoList, []);
     });
   });
@@ -641,83 +631,6 @@ void main() {
           const TodoListSuccess(todoList: []),
         ]),
       );
-    });
-  });
-
-  group('TodoList behaviour', () {
-    setUp(() async {
-      todo = Todo(description: 'Write some tests');
-      await file.writeAsString(todo.toString(), flush: true);
-      api = LocalTodoListApi(todoFile: file);
-      repository = TodoListRepository(api);
-    });
-    group('ListOrderChanged', () {
-      test('call', () async {
-        final TodoListBloc bloc = TodoListBloc(repository: repository);
-        bloc
-          ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListOrderChanged(order: ListOrder.descending));
-
-        await expectLater(
-          bloc.stream,
-          emitsInOrder([
-            TodoListSuccess(
-              filter: const Filter(order: ListOrder.ascending),
-              todoList: [todo],
-            ),
-            TodoListSuccess(
-              filter: const Filter(order: ListOrder.descending),
-              todoList: [todo],
-            ),
-          ]),
-        );
-      });
-    });
-
-    group('ListFilterChanged', () {
-      test('call', () async {
-        final TodoListBloc bloc = TodoListBloc(repository: repository);
-        bloc
-          ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListFilterChanged(filter: ListFilter.completedOnly));
-
-        await expectLater(
-          bloc.stream,
-          emitsInOrder([
-            TodoListSuccess(
-              filter: const Filter(filter: ListFilter.all),
-              todoList: [todo],
-            ),
-            TodoListSuccess(
-              filter: const Filter(filter: ListFilter.completedOnly),
-              todoList: [todo],
-            ),
-          ]),
-        );
-      });
-    });
-
-    group('ListGroupChanged', () {
-      test('call', () async {
-        final TodoListBloc bloc = TodoListBloc(repository: repository);
-        bloc
-          ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListGroupChanged(group: ListGroup.context));
-
-        await expectLater(
-          bloc.stream,
-          emitsInOrder([
-            TodoListSuccess(
-              filter: const Filter(group: ListGroup.none),
-              todoList: [todo],
-            ),
-            TodoListSuccess(
-              filter: const Filter(group: ListGroup.context),
-              todoList: [todo],
-            ),
-          ]),
-        );
-      });
     });
   });
 }

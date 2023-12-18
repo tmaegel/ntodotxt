@@ -40,41 +40,41 @@ class SettingsView extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Default order'),
-            subtitle: Text(state.order.name),
+            subtitle: Text(state.filter.order.name),
             onTap: () async {
-              await context.read<DefaultFilterCubit>().updateListOrder(
-                    await showDialog<ListOrder?>(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const OrderSettingsDialog(),
-                    ),
-                  );
+              DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
+              await showDialog<ListOrder?>(
+                context: context,
+                builder: (BuildContext context) => OrderSettingsDialog(
+                  cubit: cubit,
+                ),
+              );
             },
           ),
           ListTile(
             title: const Text('Default filter'),
-            subtitle: Text(state.filter.name),
+            subtitle: Text(state.filter.filter.name),
             onTap: () async {
-              await context.read<DefaultFilterCubit>().updateListFilter(
-                    await showDialog<ListFilter?>(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const FilterSettingsDialog(),
-                    ),
-                  );
+              DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
+              await showDialog<ListFilter?>(
+                context: context,
+                builder: (BuildContext context) => FilterSettingsDialog(
+                  cubit: cubit,
+                ),
+              );
             },
           ),
           ListTile(
             title: const Text('Default grouping'),
-            subtitle: Text(state.group.name),
+            subtitle: Text(state.filter.group.name),
             onTap: () async {
-              await context.read<DefaultFilterCubit>().updateListGroup(
-                    await showDialog<ListGroup?>(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const GroupBySettingsDialog(),
-                    ),
-                  );
+              DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
+              await showDialog<ListGroup?>(
+                context: context,
+                builder: (BuildContext context) => GroupBySettingsDialog(
+                  cubit: cubit,
+                ),
+              );
             },
           ),
           const Divider(),

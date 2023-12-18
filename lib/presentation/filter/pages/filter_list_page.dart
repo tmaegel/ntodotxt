@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/actions.dart' show primaryAddFilterAction;
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
@@ -33,9 +32,11 @@ class FilterListPage extends StatelessWidget {
             },
           ),
           floatingActionButton: PrimaryFloatingActionButton(
-            icon: Icon(primaryAddFilterAction.icon),
-            tooltip: primaryAddFilterAction.label,
-            action: () => primaryAddFilterAction.action(context),
+            tooltip: 'Add filter',
+            icon: const Icon(Icons.add),
+            action: () => context.push(
+              context.namedLocation('filter-create'),
+            ),
           ),
         );
       },

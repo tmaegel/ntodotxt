@@ -258,12 +258,9 @@ class App extends StatelessWidget {
                     repository: context.read<SettingRepository>(),
                   ),
                 ),
-                // Is required to retrieve general information from the
-                // unfiltered todo list.
                 BlocProvider<TodoListBloc>(
                   create: (context) {
                     return TodoListBloc(
-                      filter: filter,
                       repository: context.read<TodoListRepository>(),
                     )
                       ..add(const TodoListSubscriptionRequested())

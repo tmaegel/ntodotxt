@@ -11,11 +11,9 @@ enum TodoListStatus {
 }
 
 sealed class TodoListState extends Equatable {
-  final Filter filter;
   final List<Todo> todoList;
 
   const TodoListState({
-    this.filter = const Filter(), // Default
     this.todoList = const [],
   });
 
@@ -26,7 +24,8 @@ sealed class TodoListState extends Equatable {
       projects.addAll(todo.projects);
     }
 
-    return filter.order.sort(projects).toSet();
+    // @todo: Sort
+    return projects.toSet();
   }
 
   /// Returns a list with all contexts of all todos.
@@ -36,7 +35,8 @@ sealed class TodoListState extends Equatable {
       contexts.addAll(todo.contexts);
     }
 
-    return filter.order.sort(contexts).toSet();
+    // @todo: Sort
+    return contexts.toSet();
   }
 
   /// Returns a list with all key values of all todos.
@@ -46,7 +46,8 @@ sealed class TodoListState extends Equatable {
       keyValues.addAll(todo.fmtKeyValues);
     }
 
-    return filter.order.sort(keyValues).toSet();
+    // @todo: Sort
+    return keyValues.toSet();
   }
 
   /// Returns true if at least one todo is selected, otherwise false.
@@ -59,153 +60,136 @@ sealed class TodoListState extends Equatable {
 
   Iterable<Todo> get selectedTodos => todoList.where((t) => t.selected);
 
-  Iterable<Todo> get filteredTodoList => filter.apply(todoList);
+  Iterable<Todo> filteredTodoList(Filter filter) => filter.apply(todoList);
 
-  Map<String, Iterable<Todo>> get groupedTodoList {
+  Map<String, Iterable<Todo>> groupedTodoList(Filter filter) {
     switch (filter.group) {
       case ListGroup.none:
         return filter.group.groupByNone(
-          todoList: filteredTodoList,
+          todoList: filteredTodoList(filter),
         );
       case ListGroup.upcoming:
         return filter.group.groupByUpcoming(
-          todoList: filteredTodoList,
+          todoList: filteredTodoList(filter),
         );
       case ListGroup.priority:
         return filter.group.groupByPriority(
-          todoList: filteredTodoList,
+          todoList: filteredTodoList(filter),
           sections: filter.order.sort(Priority.values).toSet(),
         );
       case ListGroup.project:
         return filter.group.groupByProject(
-          todoList: filteredTodoList,
+          todoList: filteredTodoList(filter),
           sections: projects,
         );
       case ListGroup.context:
         return filter.group.groupByContext(
-          todoList: filteredTodoList,
+          todoList: filteredTodoList(filter),
           sections: contexts,
         );
       default:
         // Default is none.
         return filter.group.groupByNone(
-          todoList: filteredTodoList,
+          todoList: filteredTodoList(filter),
         );
     }
   }
 
   TodoListState copyWith({
-    Filter? filter,
     List<Todo>? todoList,
   });
 
   TodoListState loading({
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListLoading(
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
 
   TodoListState success({
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListSuccess(
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
 
   TodoListState error({
     required String message,
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListError(
       message: message,
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
   List<Object?> get props => [
-        filter,
         todoList,
       ];
 
   @override
-  String toString() => 'TodoListState { filter: $filter }';
+  String toString() => 'TodoListState { }';
 }
 
 final class TodoListInitial extends TodoListState {
   const TodoListInitial({
-    super.filter,
     super.todoList,
   });
 
   @override
   TodoListInitial copyWith({
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListInitial(
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
-  String toString() => 'TodoListInitial { filter: $filter todos: ${[
+  String toString() => 'TodoListInitial { todos: ${[
         for (var t in todoList) '$t ${t.selected}'
       ]} }';
 }
 
 final class TodoListLoading extends TodoListState {
   const TodoListLoading({
-    super.filter,
     super.todoList,
   });
 
   @override
   TodoListLoading copyWith({
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListLoading(
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
-  String toString() => 'TodoListLoading { filter: $filter todos: ${[
+  String toString() => 'TodoListLoading { todos: ${[
         for (var t in todoList) '$t ${t.selected}'
       ]} }';
 }
 
 final class TodoListSuccess extends TodoListState {
   const TodoListSuccess({
-    super.filter,
     super.todoList,
   });
 
   @override
   TodoListSuccess copyWith({
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListSuccess(
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
 
   @override
-  String toString() => 'TodoListSuccess { filter: $filter todos: ${[
+  String toString() => 'TodoListSuccess { todos: ${[
         for (var t in todoList) '$t ${t.selected}'
       ]} }';
 }
@@ -215,19 +199,16 @@ final class TodoListError extends TodoListState {
 
   const TodoListError({
     required this.message,
-    super.filter,
     super.todoList,
   });
 
   @override
   TodoListError copyWith({
     String? message,
-    Filter? filter,
     List<Todo>? todoList,
   }) {
     return TodoListError(
       message: message ?? this.message,
-      filter: filter ?? this.filter,
       todoList: todoList ?? this.todoList,
     );
   }
@@ -235,10 +216,9 @@ final class TodoListError extends TodoListState {
   @override
   List<Object?> get props => [
         message,
-        filter,
         todoList,
       ];
 
   @override
-  String toString() => 'TodoListError { message: $message filter: $filter }';
+  String toString() => 'TodoListError { message: $message }';
 }

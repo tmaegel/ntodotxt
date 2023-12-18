@@ -14,19 +14,13 @@ class DefaultFilterCubit extends Cubit<DefaultFilterState> {
     required SettingRepository repository,
   })  : _repository = repository,
         super(
-          DefaultFilterState(
-            order: filter.order,
-            filter: filter.filter,
-            group: filter.group,
-          ),
+          DefaultFilterState(filter: filter),
         );
 
   Future<void> reset() async {
     const Filter defaultFilter = Filter();
     emit(state.copyWith(
-      order: defaultFilter.order,
-      filter: defaultFilter.filter,
-      group: defaultFilter.group,
+      filter: defaultFilter,
     ));
     for (var k in ['order', 'filter', 'group']) {
       await _repository.delete(key: k);
@@ -35,7 +29,11 @@ class DefaultFilterCubit extends Cubit<DefaultFilterState> {
 
   Future<void> updateListOrder(ListOrder? value) async {
     if (value != null) {
-      emit(state.copyWith(order: value));
+      emit(
+        state.copyWith(
+          filter: state.filter.copyWith(order: value),
+        ),
+      );
       await _repository.updateOrInsert(
         Setting(key: 'order', value: value.name),
       );
@@ -44,7 +42,11 @@ class DefaultFilterCubit extends Cubit<DefaultFilterState> {
 
   Future<void> updateListFilter(ListFilter? value) async {
     if (value != null) {
-      emit(state.copyWith(filter: value));
+      emit(
+        state.copyWith(
+          filter: state.filter.copyWith(filter: value),
+        ),
+      );
       await _repository.updateOrInsert(
         Setting(key: 'filter', value: value.name),
       );
@@ -53,7 +55,11 @@ class DefaultFilterCubit extends Cubit<DefaultFilterState> {
 
   Future<void> updateListGroup(ListGroup? value) async {
     if (value != null) {
-      emit(state.copyWith(group: value));
+      emit(
+        state.copyWith(
+          filter: state.filter.copyWith(group: value),
+        ),
+      );
       await _repository.updateOrInsert(
         Setting(key: 'group', value: value.name),
       );

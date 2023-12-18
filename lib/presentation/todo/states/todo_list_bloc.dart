@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart'
     show TodoListRepository;
 import 'package:ntodotxt/domain/todo/todo_model.dart';
@@ -11,11 +10,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
   TodoListBloc({
     required TodoListRepository repository,
-    Filter? filter,
   })  : _repository = repository,
-        super(
-          TodoListInitial(filter: filter ?? const Filter()),
-        ) {
+        super(const TodoListInitial()) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
     on<TodoListTodoSubmitted>(_onTodoSubmitted);
@@ -27,9 +23,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListSelectionCompleted>(_onTodoListSelectionCompleted);
     on<TodoListSelectionIncompleted>(_onTodoListSelectionIncompleted);
     on<TodoListSelectionDeleted>(_onTodoListSelectionDeleted);
-    on<TodoListOrderChanged>(_onTodoListOrderChanged);
-    on<TodoListFilterChanged>(_onTodoListFilterChanged);
-    on<TodoListGroupChanged>(_onTodoListGroupChanged);
   }
 
   Future<void> _onTodoListSubscriptionRequested(
@@ -237,51 +230,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       await _repository
           .writeToSource()
           .whenComplete(() => emit(state.success()));
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListOrderChanged(
-    TodoListOrderChanged event,
-    Emitter<TodoListState> emit,
-  ) {
-    try {
-      emit(
-        state.success(
-          filter: state.filter.copyWith(order: event.order),
-        ),
-      );
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListFilterChanged(
-    TodoListFilterChanged event,
-    Emitter<TodoListState> emit,
-  ) {
-    try {
-      emit(
-        state.success(
-          filter: state.filter.copyWith(filter: event.filter),
-        ),
-      );
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListGroupChanged(
-    TodoListGroupChanged event,
-    Emitter<TodoListState> emit,
-  ) {
-    try {
-      emit(
-        state.success(
-          filter: state.filter.copyWith(group: event.group),
-        ),
-      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

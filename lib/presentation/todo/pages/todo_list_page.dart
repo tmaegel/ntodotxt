@@ -2,22 +2,18 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ntodotxt/actions.dart'
-    show
-        ActionWrapper,
-        appBarActions,
-        primaryAddTodoAction,
-        selectionDeleteAction,
-        selectionMarkAsDoneAction,
-        selectionMarkAsUndoneAction;
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/misc.dart';
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart'
+    show DefaultFilterCubit;
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -32,37 +28,27 @@ class TodoListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (filter == null) {
-      // Using existing BlocProvdier in parent widget.
-      return const TodoListView();
-    } else {
-      return BlocProvider(
-        create: (BuildContext context) => TodoListBloc(
-          filter: filter,
-          repository: context.read<TodoListRepository>(),
-        )
-          ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListSynchronizationRequested()),
-        child: TodoListView(filter: filter),
-      );
-    }
+    return BlocProvider(
+      create: (BuildContext context) => FilterCubit(
+        filter: filter ?? context.read<DefaultFilterCubit>().state.filter,
+      ),
+      child: Builder(
+        builder: (BuildContext context) {
+          return const TodoListView();
+        },
+      ),
+    );
   }
 }
 
 class TodoListView extends StatelessWidget {
-  final Filter? filter;
-
-  const TodoListView({
-    this.filter,
-    super.key,
-  });
-
-  bool get filtered => filter != null;
+  const TodoListView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final bool isNarrowLayout =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
+
     return BlocConsumer<TodoListBloc, TodoListState>(
       listener: (BuildContext context, TodoListState state) {
         // Catch errors on the highes possible layer.
@@ -77,62 +63,73 @@ class TodoListView extends StatelessWidget {
       builder: (BuildContext context, TodoListState state) {
         return Scaffold(
           appBar: MainAppBar(
-            title: filtered == false ? 'Todos' : 'Todos (${filter!.name})',
-            toolbar: filtered
-                ? null
-                : Row(
-                    children: [
-                      IconButton(
-                        tooltip: appBarActions[0].label,
-                        icon: Icon(appBarActions[0].icon),
-                        onPressed: () => appBarActions[0].action(context),
-                      ),
-                      PopupMenuButton<ActionWrapper>(
-                        itemBuilder: (BuildContext context) {
-                          return appBarActions.skip(1).map(
-                            (ActionWrapper item) {
-                              return PopupMenuItem<ActionWrapper>(
-                                value: item,
-                                child: Text(item.label),
-                                onTap: () => item.action(context),
-                              );
-                            },
-                          ).toList();
-                        },
-                      ),
-                    ],
+            title: 'Todos',
+            toolbar: Row(
+              children: [
+                IconButton(
+                  tooltip: 'Search',
+                  icon: const Icon(Icons.search),
+                  onPressed: () => showSearch(
+                    context: context,
+                    delegate: TodoSearchPage(),
                   ),
+                ),
+                IconButton(
+                  tooltip: 'Favorite',
+                  icon: const Icon(Icons.favorite_border),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            bottom: const AppBarFilterList(),
           ),
-          drawer: isNarrowLayout && !filtered
+          drawer: isNarrowLayout
               ? const ResponsiveNavigationDrawer(selectedIndex: 0)
               : null,
           floatingActionButton: !state.isAnySelected
               ? PrimaryFloatingActionButton(
-                  icon: Icon(primaryAddTodoAction.icon),
-                  tooltip: primaryAddTodoAction.label,
-                  action: () => primaryAddTodoAction.action(context),
+                  tooltip: 'Add todo',
+                  icon: const Icon(Icons.add),
+                  action: () => context.push(
+                    context.namedLocation('todo-create'),
+                  ),
                 )
               : null,
           bottomNavigationBar: state.isAnySelected
               ? PrimaryBottomAppBar(
                   children: [
                     IconButton(
-                      tooltip: selectionDeleteAction.label,
-                      icon: Icon(selectionDeleteAction.icon),
-                      onPressed: () => selectionDeleteAction.action(context),
+                      tooltip: 'Delete',
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        context
+                            .read<TodoListBloc>()
+                            .add(const TodoListSelectionDeleted());
+                        SnackBarHandler.info(context, 'Todos deleted.');
+                      },
                     ),
                     state.isSelectedCompleted
                         ? IconButton(
-                            tooltip: selectionMarkAsUndoneAction.label,
-                            icon: Icon(selectionMarkAsUndoneAction.icon),
-                            onPressed: () =>
-                                selectionMarkAsUndoneAction.action(context),
+                            tooltip: 'Mark as undone',
+                            icon: const Icon(Icons.remove_done),
+                            onPressed: () {
+                              context
+                                  .read<TodoListBloc>()
+                                  .add(const TodoListSelectionIncompleted());
+                              SnackBarHandler.info(
+                                  context, 'Mark todos as undone.');
+                            },
                           )
                         : IconButton(
-                            tooltip: selectionMarkAsDoneAction.label,
-                            icon: Icon(selectionMarkAsDoneAction.icon),
-                            onPressed: () =>
-                                selectionMarkAsDoneAction.action(context),
+                            tooltip: 'Mark as done',
+                            icon: const Icon(Icons.done_all),
+                            onPressed: () {
+                              context
+                                  .read<TodoListBloc>()
+                                  .add(const TodoListSelectionCompleted());
+                              SnackBarHandler.info(
+                                  context, 'Mark todos as done.');
+                            },
                           ),
                   ],
                 )
@@ -212,24 +209,31 @@ class TodoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
-      builder: (BuildContext context, TodoListState state) {
-        Map<String, Iterable<Todo>?> sectionList = state.groupedTodoList;
-        return ListView.builder(
-          itemCount: sectionList.length,
-          itemBuilder: (BuildContext context, int index) {
-            String section = sectionList.keys.elementAt(index);
-            Iterable<Todo> todoList = sectionList[section]!;
-            return ExpansionTile(
-              key: PageStorageKey<String>(section),
-              initiallyExpanded: true,
-              title: Text(section),
-              children: [
-                for (var todo in todoList)
-                  TodoListTileDismissable(
-                    todo: todo,
-                    isAnySelected: state.isAnySelected,
-                  )
-              ],
+      builder: (BuildContext context, TodoListState todoListState) {
+        return BlocBuilder<FilterCubit, FilterState>(
+          builder: (BuildContext context, FilterState filterState) {
+            Map<String, Iterable<Todo>?> sectionList =
+                todoListState.groupedTodoList(
+              filterState.filter,
+            );
+            return ListView.builder(
+              itemCount: sectionList.length,
+              itemBuilder: (BuildContext context, int index) {
+                String section = sectionList.keys.elementAt(index);
+                Iterable<Todo> todoList = sectionList[section]!;
+                return ExpansionTile(
+                  key: PageStorageKey<String>(section),
+                  initiallyExpanded: true,
+                  title: Text(section),
+                  children: [
+                    for (var todo in todoList)
+                      TodoListTileDismissable(
+                        todo: todo,
+                        isAnySelected: todoListState.isAnySelected,
+                      )
+                  ],
+                );
+              },
             );
           },
         );

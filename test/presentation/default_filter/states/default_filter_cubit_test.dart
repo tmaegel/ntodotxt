@@ -30,9 +30,11 @@ void main() {
       expect(
         cubit.state,
         const DefaultFilterState(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ),
       );
     });
@@ -49,9 +51,11 @@ void main() {
       expect(
         cubit.state,
         const DefaultFilterState(
-          order: ListOrder.descending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
+          filter: Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ),
       );
     });
@@ -65,9 +69,11 @@ void main() {
       expect(
         cubit.state,
         const DefaultFilterState(
-          order: ListOrder.ascending,
-          filter: ListFilter.completedOnly,
-          group: ListGroup.none,
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.completedOnly,
+            group: ListGroup.none,
+          ),
         ),
       );
     });
@@ -81,9 +87,11 @@ void main() {
       expect(
         cubit.state,
         const DefaultFilterState(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.priority,
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.priority,
+          ),
         ),
       );
     });
@@ -101,9 +109,11 @@ void main() {
       expect(
         cubit.state,
         const DefaultFilterState(
-          order: ListOrder.descending,
-          filter: ListFilter.completedOnly,
-          group: ListGroup.priority,
+          filter: Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.completedOnly,
+            group: ListGroup.priority,
+          ),
         ),
       );
 
@@ -111,9 +121,11 @@ void main() {
       expect(
         cubit.state,
         const DefaultFilterState(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ),
       );
     });
