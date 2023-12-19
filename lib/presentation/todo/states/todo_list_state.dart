@@ -19,35 +19,32 @@ sealed class TodoListState extends Equatable {
 
   /// Returns a list with all projects of all todos.
   Set<String> get projects {
-    Set<String> projects = {};
-    for (var todo in todoList) {
-      projects.addAll(todo.projects);
-    }
-
     // @todo: Sort
-    return projects.toSet();
+    return todoList.map((Todo todo) => todo.projects).fold<Set<String>>(
+      {},
+      (Set<String> previousValue, Set<String> value) =>
+          previousValue..addAll(value),
+    );
   }
 
   /// Returns a list with all contexts of all todos.
   Set<String> get contexts {
-    Set<String> contexts = {};
-    for (var todo in todoList) {
-      contexts.addAll(todo.contexts);
-    }
-
     // @todo: Sort
-    return contexts.toSet();
+    return todoList.map((Todo todo) => todo.contexts).fold<Set<String>>(
+      {},
+      (Set<String> previousValue, Set<String> value) =>
+          previousValue..addAll(value),
+    );
   }
 
   /// Returns a list with all key values of all todos.
   Set<String> get keyValues {
-    Set<String> keyValues = {};
-    for (var todo in todoList) {
-      keyValues.addAll(todo.fmtKeyValues);
-    }
-
     // @todo: Sort
-    return keyValues.toSet();
+    return todoList.map((Todo todo) => todo.fmtKeyValues).fold<Set<String>>(
+      {},
+      (Set<String> previousValue, Set<String> value) =>
+          previousValue..addAll(value),
+    );
   }
 
   /// Returns true if at least one todo is selected, otherwise false.

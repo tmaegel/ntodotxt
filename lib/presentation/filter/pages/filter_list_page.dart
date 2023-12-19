@@ -22,15 +22,15 @@ class FilterListPage extends StatelessWidget {
       builder: (BuildContext context, FilterListState state) {
         return Scaffold(
           appBar: const MainAppBar(title: 'Filters'),
-          drawer: isNarrowLayout
-              ? const ResponsiveNavigationDrawer(selectedIndex: 1)
-              : null,
           body: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             itemCount: state.filterList.length,
             itemBuilder: (BuildContext context, int index) {
               return FilterListTile(filter: state.filterList[index]);
             },
           ),
+          floatingActionButtonLocation:
+              isNarrowLayout ? FloatingActionButtonLocation.endContained : null,
           floatingActionButton: PrimaryFloatingActionButton(
             tooltip: 'Add filter',
             icon: const Icon(Icons.add),
@@ -38,6 +38,25 @@ class FilterListPage extends StatelessWidget {
               context.namedLocation('filter-create'),
             ),
           ),
+          bottomNavigationBar: !isNarrowLayout
+              ? null
+              : PrimaryBottomAppBar(
+                  children: [
+                    IconButton(
+                      tooltip: 'Drawer',
+                      icon: const Icon(Icons.menu),
+                      onPressed: () async {
+                        await showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // set this to true
+                          builder: (BuildContext context) =>
+                              BottomSheetNavigationDrawer(
+                                  bloc: context.read<FilterListBloc>()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
         );
       },
     );

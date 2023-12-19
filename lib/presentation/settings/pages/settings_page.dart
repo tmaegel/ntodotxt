@@ -31,81 +31,110 @@ class SettingsView extends StatelessWidget {
     return BlocBuilder<DefaultFilterCubit, DefaultFilterState>(
         builder: (BuildContext context, DefaultFilterState state) {
       return ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: [
-          ListTile(
-            title: Text(
-              'Display',
-              style: Theme.of(context).textTheme.titleSmall,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: Text(
+                'Display',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
           ),
-          ListTile(
-            title: const Text('Default order'),
-            subtitle: Text(state.filter.order.name),
-            onTap: () async {
-              DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
-              await showDialog<ListOrder?>(
-                context: context,
-                builder: (BuildContext context) => OrderSettingsDialog(
-                  cubit: cubit,
-                ),
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: const Text('Default order'),
+              subtitle: Text(state.filter.order.name),
+              onTap: () async {
+                DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
+                await showDialog<ListOrder?>(
+                  context: context,
+                  builder: (BuildContext context) => OrderSettingsDialog(
+                    cubit: cubit,
+                  ),
+                );
+              },
+            ),
           ),
-          ListTile(
-            title: const Text('Default filter'),
-            subtitle: Text(state.filter.filter.name),
-            onTap: () async {
-              DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
-              await showDialog<ListFilter?>(
-                context: context,
-                builder: (BuildContext context) => FilterSettingsDialog(
-                  cubit: cubit,
-                ),
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: const Text('Default filter'),
+              subtitle: Text(state.filter.filter.name),
+              onTap: () async {
+                DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
+                await showDialog<ListFilter?>(
+                  context: context,
+                  builder: (BuildContext context) => FilterSettingsDialog(
+                    cubit: cubit,
+                  ),
+                );
+              },
+            ),
           ),
-          ListTile(
-            title: const Text('Default grouping'),
-            subtitle: Text(state.filter.group.name),
-            onTap: () async {
-              DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
-              await showDialog<ListGroup?>(
-                context: context,
-                builder: (BuildContext context) => GroupBySettingsDialog(
-                  cubit: cubit,
-                ),
-              );
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: const Text('Default grouping'),
+              subtitle: Text(state.filter.group.name),
+              onTap: () async {
+                DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
+                await showDialog<ListGroup?>(
+                  context: context,
+                  builder: (BuildContext context) => GroupBySettingsDialog(
+                    cubit: cubit,
+                  ),
+                );
+              },
+            ),
           ),
           const Divider(),
-          ListTile(
-            title: Text(
-              'Reset',
-              style: Theme.of(context).textTheme.titleSmall,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: Text(
+                'Reset',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
           ),
-          ListTile(
-            title: const Text('Reset settings'),
-            subtitle: const Text(
-                'Resets setting to the defaults. Login data and todos are preserved.'),
-            onTap: () async => await context.read<DefaultFilterCubit>().reset(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: const Text('Reset settings'),
+              subtitle: const Text(
+                  'Resets setting to the defaults. Login data and todos are preserved.'),
+              onTap: () async =>
+                  await context.read<DefaultFilterCubit>().reset(),
+            ),
           ),
-          ListTile(
-            title: const Text('Logout'),
-            subtitle: const Text(
-                'Disconnects the connection to the backend. Settings and todos are preserved.'),
-            onTap: () => context.read<LoginCubit>().logout(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: const Text('Logout'),
+              subtitle: const Text(
+                  'Disconnects the connection to the backend. Settings and todos are preserved.'),
+              onTap: () => context.read<LoginCubit>().logout(),
+            ),
           ),
           const Divider(),
-          ListTile(
-            title: Text(
-              'Others',
-              style: Theme.of(context).textTheme.titleSmall,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: Text(
+                'Others',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
             ),
           ),
-          ListTile(
-            title: const Text('About'),
-            onTap: () => context.pushNamed('app-info'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListTile(
+              title: const Text('About'),
+              onTap: () => context.pushNamed('app-info'),
+            ),
           ),
         ],
       );

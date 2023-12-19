@@ -25,38 +25,39 @@ class AppInfoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       children: [
         ListTile(
           // Overwrite the default in themeData
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.update),
           title: const Text('ntodotxt'),
           subtitle: const Text('Version $version'),
           onTap: () => _openUrl('$repoUrl/blob/main/CHANGELOG.md'),
         ),
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.code),
           title: const Text('Source code'),
           subtitle: const Text(repoUrl),
           onTap: () => _openUrl(repoUrl),
         ),
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.bug_report_outlined),
           title: const Text('Issue tracker'),
           subtitle: const Text('$repoUrl/issues'),
           onTap: () => _openUrl('$repoUrl/issues'),
         ),
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.email_outlined),
           title: const Text('Contact me'),
           subtitle: const Text('mail@tonimaegel.de'),
           onTap: () => _openUrl('mailto:mail@tonimaegel.de'),
         ),
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.shield_outlined),
           title: const Text('Licence'),
           subtitle: const Text('MIT License'),

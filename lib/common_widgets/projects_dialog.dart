@@ -58,9 +58,6 @@ class _ProjectListBottomSheetState extends State<ProjectListBottomSheet> {
                     key: Key('${project}BottomSheetCheckboxButton'),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
                     title: Text(project),
                     value: selectedItems.contains(project),
                     onChanged: (bool? value) {

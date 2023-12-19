@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
@@ -8,7 +7,7 @@ import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart' show maxScreenWidthCompact;
 import 'package:ntodotxt/domain/filter/filter_model.dart';
-import 'package:ntodotxt/misc.dart' show PlatformInfo;
+import 'package:ntodotxt/misc.dart' show CustomScrollBehavior, PlatformInfo;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -86,12 +85,12 @@ class AppBarFilterList extends StatelessWidget {
           previousState.filter != state.filter,
       builder: (BuildContext context, FilterState state) {
         return ScrollConfiguration(
-          behavior: MyCustomScrollBehavior(),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18.0, 0.0, 16.0, 8.0),
-            child: SingleChildScrollView(
-              controller: controller,
-              scrollDirection: Axis.horizontal,
+          behavior: CustomScrollBehavior(),
+          child: SingleChildScrollView(
+            controller: controller,
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -109,7 +108,7 @@ class AppBarFilterList extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   ActionChip(
                     padding: EdgeInsets.zero,
                     avatar: const Icon(Icons.filter_list),
@@ -124,7 +123,7 @@ class AppBarFilterList extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   ActionChip(
                     padding: EdgeInsets.zero,
                     avatar: const Icon(Icons.workspaces_outlined),
@@ -139,7 +138,7 @@ class AppBarFilterList extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   ActionChip(
                     padding: EdgeInsets.zero,
                     avatar: const Icon(Icons.rocket_launch_outlined),
@@ -157,7 +156,7 @@ class AppBarFilterList extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   ActionChip(
                     padding: EdgeInsets.zero,
                     avatar: const Icon(Icons.join_inner),
@@ -183,14 +182,4 @@ class AppBarFilterList extends StatelessWidget {
       },
     );
   }
-}
-
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.stylus,
-        PointerDeviceKind.unknown,
-      };
 }

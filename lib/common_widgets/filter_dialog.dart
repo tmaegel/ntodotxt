@@ -36,9 +36,6 @@ class FilterTodoListBottomSheet extends StatelessWidget {
             return RadioListTile<ListFilter>(
               key: Key('${value.name}BottomSheetRadioButton'),
               contentPadding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
               title: Text(key),
               value: value,
               groupValue: cubit.state.filter.filter,
@@ -83,9 +80,6 @@ class FilterSettingsDialog extends StatelessWidget {
           return RadioListTile<ListFilter>(
             key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
             value: value,
             title: Text(key),
             groupValue: cubit.state.filter.filter,

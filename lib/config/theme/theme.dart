@@ -9,16 +9,24 @@ final ThemeData dark = CustomTheme.dark;
 
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
+  appBarTheme: light.appBarTheme.copyWith(
+    centerTitle: true,
+  ),
   snackBarTheme: light.snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
     insetPadding: const EdgeInsets.all(16),
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
-  chipTheme: light.chipTheme.copyWith(),
+  chipTheme: light.chipTheme.copyWith(
+    backgroundColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+  ),
   expansionTileTheme: light.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
-    tilePadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
+    textColor: dark.colorScheme.primary,
   ),
   listTileTheme: light.listTileTheme.copyWith(
     // It is not recommended to set dense to true
@@ -26,11 +34,13 @@ final ThemeData lightTheme = light.copyWith(
     dense: true,
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
-    contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
-    radius: Radius.zero,
-    thickness: MaterialStateProperty.all(4.0),
+    thickness: MaterialStateProperty.all(5.0),
   ),
   inputDecorationTheme: light.inputDecorationTheme.copyWith(
     filled: false,
@@ -55,16 +65,24 @@ final ThemeData lightTheme = light.copyWith(
   ),
 );
 final ThemeData darkTheme = dark.copyWith(
+  appBarTheme: dark.appBarTheme.copyWith(
+    centerTitle: true,
+  ),
   snackBarTheme: light.snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
     insetPadding: const EdgeInsets.all(16),
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
-  chipTheme: dark.chipTheme.copyWith(),
+  chipTheme: dark.chipTheme.copyWith(
+    backgroundColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+  ),
   expansionTileTheme: dark.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: dark.appBarTheme.backgroundColor,
-    tilePadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
+    textColor: dark.colorScheme.primary,
   ),
   listTileTheme: dark.listTileTheme.copyWith(
     // It is not recommended to set dense to true
@@ -72,11 +90,13 @@ final ThemeData darkTheme = dark.copyWith(
     dense: true,
     selectedColor: dark.textTheme.bodySmall?.color,
     selectedTileColor: dark.hoverColor,
-    contentPadding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 0.0),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
-    radius: Radius.zero,
-    thickness: MaterialStateProperty.all(4.0),
+    thickness: MaterialStateProperty.all(5.0),
   ),
   inputDecorationTheme: dark.inputDecorationTheme.copyWith(
     filled: false,

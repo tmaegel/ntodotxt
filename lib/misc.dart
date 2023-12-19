@@ -2,6 +2,7 @@
 
 import 'dart:io' show Platform;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class PlatformInfo {
@@ -43,4 +44,14 @@ class SnackBarHandler {
 
   static void error(BuildContext context, String message) =>
       _call(context, MessageType.error, message);
+}
+
+class CustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.unknown,
+      };
 }

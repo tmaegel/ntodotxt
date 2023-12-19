@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/constants/app.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
+import 'package:ntodotxt/misc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
 class DrawerDestination {
   final String label;
@@ -36,10 +41,7 @@ const List<DrawerDestination> secondaryDestinations = <DrawerDestination>[
 ];
 
 class ResponsiveNavigationDrawer extends StatefulWidget {
-  final int? selectedIndex;
-
   const ResponsiveNavigationDrawer({
-    this.selectedIndex,
     super.key,
   });
 
@@ -63,7 +65,7 @@ class _ResponsiveNavigationDrawerState
       surfaceTintColor: !isNarrowLayout
           ? Theme.of(context).appBarTheme.backgroundColor
           : null,
-      selectedIndex: widget.selectedIndex ?? _selectedIndex,
+      selectedIndex: _selectedIndex,
       children: <Widget>[
         const Padding(
           padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
@@ -96,7 +98,7 @@ class _ResponsiveNavigationDrawerState
         switch (index) {
           case 0: // Manage todos
             setState(() => _selectedIndex = index);
-            context.go(context.namedLocation('todo-list'));
+            context.push(context.namedLocation('todo-list'));
             break;
           case 1: // Manage filters
             setState(() => _selectedIndex = index);
@@ -112,6 +114,88 @@ class _ResponsiveNavigationDrawerState
         if (isNarrowLayout) {
           Navigator.pop(context); // Close drawer.
         }
+      },
+    );
+  }
+}
+
+class BottomSheetNavigationDrawer extends StatelessWidget {
+  final FilterListBloc bloc;
+
+  const BottomSheetNavigationDrawer({
+    required this.bloc,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.15,
+      maxChildSize: 0.6,
+      expand: false,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return BlocBuilder<FilterListBloc, FilterListState>(
+          bloc: bloc,
+          builder: (BuildContext context, FilterListState state) {
+            return ScrollConfiguration(
+              behavior: CustomScrollBehavior(),
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                controller: scrollController,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.checklist_outlined),
+                      title: const Text('Todo'),
+                      onTap: () {
+                        context.push(context.namedLocation('todo-list'));
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.filter_alt_outlined),
+                      title: const Text('Filter'),
+                      onTap: () {
+                        context.push(context.namedLocation('filter-list'));
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  const Divider(),
+                  for (Filter filter in state.filterList)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: ListTile(
+                        leading: const Icon(Icons.favorite_border),
+                        title: Text(filter.name),
+                        onTap: () {
+                          context.pushNamed('todo-list', extra: filter);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: const Text('Settings'),
+                      onTap: () {
+                        context.push(context.namedLocation('settings'));
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }

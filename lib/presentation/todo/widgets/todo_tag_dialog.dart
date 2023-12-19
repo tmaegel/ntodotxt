@@ -47,74 +47,75 @@ class _TodoTagDialogState<T extends TodoTagDialog> extends State<T> {
       showDragHandle: false,
       onClosing: () {},
       builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24.0,
-            vertical: 16.0,
-          ),
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: TextFormField(
-                key: _textFormKey,
-                controller: _controller,
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  hintText:
-                      'Enter <${widget.tagName}> tags seperated by whitespace ...',
-                  isDense: true,
-                  filled: false,
-                  contentPadding: EdgeInsets.zero,
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
-              ),
-              trailing: IconButton.filled(
-                icon: const Icon(Icons.done),
-                tooltip: 'Add ${widget.tagName} tags',
-                onPressed: () {
-                  // Remove duplicate whitespaces from input
-                  // and split string by whitespaces.
-                  final List<String> addedTags = _controller.text
-                      .trim()
-                      .replaceAllMapped(RegExp(r'\s+'), (match) {
-                    return ' ';
-                  }).split(' ')
-                    ..removeWhere((value) => value.isEmpty);
-                  widget.onSubmit(context, [...addedTags, ...selectedTags]);
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            if (widget.availableTags.isNotEmpty)
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: GenericChipGroup(
-                  children: [
-                    for (var t in widget.availableTags)
-                      GenericChoiceChip(
-                        label: Text(t),
-                        selected: selectedTags.contains(t),
-                        onSelected: (bool selected) {
-                          if (selected) {
-                            setState(() {
-                              selectedTags.add(t);
-                            });
-                          } else {
-                            setState(() {
-                              selectedTags.remove(t);
-                            });
-                          }
-                        },
-                      ),
-                  ],
+                contentPadding: const EdgeInsets.only(left: 8.0),
+                title: TextFormField(
+                  key: _textFormKey,
+                  controller: _controller,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  decoration: InputDecoration(
+                    hintText:
+                        'Enter <${widget.tagName}> tags seperated by whitespace ...',
+                    isDense: true,
+                    filled: false,
+                    contentPadding: EdgeInsets.zero,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                ),
+                trailing: Tooltip(
+                  message: 'Add ${widget.tagName} tags',
+                  child: TextButton(
+                    child: const Text('Apply'),
+                    onPressed: () {
+                      // Remove duplicate whitespaces from input
+                      // and split string by whitespaces.
+                      final List<String> addedTags = _controller.text
+                          .trim()
+                          .replaceAllMapped(RegExp(r'\s+'), (match) {
+                        return ' ';
+                      }).split(' ')
+                        ..removeWhere((value) => value.isEmpty);
+                      widget.onSubmit(context, [...addedTags, ...selectedTags]);
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
               ),
-          ],
+              if (widget.availableTags.isNotEmpty)
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 8.0),
+                  title: GenericChipGroup(
+                    children: [
+                      for (var t in widget.availableTags)
+                        GenericChoiceChip(
+                          label: Text(t),
+                          selected: selectedTags.contains(t),
+                          onSelected: (bool selected) {
+                            if (selected) {
+                              setState(() {
+                                selectedTags.add(t);
+                              });
+                            } else {
+                              setState(() {
+                                selectedTags.remove(t);
+                              });
+                            }
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );

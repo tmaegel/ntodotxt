@@ -35,9 +35,6 @@ class OrderTodoListBottomSheet extends StatelessWidget {
             return RadioListTile<ListOrder>(
               key: Key('${value.name}BottomSheetRadioButton'),
               contentPadding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
               title: Text(key),
               value: value,
               groupValue: cubit.state.filter.order,
@@ -81,9 +78,6 @@ class OrderSettingsDialog extends StatelessWidget {
           return RadioListTile<ListOrder>(
             key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
             value: value,
             title: Text(key),
             groupValue: cubit.state.filter.order,

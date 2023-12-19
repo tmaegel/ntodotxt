@@ -12,6 +12,8 @@ import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart'
     show DefaultFilterCubit;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart'
+    show FilterListBloc;
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -51,7 +53,6 @@ class TodoListView extends StatelessWidget {
 
     return BlocConsumer<TodoListBloc, TodoListState>(
       listener: (BuildContext context, TodoListState state) {
-        // Catch errors on the highes possible layer.
         if (state is TodoListError) {
           SnackBarHandler.error(context, state.message);
         }
@@ -64,37 +65,38 @@ class TodoListView extends StatelessWidget {
         return Scaffold(
           appBar: MainAppBar(
             title: 'Todos',
-            toolbar: Row(
-              children: [
-                IconButton(
-                  tooltip: 'Search',
-                  icon: const Icon(Icons.search),
-                  onPressed: () => showSearch(
-                    context: context,
-                    delegate: TodoSearchPage(),
+            toolbar: isNarrowLayout
+                ? null
+                : Row(
+                    children: [
+                      IconButton(
+                        tooltip: 'Search',
+                        icon: const Icon(Icons.search),
+                        onPressed: () => showSearch(
+                          context: context,
+                          delegate: TodoSearchPage(),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Favorite',
+                        icon: const Icon(Icons.favorite_border),
+                        onPressed: () {},
+                      ),
+                    ],
                   ),
-                ),
-                IconButton(
-                  tooltip: 'Favorite',
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {},
-                ),
-              ],
-            ),
             bottom: const AppBarFilterList(),
           ),
-          drawer: isNarrowLayout
-              ? const ResponsiveNavigationDrawer(selectedIndex: 0)
-              : null,
-          floatingActionButton: !state.isAnySelected
-              ? PrimaryFloatingActionButton(
+          floatingActionButtonLocation:
+              isNarrowLayout ? FloatingActionButtonLocation.endContained : null,
+          floatingActionButton: state.isAnySelected
+              ? null
+              : PrimaryFloatingActionButton(
                   tooltip: 'Add todo',
                   icon: const Icon(Icons.add),
                   action: () => context.push(
                     context.namedLocation('todo-create'),
                   ),
-                )
-              : null,
+                ),
           bottomNavigationBar: state.isAnySelected
               ? PrimaryBottomAppBar(
                   children: [
@@ -133,7 +135,38 @@ class TodoListView extends StatelessWidget {
                           ),
                   ],
                 )
-              : null,
+              : !isNarrowLayout
+                  ? null
+                  : PrimaryBottomAppBar(
+                      children: [
+                        IconButton(
+                          tooltip: 'Drawer',
+                          icon: const Icon(Icons.menu),
+                          onPressed: () async {
+                            await showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true, // set this to true
+                              builder: (BuildContext context) =>
+                                  BottomSheetNavigationDrawer(
+                                      bloc: context.read<FilterListBloc>()),
+                            );
+                          },
+                        ),
+                        IconButton(
+                          tooltip: 'Search',
+                          icon: const Icon(Icons.search),
+                          onPressed: () => showSearch(
+                            context: context,
+                            delegate: TodoSearchPage(),
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Favorite',
+                          icon: const Icon(Icons.favorite_border),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
           body: RefreshIndicator(
             key: GlobalKey<RefreshIndicatorState>(),
             onRefresh: () async {
@@ -217,6 +250,8 @@ class TodoList extends StatelessWidget {
               filterState.filter,
             );
             return ListView.builder(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               itemCount: sectionList.length,
               itemBuilder: (BuildContext context, int index) {
                 String section = sectionList.keys.elementAt(index);

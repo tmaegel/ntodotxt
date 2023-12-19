@@ -58,9 +58,6 @@ class _ContextListBottomSheetState extends State<ContextListBottomSheet> {
                     key: Key('${context}BottomSheetCheckboxButton'),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
                     title: Text(context),
                     value: selectedItems.contains(context),
                     onChanged: (bool? value) {

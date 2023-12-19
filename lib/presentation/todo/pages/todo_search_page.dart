@@ -6,6 +6,22 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class TodoSearchPage extends SearchDelegate {
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
+            isDense: true,
+            filled: false,
+            contentPadding: EdgeInsets.zero,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+          ),
+    );
+  }
+
   List<Todo> _getResults(List<Todo> todoList) {
     List<Todo> matchQuery = [];
     for (var todo in todoList) {
@@ -22,6 +38,7 @@ class TodoSearchPage extends SearchDelegate {
       builder: (BuildContext context, TodoListState state) {
         final List<Todo> matchQuery = _getResults(state.todoList);
         return ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
           itemCount: matchQuery.length,
           itemBuilder: (BuildContext context, int index) {
             Todo todo = matchQuery[index];
@@ -73,17 +90,20 @@ class TodoSearchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      key: key,
-      title: Text(
-        todo.description,
-        style: TextStyle(
-          decoration: todo.completion ? TextDecoration.lineThrough : null,
-          decorationThickness: 2.0,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: ListTile(
+        key: key,
+        title: Text(
+          todo.description,
+          style: TextStyle(
+            decoration: todo.completion ? TextDecoration.lineThrough : null,
+            decorationThickness: 2.0,
+          ),
         ),
+        subtitle: _buildSubtitle(),
+        onTap: () => _onTapAction(context),
       ),
-      subtitle: _buildSubtitle(),
-      onTap: () => _onTapAction(context),
     );
   }
 

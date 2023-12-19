@@ -68,16 +68,19 @@ class TodoPriorityTags extends TodoTagSection {
         return previousState.todo.priority != state.todo.priority;
       },
       builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          leading: Tooltip(
-            message: 'Priority',
-            child: leadingIcon,
-          ),
-          title: _buildChips(
-            context: context,
-            tags: Priorities.priorityNames,
-            selectedTags: {state.todo.priority.name},
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: Tooltip(
+              message: 'Priority',
+              child: leadingIcon,
+            ),
+            title: _buildChips(
+              context: context,
+              tags: Priorities.priorityNames,
+              selectedTags: {state.todo.priority.name},
+            ),
           ),
         );
       },
@@ -122,21 +125,24 @@ class TodoProjectTags extends TodoTagSection {
         return previousState.todo.projects != state.todo.projects;
       },
       builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          leading: Tooltip(
-            message: 'Projects',
-            child: leadingIcon,
-          ),
-          title: _buildChips(
-            context: context,
-            tags: state.todo.projects,
-            selectedTags: state.todo.projects,
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add project tag',
-            onPressed: () => _openDialog(context),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: Tooltip(
+              message: 'Projects',
+              child: leadingIcon,
+            ),
+            title: _buildChips(
+              context: context,
+              tags: state.todo.projects,
+              selectedTags: state.todo.projects,
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: 'Add project tag',
+              onPressed: () => _openDialog(context),
+            ),
           ),
         );
       },
@@ -181,21 +187,24 @@ class TodoContextTags extends TodoTagSection {
         return previousState.todo.contexts != state.todo.contexts;
       },
       builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          leading: Tooltip(
-            message: 'Contexts',
-            child: leadingIcon,
-          ),
-          title: _buildChips(
-            context: context,
-            tags: state.todo.contexts,
-            selectedTags: state.todo.contexts,
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add context tag',
-            onPressed: () => _openDialog(context),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: Tooltip(
+              message: 'Contexts',
+              child: leadingIcon,
+            ),
+            title: _buildChips(
+              context: context,
+              tags: state.todo.contexts,
+              selectedTags: state.todo.contexts,
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: 'Add context tag',
+              onPressed: () => _openDialog(context),
+            ),
           ),
         );
       },
@@ -241,21 +250,24 @@ class TodoKeyValueTags extends TodoTagSection {
             false;
       },
       builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          leading: Tooltip(
-            message: 'Key values',
-            child: leadingIcon,
-          ),
-          title: _buildChips(
-            context: context,
-            tags: state.todo.fmtKeyValues,
-            selectedTags: state.todo.fmtKeyValues,
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add key:value tag',
-            onPressed: () => _openDialog(context),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: Tooltip(
+              message: 'Key values',
+              child: leadingIcon,
+            ),
+            title: _buildChips(
+              context: context,
+              tags: state.todo.fmtKeyValues,
+              selectedTags: state.todo.fmtKeyValues,
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: 'Add key:value tag',
+              onPressed: () => _openDialog(context),
+            ),
           ),
         );
       },
@@ -273,23 +285,26 @@ class TodoCompletionDateItem extends StatelessWidget {
         return previousState.todo.completionDate != state.todo.completionDate;
       },
       builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          leading: const Tooltip(
-            message: 'Completion date',
-            child: Icon(Icons.event_available),
-          ),
-          title: Text(
-            state.todo.completionDate != null
-                ? state.todo.fmtCompletionDate
-                : 'Incompleted',
-          ),
-          trailing: Tooltip(
-            message: state.todo.completion == true ? 'Undone' : 'Done',
-            child: Checkbox(
-              value: state.todo.completion,
-              onChanged: (bool? completion) =>
-                  context.read<TodoCubit>().toggleCompletion(),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: const Tooltip(
+              message: 'Completion date',
+              child: Icon(Icons.event_available),
+            ),
+            title: Text(
+              state.todo.completionDate != null
+                  ? state.todo.fmtCompletionDate
+                  : 'Incompleted',
+            ),
+            trailing: Tooltip(
+              message: state.todo.completion == true ? 'Undone' : 'Done',
+              child: Checkbox(
+                value: state.todo.completion,
+                onChanged: (bool? completion) =>
+                    context.read<TodoCubit>().toggleCompletion(),
+              ),
             ),
           ),
         );
@@ -308,16 +323,19 @@ class TodoCreationDateItem extends StatelessWidget {
         return previousState.todo.creationDate != state.todo.creationDate;
       },
       builder: (BuildContext context, TodoState state) {
-        return ListTile(
-          key: key,
-          leading: const Tooltip(
-            message: 'Creation date',
-            child: Icon(Icons.edit_calendar),
-          ),
-          title: Text(
-            state.todo.creationDate != null
-                ? state.todo.fmtCreationDate
-                : Todo.date2Str(DateTime.now())!,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: const Tooltip(
+              message: 'Creation date',
+              child: Icon(Icons.edit_calendar),
+            ),
+            title: Text(
+              state.todo.creationDate != null
+                  ? state.todo.fmtCreationDate
+                  : Todo.date2Str(DateTime.now())!,
+            ),
           ),
         );
       },
@@ -337,22 +355,26 @@ class TodoDueDateItem extends StatelessWidget {
       },
       builder: (BuildContext context, TodoState state) {
         final String? dueDate = Todo.date2Str(state.todo.dueDate);
-        return ListTile(
-          key: key,
-          leading: const Tooltip(
-            message: 'Due date',
-            child: Icon(Icons.event),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          child: ListTile(
+            key: key,
+            leading: const Tooltip(
+              message: 'Due date',
+              child: Icon(Icons.event),
+            ),
+            title: Text(Todo.date2Str(state.todo.dueDate) ?? 'no due date'),
+            trailing: dueDate == null
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.remove),
+                    tooltip: 'Unset due date',
+                    onPressed: () => context
+                        .read<TodoCubit>()
+                        .removeKeyValue('due:$dueDate'),
+                  ),
+            onTap: () => _pickDateDialog(context),
           ),
-          title: Text(Todo.date2Str(state.todo.dueDate) ?? 'no due date'),
-          trailing: dueDate == null
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.remove),
-                  tooltip: 'Unset due date',
-                  onPressed: () =>
-                      context.read<TodoCubit>().removeKeyValue('due:$dueDate'),
-                ),
-          onTap: () => _pickDateDialog(context),
         );
       },
     );
