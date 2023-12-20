@@ -17,12 +17,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<TodoListTodoSubmitted>(_onTodoSubmitted);
     on<TodoListTodoDeleted>(_onTodoDeleted);
     on<TodoListTodoCompletionToggled>(_onTodoCompletionToggled);
-    on<TodoListTodoSelectedToggled>(_onTodoSelectedToggled);
-    on<TodoListSelectedAll>(_onTodoListSelectedAll);
-    on<TodoListUnselectedAll>(_onTodoListUnselectedAll);
-    on<TodoListSelectionCompleted>(_onTodoListSelectionCompleted);
-    on<TodoListSelectionIncompleted>(_onTodoListSelectionIncompleted);
-    on<TodoListSelectionDeleted>(_onTodoListSelectionDeleted);
   }
 
   Future<void> _onTodoListSubscriptionRequested(
@@ -110,123 +104,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
           event.todo.copyWith(completion: event.completion),
         );
       }
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoSelectedToggled(
-    TodoListTodoSelectedToggled event,
-    Emitter<TodoListState> emit,
-  ) {
-    try {
-      if (_repository.existsTodo(event.todo)) {
-        _repository.saveTodo(
-          event.todo.copyDiff(selected: event.selected),
-        );
-      } else {
-        _repository.saveTodo(
-          event.todo.copyWith(selected: event.selected),
-        );
-      }
-      // We dont want to write changes to file here.
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListSelectedAll(
-    TodoListSelectedAll event,
-    Emitter<TodoListState> emit,
-  ) {
-    try {
-      _repository.saveMultipleTodos(
-        [
-          for (var t in state.todoList) t.copyDiff(selected: true),
-        ],
-      );
-      // We dont want to write changes to file here.
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListUnselectedAll(
-    TodoListUnselectedAll event,
-    Emitter<TodoListState> emit,
-  ) {
-    try {
-      _repository.saveMultipleTodos(
-        [
-          for (var t in state.todoList) t.copyDiff(selected: false),
-        ],
-      );
-      // We dont want to write changes to file here.
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListSelectionCompleted(
-    TodoListSelectionCompleted event,
-    Emitter<TodoListState> emit,
-  ) async {
-    emit(state.loading());
-    try {
-      // Re-read file and update state manually before write the changes.
-      await _repository.readFromSource();
-      _repository.saveMultipleTodos(
-        [
-          for (var t in state.selectedTodos)
-            t.copyDiff(selected: false, completion: true)
-        ],
-      );
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListSelectionIncompleted(
-    TodoListSelectionIncompleted event,
-    Emitter<TodoListState> emit,
-  ) async {
-    emit(state.loading());
-    try {
-      // Re-read file and update state manually before write the changes.
-      await _repository.readFromSource();
-      _repository.saveMultipleTodos(
-        [
-          for (var t in state.selectedTodos)
-            t.copyDiff(selected: false, completion: false)
-        ],
-      );
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  void _onTodoListSelectionDeleted(
-    TodoListSelectionDeleted event,
-    Emitter<TodoListState> emit,
-  ) async {
-    emit(state.loading());
-    try {
-      // Re-read file and update state manually before write the changes.
-      await _repository.readFromSource();
-      _repository.deleteMultipleTodos(
-        [
-          for (var t in state.selectedTodos.toList()) t.copyWith(),
-        ],
-      );
       await _repository
           .writeToSource()
           .whenComplete(() => emit(state.success()));

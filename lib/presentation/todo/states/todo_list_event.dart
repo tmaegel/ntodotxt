@@ -50,36 +50,3 @@ final class TodoListTodoCompletionToggled extends TodoListEvent {
   @override
   List<Object?> get props => [todo, completion];
 }
-
-final class TodoListTodoSelectedToggled extends TodoListEvent {
-  final Todo todo;
-  final bool selected;
-
-  const TodoListTodoSelectedToggled({
-    required this.todo,
-    required this.selected,
-  });
-
-  @override
-  List<Object?> get props => [todo, selected];
-}
-
-final class TodoListSelectedAll extends TodoListEvent {
-  const TodoListSelectedAll();
-}
-
-final class TodoListUnselectedAll extends TodoListEvent {
-  const TodoListUnselectedAll();
-}
-
-final class TodoListSelectionCompleted extends TodoListEvent {
-  const TodoListSelectionCompleted();
-}
-
-final class TodoListSelectionIncompleted extends TodoListEvent {
-  const TodoListSelectionIncompleted();
-}
-
-final class TodoListSelectionDeleted extends TodoListEvent {
-  const TodoListSelectionDeleted();
-}

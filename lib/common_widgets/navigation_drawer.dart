@@ -141,11 +141,11 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
             return ScrollConfiguration(
               behavior: CustomScrollBehavior(),
               child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 controller: scrollController,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ListTile(
                       leading: const Icon(Icons.checklist_outlined),
                       title: const Text('Todo'),
@@ -156,7 +156,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ListTile(
                       leading: const Icon(Icons.filter_alt_outlined),
                       title: const Text('Filter'),
@@ -169,7 +169,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                   const Divider(),
                   for (Filter filter in state.filterList)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: ListTile(
                         leading: const Icon(Icons.favorite_border),
                         title: Text(filter.name),
@@ -181,7 +181,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                     ),
                   const Divider(),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ListTile(
                       leading: const Icon(Icons.settings),
                       title: const Text('Settings'),

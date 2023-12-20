@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
@@ -46,16 +45,6 @@ sealed class TodoListState extends Equatable {
           previousValue..addAll(value),
     );
   }
-
-  /// Returns true if at least one todo is selected, otherwise false.
-  bool get isAnySelected =>
-      todoList.firstWhereOrNull((todo) => todo.selected) != null;
-
-  /// Returns true if selected todos are completed only.
-  bool get isSelectedCompleted =>
-      selectedTodos.firstWhereOrNull((todo) => !todo.completion) == null;
-
-  Iterable<Todo> get selectedTodos => todoList.where((t) => t.selected);
 
   Iterable<Todo> filteredTodoList(Filter filter) => filter.apply(todoList);
 
@@ -146,9 +135,8 @@ final class TodoListInitial extends TodoListState {
   }
 
   @override
-  String toString() => 'TodoListInitial { todos: ${[
-        for (var t in todoList) '$t ${t.selected}'
-      ]} }';
+  String toString() =>
+      'TodoListInitial { todos: ${[for (var t in todoList) t]} }';
 }
 
 final class TodoListLoading extends TodoListState {
@@ -166,9 +154,8 @@ final class TodoListLoading extends TodoListState {
   }
 
   @override
-  String toString() => 'TodoListLoading { todos: ${[
-        for (var t in todoList) '$t ${t.selected}'
-      ]} }';
+  String toString() =>
+      'TodoListLoading { todos: ${[for (var t in todoList) t]} }';
 }
 
 final class TodoListSuccess extends TodoListState {
@@ -186,9 +173,8 @@ final class TodoListSuccess extends TodoListState {
   }
 
   @override
-  String toString() => 'TodoListSuccess { todos: ${[
-        for (var t in todoList) '$t ${t.selected}'
-      ]} }';
+  String toString() =>
+      'TodoListSuccess { todos: ${[for (var t in todoList) t]} }';
 }
 
 final class TodoListError extends TodoListState {

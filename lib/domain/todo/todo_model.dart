@@ -109,11 +109,6 @@ class Todo extends Equatable {
   /// Defaults to null (unset).
   final Map<String, String>? _keyValues;
 
-  /// Flag that indicates whether the [Todo]
-  /// was selected in the list.
-  /// Defaults to null (unset).
-  final bool? _selected;
-
   String get fmtId => 'id:$id';
 
   /// Whether the [Todo] is completed.
@@ -169,11 +164,6 @@ class Todo extends Equatable {
   Set<String> get fmtKeyValues =>
       {for (var k in keyValues.keys) '$k:${keyValues[k]}'};
 
-  /// Flag that indicates whether the [Todo]
-  /// was selected in the list.
-  /// Defaults to false.
-  bool get selected => _selected ?? false;
-
   DateTime? get dueDate {
     if (keyValues.containsKey('due')) {
       return str2date(keyValues['due'] ?? '');
@@ -210,7 +200,6 @@ class Todo extends Equatable {
     Set<String>? projects,
     Set<String>? contexts,
     Map<String, String>? keyValues,
-    bool? selected,
   })  : _completion = completion,
         _priority = priority,
         _completionDate = completionDate,
@@ -218,8 +207,7 @@ class Todo extends Equatable {
         _description = description,
         _projects = projects,
         _contexts = contexts,
-        _keyValues = keyValues,
-        _selected = selected {
+        _keyValues = keyValues {
     // Validate completion date.
     if (completion == true) {
       if (completionDate == null) {
@@ -269,7 +257,6 @@ class Todo extends Equatable {
     Set<String>? projects,
     Set<String>? contexts,
     Map<String, String>? keyValues,
-    bool? selected,
   }) {
     final DateTime now = DateTime.now();
 
@@ -321,7 +308,6 @@ class Todo extends Equatable {
       projects: projects,
       contexts: contexts,
       keyValues: keyValues,
-      selected: selected,
     );
   }
 
@@ -414,7 +400,6 @@ class Todo extends Equatable {
     Set<String>? projects,
     Set<String>? contexts,
     Map<String, String>? keyValues,
-    bool? selected,
   }) {
     return Todo(
       id: id,
@@ -426,7 +411,6 @@ class Todo extends Equatable {
       projects: projects ?? this.projects,
       contexts: contexts ?? this.contexts,
       keyValues: keyValues ?? this.keyValues,
-      selected: selected ?? this.selected,
     );
   }
 
@@ -442,7 +426,6 @@ class Todo extends Equatable {
     Set<String>? projects,
     Set<String>? contexts,
     Map<String, String>? keyValues,
-    bool? selected,
   }) {
     return Todo(
       id: id,
@@ -455,7 +438,6 @@ class Todo extends Equatable {
       projects: projects,
       contexts: contexts,
       keyValues: keyValues,
-      selected: selected,
     );
   }
 
@@ -474,7 +456,6 @@ class Todo extends Equatable {
       projects: _projects ?? todo.projects,
       contexts: _contexts ?? todo.contexts,
       keyValues: _keyValues ?? todo.keyValues,
-      selected: _selected ?? todo.selected,
     );
   }
 
@@ -489,13 +470,11 @@ class Todo extends Equatable {
         projects,
         contexts,
         keyValues,
-        selected,
       ];
 
   @override
   String toString({
     bool includeId = true,
-    bool debug = false,
   }) {
     final List<String> items = [
       fmtCompletion,
@@ -507,7 +486,6 @@ class Todo extends Equatable {
       if (fmtContexts.isNotEmpty) fmtContexts.join(' '),
       if (fmtKeyValues.isNotEmpty) fmtKeyValues.join(' '),
       if (includeId) fmtId,
-      if (debug) 'sel:$selected',
     ]..removeWhere((value) => value.isEmpty);
 
     return items.join(' ');

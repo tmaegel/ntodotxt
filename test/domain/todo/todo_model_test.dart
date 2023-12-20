@@ -102,17 +102,6 @@ void main() {
         expect(todo.keyValues, {'key': 'value'});
       });
     });
-
-    group('selected', () {
-      test('initial unselected', () {
-        final Todo todo = Todo(description: 'Write some tests');
-        expect(todo.selected, false);
-      });
-      test('initial selected', () {
-        final Todo todo = Todo(selected: true, description: 'Write some tests');
-        expect(todo.selected, true);
-      });
-    });
   });
 
   group('todo copyWith()', () {
@@ -210,19 +199,6 @@ void main() {
         expect(todo2.keyValues, {});
       });
     });
-
-    group('selected', () {
-      test('set selected', () {
-        final Todo todo = Todo(description: 'Write some tests');
-        final Todo todo2 = todo.copyWith(selected: true);
-        expect(todo2.selected, true);
-      });
-      test('unset selected', () {
-        final Todo todo = Todo(selected: true, description: 'Write some tests');
-        final Todo todo2 = todo.copyWith(selected: false);
-        expect(todo2.selected, false);
-      });
-    });
   });
 
   group('todo copyDiff()', () {
@@ -252,7 +228,6 @@ void main() {
         projects: const {'project1'},
         contexts: const {'contexts1'},
         keyValues: const {'key1': 'value1'},
-        selected: false,
       );
       final Todo diff = todo.copyDiff(completion: true);
       todo = todo.copyWith(
@@ -261,7 +236,6 @@ void main() {
         projects: const {'project2'},
         contexts: const {'context2'},
         keyValues: const {'key2': 'value2'},
-        selected: true,
       );
       final Todo todo2 = diff.copyMerge(todo);
       expect(todo2.priority, Priority.B);
@@ -269,7 +243,6 @@ void main() {
       expect(todo2.projects, {'project2'});
       expect(todo2.contexts, {'context2'});
       expect(todo2.keyValues, {'key2': 'value2'});
-      expect(todo2.selected, true);
       expect(todo2.completion, true);
       expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
     });

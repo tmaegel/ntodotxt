@@ -66,161 +66,197 @@ class FilterCreateEditPage extends StatelessWidget {
               children: [
                 const FilterNameTextField(),
                 const Divider(),
-                ListTile(
-                  title: Text(
-                    'Order',
-                    style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Order',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: GenericChipGroup(
-                    children: [
-                      for (var t in Order.types)
-                        GenericChoiceChip(
-                          label: Text(t.name),
-                          selected: state.filter.order == t,
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              context.read<FilterCubit>().updateOrder(t);
-                            } else {
-                              // If unselected fallback to the default.
-                              context
-                                  .read<FilterCubit>()
-                                  .updateOrder(ListOrder.ascending);
-                            }
-                          },
-                        ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: GenericChipGroup(
+                      children: [
+                        for (var t in Order.types)
+                          GenericChoiceChip(
+                            label: Text(t.name),
+                            selected: state.filter.order == t,
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                context.read<FilterCubit>().updateOrder(t);
+                              } else {
+                                // If unselected fallback to the default.
+                                context
+                                    .read<FilterCubit>()
+                                    .updateOrder(ListOrder.ascending);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Filter',
-                    style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Filter',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: GenericChipGroup(
-                    children: [
-                      for (var t in Filters.types)
-                        GenericChoiceChip(
-                          label: Text(t.name),
-                          selected: state.filter.filter == t,
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              context.read<FilterCubit>().updateFilter(t);
-                            } else {
-                              // If unselected fallback to the default.
-                              context
-                                  .read<FilterCubit>()
-                                  .updateFilter(ListFilter.all);
-                            }
-                          },
-                        ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: GenericChipGroup(
+                      children: [
+                        for (var t in Filters.types)
+                          GenericChoiceChip(
+                            label: Text(t.name),
+                            selected: state.filter.filter == t,
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                context.read<FilterCubit>().updateFilter(t);
+                              } else {
+                                // If unselected fallback to the default.
+                                context
+                                    .read<FilterCubit>()
+                                    .updateFilter(ListFilter.all);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Group by',
-                    style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Group by',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: GenericChipGroup(
-                    children: [
-                      for (var g in Groups.types)
-                        GenericChoiceChip(
-                          label: Text(g.name),
-                          selected: state.filter.group == g,
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              context.read<FilterCubit>().updateGroup(g);
-                            } else {
-                              // If unselected fallback to the default.
-                              context
-                                  .read<FilterCubit>()
-                                  .updateGroup(ListGroup.none);
-                            }
-                          },
-                        ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: GenericChipGroup(
+                      children: [
+                        for (var g in Groups.types)
+                          GenericChoiceChip(
+                            label: Text(g.name),
+                            selected: state.filter.group == g,
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                context.read<FilterCubit>().updateGroup(g);
+                              } else {
+                                // If unselected fallback to the default.
+                                context
+                                    .read<FilterCubit>()
+                                    .updateGroup(ListGroup.none);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Priorities',
-                    style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Priorities',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: GenericChipGroup(
-                    children: [
-                      for (var p in Priority.values)
-                        GenericChoiceChip(
-                          label: Text(p.name),
-                          selected: state.filter.priorities.contains(p),
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              context.read<FilterCubit>().addPriority(p);
-                            } else {
-                              context.read<FilterCubit>().removePriority(p);
-                            }
-                          },
-                        ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: GenericChipGroup(
+                      children: [
+                        for (var p in Priority.values)
+                          GenericChoiceChip(
+                            label: Text(p.name),
+                            selected: state.filter.priorities.contains(p),
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                context.read<FilterCubit>().addPriority(p);
+                              } else {
+                                context.read<FilterCubit>().removePriority(p);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Projects',
-                    style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Projects',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: GenericChipGroup(
-                    children: [
-                      for (var p
-                          in {...projects, ...state.filter.projects}.toList()
-                            ..sort())
-                        GenericChoiceChip(
-                          label: Text(p),
-                          selected: state.filter.projects.contains(p),
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              context.read<FilterCubit>().addProject(p);
-                            } else {
-                              context.read<FilterCubit>().removeProject(p);
-                            }
-                          },
-                        ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: GenericChipGroup(
+                      children: [
+                        for (var p
+                            in {...projects, ...state.filter.projects}.toList()
+                              ..sort())
+                          GenericChoiceChip(
+                            label: Text(p),
+                            selected: state.filter.projects.contains(p),
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                context.read<FilterCubit>().addProject(p);
+                              } else {
+                                context.read<FilterCubit>().removeProject(p);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Contexts',
-                    style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Contexts',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                   ),
                 ),
-                ListTile(
-                  title: GenericChipGroup(
-                    children: [
-                      for (var c
-                          in {...contexts, ...state.filter.contexts}.toList()
-                            ..sort())
-                        GenericChoiceChip(
-                          label: Text(c),
-                          selected: state.filter.contexts.contains(c),
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              context.read<FilterCubit>().addContext(c);
-                            } else {
-                              context.read<FilterCubit>().removeContext(c);
-                            }
-                          },
-                        ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: GenericChipGroup(
+                      children: [
+                        for (var c
+                            in {...contexts, ...state.filter.contexts}.toList()
+                              ..sort())
+                          GenericChoiceChip(
+                            label: Text(c),
+                            selected: state.filter.contexts.contains(c),
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                context.read<FilterCubit>().addContext(c);
+                              } else {
+                                context.read<FilterCubit>().removeContext(c);
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ],

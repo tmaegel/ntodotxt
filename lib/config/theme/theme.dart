@@ -1,7 +1,8 @@
 // coverage:ignore-file
 
-import 'package:flutter/material.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ntodotxt/misc.dart';
 
 final ThemeData light = CustomTheme.light;
@@ -11,6 +12,7 @@ final ThemeData dark = CustomTheme.dark;
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
     centerTitle: true,
+    backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
@@ -42,6 +44,12 @@ final ThemeData lightTheme = light.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
+  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(
+    elevation: 0.0,
+  ),
+  floatingActionButtonTheme: light.floatingActionButtonTheme.copyWith(
+    elevation: 0.0,
+  ),
   inputDecorationTheme: light.inputDecorationTheme.copyWith(
     filled: false,
     focusedBorder: UnderlineInputBorder(
@@ -67,6 +75,7 @@ final ThemeData lightTheme = light.copyWith(
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
     centerTitle: true,
+    backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
@@ -97,6 +106,12 @@ final ThemeData darkTheme = dark.copyWith(
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
+  ),
+  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(
+    elevation: 0.0,
+  ),
+  floatingActionButtonTheme: dark.floatingActionButtonTheme.copyWith(
+    elevation: 0.0,
   ),
   inputDecorationTheme: dark.inputDecorationTheme.copyWith(
     filled: false,
@@ -142,8 +157,7 @@ class CustomTheme {
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
       swapLegacyOnMaterial3: true,
-      // To use the Playground font, add GoogleFonts package and uncomment
-      // fontFamily: GoogleFonts.notoSans().fontFamily,
+      fontFamily: GoogleFonts.lato().fontFamily,
     );
   }
 
@@ -162,8 +176,7 @@ class CustomTheme {
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
       swapLegacyOnMaterial3: true,
-      // To use the Playground font, add GoogleFonts package and uncomment
-      // fontFamily: GoogleFonts.notoSans().fontFamily,
+      fontFamily: GoogleFonts.lato().fontFamily,
     );
   }
 }

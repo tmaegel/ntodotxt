@@ -45,7 +45,10 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? null
           : PreferredSize(
               preferredSize: Size.zero,
-              child: bottom!,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: bottom!,
+              ),
             ),
     );
   }
@@ -53,7 +56,65 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   // Scaffold requires as appbar a class that implements PreferredSizeWidget.
   @override
   Size get preferredSize =>
-      Size.fromHeight(bottom == null ? kToolbarHeight : 100);
+      Size.fromHeight(bottom == null ? kToolbarHeight : 95);
+}
+
+class SearchFieldAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final Function(BuildContext context) searchAction;
+  final Widget? bottom;
+
+  const SearchFieldAppBar({
+    required this.title,
+    required this.searchAction,
+    this.bottom,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PreferredSize(
+      preferredSize: preferredSize,
+      child: Container(
+        color: Theme.of(context).appBarTheme.backgroundColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Container(
+                decoration: ShapeDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: const StadiumBorder(),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  textColor: Theme.of(context).disabledColor,
+                  iconColor: Theme.of(context).disabledColor,
+                  shape: const StadiumBorder(),
+                  leading: const Icon(Icons.search),
+                  title: Text(title),
+                  onTap: () => searchAction(context),
+                ),
+              ),
+            ),
+            if (bottom != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Center(child: bottom!),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Scaffold requires as appbar a class that implements PreferredSizeWidget.
+  @override
+  Size get preferredSize =>
+      Size.fromHeight(bottom == null ? kToolbarHeight + 4 : 100);
 }
 
 class PrimaryBottomAppBar extends StatelessWidget {
@@ -89,93 +150,88 @@ class AppBarFilterList extends StatelessWidget {
           child: SingleChildScrollView(
             controller: controller,
             scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ActionChip(
-                    padding: EdgeInsets.zero,
-                    avatar: const Icon(Icons.sort),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: Text(state.filter.order.name),
-                    onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListOrder?>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            OrderTodoListBottomSheet(cubit: cubit),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
-                    avatar: const Icon(Icons.filter_list),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: Text(state.filter.filter.name),
-                    onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListFilter?>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            FilterTodoListBottomSheet(cubit: cubit),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
-                    avatar: const Icon(Icons.workspaces_outlined),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: Text(state.filter.group.name),
-                    onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListGroup?>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            GroupByTodoListBottomSheet(cubit: cubit),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
-                    avatar: const Icon(Icons.rocket_launch_outlined),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: const Text('projects'),
-                    onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListGroup?>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            ProjectListBottomSheet(
-                          cubit: cubit,
-                          items: context.read<TodoListBloc>().state.projects,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
-                    avatar: const Icon(Icons.join_inner),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: const Text('contexts'),
-                    onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListGroup?>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            ContextListBottomSheet(
-                          cubit: cubit,
-                          items: context.read<TodoListBloc>().state.contexts,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ActionChip(
+                  padding: EdgeInsets.zero,
+                  avatar: const Icon(Icons.sort),
+                  labelPadding: const EdgeInsets.only(right: 8.0),
+                  label: Text(state.filter.order.name),
+                  onPressed: () async {
+                    FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
+                    await showModalBottomSheet<ListOrder?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          OrderTodoListBottomSheet(cubit: cubit),
+                    );
+                  },
+                ),
+                const SizedBox(width: 4),
+                ActionChip(
+                  padding: EdgeInsets.zero,
+                  avatar: const Icon(Icons.filter_list),
+                  labelPadding: const EdgeInsets.only(right: 8.0),
+                  label: Text(state.filter.filter.name),
+                  onPressed: () async {
+                    FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
+                    await showModalBottomSheet<ListFilter?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          FilterTodoListBottomSheet(cubit: cubit),
+                    );
+                  },
+                ),
+                const SizedBox(width: 4),
+                ActionChip(
+                  padding: EdgeInsets.zero,
+                  avatar: const Icon(Icons.workspaces_outlined),
+                  labelPadding: const EdgeInsets.only(right: 8.0),
+                  label: Text(state.filter.group.name),
+                  onPressed: () async {
+                    FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
+                    await showModalBottomSheet<ListGroup?>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          GroupByTodoListBottomSheet(cubit: cubit),
+                    );
+                  },
+                ),
+                const SizedBox(width: 4),
+                ActionChip(
+                  padding: EdgeInsets.zero,
+                  avatar: const Icon(Icons.rocket_launch_outlined),
+                  labelPadding: const EdgeInsets.only(right: 8.0),
+                  label: const Text('projects'),
+                  onPressed: () async {
+                    FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
+                    await showModalBottomSheet<ListGroup?>(
+                      context: context,
+                      builder: (BuildContext context) => ProjectListBottomSheet(
+                        cubit: cubit,
+                        items: context.read<TodoListBloc>().state.projects,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 4),
+                ActionChip(
+                  padding: EdgeInsets.zero,
+                  avatar: const Icon(Icons.join_inner),
+                  labelPadding: const EdgeInsets.only(right: 8.0),
+                  label: const Text('contexts'),
+                  onPressed: () async {
+                    FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
+                    await showModalBottomSheet<ListGroup?>(
+                      context: context,
+                      builder: (BuildContext context) => ContextListBottomSheet(
+                        cubit: cubit,
+                        items: context.read<TodoListBloc>().state.contexts,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         );

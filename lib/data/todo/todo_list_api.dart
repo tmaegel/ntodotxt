@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/main.dart' show log;
 import 'package:rxdart/subjects.dart';
-import 'package:collection/collection.dart';
 
 abstract class TodoListApi {
   final File todoFile;
@@ -64,26 +64,10 @@ class LocalTodoListApi extends TodoListApi {
   List<Todo> get _todoList => controller.value;
 
   void updateList(List<Todo> todoList) {
-    final List<Todo> mergedTodoList = [];
-    // Keep the selected state if the new ones are null.
-    final List<Todo> oldSelectedTodos =
-        _todoList.where((t) => t.selected == true).toList();
-    for (Todo todo in todoList) {
-      int index = oldSelectedTodos.indexWhere((t) => t.id == todo.id);
-      if (index == -1) {
-        mergedTodoList.add(todo.copyWith());
-      } else {
-        mergedTodoList.add(
-          todo.copyMerge(
-            todo.copyDiff(selected: true),
-          ),
-        );
-      }
-    }
     // Update only if list does'nt match to prevent weird state changes.
-    if (const ListEquality().equals(_todoList, mergedTodoList) == false) {
+    if (const ListEquality().equals(_todoList, todoList) == false) {
       log.fine('Update todo list.');
-      _dispatch(mergedTodoList);
+      _dispatch(todoList);
     } else {
       log.fine('Skip update todo list. List matches with the previous one.');
     }
@@ -98,9 +82,7 @@ class LocalTodoListApi extends TodoListApi {
   void _dispatch(List<Todo> todoList) {
     controller.add(todoList);
     log.finest(
-      'Updated todos ${[
-        for (var todo in _todoList) todo.toString(debug: true)
-      ]}',
+      'Updated todos ${[for (var todo in _todoList) todo]}',
     );
   }
 

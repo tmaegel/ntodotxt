@@ -69,7 +69,7 @@ class TodoPriorityTags extends TodoTagSection {
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: Tooltip(
@@ -126,7 +126,7 @@ class TodoProjectTags extends TodoTagSection {
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: Tooltip(
@@ -188,7 +188,7 @@ class TodoContextTags extends TodoTagSection {
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: Tooltip(
@@ -251,7 +251,7 @@ class TodoKeyValueTags extends TodoTagSection {
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: Tooltip(
@@ -286,7 +286,7 @@ class TodoCompletionDateItem extends StatelessWidget {
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: const Tooltip(
@@ -324,7 +324,7 @@ class TodoCreationDateItem extends StatelessWidget {
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: const Tooltip(
@@ -356,7 +356,7 @@ class TodoDueDateItem extends StatelessWidget {
       builder: (BuildContext context, TodoState state) {
         final String? dueDate = Todo.date2Str(state.todo.dueDate);
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             key: key,
             leading: const Tooltip(

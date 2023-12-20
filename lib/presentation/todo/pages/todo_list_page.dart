@@ -36,156 +36,118 @@ class TodoListPage extends StatelessWidget {
       ),
       child: Builder(
         builder: (BuildContext context) {
-          return const TodoListView();
+          final bool isNarrowLayout =
+              MediaQuery.of(context).size.width < maxScreenWidthCompact;
+          Widget child;
+          if (isNarrowLayout) {
+            child = const TodoListViewNarrow();
+          } else {
+            child = const TodoListViewWide();
+          }
+          return BlocListener<TodoListBloc, TodoListState>(
+            listener: (BuildContext context, TodoListState state) {
+              if (state is TodoListError) {
+                SnackBarHandler.error(context, state.message);
+              }
+            },
+            child: child,
+          );
         },
       ),
     );
   }
 }
 
-class TodoListView extends StatelessWidget {
-  const TodoListView({super.key});
+class TodoListViewNarrow extends StatelessWidget {
+  const TodoListViewNarrow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bool isNarrowLayout =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
-
-    return BlocConsumer<TodoListBloc, TodoListState>(
-      listener: (BuildContext context, TodoListState state) {
-        if (state is TodoListError) {
-          SnackBarHandler.error(context, state.message);
-        }
-      },
-      buildWhen: (TodoListState previousState, TodoListState state) {
-        // Rebuild if selection has changed only.
-        return previousState.isAnySelected != state.isAnySelected;
-      },
-      builder: (BuildContext context, TodoListState state) {
-        return Scaffold(
-          appBar: MainAppBar(
-            title: 'Todos',
-            toolbar: isNarrowLayout
-                ? null
-                : Row(
-                    children: [
-                      IconButton(
-                        tooltip: 'Search',
-                        icon: const Icon(Icons.search),
-                        onPressed: () => showSearch(
-                          context: context,
-                          delegate: TodoSearchPage(),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Favorite',
-                        icon: const Icon(Icons.favorite_border),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-            bottom: const AppBarFilterList(),
-          ),
-          floatingActionButtonLocation:
-              isNarrowLayout ? FloatingActionButtonLocation.endContained : null,
-          floatingActionButton: state.isAnySelected
-              ? null
-              : PrimaryFloatingActionButton(
-                  tooltip: 'Add todo',
-                  icon: const Icon(Icons.add),
-                  action: () => context.push(
-                    context.namedLocation('todo-create'),
-                  ),
-                ),
-          bottomNavigationBar: state.isAnySelected
-              ? PrimaryBottomAppBar(
-                  children: [
-                    IconButton(
-                      tooltip: 'Delete',
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        context
-                            .read<TodoListBloc>()
-                            .add(const TodoListSelectionDeleted());
-                        SnackBarHandler.info(context, 'Todos deleted.');
-                      },
-                    ),
-                    state.isSelectedCompleted
-                        ? IconButton(
-                            tooltip: 'Mark as undone',
-                            icon: const Icon(Icons.remove_done),
-                            onPressed: () {
-                              context
-                                  .read<TodoListBloc>()
-                                  .add(const TodoListSelectionIncompleted());
-                              SnackBarHandler.info(
-                                  context, 'Mark todos as undone.');
-                            },
-                          )
-                        : IconButton(
-                            tooltip: 'Mark as done',
-                            icon: const Icon(Icons.done_all),
-                            onPressed: () {
-                              context
-                                  .read<TodoListBloc>()
-                                  .add(const TodoListSelectionCompleted());
-                              SnackBarHandler.info(
-                                  context, 'Mark todos as done.');
-                            },
-                          ),
-                  ],
-                )
-              : !isNarrowLayout
-                  ? null
-                  : PrimaryBottomAppBar(
-                      children: [
-                        IconButton(
-                          tooltip: 'Drawer',
-                          icon: const Icon(Icons.menu),
-                          onPressed: () async {
-                            await showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true, // set this to true
-                              builder: (BuildContext context) =>
-                                  BottomSheetNavigationDrawer(
-                                      bloc: context.read<FilterListBloc>()),
-                            );
-                          },
-                        ),
-                        IconButton(
-                          tooltip: 'Search',
-                          icon: const Icon(Icons.search),
-                          onPressed: () => showSearch(
-                            context: context,
-                            delegate: TodoSearchPage(),
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: 'Favorite',
-                          icon: const Icon(Icons.favorite_border),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-          body: RefreshIndicator(
-            key: GlobalKey<RefreshIndicatorState>(),
-            onRefresh: () async {
-              context
-                  .read<TodoListBloc>()
-                  .add(const TodoListSynchronizationRequested());
-            },
-            child: ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(
-                dragDevices: {
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.mouse,
-                },
-              ),
-              child: const TodoListLoadingWrapper(),
+    return Scaffold(
+      appBar: const MainAppBar(
+        title: 'Todo',
+        bottom: AppBarFilterList(),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          children: [
+            IconButton(
+              tooltip: 'Drawer',
+              icon: const Icon(Icons.menu),
+              onPressed: () async {
+                await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true, // set this to true
+                  builder: (BuildContext context) =>
+                      BottomSheetNavigationDrawer(
+                          bloc: context.read<FilterListBloc>()),
+                );
+              },
             ),
-          ),
-        );
-      },
+            IconButton(
+              tooltip: 'Search',
+              icon: const Icon(Icons.search),
+              onPressed: () => showSearch(
+                context: context,
+                delegate: TodoSearchPage(),
+              ),
+            ),
+            IconButton(
+              tooltip: 'Favorite',
+              icon: const Icon(Icons.favorite_border),
+              onPressed: () {},
+            )
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+      floatingActionButton: PrimaryFloatingActionButton(
+        tooltip: 'Add todo',
+        icon: const Icon(Icons.add),
+        action: () => context.push(
+          context.namedLocation('todo-create'),
+        ),
+      ),
+      body: const TodoListLoadingWrapper(),
+    );
+  }
+}
+
+class TodoListViewWide extends StatelessWidget {
+  const TodoListViewWide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: MainAppBar(
+        title: 'Todo',
+        toolbar: Row(
+          children: [
+            IconButton(
+              tooltip: 'Search',
+              icon: const Icon(Icons.search),
+              onPressed: () => showSearch(
+                context: context,
+                delegate: TodoSearchPage(),
+              ),
+            ),
+            IconButton(
+              tooltip: 'Favorite',
+              icon: const Icon(Icons.favorite_border),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        bottom: const AppBarFilterList(),
+      ),
+      floatingActionButton: PrimaryFloatingActionButton(
+        tooltip: 'Add todo',
+        icon: const Icon(Icons.add),
+        action: () => context.push(
+          context.namedLocation('todo-create'),
+        ),
+      ),
+      body: const TodoListLoadingWrapper(),
     );
   }
 }
@@ -195,43 +157,59 @@ class TodoListLoadingWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoListBloc, TodoListState>(
-      buildWhen: (TodoListState previousState, TodoListState state) {
-        // Rebuild if loading state is changed only.
-        return (previousState is TodoListLoading &&
-                state is! TodoListLoading) ||
-            (previousState is! TodoListLoading && state is TodoListLoading);
+    return RefreshIndicator(
+      key: GlobalKey<RefreshIndicatorState>(),
+      onRefresh: () async {
+        context
+            .read<TodoListBloc>()
+            .add(const TodoListSynchronizationRequested());
       },
-      builder: (BuildContext context, TodoListState state) {
-        if (state is TodoListLoading) {
-          return Stack(
-            children: <Widget>[
-              const TodoList(),
-              // Custom progress indicator.
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  padding: const EdgeInsets.only(top: 90),
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).canvasColor,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: CircularProgressIndicator(strokeWidth: 2),
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {
+            PointerDeviceKind.touch,
+            PointerDeviceKind.mouse,
+          },
+        ),
+        child: BlocBuilder<TodoListBloc, TodoListState>(
+          buildWhen: (TodoListState previousState, TodoListState state) {
+            // Rebuild if loading state is changed only.
+            return (previousState is TodoListLoading &&
+                    state is! TodoListLoading) ||
+                (previousState is! TodoListLoading && state is TodoListLoading);
+          },
+          builder: (BuildContext context, TodoListState state) {
+            if (state is TodoListLoading) {
+              return Stack(
+                children: <Widget>[
+                  const TodoList(),
+                  // Custom progress indicator.
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 90),
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ],
-          );
-        } else {
-          return const TodoList();
-        }
-      },
+                ],
+              );
+            } else {
+              return const TodoList();
+            }
+          },
+        ),
+      ),
     );
   }
 }
@@ -262,10 +240,7 @@ class TodoList extends StatelessWidget {
                   title: Text(section),
                   children: [
                     for (var todo in todoList)
-                      TodoListTileDismissable(
-                        todo: todo,
-                        isAnySelected: todoListState.isAnySelected,
-                      )
+                      TodoListTileDismissable(todo: todo)
                   ],
                 );
               },
@@ -279,73 +254,60 @@ class TodoList extends StatelessWidget {
 
 class TodoListTileDismissable extends StatelessWidget {
   final Todo todo;
-  final bool isAnySelected;
 
   const TodoListTileDismissable({
     required this.todo,
-    this.isAnySelected = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Allow swiping if no todo is selected only.
-    if (isAnySelected) {
-      return TodoListTile(
+    return Dismissible(
+      key: ValueKey<String>(todo.id),
+      background: Container(
+        color: Theme.of(context).colorScheme.primary,
+        child: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Icon(Icons.done),
+            ),
+            Text(todo.completion == true ? 'Undone' : 'Done'),
+            const Expanded(child: SizedBox()),
+          ],
+        ),
+      ),
+      secondaryBackground: Container(
+        color: Theme.of(context).colorScheme.primary,
+        child: Row(
+          children: [
+            const Expanded(child: SizedBox()),
+            Text(todo.completion == true ? 'Undone' : 'Done'),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Icon(Icons.done),
+            ),
+          ],
+        ),
+      ),
+      onDismissed: (DismissDirection direction) {
+        context.read<TodoListBloc>().add(
+              TodoListTodoCompletionToggled(
+                  todo: todo, completion: !todo.completion),
+            );
+      },
+      child: TodoListTile(
         todo: todo,
-        isAnySelected: isAnySelected,
-      );
-    } else {
-      return Dismissible(
-        key: ValueKey<String>(todo.id),
-        background: Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Icon(Icons.done),
-              ),
-              Text(todo.completion == true ? 'Undone' : 'Done'),
-              const Expanded(child: SizedBox()),
-            ],
-          ),
-        ),
-        secondaryBackground: Container(
-          color: Theme.of(context).colorScheme.primary,
-          child: Row(
-            children: [
-              const Expanded(child: SizedBox()),
-              Text(todo.completion == true ? 'Undone' : 'Done'),
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Icon(Icons.done),
-              ),
-            ],
-          ),
-        ),
-        onDismissed: (DismissDirection direction) {
-          context.read<TodoListBloc>().add(
-                TodoListTodoCompletionToggled(
-                    todo: todo, completion: !todo.completion),
-              );
-        },
-        child: TodoListTile(
-          todo: todo,
-          isAnySelected: isAnySelected,
-        ),
-      );
-    }
+      ),
+    );
   }
 }
 
 class TodoListTile extends StatelessWidget {
   final Todo todo;
-  final bool isAnySelected;
 
   TodoListTile({
     required this.todo,
-    this.isAnySelected = false,
     Key? key,
   }) : super(key: PageStorageKey<String>(todo.id));
 
@@ -353,7 +315,6 @@ class TodoListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       key: key,
-      selected: todo.selected,
       title: Text(
         todo.description,
         style: TextStyle(
@@ -362,16 +323,7 @@ class TodoListTile extends StatelessWidget {
         ),
       ),
       subtitle: _buildSubtitle(),
-      onTap: () {
-        if (isAnySelected) {
-          context.read<TodoListBloc>().add(TodoListTodoSelectedToggled(
-              todo: todo, selected: !todo.selected));
-        } else {
-          context.pushNamed('todo-edit', extra: todo);
-        }
-      },
-      onLongPress: () => context.read<TodoListBloc>().add(
-          TodoListTodoSelectedToggled(todo: todo, selected: !todo.selected)),
+      onTap: () => context.pushNamed('todo-edit', extra: todo),
     );
   }
 
