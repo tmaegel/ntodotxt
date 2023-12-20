@@ -342,6 +342,24 @@ class Filter extends Equatable {
     );
   }
 
+  Filter copyWithUnsaved({
+    Set<Priority>? priorities,
+    Set<String>? projects,
+    Set<String>? contexts,
+    ListOrder? order,
+    ListFilter? filter,
+    ListGroup? group,
+  }) {
+    return Filter(
+      priorities: priorities ?? this.priorities,
+      projects: projects ?? this.projects,
+      contexts: contexts ?? this.contexts,
+      order: order ?? this.order,
+      filter: filter ?? this.filter,
+      group: group ?? this.group,
+    );
+  }
+
   /// Convert a [Filter] into Map.
   /// The keys must correspond to the names of the
   /// columns in the database.

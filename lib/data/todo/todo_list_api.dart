@@ -59,7 +59,8 @@ class LocalTodoListApi extends TodoListApi {
   /// Provides a [Stream] of all todos.
   // A special Streamcontroller that captures the latest item that has been
   // added to the controller, and emits that as the first item to any new listener.
-  final controller = BehaviorSubject<List<Todo>>.seeded(const []);
+  final BehaviorSubject<List<Todo>> controller =
+      BehaviorSubject<List<Todo>>.seeded(const []);
 
   List<Todo> get _todoList => controller.value;
 
@@ -71,12 +72,6 @@ class LocalTodoListApi extends TodoListApi {
     } else {
       log.fine('Skip update todo list. List matches with the previous one.');
     }
-  }
-
-  void addToList(Todo value) {
-    log.fine('Add todo to todo list');
-    List<Todo> todoList = [..._todoList, value];
-    _dispatch(todoList);
   }
 
   void _dispatch(List<Todo> todoList) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/constants/app.dart';
+import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 
 class AdaptiveLayout extends StatelessWidget {
   // The widget to display in the body of the Scaffold.
@@ -55,11 +55,7 @@ class WideLayout extends StatelessWidget {
       body: SafeArea(
         child: Row(
           children: [
-            // To hide rounded cornors of NavigationDrawer.
-            Container(
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              child: const ResponsiveNavigationDrawer(),
-            ),
+            const NavigationRailDrawer(),
             const VerticalDivider(width: 2),
             Expanded(child: child),
           ],

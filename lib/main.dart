@@ -21,6 +21,7 @@ import 'package:ntodotxt/domain/settings/setting_repository.dart'
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
@@ -252,6 +253,9 @@ class App extends StatelessWidget {
             ],
             child: MultiBlocProvider(
               providers: [
+                BlocProvider<DrawerCubit>(
+                  create: (BuildContext context) => DrawerCubit(),
+                ),
                 BlocProvider<DefaultFilterCubit>(
                   create: (BuildContext context) => DefaultFilterCubit(
                     filter: filter,

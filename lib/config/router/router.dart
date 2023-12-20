@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/app_info/pages/app_details_page.dart';
+import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/pages/filter_create_edit_page.dart';
 import 'package:ntodotxt/presentation/filter/pages/filter_list_page.dart';
 import 'package:ntodotxt/presentation/layout/adaptive_layout.dart';
@@ -62,7 +63,10 @@ class AppRouter {
             name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
               Filter? filter = state.extra as Filter?;
-              return TodoListPage(filter: filter);
+              return TodoListPage(
+                filter: filter ??
+                    context.read<DefaultFilterCubit>().state.filter.copyWith(),
+              );
             },
             routes: <RouteBase>[
               GoRoute(

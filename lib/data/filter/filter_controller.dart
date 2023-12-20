@@ -48,7 +48,7 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      await close();
+      // Database will be closed in repository layer after refreshing the stream.
     }
 
     return model;
@@ -69,7 +69,7 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      await close();
+      // Database will be closed in repository layer after refreshing the stream.
     }
 
     return id;
@@ -91,7 +91,7 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      await close();
+      // Database will be closed in repository layer after refreshing the stream.
     }
 
     return id;
@@ -113,7 +113,7 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      await close();
+      // Database will be closed in repository layer after refreshing the stream.
     }
 
     return id;

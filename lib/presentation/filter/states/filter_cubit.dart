@@ -1,13 +1,54 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/filter/filter_repository.dart'
+    show FilterRepository;
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 
 class FilterCubit extends Cubit<FilterState> {
+  final FilterRepository _repository;
+
   FilterCubit({
+    required FilterRepository repository,
     required Filter filter,
-  }) : super(FilterSuccess(filter: filter));
+  })  : _repository = repository,
+        super(FilterSuccess(filter: filter));
+
+  Future<void> create(Filter filter) async {
+    try {
+      int id = await _repository.insert(filter);
+      if (id > 0) {
+        emit(state.success(filter: filter.copyWith(id: id)));
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  Future<void> update(Filter filter) async {
+    try {
+      int id = await _repository.update(filter);
+      if (id > 0) {
+        emit(state.success(filter: filter));
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  Future<void> delete(Filter filter) async {
+    try {
+      if (filter.id != null) {
+        await _repository.delete(id: filter.id!);
+      }
+      emit(state.success(
+        filter: filter.copyWithUnsaved(),
+      ));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
 
   void updateName(String name) {
     try {

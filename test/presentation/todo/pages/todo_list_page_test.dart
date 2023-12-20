@@ -4,15 +4,20 @@ import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart'
     show SettingController;
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
 import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
@@ -41,6 +46,11 @@ class TodoListPageMaterialApp extends StatelessWidget {
             return TodoListRepository(LocalTodoListApi(todoFile: todoFile));
           },
         ),
+        RepositoryProvider<FilterRepository>(
+          create: (BuildContext context) => FilterRepository(
+            FilterController(inMemoryDatabasePath),
+          ),
+        ),
       ],
       child: Builder(
         builder: (BuildContext context) {
@@ -59,9 +69,23 @@ class TodoListPageMaterialApp extends StatelessWidget {
                   ..add(const TodoListSubscriptionRequested())
                   ..add(const TodoListSynchronizationRequested()),
               ),
+              BlocProvider<FilterListBloc>(
+                create: (BuildContext context) {
+                  return FilterListBloc(
+                    repository: context.read<FilterRepository>(),
+                  )..add(const FilterListSubscriped());
+                },
+              ),
+              BlocProvider(
+                create: (BuildContext context) => FilterCubit(
+                  repository: context.read<FilterRepository>(),
+                  filter:
+                      filter ?? context.read<DefaultFilterCubit>().state.filter,
+                ),
+              ),
             ],
             child: MaterialApp(
-              home: TodoListPage(filter: filter),
+              home: TodoListPage(filter: filter ?? const Filter()),
             ),
           );
         },

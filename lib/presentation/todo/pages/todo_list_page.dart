@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
+import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
-import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
+import 'package:ntodotxt/common_widgets/input_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/misc.dart';
-import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart'
-    show DefaultFilterCubit;
+import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart'
     show FilterListBloc;
@@ -21,10 +22,10 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class TodoListPage extends StatelessWidget {
-  final Filter? filter;
+  final Filter filter;
 
   const TodoListPage({
-    this.filter,
+    required this.filter,
     super.key,
   });
 
@@ -32,7 +33,8 @@ class TodoListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
-        filter: filter ?? context.read<DefaultFilterCubit>().state.filter,
+        repository: context.read<FilterRepository>(),
+        filter: filter,
       ),
       child: Builder(
         builder: (BuildContext context) {
@@ -63,52 +65,29 @@ class TodoListViewNarrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MainAppBar(
-        title: 'Todo',
-        bottom: AppBarFilterList(),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: [
-            IconButton(
-              tooltip: 'Drawer',
-              icon: const Icon(Icons.menu),
-              onPressed: () async {
-                await showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true, // set this to true
-                  builder: (BuildContext context) =>
-                      BottomSheetNavigationDrawer(
-                          bloc: context.read<FilterListBloc>()),
-                );
-              },
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) =>
+          previousState.filter.name != state.filter.name,
+      builder: (BuildContext context, FilterState state) {
+        return Scaffold(
+          appBar: MainAppBar(
+            title:
+                'Todo: ${state.filter.name.isEmpty ? 'all' : state.filter.name}',
+            bottom: const AppBarFilterList(),
+          ),
+          bottomNavigationBar: const TodoListBottomAppBar(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.endContained,
+          floatingActionButton: PrimaryFloatingActionButton(
+            tooltip: 'Add todo',
+            icon: const Icon(Icons.add),
+            action: () => context.push(
+              context.namedLocation('todo-create'),
             ),
-            IconButton(
-              tooltip: 'Search',
-              icon: const Icon(Icons.search),
-              onPressed: () => showSearch(
-                context: context,
-                delegate: TodoSearchPage(),
-              ),
-            ),
-            IconButton(
-              tooltip: 'Favorite',
-              icon: const Icon(Icons.favorite_border),
-              onPressed: () {},
-            )
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      floatingActionButton: PrimaryFloatingActionButton(
-        tooltip: 'Add todo',
-        icon: const Icon(Icons.add),
-        action: () => context.push(
-          context.namedLocation('todo-create'),
-        ),
-      ),
-      body: const TodoListLoadingWrapper(),
+          ),
+          body: const TodoListLoadingWrapper(),
+        );
+      },
     );
   }
 }
@@ -118,36 +97,39 @@ class TodoListViewWide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        title: 'Todo',
-        toolbar: Row(
-          children: [
-            IconButton(
-              tooltip: 'Search',
-              icon: const Icon(Icons.search),
-              onPressed: () => showSearch(
-                context: context,
-                delegate: TodoSearchPage(),
-              ),
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) =>
+          previousState.filter.name != state.filter.name,
+      builder: (BuildContext context, FilterState state) {
+        return Scaffold(
+          appBar: MainAppBar(
+            title:
+                'Todo: ${state.filter.name.isEmpty ? 'all' : state.filter.name}',
+            toolbar: Row(
+              children: [
+                IconButton(
+                  tooltip: 'Search',
+                  icon: const Icon(Icons.search),
+                  onPressed: () => showSearch(
+                    context: context,
+                    delegate: TodoSearchPage(),
+                  ),
+                ),
+                const TodoListSaveFilter(),
+              ],
             ),
-            IconButton(
-              tooltip: 'Favorite',
-              icon: const Icon(Icons.favorite_border),
-              onPressed: () {},
+            bottom: const AppBarFilterList(),
+          ),
+          floatingActionButton: PrimaryFloatingActionButton(
+            tooltip: 'Add todo',
+            icon: const Icon(Icons.add),
+            action: () => context.push(
+              context.namedLocation('todo-create'),
             ),
-          ],
-        ),
-        bottom: const AppBarFilterList(),
-      ),
-      floatingActionButton: PrimaryFloatingActionButton(
-        tooltip: 'Add todo',
-        icon: const Icon(Icons.add),
-        action: () => context.push(
-          context.namedLocation('todo-create'),
-        ),
-      ),
-      body: const TodoListLoadingWrapper(),
+          ),
+          body: const TodoListLoadingWrapper(),
+        );
+      },
     );
   }
 }
@@ -368,6 +350,98 @@ class TodoListTile extends StatelessWidget {
           ),
         if (todo.keyValues.isNotEmpty) Text(todo.fmtKeyValues.join(' ')),
       ],
+    );
+  }
+}
+
+class TodoListBottomAppBar extends StatelessWidget {
+  const TodoListBottomAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Drawer',
+            icon: const Icon(Icons.menu),
+            onPressed: () async {
+              await showModalBottomSheet(
+                context: context,
+                isScrollControlled: true, // set this to true
+                builder: (BuildContext context) =>
+                    const BottomSheetNavigationDrawer(),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Search',
+            icon: const Icon(Icons.search),
+            onPressed: () => showSearch(
+              context: context,
+              delegate: TodoSearchPage(),
+            ),
+          ),
+          const TodoListSaveFilter(),
+        ],
+      ),
+    );
+  }
+}
+
+class TodoListSaveFilter extends StatelessWidget {
+  const TodoListSaveFilter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        // Exclude the default filter.
+        if (state.filter == const Filter()) {
+          return Container();
+        }
+        if (context.read<FilterListBloc>().state.filterExists(state.filter)) {
+          return IconButton(
+            tooltip: 'Delete filter',
+            icon: const Icon(Icons.favorite),
+            onPressed: () async {
+              final bool confirm = await ConfirmationDialog.dialog(
+                context: context,
+                title: 'Delete filter',
+                message: 'Do you want to delete the filter?',
+                actionLabel: 'Delete',
+              );
+              if (context.mounted && confirm) {
+                await context.read<FilterCubit>().delete(state.filter);
+                if (context.mounted) {
+                  SnackBarHandler.info(context, 'Filter removed');
+                  context.go(context.namedLocation('todo-list'));
+                }
+              }
+            },
+          );
+        } else {
+          return IconButton(
+            tooltip: 'Save filter',
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () async {
+              final String? filterName = await InputDialog.dialog(
+                context: context,
+                title: 'Save filter',
+                label: 'Enter filter name',
+              );
+              if (context.mounted && filterName != null) {
+                await context
+                    .read<FilterCubit>()
+                    .create(state.filter.copyWith(name: filterName));
+                if (context.mounted) {
+                  SnackBarHandler.info(context, 'Filter saved');
+                }
+              }
+            },
+          );
+        }
+      },
     );
   }
 }

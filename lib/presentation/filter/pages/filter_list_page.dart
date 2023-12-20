@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/fab.dart';
-import 'package:ntodotxt/common_widgets/navigation_drawer.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
+import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
@@ -51,8 +51,7 @@ class FilterListViewNarrow extends StatelessWidget {
                     context: context,
                     isScrollControlled: true, // set this to true
                     builder: (BuildContext context) =>
-                        BottomSheetNavigationDrawer(
-                            bloc: context.read<FilterListBloc>()),
+                        const BottomSheetNavigationDrawer(),
                   );
                 },
               ),

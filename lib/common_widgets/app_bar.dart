@@ -28,7 +28,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return AppBar(
-      automaticallyImplyLeading: screenWidth < maxScreenWidthCompact,
       titleSpacing: screenWidth < maxScreenWidthCompact ? 0.0 : null,
       title: Text(title),
       actions: toolbar == null
@@ -84,8 +83,6 @@ class AppBarFilterList extends StatelessWidget {
   Widget build(BuildContext context) {
     final ScrollController controller = ScrollController();
     return BlocBuilder<FilterCubit, FilterState>(
-      buildWhen: (FilterState previousState, FilterState state) =>
-          previousState.filter != state.filter,
       builder: (BuildContext context, FilterState state) {
         return ScrollConfiguration(
           behavior: CustomScrollBehavior(),

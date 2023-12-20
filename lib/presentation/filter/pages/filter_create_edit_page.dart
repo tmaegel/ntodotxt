@@ -6,11 +6,10 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, Filters, Groups, ListFilter, ListGroup, ListOrder, Order;
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 
 class FilterCreateEditPage extends StatelessWidget {
@@ -29,6 +28,7 @@ class FilterCreateEditPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
+        repository: context.read<FilterRepository>(),
         filter: filter ?? const Filter(),
       ),
       child: BlocConsumer<FilterCubit, FilterState>(
@@ -46,17 +46,15 @@ class FilterCreateEditPage extends StatelessWidget {
                   IconButton(
                     tooltip: 'Save',
                     icon: const Icon(Icons.save),
-                    onPressed: () {
+                    onPressed: () async {
                       if (filter == null) {
-                        context.read<FilterListBloc>().add(
-                              FilterCreated(filter: state.filter),
-                            );
+                        await context.read<FilterCubit>().create(state.filter);
                       } else {
-                        context.read<FilterListBloc>().add(
-                              FilterUpdated(filter: state.filter),
-                            );
+                        await context.read<FilterCubit>().update(state.filter);
                       }
-                      context.pop();
+                      if (context.mounted) {
+                        context.pop();
+                      }
                     },
                   ),
                 ],

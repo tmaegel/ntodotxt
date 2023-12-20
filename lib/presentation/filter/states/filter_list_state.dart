@@ -8,6 +8,9 @@ sealed class FilterListState extends Equatable {
     this.filterList = const [],
   });
 
+  bool filterExists(Filter filter) =>
+      filterList.indexWhere((Filter f) => f == filter) != -1;
+
   FilterListState success({
     List<Filter>? filterList,
   }) {

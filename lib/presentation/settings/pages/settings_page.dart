@@ -140,44 +140,4 @@ class SettingsView extends StatelessWidget {
       );
     });
   }
-
-  // ignore: unused_element
-  Future<String?> _askedForTextInput({
-    required BuildContext context,
-    required String label,
-    String? value,
-  }) async {
-    TextEditingController controller = TextEditingController(text: value);
-    return await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: label,
-            filled: false,
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
 }
