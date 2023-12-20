@@ -19,12 +19,7 @@ final ThemeData lightTheme = light.copyWith(
     insetPadding: const EdgeInsets.all(16),
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
-  chipTheme: light.chipTheme.copyWith(
-    backgroundColor: Colors.transparent,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
-  ),
+  chipTheme: light.chipTheme.copyWith(),
   expansionTileTheme: light.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
@@ -82,12 +77,7 @@ final ThemeData darkTheme = dark.copyWith(
     insetPadding: const EdgeInsets.all(16),
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
-  chipTheme: dark.chipTheme.copyWith(
-    backgroundColor: Colors.transparent,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
-  ),
+  chipTheme: dark.chipTheme.copyWith(),
   expansionTileTheme: dark.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: dark.appBarTheme.backgroundColor,

@@ -17,7 +17,19 @@ class FilterListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isNarrowLayout =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    if (isNarrowLayout) {
+      return const FilterListViewNarrow();
+    } else {
+      return const FilterListViewWide();
+    }
+  }
+}
 
+class FilterListViewNarrow extends StatelessWidget {
+  const FilterListViewNarrow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<FilterListBloc, FilterListState>(
       builder: (BuildContext context, FilterListState state) {
         return Scaffold(
@@ -29,8 +41,25 @@ class FilterListPage extends StatelessWidget {
               return FilterListTile(filter: state.filterList[index]);
             },
           ),
+          bottomNavigationBar: PrimaryBottomAppBar(
+            children: [
+              IconButton(
+                tooltip: 'Drawer',
+                icon: const Icon(Icons.menu),
+                onPressed: () async {
+                  await showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, // set this to true
+                    builder: (BuildContext context) =>
+                        BottomSheetNavigationDrawer(
+                            bloc: context.read<FilterListBloc>()),
+                  );
+                },
+              ),
+            ],
+          ),
           floatingActionButtonLocation:
-              isNarrowLayout ? FloatingActionButtonLocation.endContained : null,
+              FloatingActionButtonLocation.endContained,
           floatingActionButton: PrimaryFloatingActionButton(
             tooltip: 'Add filter',
             icon: const Icon(Icons.add),
@@ -38,25 +67,35 @@ class FilterListPage extends StatelessWidget {
               context.namedLocation('filter-create'),
             ),
           ),
-          bottomNavigationBar: !isNarrowLayout
-              ? null
-              : PrimaryBottomAppBar(
-                  children: [
-                    IconButton(
-                      tooltip: 'Drawer',
-                      icon: const Icon(Icons.menu),
-                      onPressed: () async {
-                        await showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true, // set this to true
-                          builder: (BuildContext context) =>
-                              BottomSheetNavigationDrawer(
-                                  bloc: context.read<FilterListBloc>()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+        );
+      },
+    );
+  }
+}
+
+class FilterListViewWide extends StatelessWidget {
+  const FilterListViewWide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterListBloc, FilterListState>(
+      builder: (BuildContext context, FilterListState state) {
+        return Scaffold(
+          appBar: const MainAppBar(title: 'Filters'),
+          body: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            itemCount: state.filterList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return FilterListTile(filter: state.filterList[index]);
+            },
+          ),
+          floatingActionButton: PrimaryFloatingActionButton(
+            tooltip: 'Add filter',
+            icon: const Icon(Icons.add),
+            action: () => context.push(
+              context.namedLocation('filter-create'),
+            ),
+          ),
         );
       },
     );

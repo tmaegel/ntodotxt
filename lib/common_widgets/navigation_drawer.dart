@@ -22,7 +22,7 @@ class DrawerDestination {
 const List<DrawerDestination> primaryDestinations = <DrawerDestination>[
   DrawerDestination(
     label: 'Todos',
-    icon: Icon(Icons.checklist_outlined),
+    icon: Icon(Icons.playlist_add_check),
     selectedIcon: Icon(Icons.checklist),
   ),
   DrawerDestination(
@@ -147,7 +147,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ListTile(
-                      leading: const Icon(Icons.checklist_outlined),
+                      leading: const Icon(Icons.playlist_add_check),
                       title: const Text('Todo'),
                       onTap: () {
                         context.push(context.namedLocation('todo-list'));
