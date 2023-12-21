@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
-import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/common_widgets/input_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
@@ -78,10 +77,10 @@ class TodoListViewNarrow extends StatelessWidget {
           bottomNavigationBar: const TodoListBottomAppBar(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,
-          floatingActionButton: PrimaryFloatingActionButton(
+          floatingActionButton: FloatingActionButton(
             tooltip: 'Add todo',
-            icon: const Icon(Icons.add),
-            action: () => context.push(
+            child: const Icon(Icons.add),
+            onPressed: () => context.push(
               context.namedLocation('todo-create'),
             ),
           ),
@@ -120,10 +119,10 @@ class TodoListViewWide extends StatelessWidget {
             ),
             bottom: const AppBarFilterList(),
           ),
-          floatingActionButton: PrimaryFloatingActionButton(
+          floatingActionButton: FloatingActionButton(
             tooltip: 'Add todo',
-            icon: const Icon(Icons.add),
-            action: () => context.push(
+            child: const Icon(Icons.add),
+            onPressed: () => context.push(
               context.namedLocation('todo-create'),
             ),
           ),

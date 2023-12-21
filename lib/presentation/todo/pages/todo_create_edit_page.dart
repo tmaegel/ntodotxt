@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
-import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
@@ -64,10 +63,10 @@ class TodoCreateEditPage extends StatelessWidget {
             ),
             floatingActionButton: state.todo.description.isEmpty
                 ? null
-                : PrimaryFloatingActionButton(
-                    icon: const Icon(Icons.save),
+                : FloatingActionButton(
                     tooltip: 'Save',
-                    action: () {
+                    child: const Icon(Icons.save),
+                    onPressed: () {
                       context.pop();
                       context
                           .read<TodoListBloc>()

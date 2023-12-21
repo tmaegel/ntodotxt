@@ -44,6 +44,8 @@ final ThemeData lightTheme = light.copyWith(
   ),
   floatingActionButtonTheme: light.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
+    focusElevation: 0.0,
+    hoverElevation: 0.0,
   ),
   inputDecorationTheme: light.inputDecorationTheme.copyWith(
     filled: false,
@@ -102,6 +104,8 @@ final ThemeData darkTheme = dark.copyWith(
   ),
   floatingActionButtonTheme: dark.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
+    focusElevation: 0.0,
+    hoverElevation: 0.0,
   ),
   inputDecorationTheme: dark.inputDecorationTheme.copyWith(
     filled: false,

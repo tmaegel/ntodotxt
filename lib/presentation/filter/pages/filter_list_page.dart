@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
-import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
@@ -61,10 +60,10 @@ class FilterListViewNarrow extends StatelessWidget {
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,
-          floatingActionButton: PrimaryFloatingActionButton(
+          floatingActionButton: FloatingActionButton(
             tooltip: 'Add filter',
-            icon: const Icon(Icons.add),
-            action: () => context.push(
+            child: const Icon(Icons.add),
+            onPressed: () => context.push(
               context.namedLocation('filter-create'),
             ),
           ),
@@ -90,10 +89,10 @@ class FilterListViewWide extends StatelessWidget {
               return FilterListTile(filter: state.filterList[index]);
             },
           ),
-          floatingActionButton: PrimaryFloatingActionButton(
+          floatingActionButton: FloatingActionButton(
             tooltip: 'Add filter',
-            icon: const Icon(Icons.add),
-            action: () => context.push(
+            child: const Icon(Icons.add),
+            onPressed: () => context.push(
               context.namedLocation('filter-create'),
             ),
           ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/common_widgets/fab.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 
 class LoginPage extends StatelessWidget {
@@ -15,21 +14,21 @@ class LoginPage extends StatelessWidget {
           children: [
             SizedBox(
               width: 150,
-              child: PrimaryFloatingActionButton(
-                icon: const Icon(Icons.cloud_off),
+              child: FloatingActionButton.extended(
+                label: const Text('Offline'),
                 tooltip: 'Use this app offline',
-                label: 'Offline',
-                action: () => context.read<LoginCubit>().loginOffline(),
+                icon: const Icon(Icons.cloud_off),
+                onPressed: () => context.read<LoginCubit>().loginOffline(),
               ),
             ),
             const SizedBox(height: 16),
             SizedBox(
               width: 150,
-              child: PrimaryFloatingActionButton(
-                icon: const Icon(Icons.cloud_outlined),
+              child: FloatingActionButton.extended(
+                label: const Text('WebDAV'),
                 tooltip: 'Login via WebDAV',
-                label: 'WebDAV',
-                action: () {
+                icon: const Icon(Icons.cloud_outlined),
+                onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -56,11 +55,11 @@ class LocalLoginView extends StatelessWidget {
       body: const Center(
         child: Text('Offline usage'),
       ),
-      floatingActionButton: PrimaryFloatingActionButton(
-        icon: const Icon(Icons.check),
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('Continue'),
         tooltip: 'Continue',
-        label: 'Continue',
-        action: () => context.read<LoginCubit>().loginOffline(),
+        icon: const Icon(Icons.check),
+        onPressed: () => context.read<LoginCubit>().loginOffline(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
@@ -168,11 +167,11 @@ class WebDAVLoginView extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: PrimaryFloatingActionButton(
-        icon: const Icon(Icons.cloud_outlined),
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('Login'),
         tooltip: 'Login',
-        label: 'Login',
-        action: () {
+        icon: const Icon(Icons.cloud_outlined),
+        onPressed: () {
           // Validate returns true if the form is valid, or false otherwise.
           if (formKey.currentState!.validate()) {
             context.read<LoginCubit>().loginWebDAV(
