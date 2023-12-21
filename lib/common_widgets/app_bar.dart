@@ -6,7 +6,6 @@ import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart' show maxScreenWidthCompact;
-import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/misc.dart' show CustomScrollBehavior, PlatformInfo;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
@@ -58,24 +57,6 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       Size.fromHeight(bottom == null ? kToolbarHeight : 95);
 }
 
-class PrimaryBottomAppBar extends StatelessWidget {
-  final List<Widget> children;
-
-  const PrimaryBottomAppBar({
-    required this.children,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      child: Row(
-        children: children,
-      ),
-    );
-  }
-}
-
 class AppBarFilterList extends StatelessWidget {
   const AppBarFilterList({super.key});
 
@@ -100,11 +81,9 @@ class AppBarFilterList extends StatelessWidget {
                     labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text(state.filter.order.name),
                     onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListOrder?>(
+                      await FilterStateOrderDialog.dialog(
                         context: context,
-                        builder: (BuildContext context) =>
-                            OrderTodoListBottomSheet(cubit: cubit),
+                        cubit: BlocProvider.of<FilterCubit>(context),
                       );
                     },
                   ),
@@ -115,11 +94,9 @@ class AppBarFilterList extends StatelessWidget {
                     labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text(state.filter.filter.name),
                     onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListFilter?>(
+                      await FilterStateFilterDialog.dialog(
                         context: context,
-                        builder: (BuildContext context) =>
-                            FilterTodoListBottomSheet(cubit: cubit),
+                        cubit: BlocProvider.of<FilterCubit>(context),
                       );
                     },
                   ),
@@ -130,11 +107,9 @@ class AppBarFilterList extends StatelessWidget {
                     labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text(state.filter.group.name),
                     onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListGroup?>(
+                      await FilterStateGroupDialog.dialog(
                         context: context,
-                        builder: (BuildContext context) =>
-                            GroupByTodoListBottomSheet(cubit: cubit),
+                        cubit: BlocProvider.of<FilterCubit>(context),
                       );
                     },
                   ),
@@ -145,14 +120,10 @@ class AppBarFilterList extends StatelessWidget {
                     labelPadding: const EdgeInsets.only(right: 8.0),
                     label: const Text('projects'),
                     onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListGroup?>(
+                      await ProjectListDialog.dialog(
                         context: context,
-                        builder: (BuildContext context) =>
-                            ProjectListBottomSheet(
-                          cubit: cubit,
-                          items: context.read<TodoListBloc>().state.projects,
-                        ),
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                        items: context.read<TodoListBloc>().state.projects,
                       );
                     },
                   ),
@@ -163,14 +134,10 @@ class AppBarFilterList extends StatelessWidget {
                     labelPadding: const EdgeInsets.only(right: 8.0),
                     label: const Text('contexts'),
                     onPressed: () async {
-                      FilterCubit cubit = BlocProvider.of<FilterCubit>(context);
-                      await showModalBottomSheet<ListGroup?>(
+                      await ContextListDialog.dialog(
                         context: context,
-                        builder: (BuildContext context) =>
-                            ContextListBottomSheet(
-                          cubit: cubit,
-                          items: context.read<TodoListBloc>().state.contexts,
-                        ),
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                        items: context.read<TodoListBloc>().state.contexts,
                       );
                     },
                   ),

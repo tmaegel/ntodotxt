@@ -48,7 +48,7 @@ class FilterController extends ModelController<Filter> {
     } on Exception {
       rethrow;
     } finally {
-      // Database will be closed in repository layer after refreshing the stream.
+      await close();
     }
 
     return model;
@@ -67,6 +67,7 @@ class FilterController extends ModelController<Filter> {
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
     } on Exception {
+      await close();
       rethrow;
     } finally {
       // Database will be closed in repository layer after refreshing the stream.
@@ -89,6 +90,7 @@ class FilterController extends ModelController<Filter> {
         whereArgs: [model.id],
       );
     } on Exception {
+      await close();
       rethrow;
     } finally {
       // Database will be closed in repository layer after refreshing the stream.
@@ -111,6 +113,7 @@ class FilterController extends ModelController<Filter> {
         whereArgs: [identifier],
       );
     } on Exception {
+      await close();
       rethrow;
     } finally {
       // Database will be closed in repository layer after refreshing the stream.

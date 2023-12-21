@@ -5,8 +5,6 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show ListFilter, ListGroup, ListOrder;
 import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
 import 'package:ntodotxt/presentation/default_filter/states/default_filter_state.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
@@ -48,12 +46,9 @@ class SettingsView extends StatelessWidget {
               title: const Text('Default order'),
               subtitle: Text(state.filter.order.name),
               onTap: () async {
-                DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
-                await showDialog<ListOrder?>(
+                await DefaultFilterStateOrderDialog.dialog(
                   context: context,
-                  builder: (BuildContext context) => OrderSettingsDialog(
-                    cubit: cubit,
-                  ),
+                  cubit: BlocProvider.of<DefaultFilterCubit>(context),
                 );
               },
             ),
@@ -64,12 +59,9 @@ class SettingsView extends StatelessWidget {
               title: const Text('Default filter'),
               subtitle: Text(state.filter.filter.name),
               onTap: () async {
-                DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
-                await showDialog<ListFilter?>(
+                await DefaultFilterStateFilterDialog.dialog(
                   context: context,
-                  builder: (BuildContext context) => FilterSettingsDialog(
-                    cubit: cubit,
-                  ),
+                  cubit: BlocProvider.of<DefaultFilterCubit>(context),
                 );
               },
             ),
@@ -80,12 +72,9 @@ class SettingsView extends StatelessWidget {
               title: const Text('Default grouping'),
               subtitle: Text(state.filter.group.name),
               onTap: () async {
-                DefaultFilterCubit cubit = context.read<DefaultFilterCubit>();
-                await showDialog<ListGroup?>(
+                await DefaultFilterStateGroupDialog.dialog(
                   context: context,
-                  builder: (BuildContext context) => GroupBySettingsDialog(
-                    cubit: cubit,
-                  ),
+                  cubit: BlocProvider.of<DefaultFilterCubit>(context),
                 );
               },
             ),

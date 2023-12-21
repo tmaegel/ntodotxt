@@ -41,21 +41,23 @@ class FilterListViewNarrow extends StatelessWidget {
               return FilterListTile(filter: state.filterList[index]);
             },
           ),
-          bottomNavigationBar: PrimaryBottomAppBar(
-            children: [
-              IconButton(
-                tooltip: 'Drawer',
-                icon: const Icon(Icons.menu),
-                onPressed: () async {
-                  await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true, // set this to true
-                    builder: (BuildContext context) =>
-                        const BottomSheetNavigationDrawer(),
-                  );
-                },
-              ),
-            ],
+          bottomNavigationBar: BottomAppBar(
+            child: Row(
+              children: [
+                IconButton(
+                  tooltip: 'Drawer',
+                  icon: const Icon(Icons.menu),
+                  onPressed: () async {
+                    await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true, // set this to true
+                      builder: (BuildContext context) =>
+                          const BottomSheetNavigationDrawer(),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,

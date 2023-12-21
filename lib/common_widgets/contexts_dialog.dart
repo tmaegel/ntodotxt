@@ -2,21 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
     show FilterCubit;
 
-class ContextListBottomSheet extends StatefulWidget {
+class ContextListDialog extends StatefulWidget {
   final FilterCubit cubit;
   final Set<String> items;
 
-  const ContextListBottomSheet({
+  const ContextListDialog({
     required this.cubit,
     required this.items,
     super.key,
   });
 
+  static Future<String?> dialog({
+    required BuildContext context,
+    required FilterCubit cubit,
+    required Set<String> items,
+  }) async {
+    return await showDialog<String?>(
+      context: context,
+      builder: (BuildContext context) =>
+          ContextListDialog(cubit: cubit, items: items),
+    );
+  }
+
   @override
-  State<ContextListBottomSheet> createState() => _ContextListBottomSheetState();
+  State<ContextListDialog> createState() => _ContextListDialogState();
 }
 
-class _ContextListBottomSheetState extends State<ContextListBottomSheet> {
+class _ContextListDialogState extends State<ContextListDialog> {
   Set<String> selectedItems = {};
 
   @override
@@ -27,55 +39,47 @@ class _ContextListBottomSheetState extends State<ContextListBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return BottomSheet(
-      key: const Key('ContextsTodoListBottomSheet'),
-      enableDrag: false,
-      showDragHandle: false,
-      onClosing: () {},
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                contentPadding: const EdgeInsets.only(left: 8.0),
-                title: const Text('Select contexts'),
-                trailing: TextButton(
-                  onPressed: () {
-                    widget.cubit.updateContexts(selectedItems);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Apply'),
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.items.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String context = widget.items.elementAt(index);
-                  return CheckboxListTile(
-                    key: Key('${context}BottomSheetCheckboxButton'),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(context),
-                    value: selectedItems.contains(context),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          selectedItems.add(context);
-                        } else {
-                          selectedItems.remove(context);
-                        }
-                      });
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
+    return AlertDialog(
+      title: const Center(
+        child: Text('Contexts'),
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: widget.items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String context = widget.items.elementAt(index);
+            return CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(context),
+              value: selectedItems.contains(context),
+              onChanged: (bool? value) {
+                setState(() {
+                  if (value == true) {
+                    selectedItems.add(context);
+                  } else {
+                    selectedItems.remove(context);
+                  }
+                });
+              },
+            );
+          },
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: const Text('Apply'),
+          onPressed: () {
+            widget.cubit.updateContexts(selectedItems);
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 }

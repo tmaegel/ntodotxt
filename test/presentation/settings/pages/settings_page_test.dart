@@ -72,7 +72,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byKey(const Key('OrderSettingsDialog')), findsOneWidget);
+        expect(find.byType(Dialog), findsOneWidget);
         await tester.tap(
           find.byKey(Key('${ListOrder.descending.name}DialogRadioButton')),
         );
@@ -118,7 +118,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byKey(const Key('FilterSettingsDialog')), findsOneWidget);
+        expect(find.byType(Dialog), findsOneWidget);
         await tester.tap(
           find.byKey(Key('${ListFilter.completedOnly.name}DialogRadioButton')),
         );
@@ -164,7 +164,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byKey(const Key('GroupBySettingsDialog')), findsOneWidget);
+        expect(find.byType(Dialog), findsOneWidget);
         await tester.tap(
           find.byKey(Key('${ListGroup.priority.name}DialogRadioButton')),
         );

@@ -3,7 +3,6 @@ import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 
 class AdaptiveLayout extends StatelessWidget {
-  // The widget to display in the body of the Scaffold.
   final Widget child;
 
   const AdaptiveLayout({
@@ -22,7 +21,6 @@ class AdaptiveLayout extends StatelessWidget {
 }
 
 class NarrowLayout extends StatelessWidget {
-  // The widget to display in the body of the Scaffold.
   final Widget child;
 
   const NarrowLayout({
@@ -31,17 +29,10 @@ class NarrowLayout extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: child,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => child;
 }
 
 class WideLayout extends StatelessWidget {
-  // The widget to display in the body of the Scaffold.
   final Widget child;
 
   const WideLayout({
@@ -51,16 +42,12 @@ class WideLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Row(
-          children: [
-            const NavigationRailDrawer(),
-            const VerticalDivider(width: 2),
-            Expanded(child: child),
-          ],
-        ),
-      ),
+    return Row(
+      children: [
+        const NavigationRailDrawer(),
+        const VerticalDivider(width: 2),
+        Expanded(child: child),
+      ],
     );
   }
 }

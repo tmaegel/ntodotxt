@@ -27,7 +27,6 @@ class InputDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
     return AlertDialog(
-      key: const Key('InputDialog'),
       title: Text(title),
       content: TextField(
         controller: controller,

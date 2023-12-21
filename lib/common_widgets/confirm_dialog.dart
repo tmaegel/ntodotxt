@@ -34,7 +34,6 @@ class ConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      key: const Key('ConfirmDialog'),
       title: Text(title),
       content: Text(message),
       actions: <Widget>[

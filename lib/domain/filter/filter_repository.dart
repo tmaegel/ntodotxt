@@ -22,11 +22,8 @@ class FilterRepository {
 
   Future<List<Filter>> list() async => await controller.list();
 
-  Future<Filter?> get({required int id}) async {
-    final Filter? result = await controller.get(identifier: id);
-    await refresh();
-    return result;
-  }
+  Future<Filter?> get({required int id}) async =>
+      await controller.get(identifier: id);
 
   Future<int> insert(Filter model) async {
     final int result = await controller.insert(model);
