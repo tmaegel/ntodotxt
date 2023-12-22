@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
     show FilterCubit;
 
@@ -40,32 +41,24 @@ class _ProjectListDialogState extends State<ProjectListDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Center(
-        child: Text('Projects'),
-      ),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: widget.items.length,
-          itemBuilder: (BuildContext context, int index) {
-            String project = widget.items.elementAt(index);
-            return CheckboxListTile(
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text(project),
-              value: selectedItems.contains(project),
-              onChanged: (bool? value) {
+      title: const Text('Projects'),
+      content: GenericChipGroup(
+        children: [
+          for (String item in widget.items)
+            GenericChoiceChip(
+              label: Text(item),
+              selected: selectedItems.contains(item),
+              onSelected: (bool selected) {
                 setState(() {
-                  if (value == true) {
-                    selectedItems.add(project);
+                  if (selected == true) {
+                    selectedItems.add(item);
                   } else {
-                    selectedItems.remove(project);
+                    selectedItems.remove(item);
                   }
                 });
               },
-            );
-          },
-        ),
+            ),
+        ],
       ),
       actions: <Widget>[
         TextButton(

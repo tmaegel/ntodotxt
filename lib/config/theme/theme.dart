@@ -11,7 +11,6 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
-    centerTitle: true,
     backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
@@ -71,7 +70,6 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
-    centerTitle: true,
     backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(

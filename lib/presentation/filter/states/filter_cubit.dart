@@ -118,6 +118,20 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
+  void updatePriorities(Set<Priority> priorities) {
+    try {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(
+            priorities: {...priorities},
+          ),
+        ),
+      );
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
   void addProject(String project) {
     try {
       emit(

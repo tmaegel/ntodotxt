@@ -4,8 +4,9 @@ import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
+import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
-import 'package:ntodotxt/constants/app.dart' show maxScreenWidthCompact;
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show CustomScrollBehavior, PlatformInfo;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
@@ -25,9 +26,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return AppBar(
-      titleSpacing: screenWidth < maxScreenWidthCompact ? 0.0 : null,
       title: Text(title),
       actions: toolbar == null
           ? null
@@ -116,9 +115,24 @@ class AppBarFilterList extends StatelessWidget {
                   const SizedBox(width: 4),
                   ActionChip(
                     padding: EdgeInsets.zero,
+                    avatar: const Icon(Icons.flag_outlined),
+                    labelPadding: const EdgeInsets.only(right: 8.0),
+                    label:
+                        Text('priorities (${state.filter.priorities.length})'),
+                    onPressed: () async {
+                      await PriorityListDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                        items: Priority.values.toSet(),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                  ActionChip(
+                    padding: EdgeInsets.zero,
                     avatar: const Icon(Icons.rocket_launch_outlined),
                     labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: const Text('projects'),
+                    label: Text('projects (${state.filter.projects.length})'),
                     onPressed: () async {
                       await ProjectListDialog.dialog(
                         context: context,
@@ -132,7 +146,7 @@ class AppBarFilterList extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     avatar: const Icon(Icons.join_inner),
                     labelPadding: const EdgeInsets.only(right: 8.0),
-                    label: const Text('contexts'),
+                    label: Text('contexts (${state.filter.contexts.length})'),
                     onPressed: () async {
                       await ContextListDialog.dialog(
                         context: context,

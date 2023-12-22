@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
     show FilterCubit;
 
-class ContextListDialog extends StatefulWidget {
+class PriorityListDialog extends StatefulWidget {
   final FilterCubit cubit;
-  final Set<String> items;
+  final Set<Priority> items;
 
-  const ContextListDialog({
+  const PriorityListDialog({
     required this.cubit,
     required this.items,
     super.key,
@@ -16,37 +17,37 @@ class ContextListDialog extends StatefulWidget {
   static Future<String?> dialog({
     required BuildContext context,
     required FilterCubit cubit,
-    required Set<String> items,
+    required Set<Priority> items,
   }) async {
     return await showDialog<String?>(
       context: context,
       builder: (BuildContext context) =>
-          ContextListDialog(cubit: cubit, items: items),
+          PriorityListDialog(cubit: cubit, items: items),
     );
   }
 
   @override
-  State<ContextListDialog> createState() => _ContextListDialogState();
+  State<PriorityListDialog> createState() => _PriorityListDialogState();
 }
 
-class _ContextListDialogState extends State<ContextListDialog> {
-  Set<String> selectedItems = {};
+class _PriorityListDialogState extends State<PriorityListDialog> {
+  Set<Priority> selectedItems = {};
 
   @override
   void initState() {
-    selectedItems = {...widget.cubit.state.filter.contexts};
+    selectedItems = {...widget.cubit.state.filter.priorities};
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Contexts'),
+      title: const Text('Priorities'),
       content: GenericChipGroup(
         children: [
-          for (String item in widget.items)
+          for (Priority item in widget.items)
             GenericChoiceChip(
-              label: Text(item),
+              label: Text(item.name),
               selected: selectedItems.contains(item),
               onSelected: (bool selected) {
                 setState(() {
@@ -68,7 +69,7 @@ class _ContextListDialogState extends State<ContextListDialog> {
         TextButton(
           child: const Text('Apply'),
           onPressed: () {
-            widget.cubit.updateContexts(selectedItems);
+            widget.cubit.updatePriorities(selectedItems);
             Navigator.pop(context);
           },
         ),
