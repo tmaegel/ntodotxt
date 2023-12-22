@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
+import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
@@ -43,36 +44,46 @@ class TodoCreateEditPage extends StatelessWidget {
           return Scaffold(
             appBar: MainAppBar(
               title: createMode ? 'Create' : 'Edit',
-              toolbar: createMode
-                  ? null
-                  : Row(
-                      children: <Widget>[
-                        IconButton(
-                          tooltip: 'Delete',
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            context.pop();
-                            context
-                                .read<TodoListBloc>()
-                                .add(TodoListTodoDeleted(todo: state.todo));
+              toolbar: Row(
+                children: <Widget>[
+                  if (!createMode)
+                    IconButton(
+                      tooltip: 'Delete',
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        final bool confirm = await ConfirmationDialog.dialog(
+                          context: context,
+                          title: 'Delete todo',
+                          message: 'Do you want to delete the todo?',
+                          actionLabel: 'Delete',
+                        );
+                        if (context.mounted && confirm) {
+                          context
+                              .read<TodoListBloc>()
+                              .add(TodoListTodoDeleted(todo: state.todo));
+                          if (context.mounted) {
                             SnackBarHandler.info(context, 'Todo deleted');
-                          },
-                        ),
-                      ],
+                            context.pop();
+                          }
+                        }
+                      },
                     ),
-            ),
-            floatingActionButton: state.todo.description.isEmpty
-                ? null
-                : FloatingActionButton(
+                  IconButton(
                     tooltip: 'Save',
-                    child: const Icon(Icons.save),
-                    onPressed: () {
-                      context.pop();
+                    icon: const Icon(Icons.save),
+                    onPressed: () async {
                       context
                           .read<TodoListBloc>()
                           .add(TodoListTodoSubmitted(todo: state.todo));
+                      if (context.mounted) {
+                        SnackBarHandler.info(context, 'Todo saved');
+                        context.pop();
+                      }
                     },
                   ),
+                ],
+              ),
+            ),
             body: ListView(
               children: [
                 const TodoStringTextField(),

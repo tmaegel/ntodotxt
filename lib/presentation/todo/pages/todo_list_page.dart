@@ -413,7 +413,7 @@ class TodoListSaveFilter extends StatelessWidget {
               if (context.mounted && confirm) {
                 await context.read<FilterCubit>().delete(state.filter);
                 if (context.mounted) {
-                  SnackBarHandler.info(context, 'Filter removed');
+                  SnackBarHandler.info(context, 'Filter deleted');
                   context.go(context.namedLocation('todo-list'));
                 }
               }

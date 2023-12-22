@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, Filters, Groups, ListFilter, ListGroup, ListOrder, Order;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
@@ -24,6 +25,8 @@ class FilterCreateEditPage extends StatelessWidget {
     super.key,
   });
 
+  bool get createMode => filter == null;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -38,11 +41,43 @@ class FilterCreateEditPage extends StatelessWidget {
           }
         },
         builder: (BuildContext context, FilterState state) {
+          final List<String> allProjects = [
+            ...projects,
+            ...state.filter.projects,
+          ]
+            ..sort()
+            ..toSet();
+          final List<String> allContexts = [
+            ...contexts,
+            ...state.filter.contexts,
+          ]
+            ..sort()
+            ..toSet();
+
           return Scaffold(
             appBar: MainAppBar(
-              title: filter == null ? 'Add' : 'Edit',
+              title: createMode ? 'Create' : 'Edit',
               toolbar: Row(
                 children: <Widget>[
+                  IconButton(
+                    tooltip: 'Delete',
+                    icon: const Icon(Icons.delete),
+                    onPressed: () async {
+                      final bool confirm = await ConfirmationDialog.dialog(
+                        context: context,
+                        title: 'Delete filter',
+                        message: 'Do you want to delete the filter?',
+                        actionLabel: 'Delete',
+                      );
+                      if (context.mounted && confirm) {
+                        await context.read<FilterCubit>().delete(state.filter);
+                        if (context.mounted) {
+                          SnackBarHandler.info(context, 'Filter deleted');
+                          context.pop();
+                        }
+                      }
+                    },
+                  ),
                   IconButton(
                     tooltip: 'Save',
                     icon: const Icon(Icons.save),
@@ -53,6 +88,7 @@ class FilterCreateEditPage extends StatelessWidget {
                         await context.read<FilterCubit>().update(state.filter);
                       }
                       if (context.mounted) {
+                        SnackBarHandler.info(context, 'Filter saved');
                         context.pop();
                       }
                     },
@@ -193,70 +229,70 @@ class FilterCreateEditPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Projects',
-                      style: Theme.of(context).textTheme.titleSmall,
+                if (allProjects.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        'Projects',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: GenericChipGroup(
-                      children: [
-                        for (var p
-                            in {...projects, ...state.filter.projects}.toList()
-                              ..sort())
-                          GenericChoiceChip(
-                            label: Text(p),
-                            selected: state.filter.projects.contains(p),
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                context.read<FilterCubit>().addProject(p);
-                              } else {
-                                context.read<FilterCubit>().removeProject(p);
-                              }
-                            },
-                          ),
-                      ],
+                if (allProjects.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListTile(
+                      title: GenericChipGroup(
+                        children: [
+                          for (var p in allProjects)
+                            GenericChoiceChip(
+                              label: Text(p),
+                              selected: state.filter.projects.contains(p),
+                              onSelected: (bool selected) {
+                                if (selected) {
+                                  context.read<FilterCubit>().addProject(p);
+                                } else {
+                                  context.read<FilterCubit>().removeProject(p);
+                                }
+                              },
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Contexts',
-                      style: Theme.of(context).textTheme.titleSmall,
+                if (allContexts.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListTile(
+                      title: Text(
+                        'Contexts',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: GenericChipGroup(
-                      children: [
-                        for (var c
-                            in {...contexts, ...state.filter.contexts}.toList()
-                              ..sort())
-                          GenericChoiceChip(
-                            label: Text(c),
-                            selected: state.filter.contexts.contains(c),
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                context.read<FilterCubit>().addContext(c);
-                              } else {
-                                context.read<FilterCubit>().removeContext(c);
-                              }
-                            },
-                          ),
-                      ],
+                if (allContexts.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListTile(
+                      title: GenericChipGroup(
+                        children: [
+                          for (var c in allContexts)
+                            GenericChoiceChip(
+                              label: Text(c),
+                              selected: state.filter.contexts.contains(c),
+                              onSelected: (bool selected) {
+                                if (selected) {
+                                  context.read<FilterCubit>().addContext(c);
+                                } else {
+                                  context.read<FilterCubit>().removeContext(c);
+                                }
+                              },
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           );
