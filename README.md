@@ -22,10 +22,11 @@ tbd
 - [ ] Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
 - [ ] Build and publish to Microsoft Store (Windows)
-- [ ] Manage saved filters (ordering, filter by project, context and priorities)
+- [x] Manage saved filters (ordering, filter by project, context and priorities)
 - [ ] [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
 - [ ] Add language localization
 - [ ] Archiving of all completed todos (done.txt)
+- [ ] Animations
 - [ ] Increase test coverage
 
 ## Requirements
