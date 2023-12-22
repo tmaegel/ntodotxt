@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
+import 'package:ntodotxt/common_widgets/key_values_dialog.dart';
+import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_tag_dialog.dart';
 
 abstract class TodoTagSection extends StatelessWidget {
   final Icon leadingIcon;
@@ -14,17 +16,6 @@ abstract class TodoTagSection extends StatelessWidget {
     required this.leadingIcon,
     super.key,
   });
-
-  void _showDialog({
-    required BuildContext context,
-    required Widget child,
-  }) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) => child,
-    );
-  }
 
   void _onSelected(BuildContext context, String value, bool selected);
 
@@ -100,22 +91,10 @@ class TodoProjectTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoCubit>().addMultipleProjects([value]);
+      context.read<TodoCubit>().addProject(value);
     } else {
       context.read<TodoCubit>().removeProject(value);
     }
-  }
-
-  void _openDialog(BuildContext context) {
-    _showDialog(
-      context: context,
-      child: BlocProvider.value(
-        value: BlocProvider.of<TodoCubit>(context),
-        child: TodoProjectTagDialog(
-          availableTags: availableTags,
-        ),
-      ),
-    );
   }
 
   @override
@@ -141,7 +120,11 @@ class TodoProjectTags extends TodoTagSection {
             trailing: IconButton(
               icon: const Icon(Icons.add),
               tooltip: 'Add project tag',
-              onPressed: () => _openDialog(context),
+              onPressed: () => ProjectTagDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<TodoCubit>(context),
+                availableTags: availableTags,
+              ),
             ),
           ),
         );
@@ -162,22 +145,10 @@ class TodoContextTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoCubit>().addMultipleContexts([value]);
+      context.read<TodoCubit>().addContext(value);
     } else {
       context.read<TodoCubit>().removeContext(value);
     }
-  }
-
-  void _openDialog(BuildContext context) {
-    _showDialog(
-      context: context,
-      child: BlocProvider.value(
-        value: BlocProvider.of<TodoCubit>(context),
-        child: TodoContextTagDialog(
-          availableTags: availableTags,
-        ),
-      ),
-    );
   }
 
   @override
@@ -203,7 +174,11 @@ class TodoContextTags extends TodoTagSection {
             trailing: IconButton(
               icon: const Icon(Icons.add),
               tooltip: 'Add context tag',
-              onPressed: () => _openDialog(context),
+              onPressed: () => ContextTagDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<TodoCubit>(context),
+                availableTags: availableTags,
+              ),
             ),
           ),
         );
@@ -224,22 +199,10 @@ class TodoKeyValueTags extends TodoTagSection {
   @override
   void _onSelected(BuildContext context, String value, bool selected) {
     if (selected) {
-      context.read<TodoCubit>().addMultipleKeyValues([value]);
+      context.read<TodoCubit>().addKeyValue(value);
     } else {
       context.read<TodoCubit>().removeKeyValue(value);
     }
-  }
-
-  void _openDialog(BuildContext context) {
-    _showDialog(
-      context: context,
-      child: BlocProvider.value(
-        value: BlocProvider.of<TodoCubit>(context),
-        child: TodoKeyValueTagDialog(
-          availableTags: availableTags,
-        ),
-      ),
-    );
   }
 
   @override
@@ -266,7 +229,11 @@ class TodoKeyValueTags extends TodoTagSection {
             trailing: IconButton(
               icon: const Icon(Icons.add),
               tooltip: 'Add key:value tag',
-              onPressed: () => _openDialog(context),
+              onPressed: () => KeyValueTagDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<TodoCubit>(context),
+                availableTags: availableTags,
+              ),
             ),
           ),
         );
@@ -392,9 +359,9 @@ class TodoDueDateItem extends StatelessWidget {
         if (date != null) {
           final String? formattedDate = Todo.date2Str(date);
           if (formattedDate != null) {
-            context.read<TodoCubit>().addMultipleKeyValues(
-              ['due:$formattedDate'],
-            );
+            context.read<TodoCubit>().addKeyValue(
+                  'due:$formattedDate',
+                );
           }
         }
       },

@@ -74,12 +74,12 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void addMultipleProjects(List<String> projects) {
+  void updateProjects(Set<String> projects) {
     try {
       emit(
         state.success(
           todo: state.todo.copyWith(
-            projects: {...state.todo.projects}..addAll(projects),
+            projects: {...projects},
           ),
         ),
       );
@@ -116,12 +116,12 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void addMultipleContexts(List<String> contexts) {
+  void updateContexts(Set<String> contexts) {
     try {
       emit(
         state.success(
           todo: state.todo.copyWith(
-            contexts: {...state.todo.contexts}..addAll(contexts),
+            contexts: {...contexts},
           ),
         ),
       );
@@ -162,9 +162,9 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void addMultipleKeyValues(List<String> kvs) {
+  void updateKeyValues(Set<String> kvs) {
     try {
-      Map<String, String> keyValues = {...state.todo.keyValues};
+      Map<String, String> keyValues = {};
       for (var kv in kvs) {
         if (!Todo.patternKeyValue.hasMatch(kv)) {
           throw TodoInvalidKeyValueTag(tag: kv);

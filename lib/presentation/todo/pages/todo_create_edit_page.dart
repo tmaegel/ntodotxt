@@ -42,7 +42,7 @@ class TodoCreateEditPage extends StatelessWidget {
         builder: (BuildContext context, TodoState state) {
           return Scaffold(
             appBar: MainAppBar(
-              title: createMode ? 'Add' : 'Edit',
+              title: createMode ? 'Create' : 'Edit',
               toolbar: createMode
                   ? null
                   : Row(

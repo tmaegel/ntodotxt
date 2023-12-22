@@ -35,8 +35,8 @@ class _PriorityListDialogState extends State<PriorityListDialog> {
 
   @override
   void initState() {
-    selectedItems = {...widget.cubit.state.filter.priorities};
     super.initState();
+    selectedItems = {...widget.cubit.state.filter.priorities};
   }
 
   @override

@@ -459,13 +459,9 @@ void main() {
         ),
         'project1',
       );
-      await safeTapByFinder(
-        tester,
-        find.descendant(
-          of: addProjectTagDialogFinder,
-          matching: find.byTooltip('Add project tags'),
-        ),
-      );
+      await safeTapByFinder(tester, find.text('Add'));
+      await tester.pump();
+      await safeTapByFinder(tester, find.text('Apply'));
       await tester.pump();
 
       expect(
@@ -630,13 +626,9 @@ void main() {
         ),
         'context1',
       );
-      await safeTapByFinder(
-        tester,
-        find.descendant(
-          of: addContextTagDialogFinder,
-          matching: find.byTooltip('Add context tags'),
-        ),
-      );
+      await safeTapByFinder(tester, find.text('Add'));
+      await tester.pump();
+      await safeTapByFinder(tester, find.text('Apply'));
       await tester.pump();
 
       expect(
@@ -801,13 +793,9 @@ void main() {
         ),
         'foo:bar',
       );
-      await safeTapByFinder(
-        tester,
-        find.descendant(
-          of: addKeyValueTagDialogFinder,
-          matching: find.byTooltip('Add key:value tags'),
-        ),
-      );
+      await safeTapByFinder(tester, find.text('Add'));
+      await tester.pump();
+      await safeTapByFinder(tester, find.text('Apply'));
       await tester.pump();
 
       expect(

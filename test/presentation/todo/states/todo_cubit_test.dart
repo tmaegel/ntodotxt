@@ -157,7 +157,7 @@ void main() {
       test('initial', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project1']);
+        bloc.addProject('project1');
 
         expect(
             bloc.state,
@@ -175,7 +175,7 @@ void main() {
           projects: const {'project1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project2']);
+        bloc.addProject('project2');
 
         expect(
             bloc.state,
@@ -190,7 +190,7 @@ void main() {
       test('invalid format', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project 2']);
+        bloc.addProject('project 2');
 
         expect(
             bloc.state,
@@ -209,7 +209,7 @@ void main() {
           projects: const {'project1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project1']);
+        bloc.addProject('project1');
 
         expect(
             bloc.state,
@@ -227,7 +227,7 @@ void main() {
           projects: const {'project1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['Project1']);
+        bloc.addProject('Project1');
 
         expect(
             bloc.state,
@@ -242,7 +242,7 @@ void main() {
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project1', 'project2']);
+        bloc.updateProjects({'project1', 'project2'});
 
         expect(
             bloc.state,
@@ -257,7 +257,7 @@ void main() {
       test('multiple entries / invalid format', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project1', 'project 2']);
+        bloc.updateProjects({'project1', 'project 2'});
 
         expect(
             bloc.state,
@@ -276,7 +276,7 @@ void main() {
           projects: const {'project1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['project1', 'project2']);
+        bloc.updateProjects({'project1', 'project2'});
 
         expect(
             bloc.state,
@@ -294,7 +294,7 @@ void main() {
           projects: const {'project1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleProjects(['Project1', 'Project2']);
+        bloc.updateProjects({'Project1', 'Project2'});
 
         expect(
             bloc.state,
@@ -367,7 +367,7 @@ void main() {
       test('initial', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context1']);
+        bloc.addContext('context1');
 
         expect(
             bloc.state,
@@ -385,7 +385,7 @@ void main() {
           contexts: const {'context1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context2']);
+        bloc.addContext('context2');
 
         expect(
             bloc.state,
@@ -400,7 +400,7 @@ void main() {
       test('invalid format', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context 2']);
+        bloc.addContext('context 2');
 
         expect(
             bloc.state,
@@ -419,7 +419,7 @@ void main() {
           contexts: const {'context1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context1']);
+        bloc.addContext('context1');
 
         expect(
             bloc.state,
@@ -437,7 +437,7 @@ void main() {
           contexts: const {'context1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['Context1']);
+        bloc.addContext('Context1');
 
         expect(
             bloc.state,
@@ -452,7 +452,7 @@ void main() {
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context1', 'context2']);
+        bloc.updateContexts({'context1', 'context2'});
 
         expect(
             bloc.state,
@@ -467,7 +467,7 @@ void main() {
       test('multiple entries / invalid format', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context1', 'context 2']);
+        bloc.updateContexts({'context1', 'context 2'});
 
         expect(
             bloc.state,
@@ -486,7 +486,7 @@ void main() {
           contexts: const {'context1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context1', 'context2']);
+        bloc.updateContexts({'context1', 'context2'});
 
         expect(
             bloc.state,
@@ -504,7 +504,7 @@ void main() {
           contexts: const {'context1'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleContexts(['context1', 'Context2']);
+        bloc.updateContexts({'context1', 'Context2'});
 
         expect(
             bloc.state,
@@ -577,7 +577,7 @@ void main() {
       test('initial', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key:val']);
+        bloc.addKeyValue('key:val');
 
         expect(
             bloc.state,
@@ -595,7 +595,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key:val']);
+        bloc.addKeyValue('key:val');
 
         expect(
             bloc.state,
@@ -610,7 +610,7 @@ void main() {
       test('invalid format', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key_val']);
+        bloc.addKeyValue('key_val');
 
         expect(
             bloc.state,
@@ -629,7 +629,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['foo:bar']);
+        bloc.addKeyValue('foo:bar');
 
         expect(
           bloc.state,
@@ -648,7 +648,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['Foo:bar']);
+        bloc.addKeyValue('Foo:bar');
 
         expect(
           bloc.state,
@@ -667,7 +667,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['foo:new']);
+        bloc.addKeyValue('foo:new');
 
         expect(
           bloc.state,
@@ -683,7 +683,7 @@ void main() {
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key1:val1', 'key2:val2']);
+        bloc.updateKeyValues({'key1:val1', 'key2:val2'});
 
         expect(
           bloc.state,
@@ -699,7 +699,7 @@ void main() {
       test('multiple entries / invalid format', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key1:val1', 'key2_val2']);
+        bloc.updateKeyValues({'key1:val1', 'key2_val2'});
 
         expect(
           bloc.state,
@@ -719,7 +719,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key1:val1', 'foo:bar']);
+        bloc.updateKeyValues({'key1:val1', 'foo:bar'});
 
         expect(
           bloc.state,
@@ -738,7 +738,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['Key1:val1', 'Foo:bar']);
+        bloc.updateKeyValues({'Key1:val1', 'Foo:bar'});
 
         expect(
           bloc.state,
@@ -757,7 +757,7 @@ void main() {
           keyValues: const {'foo': 'bar'},
         );
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.addMultipleKeyValues(['key1:val1', 'foo:new']);
+        bloc.updateKeyValues({'key1:val1', 'foo:new'});
 
         expect(
           bloc.state,

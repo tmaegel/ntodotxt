@@ -91,7 +91,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.updateOrder(ListOrder.descending);
 
@@ -99,7 +99,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.descending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -112,7 +111,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.updateFilter(ListFilter.completedOnly);
 
@@ -120,7 +119,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.completedOnly,
             group: ListGroup.none,
@@ -128,12 +126,12 @@ void main() {
         ),
       );
     });
-    test('filter', () async {
+    test('group', () async {
       final FilterCubit cubit = FilterCubit(
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.updateGroup(ListGroup.priority);
 
@@ -141,7 +139,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.priority,
@@ -157,7 +154,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.addPriority(Priority.A);
 
@@ -165,7 +162,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -179,7 +175,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter', priorities: {Priority.A}),
+        filter: const Filter(priorities: {Priority.A}),
       );
       cubit.addPriority(Priority.A);
 
@@ -187,7 +183,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -201,7 +196,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter', priorities: {Priority.A}),
+        filter: const Filter(priorities: {Priority.A}),
       );
       cubit.removePriority(Priority.A);
 
@@ -209,7 +204,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -223,7 +217,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.removePriority(Priority.A);
 
@@ -231,11 +225,31 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
             priorities: {},
+          ),
+        ),
+      );
+    });
+    test('update multiple', () async {
+      final FilterCubit cubit = FilterCubit(
+        repository: FilterRepository(
+          FilterController(inMemoryDatabasePath),
+        ),
+        filter: const Filter(),
+      );
+      cubit.updatePriorities({Priority.A, Priority.B});
+
+      expect(
+        cubit.state,
+        const FilterSuccess(
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+            priorities: {Priority.A, Priority.B},
           ),
         ),
       );
@@ -248,7 +262,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.addProject('project1');
 
@@ -256,7 +270,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -270,7 +283,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter', projects: {'project1'}),
+        filter: const Filter(projects: {'project1'}),
       );
       cubit.addProject('project1');
 
@@ -278,7 +291,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -292,7 +304,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter', projects: {'project1'}),
+        filter: const Filter(projects: {'project1'}),
       );
       cubit.removeProject('project1');
 
@@ -300,7 +312,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -314,7 +325,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.removeProject('project1');
 
@@ -322,11 +333,31 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
             projects: {},
+          ),
+        ),
+      );
+    });
+    test('update multiple', () async {
+      final FilterCubit cubit = FilterCubit(
+        repository: FilterRepository(
+          FilterController(inMemoryDatabasePath),
+        ),
+        filter: const Filter(),
+      );
+      cubit.updateProjects({'project1', 'project2'});
+
+      expect(
+        cubit.state,
+        const FilterSuccess(
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+            projects: {'project1', 'project2'},
           ),
         ),
       );
@@ -339,7 +370,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.addContext('context1');
 
@@ -347,7 +378,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -361,7 +391,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter', contexts: {'context1'}),
+        filter: const Filter(contexts: {'context1'}),
       );
       cubit.addContext('context1');
 
@@ -369,7 +399,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -383,7 +412,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter', contexts: {'context1'}),
+        filter: const Filter(contexts: {'context1'}),
       );
       cubit.removeContext('context1');
 
@@ -391,7 +420,6 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
@@ -405,7 +433,7 @@ void main() {
         repository: FilterRepository(
           FilterController(inMemoryDatabasePath),
         ),
-        filter: const Filter(name: 'filter'),
+        filter: const Filter(),
       );
       cubit.removeContext('context1');
 
@@ -413,11 +441,31 @@ void main() {
         cubit.state,
         const FilterSuccess(
           filter: Filter(
-            name: 'filter',
             order: ListOrder.ascending,
             filter: ListFilter.all,
             group: ListGroup.none,
             contexts: {},
+          ),
+        ),
+      );
+    });
+    test('update multiple', () async {
+      final FilterCubit cubit = FilterCubit(
+        repository: FilterRepository(
+          FilterController(inMemoryDatabasePath),
+        ),
+        filter: const Filter(),
+      );
+      cubit.updateContexts({'context1', 'context2'});
+
+      expect(
+        cubit.state,
+        const FilterSuccess(
+          filter: Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+            contexts: {'context1', 'context2'},
           ),
         ),
       );

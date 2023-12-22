@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/common_widgets/tag_dialog.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
     show FilterCubit;
+import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 
 class ContextListDialog extends StatefulWidget {
   final FilterCubit cubit;
@@ -34,8 +36,8 @@ class _ContextListDialogState extends State<ContextListDialog> {
 
   @override
   void initState() {
-    selectedItems = {...widget.cubit.state.filter.contexts};
     super.initState();
+    selectedItems = {...widget.cubit.state.filter.contexts};
   }
 
   @override
@@ -44,7 +46,7 @@ class _ContextListDialogState extends State<ContextListDialog> {
       title: const Text('Contexts'),
       content: GenericChipGroup(
         children: [
-          for (String item in widget.items)
+          for (String item in widget.items.toList()..sort())
             GenericChoiceChip(
               label: Text(item),
               selected: selectedItems.contains(item),
@@ -74,5 +76,55 @@ class _ContextListDialogState extends State<ContextListDialog> {
         ),
       ],
     );
+  }
+}
+
+class ContextTagDialog extends TagDialog {
+  const ContextTagDialog({
+    required super.cubit,
+    super.title = 'Contexts',
+    super.tagName = 'context',
+    super.availableTags,
+    super.key = const Key('addContextTagDialog'),
+  });
+
+  @override
+  RegExp get regex => RegExp(r'^\S+$');
+
+  static Future<void> dialog({
+    required BuildContext context,
+    required TodoCubit cubit,
+    required Set<String> availableTags,
+  }) async {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) => ContextTagDialog(
+        cubit: cubit,
+        availableTags: availableTags,
+      ),
+    );
+  }
+
+  @override
+  void onSubmit(BuildContext context, Set<String> values) =>
+      cubit.updateContexts(values);
+
+  @override
+  State<ContextTagDialog> createState() => _ContextTagDialogState();
+}
+
+class _ContextTagDialogState extends TagDialogState<ContextTagDialog> {
+  @override
+  void initState() {
+    super.initState();
+    super.tags = {
+      ...widget.availableTags.map(
+        (String t) => Tag(name: t, selected: false),
+      ),
+      ...widget.cubit.state.todo.contexts.map(
+        (String t) => Tag(name: t, selected: true),
+      ),
+    };
   }
 }

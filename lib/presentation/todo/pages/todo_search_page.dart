@@ -16,6 +16,7 @@ class TodoSearchPage extends SearchDelegate {
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
             errorBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
           ),
