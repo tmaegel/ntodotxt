@@ -14,7 +14,7 @@ class Setting extends Equatable {
         value = map['value'] as String;
 
   static String get tableRepr {
-    return '''CREATE TABLE settings(
+    return '''CREATE TABLE IF NOT EXISTS settings(
       `id` INTEGER PRIMARY KEY,
       `key` TEXT NOT NULL UNIQUE,
       `value` TEXT NOT NULL

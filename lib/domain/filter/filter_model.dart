@@ -30,7 +30,7 @@ extension Order on ListOrder {
     if (name != null) {
       try {
         return ListOrder.values.byName(name);
-      } on Exception {
+      } on ArgumentError {
         // Returns ListOrder.ascending
       }
     }
@@ -86,7 +86,7 @@ extension Filters on ListFilter {
     if (name != null) {
       try {
         return ListFilter.values.byName(name);
-      } on Exception {
+      } on ArgumentError {
         // Returns ListFilter.all
       }
     }
@@ -120,7 +120,7 @@ extension Groups on ListGroup {
     if (name != null) {
       try {
         return ListGroup.values.byName(name);
-      } on Exception {
+      } on ArgumentError {
         // Returns ListGroup.none
       }
     }
@@ -274,7 +274,7 @@ class Filter extends Equatable {
   }
 
   static String get tableRepr {
-    return '''CREATE TABLE filters(
+    return '''CREATE TABLE IF NOT EXISTS filters(
       `id` INTEGER PRIMARY KEY,
       `name` TEXT NOT NULL,
       `priorities` TEXT,

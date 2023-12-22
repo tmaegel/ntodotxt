@@ -116,12 +116,7 @@ class FilterListTile extends StatelessWidget {
       key: ValueKey<int>(filter.id!),
       title: Text(filter.name),
       subtitle: _buildSubtitle(),
-      onTap: () => context.pushNamed('todo-list', extra: filter),
-      trailing: IconButton(
-        icon: const Icon(Icons.edit),
-        tooltip: 'Edit',
-        onPressed: () => context.pushNamed('filter-edit', extra: filter),
-      ),
+      onTap: () => context.pushNamed('filter-edit', extra: filter),
     );
   }
 
