@@ -36,6 +36,12 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   flutter_oss_licenses: ^2.0.1
   test_cov_console: ^0.2.2
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true

@@ -31,8 +31,8 @@ class AppInfoView extends StatelessWidget {
           // Overwrite the default in themeData
           contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.update),
-          title: const Text('ntodotxt'),
-          subtitle: const Text('Version $version'),
+          title: const Text('Version'),
+          subtitle: const Text('v$version'),
           onTap: () => _openUrl('$repoUrl/blob/main/CHANGELOG.md'),
         ),
         ListTile(
@@ -62,6 +62,13 @@ class AppInfoView extends StatelessWidget {
           title: const Text('Licence'),
           subtitle: const Text('MIT License'),
           onTap: () => context.pushNamed('licenses'),
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+          leading: const Icon(Icons.info_outline),
+          title: const Text('App icon'),
+          subtitle: const Text('Made by @colebemis'),
+          onTap: () => _openUrl('https://github.com/feathericons/feather'),
         ),
       ],
     );
