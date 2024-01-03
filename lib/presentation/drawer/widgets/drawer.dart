@@ -94,7 +94,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.5,
+      initialChildSize: 0.3,
       minChildSize: 0.15,
       maxChildSize: 0.6,
       expand: false,
@@ -138,18 +138,19 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                 return ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.all(16.0),
+                    controller: scrollController,
                     itemCount: destinations.length,
                     itemBuilder: (BuildContext context, int index) {
                       final DrawerDestination d = destinations[index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 2.0),
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
                         child: ListTile(
                           selected: drawerState == index,
                           leading:
                               drawerState == index ? d.selectedIcon : d.icon,
                           title: Text(d.label),
+                          shape: const StadiumBorder(),
                           onTap: () {
                             // Navigate if location will be changed only.
                             if (drawerState != index) {
