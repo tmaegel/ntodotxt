@@ -44,35 +44,39 @@ class _ProjectListDialogState extends State<ProjectListDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Projects'),
-      content: GenericChipGroup(
-        children: [
-          for (String item in widget.items.toList()..sort())
-            GenericChoiceChip(
-              label: Text(item),
-              selected: selectedItems.contains(item),
-              onSelected: (bool selected) {
-                setState(() {
-                  if (selected == true) {
-                    selectedItems.add(item);
-                  } else {
-                    selectedItems.remove(item);
-                  }
-                });
-              },
+      content: widget.items.isEmpty == true
+          ? const Text('No project tags available')
+          : GenericChipGroup(
+              children: [
+                for (String item in widget.items.toList()..sort())
+                  GenericChoiceChip(
+                    label: Text(item),
+                    selected: selectedItems.contains(item),
+                    onSelected: (bool selected) {
+                      setState(() {
+                        if (selected == true) {
+                          selectedItems.add(item);
+                        } else {
+                          selectedItems.remove(item);
+                        }
+                      });
+                    },
+                  ),
+              ],
             ),
-        ],
-      ),
       actions: <Widget>[
         TextButton(
-          child: const Text('Cancel'),
           onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
         ),
         TextButton(
+          onPressed: widget.items.isEmpty == true
+              ? null
+              : () {
+                  widget.cubit.updateProjects(selectedItems);
+                  Navigator.pop(context);
+                },
           child: const Text('Apply'),
-          onPressed: () {
-            widget.cubit.updateProjects(selectedItems);
-            Navigator.pop(context);
-          },
         ),
       ],
     );
