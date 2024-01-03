@@ -2,7 +2,6 @@
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ntodotxt/misc.dart';
 
 final ThemeData light = CustomTheme.light;
@@ -149,7 +148,7 @@ class CustomTheme {
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
       swapLegacyOnMaterial3: true,
-      fontFamily: GoogleFonts.lato().fontFamily,
+      // fontFamily: GoogleFonts.lato().fontFamily,
     );
   }
 
@@ -168,7 +167,7 @@ class CustomTheme {
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
       swapLegacyOnMaterial3: true,
-      fontFamily: GoogleFonts.lato().fontFamily,
+      // fontFamily: GoogleFonts.lato().fontFamily,
     );
   }
 }
