@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-01-04
+
+### Added
+
+- App icon (made by @colebemis)
+- Confirmation dialog for deleting todo or filter
+
+### Changed
+
+- Update drawer (mobile) style
+- Disable 'Apply' button in dialogs if unnecessary (e.g. empty list)
+- Bump flutter to 3.16.5
+- Bump go_router to 13.0.1
+- Bump url_launcher to 6.2.2
+
+### Removed
+
+- Remove google_fonts
+
 ## [0.3.0] - 2023-12-22
 
 ### Added
@@ -52,7 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/tmaegel/ntodotxt/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/tmaegel/ntodotxt/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/tmaegel/ntodotxt/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/tmaegel/ntodotxt/releases/tag/v0.1.0
