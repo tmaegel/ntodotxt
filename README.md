@@ -7,9 +7,11 @@
 
 **This app is still under active development and not released, yet.**
 
-`ntodotxt` is an app for managing your todos within a [todo.txt](https://github.com/todotxt/todo.txt) file locally or via webdav (e.g. Nextcloud).
+With `ntodotxt` you can manage your todos in the [todo.txt](https://github.com/todotxt/todo.txt) format (i.e. all information
+is stored in a single file). You can save your todos locally on your device and/or synchronize the todo.txt file via webdav - for
+example with a self-hosted nextcloud instance.
 
-Moreover, this app completely open source.
+Moreover, this app is completely open source.
 
 ## Features
 
@@ -31,4 +33,4 @@ tbd
 
 ## Requirements
 
-- [Nextcloud](https://nextcloud.com/) instance or other webdav server running (**cloud-sync only**)
+- [Nextcloud](https://nextcloud.com/) instance or other webdav server running (**webdav-sync only**)
