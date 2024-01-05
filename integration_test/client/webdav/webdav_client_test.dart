@@ -1,9 +1,10 @@
-@Tags(['client'])
-
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
 
 void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   const String host = 'localhost';
   const int port = 8080;
   const String baseUrl = '/remote.php/dav/files';
