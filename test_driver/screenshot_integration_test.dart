@@ -13,6 +13,7 @@ Future<void> main() async {
       },
     );
   } catch (e) {
+    // ignore: avoid_print
     print('Error occured: $e');
   }
 }
