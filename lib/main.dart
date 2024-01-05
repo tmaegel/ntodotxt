@@ -208,12 +208,14 @@ class App extends StatelessWidget {
   final LoginState loginState;
   final String databasePath;
   final File todoFile;
+  final ThemeMode? themeMode;
 
   const App({
     required this.filter,
     required this.loginState,
     required this.databasePath,
     required this.todoFile,
+    this.themeMode,
     super.key,
   });
 
@@ -286,7 +288,7 @@ class App extends StatelessWidget {
                       debugShowCheckedModeBanner: false,
                       theme: lightTheme,
                       darkTheme: darkTheme,
-                      themeMode: ThemeMode.system,
+                      themeMode: themeMode,
                       home: const LoginPage(),
                     );
                   } else {
@@ -295,9 +297,7 @@ class App extends StatelessWidget {
                       debugShowCheckedModeBanner: false,
                       theme: lightTheme,
                       darkTheme: darkTheme,
-                      // If you do not have a themeMode switch, uncomment this line
-                      // to let the device system mode control the theme mode:
-                      themeMode: ThemeMode.system,
+                      themeMode: themeMode,
                       routerConfig: AppRouter().config,
                     );
                   }
