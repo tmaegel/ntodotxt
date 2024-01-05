@@ -31,11 +31,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  file: ^7.0.0
+  integration_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  file: ^6.1.4
   flutter_lints: ^3.0.1
   flutter_oss_licenses: ^2.0.1
   test_cov_console: ^0.2.2
-  flutter_launcher_icons: ^0.13.1
 
 flutter_launcher_icons:
   android: true
