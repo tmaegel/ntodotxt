@@ -31,7 +31,7 @@ jobs:
           echo keyPassword=\${{ secrets.APP_SIGN_KEY_PASSWORD }} > ${{ env.PROPERTIES_PATH }}
           echo storePassword=\${{ secrets.APP_SIGN_STORE_PASSWORD }} >> ${{ env.PROPERTIES_PATH }}
           echo keyAlias=\${{ secrets.APP_SIGN_KEY_ALIAS }} >> ${{ env.PROPERTIES_PATH }}
-          echo storeFile=./android/app/key.jks >> ${{ env.PROPERTIES_PATH }}
+          echo storeFile=key.jks >> ${{ env.PROPERTIES_PATH }}
           echo "${{ secrets.APP_SIGN_KEY_JKS }}" | base64 --decode > android/app/key.jks
 
       - name: Setup flutter
