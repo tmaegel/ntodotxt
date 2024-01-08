@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2024-01-08
+
+### Changed
+
+- Signing apks
+
+### Fixed
+
+- Add missing flutter_launcher_icons dependency
+
 ## [0.4.2] - 2024-01-05
 
 ### Added
@@ -87,7 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.2...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/tmaegel/ntodotxt/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/tmaegel/ntodotxt/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/tmaegel/ntodotxt/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/tmaegel/ntodotxt/compare/v0.3.0...v0.4.0

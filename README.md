@@ -41,12 +41,6 @@ flutter run  # debug version
 flutter build  # release version
 ```
 
-## Reproducable build
-
-```bash
- apt install aapt apksigner apksigcopier bat dexdump dos2unix unzip python3-click zipalign
-```
-
 ## Requirements
 
 - [Nextcloud](https://nextcloud.com/) instance or other webdav server running (**webdav-sync only**)
