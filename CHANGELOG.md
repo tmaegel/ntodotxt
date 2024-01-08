@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Signing apks
+- Sign apks
 
 ### Fixed
 
-- Add missing flutter_launcher_icons dependency
+- Add missing `flutter_launcher_icons` dependency
 
 ## [0.4.2] - 2024-01-05
 
@@ -27,11 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add metadata (fastlane) to get the app ready for deployment in the fdroid store
+- Add metadata (`fastlane`) to get the app ready for deployment in the fdroid store
 
 ### Fixed
 
-- Add version code to pubspec.yaml
+- Add version code to `pubspec.yaml`
 
 ## [0.4.0] - 2024-01-04
 
@@ -44,20 +44,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update drawer (mobile) style
 - Disable 'Apply' button in dialogs if unnecessary (e.g. empty list)
-- Bump flutter to 3.16.5
-- Bump go_router to 13.0.1
-- Bump url_launcher to 6.2.2
+- Bump `flutter` to 3.16.5
+- Bump `go_router` to 13.0.1
+- Bump `url_launcher` to 6.2.2
 
 ### Removed
 
-- Remove google_fonts
+- Remove `google_fonts`
 
 ## [0.3.0] - 2023-12-22
 
 ### Added
 
 - Add functionality to save and manage filters
-- Add database (sqflite) and controller to persist data (filter and settings)
+- Add database (`sqflite`) and controller to persist data (filter and settings)
 - Add simple loading / splash screen while initialize the app
 
 ### Changed
