@@ -10,3 +10,7 @@ sealed class FilterListEvent extends Equatable {
 final class FilterListSubscriped extends FilterListEvent {
   const FilterListSubscriped();
 }
+
+final class FilterListSynchronizationRequested extends FilterListEvent {
+  const FilterListSynchronizationRequested();
+}

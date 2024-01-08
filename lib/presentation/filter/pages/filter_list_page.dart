@@ -44,7 +44,7 @@ class FilterListViewNarrow extends StatelessWidget {
             child: Row(
               children: [
                 IconButton(
-                  tooltip: 'Drawer',
+                  tooltip: 'Open drawer',
                   icon: const Icon(Icons.menu),
                   onPressed: () async {
                     await showModalBottomSheet(

@@ -11,13 +11,13 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
       : _repository = repository,
         super(const FilterListSuccess()) {
     on<FilterListSubscriped>(_onFilterListSubscriped);
+    on<FilterListSynchronizationRequested>(_onFilterSynchronizationRequested);
   }
 
   Future<void> _onFilterListSubscriped(
     FilterListSubscriped event,
     Emitter<FilterListState> emit,
   ) async {
-    await _repository.refresh();
     await emit.forEach<List<Filter>>(
       _repository.stream,
       onData: (filterList) {
@@ -25,5 +25,17 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
       },
       onError: (e, _) => state.error(message: e.toString()),
     );
+  }
+
+  Future<void> _onFilterSynchronizationRequested(
+    FilterListSynchronizationRequested event,
+    Emitter<FilterListState> emit,
+  ) async {
+    try {
+      await _repository.refresh();
+      emit(state.success());
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
   }
 }

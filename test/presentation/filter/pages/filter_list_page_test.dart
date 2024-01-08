@@ -45,7 +45,9 @@ class FilterListPageMaterialApp extends StatelessWidget {
                 create: (BuildContext context) {
                   return FilterListBloc(
                     repository: context.read<FilterRepository>(),
-                  )..add(const FilterListSubscriped());
+                  )
+                    ..add(const FilterListSubscriped())
+                    ..add(const FilterListSynchronizationRequested());
                 },
               ),
             ],

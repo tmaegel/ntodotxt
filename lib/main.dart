@@ -136,10 +136,10 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Center(
           child: Text(message ?? 'Loading...'),
@@ -277,7 +277,9 @@ class App extends StatelessWidget {
                   create: (BuildContext context) {
                     return FilterListBloc(
                       repository: context.read<FilterRepository>(),
-                    )..add(const FilterListSubscriped());
+                    )
+                      ..add(const FilterListSubscriped())
+                      ..add(const FilterListSynchronizationRequested());
                   },
                 ),
               ],
