@@ -26,7 +26,12 @@ example with a self-hosted nextcloud instance.
 
 ## Features
 
-tbd
+- Manage your todos in [todo.txt](https://github.com/todotxt/todo.txt) format
+- Manage your todos offline if you want
+- Synchronize your todos via webdav with a server of your choice
+- Completely customizable filters
+  - Ordering
+  - Filter by project, context, priorities and completion
 
 ## Planned features
 
@@ -35,8 +40,9 @@ tbd
 - [ ] Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
 - [ ] Build and publish to Microsoft Store (Windows)
-- [x] Manage saved filters (ordering, filter by project, context and priorities)
 - [ ] [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
+- [ ] Custom todo.txt path
+- [ ] Import existing todo.txt
 - [ ] Add language localization
 - [ ] Archiving of all completed todos (done.txt)
 - [ ] Animations
