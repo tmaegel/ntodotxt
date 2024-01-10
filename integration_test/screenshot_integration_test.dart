@@ -127,7 +127,7 @@ void main() async {
 
         await binding.convertFlutterSurfaceToImage();
         await tester.pumpAndSettle();
-        await binding.takeScreenshot('todo_list_dark_01');
+        await binding.takeScreenshot('phone/1');
       });
       testWidgets('of todo list (with open drawer)', (tester) async {
         await tester.pumpWidget(
@@ -144,7 +144,7 @@ void main() async {
 
         await binding.convertFlutterSurfaceToImage();
         await tester.pumpAndSettle();
-        await binding.takeScreenshot('todo_list_dark_02');
+        await binding.takeScreenshot('phone/2');
       });
       testWidgets('of todo edit page', (tester) async {
         await tester.pumpWidget(
@@ -161,7 +161,7 @@ void main() async {
 
         await binding.convertFlutterSurfaceToImage();
         await tester.pumpAndSettle();
-        await binding.takeScreenshot('todo_edit_dark_01');
+        await binding.takeScreenshot('phone/3');
       });
       testWidgets('of filter list (default)', (tester) async {
         await tester.pumpWidget(
@@ -181,27 +181,7 @@ void main() async {
 
         await binding.convertFlutterSurfaceToImage();
         await tester.pumpAndSettle();
-        await binding.takeScreenshot('filter_list_dark_01');
-      });
-      testWidgets('of settings (default)', (tester) async {
-        await tester.pumpWidget(
-          AppTester(
-            todoFile: todoFile,
-            databasePath: databasePath,
-            themeMode: ThemeMode.dark,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.byTooltip('Open drawer'));
-        await tester.pumpAndSettle();
-
-        await safeTapByFinder(tester, find.text('Settings'));
-        await tester.pumpAndSettle();
-
-        await binding.convertFlutterSurfaceToImage();
-        await tester.pumpAndSettle();
-        await binding.takeScreenshot('settings_dark_01');
+        await binding.takeScreenshot('phone/4');
       });
     });
   });

@@ -47,4 +47,10 @@ flutter_launcher_icons:
   min_sdk_android: 21
 
 flutter:
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: fonts/OpenSans-VariableFont_wdth,wght.ttf
+        - asset: fonts/OpenSans-Italic-VariableFont_wdth,wght.ttf
+
   uses-material-design: true
