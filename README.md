@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml/badge.svg)](https://github.com/tmaegel/ntodotxt/actions/workflows/ci.yaml)
 [![Release](https://img.shields.io/github/v/release/tmaegel/ntodotxt)](https://github.com/tmaegel/ntodotxt/releases)
-[![F-Droid](https://img.shields.io/f-droid/v/de.tnmgl.ntodotxt.svg?logo=F-Droid)
+[![F-Droid](https://img.shields.io/f-droid/v/de.tnmgl.ntodotxt.svg?logo=F-Droid)](https://f-droid.org/packages/de.tnmgl.ntodotxt)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/_Flutter_-3.16.5-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter)
 
@@ -12,9 +12,9 @@ With `ntodotxt` you can manage your todos in the [todo.txt](https://github.com/t
 is stored in a single file). You can save your todos locally on your device and/or synchronize the todo.txt file via webdav - for
 example with a self-hosted nextcloud instance.
 
-Moreover, this app is completely open source.
+## Downloads
 
-[![Get it on F-Droid][https://fdroid.gitlab.io/artwork/badge/get-it-on.png]][https://f-droid.org/packages/de.tnmgl.ntodotxt]
+<a href="https://f-droid.org/packages/de.tnmgl.ntodotxt"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80" /></a>
 
 ## Screenshots
 
