@@ -7,6 +7,7 @@ repos:
     rev: "v4.5.0"
     hooks:
       - id: check-added-large-files
+        args: ['--maxkb=1024']
       - id: check-case-conflict
       - id: pretty-format-json
         args: ["--autofix", "--indent=4", "--no-sort-keys"]

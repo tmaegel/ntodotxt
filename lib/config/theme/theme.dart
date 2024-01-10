@@ -148,7 +148,7 @@ class CustomTheme {
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
       swapLegacyOnMaterial3: true,
-      // fontFamily: GoogleFonts.lato().fontFamily,
+      fontFamily: 'OpenSans',
     );
   }
 
@@ -167,7 +167,7 @@ class CustomTheme {
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
       swapLegacyOnMaterial3: true,
-      // fontFamily: GoogleFonts.lato().fontFamily,
+      fontFamily: 'OpenSans',
     );
   }
 }
