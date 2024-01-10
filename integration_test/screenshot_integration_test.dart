@@ -38,12 +38,6 @@ class AppTester extends StatelessWidget {
   }
 }
 
-Future safeTapByFinder(WidgetTester tester, Finder finder) async {
-  await tester.ensureVisible(finder);
-  await tester.pumpAndSettle();
-  await tester.tap(finder);
-}
-
 void main() async {
   final IntegrationTestWidgetsFlutterBinding binding =
       IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -103,14 +97,44 @@ void main() async {
     );
     // Setup filters.
     await (await controller.database).delete('filters'); // Clear
-    Filter model = const Filter(
-      id: 1,
-      name: 'Completed only',
-      order: ListOrder.ascending,
-      filter: ListFilter.completedOnly,
-      group: ListGroup.none,
+    await controller.insert(
+      const Filter(
+        id: 1,
+        name: 'Agenda',
+        order: ListOrder.ascending,
+        filter: ListFilter.incompletedOnly,
+        group: ListGroup.upcoming,
+      ),
     );
-    await controller.insert(model);
+    await controller.insert(
+      const Filter(
+        id: 2,
+        name: 'Highly prioritized',
+        order: ListOrder.ascending,
+        filter: ListFilter.incompletedOnly,
+        group: ListGroup.project,
+        priorities: {Priority.A},
+      ),
+    );
+    await controller.insert(
+      const Filter(
+        id: 3,
+        name: 'Projectideas',
+        order: ListOrder.ascending,
+        filter: ListFilter.completedOnly,
+        group: ListGroup.none,
+        projects: {'projectideas'},
+      ),
+    );
+    await controller.insert(
+      const Filter(
+        id: 4,
+        name: 'Completed only',
+        order: ListOrder.ascending,
+        filter: ListFilter.completedOnly,
+        group: ListGroup.none,
+      ),
+    );
   });
 
   group('dark mode', () {
@@ -140,6 +164,10 @@ void main() async {
         await tester.pumpAndSettle();
 
         await tester.tap(find.byTooltip('Open drawer'));
+        await tester.pumpAndSettle();
+
+        await tester.drag(
+            find.byType(DraggableScrollableSheet), const Offset(0, -500));
         await tester.pumpAndSettle();
 
         await binding.convertFlutterSurfaceToImage();
@@ -176,12 +204,43 @@ void main() async {
         await tester.tap(find.byTooltip('Open drawer'));
         await tester.pumpAndSettle();
 
-        await safeTapByFinder(tester, find.text('Filters'));
+        await tester.drag(
+            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Filters'));
         await tester.pumpAndSettle();
 
         await binding.convertFlutterSurfaceToImage();
         await tester.pumpAndSettle();
         await binding.takeScreenshot('phone/4');
+      });
+      testWidgets('of filter edit page', (tester) async {
+        await tester.pumpWidget(
+          AppTester(
+            todoFile: todoFile,
+            databasePath: databasePath,
+            themeMode: ThemeMode.dark,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byTooltip('Open drawer'));
+        await tester.pumpAndSettle();
+
+        await tester.drag(
+            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Filters'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Projectideas'));
+        await tester.pumpAndSettle();
+
+        await binding.convertFlutterSurfaceToImage();
+        await tester.pumpAndSettle();
+        await binding.takeScreenshot('phone/5');
       });
     });
   });

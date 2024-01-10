@@ -16,7 +16,7 @@ emulator_stop:
 	adb emu kill
 
 screenshots:
-	flutter emulators --launch "Pixel_3a_API_34_extension_level_7_x86_64" && sleep 10
+	flutter emulators --launch "Pixel_4_API_34_extension_level_7_x86_64" && sleep 10
 	flutter drive \
 		--driver=test_driver/screenshot_integration_test.dart \
 		--target=integration_test/screenshot_integration_test.dart || true
