@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
@@ -76,7 +77,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   // Scaffold requires as appbar a class that implements PreferredSizeWidget.
   @override
   Size get preferredSize =>
-      Size.fromHeight(bottom == null ? kToolbarHeight : 95);
+      Size.fromHeight(bottom == null ? kToolbarHeight : 89);
 }
 
 class AppBarFilterList extends StatelessWidget {
@@ -97,10 +98,8 @@ class AppBarFilterList extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ActionChip(
-                    padding: EdgeInsets.zero,
+                  GenericActionChip(
                     avatar: const Icon(Icons.sort),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text(state.filter.order.name),
                     onPressed: () async {
                       await FilterStateOrderDialog.dialog(
@@ -110,10 +109,8 @@ class AppBarFilterList extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
+                  GenericActionChip(
                     avatar: const Icon(Icons.filter_list),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text(state.filter.filter.name),
                     onPressed: () async {
                       await FilterStateFilterDialog.dialog(
@@ -123,10 +120,8 @@ class AppBarFilterList extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
+                  GenericActionChip(
                     avatar: const Icon(Icons.workspaces_outlined),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text(state.filter.group.name),
                     onPressed: () async {
                       await FilterStateGroupDialog.dialog(
@@ -136,10 +131,8 @@ class AppBarFilterList extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
+                  GenericActionChip(
                     avatar: const Icon(Icons.flag_outlined),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
                     label:
                         Text('priorities (${state.filter.priorities.length})'),
                     onPressed: () async {
@@ -151,10 +144,8 @@ class AppBarFilterList extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
+                  GenericActionChip(
                     avatar: const Icon(Icons.rocket_launch_outlined),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text('projects (${state.filter.projects.length})'),
                     onPressed: () async {
                       await ProjectListDialog.dialog(
@@ -165,10 +156,8 @@ class AppBarFilterList extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 4),
-                  ActionChip(
-                    padding: EdgeInsets.zero,
+                  GenericActionChip(
                     avatar: const Icon(Icons.join_inner),
-                    labelPadding: const EdgeInsets.only(right: 8.0),
                     label: Text('contexts (${state.filter.contexts.length})'),
                     onPressed: () async {
                       await ContextListDialog.dialog(
