@@ -10,7 +10,6 @@ import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/misc.dart';
-import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart'
     show FilterListBloc;
@@ -70,8 +69,9 @@ class TodoListViewNarrow extends StatelessWidget {
       builder: (BuildContext context, FilterState state) {
         return Scaffold(
           appBar: MainAppBar(
-            title:
-                'Todo: ${state.filter.name.isEmpty ? 'all' : state.filter.name}',
+            title: state.filter.name.isEmpty
+                ? 'Todos'
+                : 'Filter: ${state.filter.name}',
             bottom: const AppBarFilterList(),
           ),
           bottomNavigationBar: const TodoListBottomAppBar(),
@@ -362,19 +362,7 @@ class TodoListBottomAppBar extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: 'Open drawer',
-            icon: const Icon(Icons.menu),
-            onPressed: () async {
-              await showModalBottomSheet(
-                context: context,
-                isScrollControlled: true, // set this to true
-                builder: (BuildContext context) =>
-                    const BottomSheetNavigationDrawer(),
-              );
-            },
-          ),
-          IconButton(
-            tooltip: 'Open search',
+            tooltip: 'Search',
             icon: const Icon(Icons.search),
             onPressed: () => showSearch(
               context: context,

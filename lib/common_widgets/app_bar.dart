@@ -6,8 +6,10 @@ import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
+import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show CustomScrollBehavior, PlatformInfo;
+import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -26,8 +28,29 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool narrowView =
+        MediaQuery.of(context).size.width < maxScreenWidthCompact;
     return AppBar(
+      titleSpacing: narrowView ? 0.0 : null,
       title: Text(title),
+      leading: narrowView && !Navigator.of(context).canPop()
+          ? Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  tooltip: 'Open drawer',
+                  icon: const Icon(Icons.menu),
+                  onPressed: () async {
+                    await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) =>
+                          const BottomSheetNavigationDrawer(),
+                    );
+                  },
+                );
+              },
+            )
+          : null,
       actions: toolbar == null
           ? null
           : <Widget>[

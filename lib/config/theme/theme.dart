@@ -37,9 +37,7 @@ final ThemeData lightTheme = light.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
-  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(
-    elevation: 0.0,
-  ),
+  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(),
   floatingActionButtonTheme: light.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
     focusElevation: 0.0,
@@ -96,9 +94,7 @@ final ThemeData darkTheme = dark.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
-  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(
-    elevation: 0.0,
-  ),
+  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(),
   floatingActionButtonTheme: dark.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
     focusElevation: 0.0,

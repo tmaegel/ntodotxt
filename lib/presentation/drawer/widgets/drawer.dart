@@ -109,14 +109,14 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                     icon: const Icon(Icons.playlist_add_check),
                     selectedIcon: const Icon(Icons.playlist_add_check),
                     onTap: (BuildContext context) =>
-                        context.pushNamed('todo-list'),
+                        context.goNamed('todo-list'),
                   ),
                   DrawerDestination(
                     label: 'Filters',
                     icon: const Icon(Icons.filter_alt_outlined),
                     selectedIcon: const Icon(Icons.filter_alt),
                     onTap: (BuildContext context) =>
-                        context.pushNamed('filter-list'),
+                        context.goNamed('filter-list'),
                   ),
                   for (Filter filter in filterListState.filterList)
                     DrawerDestination(

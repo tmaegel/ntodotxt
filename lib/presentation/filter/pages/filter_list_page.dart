@@ -5,7 +5,6 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
@@ -40,22 +39,9 @@ class FilterListViewNarrow extends StatelessWidget {
               return FilterListTile(filter: state.filterList[index]);
             },
           ),
-          bottomNavigationBar: BottomAppBar(
+          bottomNavigationBar: const BottomAppBar(
             child: Row(
-              children: [
-                IconButton(
-                  tooltip: 'Open drawer',
-                  icon: const Icon(Icons.menu),
-                  onPressed: () async {
-                    await showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true, // set this to true
-                      builder: (BuildContext context) =>
-                          const BottomSheetNavigationDrawer(),
-                    );
-                  },
-                ),
-              ],
+              children: [],
             ),
           ),
           floatingActionButtonLocation:
