@@ -18,11 +18,11 @@ Moreover, this app is completely open source.
 
 ## Screenshots
 
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/phone/1.png"><img src="screenshots/preview/1.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/phone/2.png"><img src="screenshots/preview/2.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/phone/3.png"><img src="screenshots/preview/3.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/phone/4.png"><img src="screenshots/preview/4.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/phone/5.png"><img src="screenshots/preview/5.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/1.png"><img src="screenshots/preview/1.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/2.png"><img src="screenshots/preview/2.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/3.png"><img src="screenshots/preview/3.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/4.png"><img src="screenshots/preview/4.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/5.png"><img src="screenshots/preview/5.png" width="150px"/></a>
 
 ## Features
 
