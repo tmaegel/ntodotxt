@@ -5,7 +5,7 @@ import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 class KeyValueTagDialog extends TagDialog {
   const KeyValueTagDialog({
     required super.cubit,
-    super.title = 'Key Values',
+    super.title = 'Key values',
     super.tagName = 'key:value',
     super.availableTags,
     super.key = const Key('addKeyValueTagDialog'),
