@@ -1,5 +1,31 @@
 import 'package:flutter/material.dart';
 
+class BasicChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+
+  const BasicChip({
+    required this.label,
+    this.selected = false,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).listTileTheme.subtitleTextStyle,
+      ),
+    );
+  }
+}
+
 class GenericActionChip extends StatelessWidget {
   final Widget label;
   final Widget avatar;
@@ -61,9 +87,11 @@ class GenericChoiceChip extends StatelessWidget {
 
 class GenericChipGroup extends StatelessWidget {
   final List<Widget> children;
+  final WrapAlignment alignment;
 
   const GenericChipGroup({
     required this.children,
+    this.alignment = WrapAlignment.start,
     super.key,
   });
 
@@ -71,6 +99,7 @@ class GenericChipGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 4.0, // gap between adjacent chips
+      alignment: alignment,
       runSpacing: 4.0, // gap between lines
       runAlignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.start,

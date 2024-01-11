@@ -50,7 +50,7 @@ void main() async {
     sqfliteFfiInit();
   }
 
-  Logger.root.level = Level.FINER; // defaults to Level.INFO
+  Logger.root.level = Level.INFO; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     // ignore: avoid_print
     print('${record.level.name}: ${record.time}: ${record.message}');

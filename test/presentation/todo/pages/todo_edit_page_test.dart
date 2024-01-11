@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/common_widgets/priority_dialog.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
 
@@ -38,20 +40,10 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Priority'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) =>
-                  widget is ChoiceChip &&
-                  (widget.label as Text).data == 'A' &&
-                  widget.selected == true,
-            ),
+            of: find.byType(TodoPriorityItem),
+            matching: find.text('A'),
           ),
           findsOneWidget,
         );
@@ -70,20 +62,45 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Priority'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) =>
-                  widget is ChoiceChip && widget.selected == true,
-            ),
+            of: find.byType(TodoPriorityItem),
+            matching: find.text('none'),
           ),
-          findsNothing,
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('update', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(priority: null, description: 'Code something'),
+        ));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoPriorityItem));
+        await tester.pump();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(PriorityDialog),
+            matching: find.text('A'),
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoPriorityItem),
+            matching: find.text('A'),
+          ),
+          findsOneWidget,
         );
 
         // resets the screen to its original size after the test end
@@ -106,23 +123,9 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Completion date'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Checkbox && widget.value == true,
-            ),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: todoAttrTileFinder,
+            of: find.byType(TodoCompletionDateItem),
             matching: find.byWidgetPredicate(
               (Widget widget) => widget is Text && widget.data == today,
             ),
@@ -144,25 +147,69 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Completion date'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
+            of: find.byType(TodoCompletionDateItem),
             matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Checkbox && widget.value == false,
+              (Widget widget) => widget is Text && widget.data == '-',
             ),
           ),
           findsOneWidget,
         );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        final DateTime now = DateTime.now();
+        final String today =
+            '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(completion: false, description: 'Code something'),
+        ));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoCompletionDateItem));
+        await tester.pump();
+
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
+            of: find.byType(TodoCompletionDateItem),
             matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Text && widget.data == 'Incompleted',
+              (Widget widget) => widget is Text && widget.data == today,
+            ),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(completion: true, description: 'Code something'),
+        ));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoCompletionDateItem));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoCompletionDateItem),
+            matching: find.byWidgetPredicate(
+              (Widget widget) => widget is Text && widget.data == '-',
             ),
           ),
           findsOneWidget,
@@ -187,14 +234,9 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Creation date'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
+            of: find.byType(TodoCreationDateItem),
             matching: find.byWidgetPredicate(
               (Widget widget) => widget is Text && widget.data == '2023-12-05',
             ),
@@ -222,33 +264,23 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Due date'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
+            of: find.byType(TodoDueDateItem),
             matching: find.byWidgetPredicate(
               (Widget widget) => widget is Text && widget.data == '2023-12-31',
             ),
           ),
           findsOneWidget,
         );
-        Finder todoKeyValuesTileFinder = find.ancestor(
-          of: find.byTooltip('Key values'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoKeyValuesTileFinder, findsOneWidget);
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
         expect(
           find.descendant(
-            of: todoKeyValuesTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) =>
-                  widget is ChoiceChip &&
-                  (widget.label as Text).data == 'due:2023-12-31',
-            ),
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('due:2023-12-31'),
           ),
           findsOneWidget,
         );
@@ -267,35 +299,75 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoAttrTileFinder = find.ancestor(
-          of: find.byTooltip('Due date'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoAttrTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoAttrTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Text && widget.data == 'no due date',
-            ),
+            of: find.byType(TodoDueDateItem),
+            matching: find.text('-'),
           ),
           findsOneWidget,
         );
-        Finder todoKeyValuesTileFinder = find.ancestor(
-          of: find.byTooltip('Key values'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoKeyValuesTileFinder, findsOneWidget);
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
         expect(
           find.descendant(
-            of: todoKeyValuesTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) =>
-                  widget is ChoiceChip &&
-                  (widget.label as Text).data!.startsWith('due'),
-            ),
+            of: find.byType(TodoKeyValueTagsItem),
+            matching:
+                find.byWidgetPredicate((Widget widget) => widget is BasicChip),
           ),
           findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        final DateTime now = DateTime.now();
+        final String today =
+            '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+          ),
+        ));
+        await tester.pump();
+
+        // Unset due date button.
+        await tester.tap(find.byType(TodoDueDateItem));
+        await tester.pump();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoDueDateItem),
+            matching: find.text(today),
+          ),
+          findsOneWidget,
+        );
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('due:$today'),
+          ),
+          findsOneWidget,
         );
 
         // resets the screen to its original size after the test end
@@ -315,38 +387,24 @@ void main() {
         ));
         await tester.pump();
 
-        Finder todoDueDateTileFinder = find.ancestor(
-          of: find.byTooltip('Due date'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoDueDateTileFinder, findsOneWidget);
-
-        Finder todoKeyValuesTileFinder = find.ancestor(
-          of: find.byTooltip('Key values'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoKeyValuesTileFinder, findsOneWidget);
-
-        Finder addUnsetDueDateFinder = find.descendant(
-          of: todoDueDateTileFinder,
-          matching: find.byTooltip('Unset due date'),
-        );
-        expect(addUnsetDueDateFinder, findsOneWidget);
-        await tester.tap(addUnsetDueDateFinder); // Unset due date button.
+        // Unset due date button.
+        await tester.tap(find.byType(TodoDueDateItem));
         await tester.pump();
 
         expect(
           find.descendant(
-            of: todoDueDateTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) => widget is Text && widget.data == 'no due date',
-            ),
+            of: find.byType(TodoDueDateItem),
+            matching: find.text('-'),
           ),
           findsOneWidget,
         );
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
         expect(
           find.descendant(
-            of: todoKeyValuesTileFinder,
+            of: find.byType(TodoKeyValueTagsItem),
             matching:
                 find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
           ),
@@ -372,20 +430,13 @@ void main() {
           ),
         ));
         await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
 
-        Finder todoProjectsTileFinder = find.ancestor(
-          of: find.byTooltip('Projects'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoProjectsTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoProjectsTileFinder,
-            matching: find.byWidgetPredicate(
-              (Widget widget) =>
-                  widget is ChoiceChip &&
-                  (widget.label as Text).data == 'project1',
-            ),
+            of: find.byType(TodoProjectTagsItem),
+            matching: find.text('project1'),
           ),
           findsOneWidget,
         );
@@ -405,17 +456,103 @@ void main() {
           ),
         ));
         await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
 
-        Finder todoProjectsTileFinder = find.ancestor(
-          of: find.byTooltip('Projects'),
-          matching: find.byType(ListTile),
-        );
-        expect(todoProjectsTileFinder, findsOneWidget);
         expect(
           find.descendant(
-            of: todoProjectsTileFinder,
+            of: find.byType(TodoProjectTagsItem),
             matching:
-                find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
+                find.byWidgetPredicate((Widget widget) => widget is BasicChip),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something'),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoProjectTagsItem));
+        await tester.pump();
+
+        Finder addContextTagDialogFinder =
+            find.byKey(const Key('addProjectTagDialog'));
+        expect(addContextTagDialogFinder, findsOneWidget);
+
+        // Add new tag.
+        await tester.enterText(
+          find.descendant(
+            of: addContextTagDialogFinder,
+            matching: find.byType(TextFormField),
+          ),
+          'project1',
+        );
+        await safeTapByFinder(tester, find.text('Add'));
+        await tester.pump();
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoProjectTagsItem),
+            matching: find.text('project1'),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+            projects: const {'project1'},
+          ),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoProjectTagsItem));
+        await tester.pump();
+
+        Finder addContextTagDialogFinder =
+            find.byKey(const Key('addProjectTagDialog'));
+        expect(addContextTagDialogFinder, findsOneWidget);
+
+        await safeTapByFinder(
+          tester,
+          find.descendant(
+            of: addContextTagDialogFinder,
+            matching: find.text('project1'),
+          ),
+        );
+        await tester.pump();
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching: find.text('project1'),
           ),
           findsNothing,
         );
@@ -425,439 +562,297 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
       });
     });
-    testWidgets('add', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(description: 'Code something'),
-      ));
-      await tester.pump();
+    group('context', () {
+      testWidgets('set', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
 
-      Finder todoProjectsTileFinder = find.ancestor(
-        of: find.byTooltip('Projects'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoProjectsTileFinder, findsOneWidget);
-
-      Finder addProjectTagFinder = find.descendant(
-        of: todoProjectsTileFinder,
-        matching: find.byTooltip('Add project tag'),
-      );
-      expect(addProjectTagFinder, findsOneWidget);
-      await tester.tap(addProjectTagFinder); // Add project tag button.
-      await tester.pump();
-
-      Finder addProjectTagDialogFinder =
-          find.byKey(const Key('addProjectTagDialog'));
-      expect(addProjectTagDialogFinder, findsOneWidget);
-      await tester.enterText(
-        find.descendant(
-          of: addProjectTagDialogFinder,
-          matching: find.byType(TextFormField),
-        ),
-        'project1',
-      );
-      await safeTapByFinder(tester, find.text('Add'));
-      await tester.pump();
-      await safeTapByFinder(tester, find.text('Apply'));
-      await tester.pump();
-
-      expect(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'project1',
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+            contexts: const {'context1'},
           ),
-        ),
-        findsOneWidget,
-      );
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('remove', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-          projects: const {'project1'},
-        ),
-      ));
-      await tester.pump();
-
-      Finder todoProjectsTileFinder = find.ancestor(
-        of: find.byTooltip('Projects'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoProjectsTileFinder, findsOneWidget);
-
-      // Remove project (tag) by tap on chip.
-      await tester.tap(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'project1',
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching: find.text('context1'),
           ),
-        ),
-      );
-      await tester.pump();
+          findsOneWidget,
+        );
 
-      expect(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching:
-              find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
-        ),
-        findsNothing,
-      );
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('unset', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-  });
-
-  group('context', () {
-    testWidgets('set', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-          contexts: const {'context1'},
-        ),
-      ));
-      await tester.pump();
-
-      Finder todoProjectsTileFinder = find.ancestor(
-        of: find.byTooltip('Contexts'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoProjectsTileFinder, findsOneWidget);
-      expect(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'context1',
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
           ),
-        ),
-        findsOneWidget,
-      );
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('unset', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-        ),
-      ));
-      await tester.pump();
-
-      Finder todoProjectsTileFinder = find.ancestor(
-        of: find.byTooltip('Contexts'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoProjectsTileFinder, findsOneWidget);
-      expect(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching:
-              find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
-        ),
-        findsNothing,
-      );
-
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('add', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(description: 'Code something'),
-      ));
-      await tester.pump();
-
-      Finder todoContextsTileFinder = find.ancestor(
-        of: find.byTooltip('Contexts'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoContextsTileFinder, findsOneWidget);
-
-      Finder addContextTagFinder = find.descendant(
-        of: todoContextsTileFinder,
-        matching: find.byTooltip('Add context tag'),
-      );
-      expect(addContextTagFinder, findsOneWidget);
-      await tester.tap(addContextTagFinder); // Add context tag button.
-      await tester.pump();
-
-      Finder addContextTagDialogFinder =
-          find.byKey(const Key('addContextTagDialog'));
-      expect(addContextTagDialogFinder, findsOneWidget);
-      await tester.enterText(
-        find.descendant(
-          of: addContextTagDialogFinder,
-          matching: find.byType(TextFormField),
-        ),
-        'context1',
-      );
-      await safeTapByFinder(tester, find.text('Add'));
-      await tester.pump();
-      await safeTapByFinder(tester, find.text('Apply'));
-      await tester.pump();
-
-      expect(
-        find.descendant(
-          of: todoContextsTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'context1',
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching:
+                find.byWidgetPredicate((Widget widget) => widget is BasicChip),
           ),
-        ),
-        findsOneWidget,
-      );
+          findsNothing,
+        );
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('remove', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-          contexts: const {'context1'},
-        ),
-      ));
-      await tester.pump();
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something'),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
 
-      Finder todoContextsTileFinder = find.ancestor(
-        of: find.byTooltip('Contexts'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoContextsTileFinder, findsOneWidget);
+        await tester.tap(find.byType(TodoContextTagsItem));
+        await tester.pump();
 
-      // Remove project (tag) by tap on chip.
-      await tester.tap(
-        find.descendant(
-          of: todoContextsTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'context1',
+        Finder addContextTagDialogFinder =
+            find.byKey(const Key('addContextTagDialog'));
+        expect(addContextTagDialogFinder, findsOneWidget);
+
+        // Add new tag.
+        await tester.enterText(
+          find.descendant(
+            of: addContextTagDialogFinder,
+            matching: find.byType(TextFormField),
           ),
-        ),
-      );
-      await tester.pump();
+          'context1',
+        );
+        await safeTapByFinder(tester, find.text('Add'));
+        await tester.pump();
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pump();
 
-      expect(
-        find.descendant(
-          of: todoContextsTileFinder,
-          matching:
-              find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
-        ),
-        findsNothing,
-      );
-
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-  });
-
-  group('key-value', () {
-    testWidgets('set', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-          keyValues: const {'foo': 'bar'},
-        ),
-      ));
-      await tester.pump();
-
-      Finder todoProjectsTileFinder = find.ancestor(
-        of: find.byTooltip('Key values'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoProjectsTileFinder, findsOneWidget);
-      expect(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'foo:bar',
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching: find.text('context1'),
           ),
-        ),
-        findsOneWidget,
-      );
+          findsOneWidget,
+        );
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('unset', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-        ),
-      ));
-      await tester.pump();
-
-      Finder todoProjectsTileFinder = find.ancestor(
-        of: find.byTooltip('Key values'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoProjectsTileFinder, findsOneWidget);
-      expect(
-        find.descendant(
-          of: todoProjectsTileFinder,
-          matching:
-              find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
-        ),
-        findsNothing,
-      );
-
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('add', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
-
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(description: 'Code something'),
-      ));
-      await tester.pump();
-
-      Finder todoKeyValuesTileFinder = find.ancestor(
-        of: find.byTooltip('Key values'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoKeyValuesTileFinder, findsOneWidget);
-
-      Finder addKeyValueTagFinder = find.descendant(
-        of: todoKeyValuesTileFinder,
-        matching: find.byTooltip('Add key:value tag'),
-      );
-      expect(addKeyValueTagFinder, findsOneWidget);
-      await tester.tap(addKeyValueTagFinder); // Add key value tag button.
-      await tester.pump();
-
-      Finder addKeyValueTagDialogFinder =
-          find.byKey(const Key('addKeyValueTagDialog'));
-      expect(addKeyValueTagDialogFinder, findsOneWidget);
-      await tester.enterText(
-        find.descendant(
-          of: addKeyValueTagDialogFinder,
-          matching: find.byType(TextFormField),
-        ),
-        'foo:bar',
-      );
-      await safeTapByFinder(tester, find.text('Add'));
-      await tester.pump();
-      await safeTapByFinder(tester, find.text('Apply'));
-      await tester.pump();
-
-      expect(
-        find.descendant(
-          of: todoKeyValuesTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'foo:bar',
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+            contexts: const {'context1'},
           ),
-        ),
-        findsOneWidget,
-      );
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-    });
-    testWidgets('remove', (tester) async {
-      // Increase size to ensure all elements in list are visible.
-      tester.view.physicalSize = const Size(400, 1600);
-      tester.view.devicePixelRatio = 1.0;
+        await tester.tap(find.byType(TodoContextTagsItem));
+        await tester.pump();
 
-      await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-        todo: Todo(
-          description: 'Code something',
-          keyValues: const {'foo': 'bar'},
-        ),
-      ));
-      await tester.pump();
+        Finder addContextTagDialogFinder =
+            find.byKey(const Key('addContextTagDialog'));
+        expect(addContextTagDialogFinder, findsOneWidget);
 
-      Finder todoKeyValuesTileFinder = find.ancestor(
-        of: find.byTooltip('Key values'),
-        matching: find.byType(ListTile),
-      );
-      expect(todoKeyValuesTileFinder, findsOneWidget);
-
-      // Remove project (tag) by tap on chip.
-      await tester.tap(
-        find.descendant(
-          of: todoKeyValuesTileFinder,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is ChoiceChip &&
-                (widget.label as Text).data == 'foo:bar',
+        await safeTapByFinder(
+          tester,
+          find.descendant(
+            of: addContextTagDialogFinder,
+            matching: find.text('context1'),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pump();
 
-      expect(
-        find.descendant(
-          of: todoKeyValuesTileFinder,
-          matching:
-              find.byWidgetPredicate((Widget widget) => widget is ChoiceChip),
-        ),
-        findsNothing,
-      );
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching: find.text('Context1'),
+          ),
+          findsNothing,
+        );
 
-      // resets the screen to its original size after the test end
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+    });
+
+    group('key-value', () {
+      testWidgets('set', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+            keyValues: const {'foo': 'bar'},
+          ),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('foo:bar'),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('unset', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+          ),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching:
+                find.byWidgetPredicate((Widget widget) => widget is BasicChip),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something'),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoKeyValueTagsItem));
+        await tester.pump();
+
+        Finder addKeyValueTagDialogFinder =
+            find.byKey(const Key('addKeyValueTagDialog'));
+        expect(addKeyValueTagDialogFinder, findsOneWidget);
+
+        // Add new tag.
+        await tester.enterText(
+          find.descendant(
+            of: addKeyValueTagDialogFinder,
+            matching: find.byType(TextFormField),
+          ),
+          'foo:bar',
+        );
+        await safeTapByFinder(tester, find.text('Add'));
+        await tester.pump();
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('foo:bar'),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(
+            description: 'Code something',
+            keyValues: const {'foo': 'bar'},
+          ),
+        ));
+        await tester.pump();
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pump();
+
+        await tester.tap(find.byType(TodoKeyValueTagsItem));
+        await tester.pump();
+
+        Finder addKeyValueTagDialogFinder =
+            find.byKey(const Key('addKeyValueTagDialog'));
+        expect(addKeyValueTagDialogFinder, findsOneWidget);
+
+        await safeTapByFinder(
+          tester,
+          find.descendant(
+            of: addKeyValueTagDialogFinder,
+            matching: find.text('foo:bar'),
+          ),
+        );
+        await tester.pump();
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pump();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('foo:bar'),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
     });
   });
 }
