@@ -74,7 +74,7 @@ class AppPreview extends StatelessWidget {
                                       color: foregroundColor,
                                       size: Theme.of(context)
                                           .textTheme
-                                          .bodyMedium
+                                          .bodySmall
                                           ?.fontSize,
                                     ),
                                     Icon(
@@ -82,15 +82,16 @@ class AppPreview extends StatelessWidget {
                                       color: foregroundColor,
                                       size: Theme.of(context)
                                           .textTheme
-                                          .bodyMedium
+                                          .bodySmall
                                           ?.fontSize,
                                     ),
+                                    const SizedBox(width: 2.0),
                                     Icon(
                                       Icons.battery_full,
                                       color: foregroundColor,
                                       size: Theme.of(context)
                                           .textTheme
-                                          .bodyMedium
+                                          .bodySmall
                                           ?.fontSize,
                                     ),
                                   ],
