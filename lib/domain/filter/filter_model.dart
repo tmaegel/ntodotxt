@@ -333,9 +333,13 @@ class Filter extends Equatable {
     return Filter(
       id: id ?? this.id,
       name: name ?? this.name,
-      priorities: priorities ?? this.priorities,
-      projects: projects ?? this.projects,
-      contexts: contexts ?? this.contexts,
+      priorities: Priorities.sort(priorities ?? this.priorities),
+      projects: projects != null
+          ? (projects.toList()..sort()).toSet()
+          : this.projects,
+      contexts: contexts != null
+          ? (contexts.toList()..sort()).toSet()
+          : this.contexts,
       order: order ?? this.order,
       filter: filter ?? this.filter,
       group: group ?? this.group,

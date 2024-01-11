@@ -25,6 +25,14 @@ extension Priorities on Priority {
 
     return Priority.none;
   }
+
+  static Set<Priority> sort(Set<Priority> priorities) {
+    List<Priority> sorted = priorities.toList()
+      ..sort(
+        (Priority a, Priority b) => a.index.compareTo(b.index),
+      );
+    return sorted.toSet();
+  }
 }
 
 ///
@@ -280,22 +288,27 @@ class Todo extends Equatable {
     }
 
     if (projects != null) {
-      projects = {
+      projects = ([
         for (var p in projects)
           p.startsWith('+') ? p.substring(1).toLowerCase() : p.toLowerCase(),
-      };
+      ]..sort())
+          .toSet();
     }
     if (contexts != null) {
-      contexts = {
+      contexts = ([
         for (var c in contexts)
           c.startsWith('@') ? c.substring(1).toLowerCase() : c.toLowerCase(),
-      };
+      ]..sort())
+          .toSet();
     }
     if (keyValues != null) {
       keyValues = {
         for (MapEntry<String, String> kv in keyValues.entries)
           kv.key.toLowerCase(): kv.value.toLowerCase()
       };
+      keyValues.entries
+          .toList()
+          .sort((MapEntry a, MapEntry b) => a.key.compareTo(b.key));
     }
 
     return Todo._(

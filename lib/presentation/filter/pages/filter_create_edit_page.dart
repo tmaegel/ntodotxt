@@ -5,9 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
+import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
+import 'package:ntodotxt/common_widgets/filter_dialog.dart';
+import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
+import 'package:ntodotxt/common_widgets/order_dialog.dart';
+import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
+import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show Filter, Filters, Groups, ListFilter, ListGroup, ListOrder, Order;
+import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
@@ -45,19 +50,6 @@ class FilterCreateEditPage extends StatelessWidget {
           }
         },
         builder: (BuildContext context, FilterState state) {
-          final List<String> allProjects = [
-            ...projects,
-            ...state.filter.projects,
-          ]
-            ..sort()
-            ..toSet();
-          final List<String> allContexts = [
-            ...contexts,
-            ...state.filter.contexts,
-          ]
-            ..sort()
-            ..toSet();
-
           return Scaffold(
             appBar: MainAppBar(
               title: createMode ? 'Create' : 'Edit',
@@ -83,7 +75,7 @@ class FilterCreateEditPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListTile(
                     title: Text(
-                      'Order',
+                      'General',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
@@ -91,32 +83,65 @@ class FilterCreateEditPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListTile(
-                    title: GenericChipGroup(
+                    leading: const Icon(Icons.sort),
+                    title: const Text('Order'),
+                    subtitle: GenericChipGroup(
                       children: [
-                        for (var t in Order.types)
-                          GenericChoiceChip(
-                            label: Text(t.name),
-                            selected: state.filter.order == t,
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                context.read<FilterCubit>().updateOrder(t);
-                              } else {
-                                // If unselected fallback to the default.
-                                context
-                                    .read<FilterCubit>()
-                                    .updateOrder(ListOrder.ascending);
-                              }
-                            },
-                          ),
+                        BasicChip(label: state.filter.order.name),
                       ],
                     ),
+                    onTap: () async {
+                      await FilterStateOrderDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                      );
+                    },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    leading: const Icon(Icons.filter_list),
+                    title: const Text('Filter'),
+                    subtitle: GenericChipGroup(
+                      children: [
+                        BasicChip(label: state.filter.filter.name),
+                      ],
+                    ),
+                    onTap: () async {
+                      await FilterStateFilterDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    leading: const Icon(Icons.workspaces_outlined),
+                    title: const Text('Group by'),
+                    subtitle: GenericChipGroup(
+                      children: [
+                        BasicChip(
+                          label: state.filter.group.name,
+                        ),
+                      ],
+                    ),
+                    onTap: () async {
+                      await FilterStateGroupDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                      );
+                    },
+                  ),
+                ),
+                const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListTile(
                     title: Text(
-                      'Filter',
+                      'Tags',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
@@ -124,154 +149,70 @@ class FilterCreateEditPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListTile(
-                    title: GenericChipGroup(
-                      children: [
-                        for (var t in Filters.types)
-                          GenericChoiceChip(
-                            label: Text(t.name),
-                            selected: state.filter.filter == t,
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                context.read<FilterCubit>().updateFilter(t);
-                              } else {
-                                // If unselected fallback to the default.
-                                context
-                                    .read<FilterCubit>()
-                                    .updateFilter(ListFilter.all);
-                              }
-                            },
+                    leading: const Icon(Icons.flag_outlined),
+                    title: const Text('Priorities'),
+                    subtitle: state.filter.priorities.isEmpty
+                        ? const Text('-')
+                        : GenericChipGroup(
+                            children: [
+                              for (var t in state.filter.priorities)
+                                BasicChip(label: t.name),
+                            ],
                           ),
-                      ],
-                    ),
+                    onTap: () async {
+                      await PriorityListDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                        items: Priority.values.toSet(),
+                      );
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListTile(
-                    title: Text(
-                      'Group by',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: GenericChipGroup(
-                      children: [
-                        for (var g in Groups.types)
-                          GenericChoiceChip(
-                            label: Text(g.name),
-                            selected: state.filter.group == g,
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                context.read<FilterCubit>().updateGroup(g);
-                              } else {
-                                // If unselected fallback to the default.
-                                context
-                                    .read<FilterCubit>()
-                                    .updateGroup(ListGroup.none);
-                              }
-                            },
+                    leading: const Icon(Icons.rocket_launch_outlined),
+                    title: const Text('Projects'),
+                    subtitle: state.filter.projects.isEmpty
+                        ? const Text('-')
+                        : GenericChipGroup(
+                            children: [
+                              for (var t in state.filter.projects)
+                                BasicChip(label: t),
+                            ],
                           ),
-                      ],
-                    ),
+                    onTap: () async {
+                      await ProjectListDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                        items: projects,
+                      );
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ListTile(
-                    title: Text(
-                      'Priorities',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: GenericChipGroup(
-                      children: [
-                        for (var p in Priority.values)
-                          GenericChoiceChip(
-                            label: Text(p.name),
-                            selected: state.filter.priorities.contains(p),
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                context.read<FilterCubit>().addPriority(p);
-                              } else {
-                                context.read<FilterCubit>().removePriority(p);
-                              }
-                            },
+                    leading: const Icon(Icons.join_inner),
+                    title: const Text('Contexts'),
+                    subtitle: state.filter.contexts.isEmpty
+                        ? const Text('-')
+                        : GenericChipGroup(
+                            children: [
+                              for (var t in state.filter.contexts)
+                                BasicChip(label: t),
+                            ],
                           ),
-                      ],
-                    ),
+                    onTap: () async {
+                      await ContextListDialog.dialog(
+                        context: context,
+                        cubit: BlocProvider.of<FilterCubit>(context),
+                        items: contexts,
+                      );
+                    },
                   ),
                 ),
-                if (allProjects.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ListTile(
-                      title: Text(
-                        'Projects',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ),
-                  ),
-                if (allProjects.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ListTile(
-                      title: GenericChipGroup(
-                        children: [
-                          for (var p in allProjects)
-                            GenericChoiceChip(
-                              label: Text(p),
-                              selected: state.filter.projects.contains(p),
-                              onSelected: (bool selected) {
-                                if (selected) {
-                                  context.read<FilterCubit>().addProject(p);
-                                } else {
-                                  context.read<FilterCubit>().removeProject(p);
-                                }
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                if (allContexts.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ListTile(
-                      title: Text(
-                        'Contexts',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ),
-                  ),
-                if (allContexts.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ListTile(
-                      title: GenericChipGroup(
-                        children: [
-                          for (var c in allContexts)
-                            GenericChoiceChip(
-                              label: Text(c),
-                              selected: state.filter.contexts.contains(c),
-                              onSelected: (bool selected) {
-                                if (selected) {
-                                  context.read<FilterCubit>().addContext(c);
-                                } else {
-                                  context.read<FilterCubit>().removeContext(c);
-                                }
-                              },
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: 16),
               ],
             ),
             bottomNavigationBar: !narrowView

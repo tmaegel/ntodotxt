@@ -508,11 +508,11 @@ void main() {
       });
       test('multiple project tags', () {
         final todo = Todo.fromString(value: 'Write some tests +ntodotxt +code');
-        expect(todo.projects, ['ntodotxt', 'code']);
+        expect(todo.projects, ['code', 'ntodotxt']);
       });
       test('multiple project tags (not in sequence)', () {
         final todo = Todo.fromString(value: 'Write some +tests for +ntodotxt');
-        expect(todo.projects, ['tests', 'ntodotxt']);
+        expect(todo.projects, ['ntodotxt', 'tests']);
       });
       test('project tag with a special name', () {
         final todo =
@@ -568,11 +568,11 @@ void main() {
       });
       test('multiple context tags', () {
         final todo = Todo.fromString(value: 'Write some @tests @dx');
-        expect(todo.contexts, ['tests', 'dx']);
+        expect(todo.contexts, ['dx', 'tests']);
       });
       test('multiple context tags (not in sequence)', () {
         final todo = Todo.fromString(value: 'Write some @tests for @ntodotxt');
-        expect(todo.contexts, ['tests', 'ntodotxt']);
+        expect(todo.contexts, ['ntodotxt', 'tests']);
       });
       test('context tag with a special name', () {
         final todo =

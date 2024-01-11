@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 class BasicChip extends StatelessWidget {
   final String label;
-  final bool selected;
 
   const BasicChip({
     required this.label,
-    this.selected = false,
     super.key,
   });
 

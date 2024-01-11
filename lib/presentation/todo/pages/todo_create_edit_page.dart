@@ -273,11 +273,7 @@ class TodoProjectTagsItem extends StatelessWidget {
                 ? const Text('-')
                 : GenericChipGroup(
                     children: [
-                      for (var t in state.todo.projects)
-                        BasicChip(
-                          label: t,
-                          selected: state.todo.projects.contains(t),
-                        ),
+                      for (var t in state.todo.projects) BasicChip(label: t),
                     ],
                   ),
             onTap: () => ProjectTagDialog.dialog(
@@ -317,11 +313,7 @@ class TodoContextTagsItem extends StatelessWidget {
                 ? const Text('-')
                 : GenericChipGroup(
                     children: [
-                      for (var t in state.todo.contexts)
-                        BasicChip(
-                          label: t,
-                          selected: state.todo.contexts.contains(t),
-                        ),
+                      for (var t in state.todo.contexts) BasicChip(label: t),
                     ],
                   ),
             onTap: () => ContextTagDialog.dialog(
@@ -363,10 +355,7 @@ class TodoKeyValueTagsItem extends StatelessWidget {
                 : GenericChipGroup(
                     children: [
                       for (var t in state.todo.fmtKeyValues)
-                        BasicChip(
-                          label: t,
-                          selected: state.todo.fmtKeyValues.contains(t),
-                        ),
+                        BasicChip(label: t),
                     ],
                   ),
             onTap: () => KeyValueTagDialog.dialog(
