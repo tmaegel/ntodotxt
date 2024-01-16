@@ -112,7 +112,7 @@ class WebDAVLoginView extends StatelessWidget {
                     return 'Missing server port';
                   }
                   if (!RegExp(
-                          r'(?<proto>^(http|https):\/\/)(?<host>\w+):(?<port>\d+)$')
+                          r'(?<proto>^(http|https):\/\/)(?<host>\S+):(?<port>\d+)$')
                       .hasMatch(value)) {
                     return 'Invalid format';
                   }
