@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.4] - 2024-01-16
+
+### Changed
+
+- Move drawer to appbar (mobile only)
+- Redesign todo and filter detail page/view
+
+### Fixed
+
+- Disable allowBackup in AndroidManifest.xml
+- Some dialogs are scrollable if the keyboad appears
+- Fix regex for hostname validation #8
+
 ## [0.4.3] - 2024-01-08
 
 ### Changed
@@ -97,7 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.3...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/tmaegel/ntodotxt/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/tmaegel/ntodotxt/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/tmaegel/ntodotxt/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/tmaegel/ntodotxt/compare/v0.4.0...v0.4.1
