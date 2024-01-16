@@ -147,5 +147,23 @@ void main() {
       await tester.pump();
       expect(find.text('Invalid format'), findsOneWidget);
     });
+    testWidgets('Invalid format (invalid host)', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: WebDAVLoginView(),
+        ),
+      );
+      await tester.enterText(
+        find.ancestor(
+          of: find.text('Server'),
+          matching: find.byType(TextFormField),
+        ),
+        'https://local host:80',
+      );
+      await tester.tap(find.text('Login'));
+      await tester.pump();
+      expect(find.text('Invalid format'), findsOneWidget);
+    });
   });
 }
