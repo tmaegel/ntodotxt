@@ -60,3 +60,7 @@ flutter build  # release version
 ## Requirements
 
 - [Nextcloud](https://nextcloud.com/) instance or other webdav server running (**webdav-sync only**)
+
+## Alternatives
+There are other note taking apps with the WebDAV support.
+See them in [Awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps)
