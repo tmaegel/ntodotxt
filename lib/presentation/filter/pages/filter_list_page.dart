@@ -39,6 +39,7 @@ class FilterListViewNarrow extends StatelessWidget {
               return FilterListTile(filter: state.filterList[index]);
             },
           ),
+          drawer: Container(),
           bottomNavigationBar: const BottomAppBar(
             child: Row(
               children: [],

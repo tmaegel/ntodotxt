@@ -74,6 +74,7 @@ class TodoListViewNarrow extends StatelessWidget {
                 : 'Filter: ${state.filter.name}',
             bottom: const AppBarFilterList(),
           ),
+          drawer: Container(),
           bottomNavigationBar: const TodoListBottomAppBar(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.endContained,

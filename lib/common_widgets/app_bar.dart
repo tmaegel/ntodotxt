@@ -34,7 +34,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       titleSpacing: narrowView ? 0.0 : null,
       title: Text(title),
-      leading: narrowView && !Navigator.of(context).canPop()
+      leading: narrowView && Scaffold.of(context).hasDrawer
           ? Builder(
               builder: (BuildContext context) {
                 return IconButton(
