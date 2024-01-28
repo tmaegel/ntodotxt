@@ -6,11 +6,11 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/_Flutter_-3.16.9-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter)
 
-**This app is still under active development and not released, yet.**
-
 With `ntodotxt` you can manage your todos in the [todo.txt](https://github.com/todotxt/todo.txt) format (i.e. all information
 is stored in a single file). You can save your todos locally on your device and/or synchronize the todo.txt file via webdav - for
 example with a self-hosted nextcloud instance.
+
+This application is under active development and will continue to be modified and improved over time.
 
 ## Downloads
 
@@ -35,7 +35,7 @@ example with a self-hosted nextcloud instance.
 
 ## Planned features
 
-- [ ] Build and publish to F-Droid (Android)
+- [x] Build and publish to F-Droid (Android)
 - [ ] Build and publish to Google Play (Android)
 - [ ] Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
