@@ -15,6 +15,7 @@ class LoginPage extends StatelessWidget {
             SizedBox(
               width: 150,
               child: FloatingActionButton.extended(
+                heroTag: 'offlineLoginView',
                 label: const Text('Offline'),
                 tooltip: 'Use this app offline',
                 icon: const Icon(Icons.cloud_off),
@@ -25,6 +26,7 @@ class LoginPage extends StatelessWidget {
             SizedBox(
               width: 150,
               child: FloatingActionButton.extended(
+                heroTag: 'webdavLoginView',
                 label: const Text('WebDAV'),
                 tooltip: 'Login via WebDAV',
                 icon: const Icon(Icons.cloud_outlined),
@@ -56,6 +58,7 @@ class LocalLoginView extends StatelessWidget {
         child: Text('Offline usage'),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'offlineLogin',
         label: const Text('Continue'),
         tooltip: 'Continue',
         icon: const Icon(Icons.check),
@@ -168,6 +171,7 @@ class WebDAVLoginView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'webdavLogin',
         label: const Text('Login'),
         tooltip: 'Login',
         icon: const Icon(Icons.cloud_outlined),
