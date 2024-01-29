@@ -132,6 +132,7 @@ extension Groups on ListGroup {
     required Iterable<Todo> todoList,
   }) {
     Map<String, Iterable<Todo>> groups = {'All': todoList};
+    groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
 
     return groups;
   }
