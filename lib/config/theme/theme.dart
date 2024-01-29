@@ -24,9 +24,6 @@ final ThemeData lightTheme = light.copyWith(
     textColor: dark.colorScheme.primary,
   ),
   listTileTheme: light.listTileTheme.copyWith(
-    // It is not recommended to set dense to true
-    // when ThemeData.useMaterial3 is true.
-    dense: true,
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
     contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
@@ -81,9 +78,6 @@ final ThemeData darkTheme = dark.copyWith(
     textColor: dark.colorScheme.primary,
   ),
   listTileTheme: dark.listTileTheme.copyWith(
-    // It is not recommended to set dense to true
-    // when ThemeData.useMaterial3 is true.
-    dense: true,
     selectedColor: dark.textTheme.bodySmall?.color,
     selectedTileColor: dark.hoverColor,
     contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
