@@ -1,95 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/tag_dialog.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
     show FilterCubit;
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 
-class ProjectListDialog extends StatefulWidget {
+class FilterProjectTagDialog extends TagDialog {
   final FilterCubit cubit;
-  final Set<String> items;
 
-  const ProjectListDialog({
+  const FilterProjectTagDialog({
     required this.cubit,
-    required this.items,
-    super.key,
-  });
-
-  static Future<String?> dialog({
-    required BuildContext context,
-    required FilterCubit cubit,
-    required Set<String> items,
-  }) async {
-    return await showDialog<String?>(
-      context: context,
-      builder: (BuildContext context) =>
-          ProjectListDialog(cubit: cubit, items: items),
-    );
-  }
-
-  @override
-  State<ProjectListDialog> createState() => _ProjectListDialogState();
-}
-
-class _ProjectListDialogState extends State<ProjectListDialog> {
-  Set<String> selectedItems = {};
-
-  @override
-  void initState() {
-    super.initState();
-    selectedItems = {...widget.cubit.state.filter.projects};
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Projects'),
-      content: widget.items.isEmpty == true
-          ? const Text('No project tags available')
-          : GenericChipGroup(
-              children: [
-                for (String item in widget.items.toList()..sort())
-                  GenericChoiceChip(
-                    label: Text(item),
-                    selected: selectedItems.contains(item),
-                    onSelected: (bool selected) {
-                      setState(() {
-                        if (selected == true) {
-                          selectedItems.add(item);
-                        } else {
-                          selectedItems.remove(item);
-                        }
-                      });
-                    },
-                  ),
-              ],
-            ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: widget.items.isEmpty == true
-              ? null
-              : () {
-                  widget.cubit.updateProjects(selectedItems);
-                  Navigator.pop(context);
-                },
-          child: const Text('Apply'),
-        ),
-      ],
-    );
-  }
-}
-
-class ProjectTagDialog extends TagDialog {
-  const ProjectTagDialog({
-    required super.cubit,
     super.title = 'Projects',
     super.tagName = 'project',
     super.availableTags,
-    super.key = const Key('addProjectTagDialog'),
+    super.addTags = false,
+    super.key = const Key('FilterProjectTagDialog'),
+  });
+
+  @override
+  RegExp get regex => RegExp(r'^\S+$');
+
+  static Future<void> dialog({
+    required BuildContext context,
+    required FilterCubit cubit,
+    required Set<String> availableTags,
+  }) async {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) => FilterProjectTagDialog(
+        cubit: cubit,
+        availableTags: availableTags,
+      ),
+    );
+  }
+
+  @override
+  void onSubmit(BuildContext context, Set<String> values) =>
+      cubit.updateProjects(values);
+
+  @override
+  State<FilterProjectTagDialog> createState() => _FilterProjectTagDialogState();
+}
+
+class _FilterProjectTagDialogState
+    extends TagDialogState<FilterProjectTagDialog> {
+  @override
+  void initState() {
+    super.initState();
+    super.tags = {
+      ...widget.availableTags.map(
+        (String t) => Tag(
+          name: t,
+          selected: widget.cubit.state.filter.projects.contains(t),
+        ),
+      ),
+    };
+  }
+}
+
+class TodoProjectTagDialog extends TagDialog {
+  final TodoCubit cubit;
+
+  const TodoProjectTagDialog({
+    required this.cubit,
+    super.title = 'Projects',
+    super.tagName = 'project',
+    super.availableTags,
+    super.addTags = true,
+    super.key = const Key('TodoProjectTagDialog'),
   });
 
   @override
@@ -103,7 +81,7 @@ class ProjectTagDialog extends TagDialog {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext context) => ProjectTagDialog(
+      builder: (BuildContext context) => TodoProjectTagDialog(
         cubit: cubit,
         availableTags: availableTags,
       ),
@@ -115,10 +93,10 @@ class ProjectTagDialog extends TagDialog {
       cubit.updateProjects(values);
 
   @override
-  State<ProjectTagDialog> createState() => _ProjectTagDialogState();
+  State<TodoProjectTagDialog> createState() => _TodoProjectTagDialogState();
 }
 
-class _ProjectTagDialogState extends TagDialogState<ProjectTagDialog> {
+class _TodoProjectTagDialogState extends TagDialogState<TodoProjectTagDialog> {
   @override
   void initState() {
     super.initState();

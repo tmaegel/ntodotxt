@@ -487,14 +487,14 @@ void main() {
         await tester.tap(find.byType(TodoProjectTagsItem));
         await tester.pump();
 
-        Finder addContextTagDialogFinder =
-            find.byKey(const Key('addProjectTagDialog'));
-        expect(addContextTagDialogFinder, findsOneWidget);
+        Finder addProjectTagDialogFinder =
+            find.byKey(const Key('TodoProjectTagDialog'));
+        expect(addProjectTagDialogFinder, findsOneWidget);
 
         // Add new tag.
         await tester.enterText(
           find.descendant(
-            of: addContextTagDialogFinder,
+            of: addProjectTagDialogFinder,
             matching: find.byType(TextFormField),
           ),
           'project1',
@@ -534,14 +534,14 @@ void main() {
         await tester.tap(find.byType(TodoProjectTagsItem));
         await tester.pump();
 
-        Finder addContextTagDialogFinder =
-            find.byKey(const Key('addProjectTagDialog'));
-        expect(addContextTagDialogFinder, findsOneWidget);
+        Finder addProjectTagDialogFinder =
+            find.byKey(const Key('TodoProjectTagDialog'));
+        expect(addProjectTagDialogFinder, findsOneWidget);
 
         await safeTapByFinder(
           tester,
           find.descendant(
-            of: addContextTagDialogFinder,
+            of: addProjectTagDialogFinder,
             matching: find.text('project1'),
           ),
         );
@@ -634,7 +634,7 @@ void main() {
         await tester.pump();
 
         Finder addContextTagDialogFinder =
-            find.byKey(const Key('addContextTagDialog'));
+            find.byKey(const Key('TodoContextTagDialog'));
         expect(addContextTagDialogFinder, findsOneWidget);
 
         // Add new tag.
@@ -681,7 +681,7 @@ void main() {
         await tester.pump();
 
         Finder addContextTagDialogFinder =
-            find.byKey(const Key('addContextTagDialog'));
+            find.byKey(const Key('TodoContextTagDialog'));
         expect(addContextTagDialogFinder, findsOneWidget);
 
         await safeTapByFinder(
@@ -780,7 +780,7 @@ void main() {
         await tester.pump();
 
         Finder addKeyValueTagDialogFinder =
-            find.byKey(const Key('addKeyValueTagDialog'));
+            find.byKey(const Key('TodoKeyValueTagDialog'));
         expect(addKeyValueTagDialogFinder, findsOneWidget);
 
         // Add new tag.
@@ -827,7 +827,7 @@ void main() {
         await tester.pump();
 
         Finder addKeyValueTagDialogFinder =
-            find.byKey(const Key('addKeyValueTagDialog'));
+            find.byKey(const Key('TodoKeyValueTagDialog'));
         expect(addKeyValueTagDialogFinder, findsOneWidget);
 
         await safeTapByFinder(

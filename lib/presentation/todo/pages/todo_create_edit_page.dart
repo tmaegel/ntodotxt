@@ -276,7 +276,7 @@ class TodoProjectTagsItem extends StatelessWidget {
                       for (var t in state.todo.projects) BasicChip(label: t),
                     ],
                   ),
-            onTap: () => ProjectTagDialog.dialog(
+            onTap: () => TodoProjectTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
               availableTags: availableTags,
@@ -316,7 +316,7 @@ class TodoContextTagsItem extends StatelessWidget {
                       for (var t in state.todo.contexts) BasicChip(label: t),
                     ],
                   ),
-            onTap: () => ContextTagDialog.dialog(
+            onTap: () => TodoContextTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
               availableTags: availableTags,
@@ -358,7 +358,7 @@ class TodoKeyValueTagsItem extends StatelessWidget {
                         BasicChip(label: t),
                     ],
                   ),
-            onTap: () => KeyValueTagDialog.dialog(
+            onTap: () => TodoKeyValueTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
               availableTags: availableTags,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/misc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 
 class Tag {
   String name;
@@ -17,16 +16,16 @@ class Tag {
 }
 
 class TagDialog extends StatefulWidget {
-  final TodoCubit cubit;
   final String title;
   final String tagName;
   final Set<String> availableTags;
+  final bool addTags;
 
   const TagDialog({
-    required this.cubit,
     required this.title,
     required this.tagName,
     this.availableTags = const {},
+    this.addTags = true,
     super.key,
   });
 
@@ -70,7 +69,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.9,
+      initialChildSize: widget.addTags == true ? 0.9 : 0.5,
       minChildSize: 0.15,
       maxChildSize: 0.9,
       expand: false,
@@ -101,56 +100,57 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                 ),
               ),
               const Divider(),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  title: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: _controller,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        hintText: 'Enter <${widget.tagName}> tag ...',
-                        isDense: true,
-                        filled: false,
-                        contentPadding: EdgeInsets.zero,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
+              if (widget.addTags)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    title: Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        controller: _controller,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          hintText: 'Enter <${widget.tagName}> tag ...',
+                          isDense: true,
+                          filled: false,
+                          contentPadding: EdgeInsets.zero,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Missing tag name';
+                          }
+                          if (!widget.regex.hasMatch(value.trim())) {
+                            return 'Invalid tag format';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Missing tag name';
+                    ),
+                    trailing: TextButton(
+                      child: const Text('Add'),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            tags.add(Tag(
+                              name: _controller.text.trim(),
+                              selected: true,
+                            ));
+                          });
+                          _controller.text = '';
                         }
-                        if (!widget.regex.hasMatch(value)) {
-                          return 'Invalid tag format';
-                        }
-                        return null;
                       },
                     ),
                   ),
-                  trailing: TextButton(
-                    child: const Text('Add'),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          tags.add(Tag(
-                            name: _controller.text,
-                            selected: true,
-                          ));
-                        });
-                        _controller.text = '';
-                      }
-                    },
-                  ),
                 ),
-              ),
-              if (tags.isNotEmpty) const Divider(),
+              if (tags.isNotEmpty && widget.addTags) const Divider(),
               if (tags.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(

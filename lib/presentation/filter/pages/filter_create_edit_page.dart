@@ -182,10 +182,10 @@ class FilterCreateEditPage extends StatelessWidget {
                             ],
                           ),
                     onTap: () async {
-                      await ProjectListDialog.dialog(
+                      await FilterProjectTagDialog.dialog(
                         context: context,
                         cubit: BlocProvider.of<FilterCubit>(context),
-                        items: projects,
+                        availableTags: projects,
                       );
                     },
                   ),
@@ -204,10 +204,10 @@ class FilterCreateEditPage extends StatelessWidget {
                             ],
                           ),
                     onTap: () async {
-                      await ContextListDialog.dialog(
+                      await FilterContextTagDialog.dialog(
                         context: context,
                         cubit: BlocProvider.of<FilterCubit>(context),
-                        items: contexts,
+                        availableTags: contexts,
                       );
                     },
                   ),

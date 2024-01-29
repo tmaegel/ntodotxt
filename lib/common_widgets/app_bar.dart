@@ -148,10 +148,11 @@ class AppBarFilterList extends StatelessWidget {
                     avatar: const Icon(Icons.rocket_launch_outlined),
                     label: Text('projects (${state.filter.projects.length})'),
                     onPressed: () async {
-                      await ProjectListDialog.dialog(
+                      await FilterProjectTagDialog.dialog(
                         context: context,
                         cubit: BlocProvider.of<FilterCubit>(context),
-                        items: context.read<TodoListBloc>().state.projects,
+                        availableTags:
+                            context.read<TodoListBloc>().state.projects,
                       );
                     },
                   ),
@@ -160,10 +161,11 @@ class AppBarFilterList extends StatelessWidget {
                     avatar: const Icon(Icons.join_inner),
                     label: Text('contexts (${state.filter.contexts.length})'),
                     onPressed: () async {
-                      await ContextListDialog.dialog(
+                      await FilterContextTagDialog.dialog(
                         context: context,
                         cubit: BlocProvider.of<FilterCubit>(context),
-                        items: context.read<TodoListBloc>().state.contexts,
+                        availableTags:
+                            context.read<TodoListBloc>().state.contexts,
                       );
                     },
                   ),

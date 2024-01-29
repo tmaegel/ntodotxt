@@ -31,16 +31,22 @@ class MaterialAppProjectListDialog extends StatelessWidget {
                   builder: (BuildContext context, FilterState state) {
                     return Column(
                       children: [
-                        Text(state.filter.projects.toString()),
+                        Text(
+                          'result: ${state.filter.projects.toString()}',
+                        ),
                         Builder(
                           builder: (BuildContext context) {
                             return TextButton(
                               child: const Text('Open dialog'),
                               onPressed: () async {
-                                await ProjectListDialog.dialog(
+                                await FilterProjectTagDialog.dialog(
                                   context: context,
                                   cubit: BlocProvider.of<FilterCubit>(context),
-                                  items: {'project1', 'project2', 'project3'},
+                                  availableTags: {
+                                    'project1',
+                                    'project2',
+                                    'project3'
+                                  },
                                 );
                               },
                             );
@@ -59,66 +65,66 @@ class MaterialAppProjectListDialog extends StatelessWidget {
   }
 }
 
+Future safeTapByFinder(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('ProjectListDialog', () {
+  group('FilterProjectTagDialog', () {
     testWidgets('apply', (tester) async {
       await tester.pumpWidget(const MaterialAppProjectListDialog());
-      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byWidgetPredicate(
+          (Widget widget) => widget is Text && widget.data == 'result: {}',
+        ),
+        findsOneWidget,
+      );
 
       await tester.tap(find.text('Open dialog'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.byType(Dialog), findsOneWidget);
-      await tester.tap(find.text('project1'));
-      await tester.pump();
-
-      await tester.tap(find.text('Apply'));
-      await tester.pump();
+      await safeTapByFinder(
+        tester,
+        find.descendant(
+          of: find.byKey(const Key('FilterProjectTagDialog')),
+          matching: find.text('project1'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await safeTapByFinder(tester, find.text('Apply'));
+      await tester.pumpAndSettle();
 
       expect(
         find.byWidgetPredicate(
           (Widget widget) =>
-              widget is Text && widget.data!.contains('project1'),
+              widget is Text && widget.data == 'result: {project1}',
         ),
         findsOneWidget,
       );
 
       await tester.tap(find.text('Open dialog'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.byType(Dialog), findsOneWidget);
-      await tester.tap(find.text('project1'));
-      await tester.pump();
-
-      await tester.tap(find.text('Apply'));
-      await tester.pump();
-
-      expect(
-        find.byWidgetPredicate(
-          (Widget widget) => widget is Text && widget.data == '{}',
+      await safeTapByFinder(
+        tester,
+        find.descendant(
+          of: find.byKey(const Key('FilterProjectTagDialog')),
+          matching: find.text('project1'),
         ),
-        findsOneWidget,
       );
-    });
-    testWidgets('cancel', (tester) async {
-      await tester.pumpWidget(const MaterialAppProjectListDialog());
       await tester.pump();
-
-      await tester.tap(find.text('Open dialog'));
-      await tester.pump();
-
-      expect(find.byType(Dialog), findsOneWidget);
-      await tester.tap(find.text('project1'));
-      await tester.pump();
-
-      await tester.tap(find.text('Cancel'));
-      await tester.pump();
+      await safeTapByFinder(tester, find.text('Apply'));
+      await tester.pumpAndSettle();
 
       expect(
         find.byWidgetPredicate(
-          (Widget widget) => widget is Text && widget.data == '{}',
+          (Widget widget) => widget is Text && widget.data == 'result: {}',
         ),
         findsOneWidget,
       );

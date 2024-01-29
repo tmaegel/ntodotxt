@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/tag_dialog.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 
-class KeyValueTagDialog extends TagDialog {
-  const KeyValueTagDialog({
-    required super.cubit,
+class TodoKeyValueTagDialog extends TagDialog {
+  final TodoCubit cubit;
+
+  const TodoKeyValueTagDialog({
+    required this.cubit,
     super.title = 'Key values',
     super.tagName = 'key:value',
     super.availableTags,
-    super.key = const Key('addKeyValueTagDialog'),
+    super.addTags = true,
+    super.key = const Key('TodoKeyValueTagDialog'),
   });
 
   @override
@@ -22,7 +25,7 @@ class KeyValueTagDialog extends TagDialog {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext context) => KeyValueTagDialog(
+      builder: (BuildContext context) => TodoKeyValueTagDialog(
         cubit: cubit,
         availableTags: availableTags,
       ),
@@ -34,10 +37,11 @@ class KeyValueTagDialog extends TagDialog {
       cubit.updateKeyValues(values);
 
   @override
-  State<KeyValueTagDialog> createState() => _KeyValueTagDialogState();
+  State<TodoKeyValueTagDialog> createState() => _TodoKeyValueTagDialogState();
 }
 
-class _KeyValueTagDialogState extends TagDialogState<KeyValueTagDialog> {
+class _TodoKeyValueTagDialogState
+    extends TagDialogState<TodoKeyValueTagDialog> {
   @override
   void initState() {
     super.initState();
