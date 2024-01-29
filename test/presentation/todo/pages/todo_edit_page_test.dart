@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/priority_dialog.dart';
+import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
 
@@ -38,7 +38,7 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(priority: Priority.A, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -60,7 +60,7 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(priority: null, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -82,18 +82,22 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(priority: null, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoPriorityItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
-        await tester.tap(
+        await safeTapByFinder(
+          tester,
           find.descendant(
-            of: find.byType(PriorityDialog),
+            of: find.byType(TodoPriorityTagDialog),
             matching: find.text('A'),
           ),
         );
-        await tester.pump();
+        await tester.pumpAndSettle();
+
+        await safeTapByFinder(tester, find.text('Apply'));
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -121,7 +125,7 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(completion: true, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -145,7 +149,7 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(completion: false, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -173,10 +177,10 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(completion: false, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoCompletionDateItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -200,10 +204,10 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(completion: true, description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoCompletionDateItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -232,7 +236,7 @@ void main() {
               creationDate: DateTime(2023, 12, 5),
               description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -262,7 +266,7 @@ void main() {
             keyValues: const {'due': '2023-12-31'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -275,7 +279,7 @@ void main() {
         );
 
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -297,7 +301,7 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -308,7 +312,7 @@ void main() {
         );
 
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -337,11 +341,11 @@ void main() {
             description: 'Code something',
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         // Unset due date button.
         await tester.tap(find.byType(TodoDueDateItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(
           find.descendant(
@@ -349,7 +353,7 @@ void main() {
             matching: find.text('OK'),
           ),
         );
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -360,7 +364,7 @@ void main() {
         );
 
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -385,11 +389,11 @@ void main() {
             keyValues: const {'due': '2023-12-31'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         // Unset due date button.
         await tester.tap(find.byType(TodoDueDateItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -400,7 +404,7 @@ void main() {
         );
 
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -429,9 +433,9 @@ void main() {
             projects: const {'project1'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -455,9 +459,9 @@ void main() {
             description: 'Code something',
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -480,12 +484,12 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoProjectTagsItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         Finder addProjectTagDialogFinder =
             find.byKey(const Key('TodoProjectTagDialog'));
@@ -500,9 +504,9 @@ void main() {
           'project1',
         );
         await safeTapByFinder(tester, find.text('Add'));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await safeTapByFinder(tester, find.text('Apply'));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -527,12 +531,12 @@ void main() {
             projects: const {'project1'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoProjectTagsItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         Finder addProjectTagDialogFinder =
             find.byKey(const Key('TodoProjectTagDialog'));
@@ -545,9 +549,9 @@ void main() {
             matching: find.text('project1'),
           ),
         );
-        await tester.pump();
+        await tester.pumpAndSettle();
         await safeTapByFinder(tester, find.text('Apply'));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -575,9 +579,9 @@ void main() {
             contexts: const {'context1'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -601,9 +605,9 @@ void main() {
             description: 'Code something',
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -626,12 +630,12 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoContextTagsItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         Finder addContextTagDialogFinder =
             find.byKey(const Key('TodoContextTagDialog'));
@@ -646,9 +650,9 @@ void main() {
           'context1',
         );
         await safeTapByFinder(tester, find.text('Add'));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await safeTapByFinder(tester, find.text('Apply'));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -673,12 +677,12 @@ void main() {
             contexts: const {'context1'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoContextTagsItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         Finder addContextTagDialogFinder =
             find.byKey(const Key('TodoContextTagDialog'));
@@ -691,9 +695,9 @@ void main() {
             matching: find.text('context1'),
           ),
         );
-        await tester.pump();
+        await tester.pumpAndSettle();
         await safeTapByFinder(tester, find.text('Apply'));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -721,9 +725,9 @@ void main() {
             keyValues: const {'foo': 'bar'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -747,9 +751,9 @@ void main() {
             description: 'Code something',
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -772,12 +776,12 @@ void main() {
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(description: 'Code something'),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoKeyValueTagsItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         Finder addKeyValueTagDialogFinder =
             find.byKey(const Key('TodoKeyValueTagDialog'));
@@ -792,9 +796,9 @@ void main() {
           'foo:bar',
         );
         await safeTapByFinder(tester, find.text('Add'));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await safeTapByFinder(tester, find.text('Apply'));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(
@@ -819,12 +823,12 @@ void main() {
             keyValues: const {'foo': 'bar'},
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         await tester.tap(find.byType(TodoKeyValueTagsItem));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         Finder addKeyValueTagDialogFinder =
             find.byKey(const Key('TodoKeyValueTagDialog'));
@@ -837,9 +841,9 @@ void main() {
             matching: find.text('foo:bar'),
           ),
         );
-        await tester.pump();
+        await tester.pumpAndSettle();
         await safeTapByFinder(tester, find.text('Apply'));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(
           find.descendant(

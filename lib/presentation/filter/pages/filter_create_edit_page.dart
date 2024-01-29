@@ -160,10 +160,10 @@ class FilterCreateEditPage extends StatelessWidget {
                             ],
                           ),
                     onTap: () async {
-                      await PriorityListDialog.dialog(
+                      await FilterPriorityTagDialog.dialog(
                         context: context,
                         cubit: BlocProvider.of<FilterCubit>(context),
-                        items: Priority.values.toSet(),
+                        availableTags: Priority.values.toSet(),
                       );
                     },
                   ),

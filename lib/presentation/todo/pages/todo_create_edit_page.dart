@@ -7,7 +7,7 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
 import 'package:ntodotxt/common_widgets/key_values_dialog.dart';
-import 'package:ntodotxt/common_widgets/priority_dialog.dart';
+import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
@@ -237,9 +237,10 @@ class TodoPriorityItem extends StatelessWidget {
             leading: const Icon(Icons.outlined_flag),
             title: const Text('Priority'),
             subtitle: Text(state.todo.priority.name),
-            onTap: () => PriorityDialog.dialog(
+            onTap: () => TodoPriorityTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
+              availableTags: Priorities.priorities,
             ),
           ),
         );
