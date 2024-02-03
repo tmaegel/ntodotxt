@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.5] - 2024-02-03
+
+### Changed
+
+- Bump flutter version to 3.16.9
+- Update some dialogs
+
+### Fixed
+
+- Server port for the webdav connection is optional #12 #17
+- Sometimes the hamburger menu gets lost #18
+- dense attribute is not neccessary for material3 themes
+
 ## [0.4.4] - 2024-01-16
 
 ### Changed
@@ -110,7 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.4...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.5...HEAD
+[0.4.5]: https://github.com/tmaegel/ntodotxt/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/tmaegel/ntodotxt/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/tmaegel/ntodotxt/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/tmaegel/ntodotxt/compare/v0.4.1...v0.4.2
