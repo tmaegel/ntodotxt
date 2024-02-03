@@ -18,7 +18,7 @@ class WebDAVClient {
   WebDAVClient({
     String schema = 'http',
     required String host,
-    required int port,
+    int? port,
     required String baseUrl,
     required String username,
     required String password,

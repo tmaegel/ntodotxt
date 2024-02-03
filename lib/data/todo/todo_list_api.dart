@@ -195,13 +195,15 @@ class WebDAVTodoListApi extends LocalTodoListApi {
     required String password,
   }) {
     late WebDAVClient client;
-    final RegExp exp =
-        RegExp(r'(?<schema>^(http|https)):\/\/(?<host>\w+):(?<port>\d+)$');
+    final RegExp exp = RegExp(
+        r'(?<schema>^(http|https)):\/\/(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$');
     final RegExpMatch? match = exp.firstMatch(server);
     if (match != null) {
       String schema = match.namedGroup('schema')!;
       String host = match.namedGroup('host')!;
-      int port = int.parse(match.namedGroup('port')!);
+      int? port = match.namedGroup('port') != null
+          ? int.parse(match.namedGroup('port')!)
+          : null;
       client = WebDAVClient(
         schema: schema,
         host: host,
@@ -211,7 +213,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
         password: password,
       );
     } else {
-      throw const FormatException('Invalid server foramt.');
+      throw const FormatException('Invalid server format');
     }
 
     return WebDAVTodoListApi._(

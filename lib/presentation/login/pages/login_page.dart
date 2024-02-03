@@ -98,7 +98,7 @@ class WebDAVLoginView extends StatelessWidget {
                 controller: serverTextFieldController,
                 decoration: const InputDecoration(
                   labelText: 'Server',
-                  hintText: 'http[s]://<server>:<port>',
+                  hintText: 'http[s]://<server>[:<port>]',
                 ),
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
@@ -108,14 +108,8 @@ class WebDAVLoginView extends StatelessWidget {
                       !value.startsWith('https://')) {
                     return 'Missing protocol';
                   }
-                  final strippedValue = value
-                      .replaceAll('http://', '')
-                      .replaceAll('https://', '');
-                  if (strippedValue.split(':').length < 2) {
-                    return 'Missing server port';
-                  }
                   if (!RegExp(
-                          r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+):(?<port>\d+)$')
+                          r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
                       .hasMatch(value)) {
                     return 'Invalid format';
                   }
