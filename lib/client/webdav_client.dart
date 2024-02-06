@@ -40,11 +40,11 @@ class WebDAVClient {
     // Set the public request headers
     client.setHeaders({'accept-charset': 'utf-8'});
     // Set the connection server timeout time in milliseconds.
-    client.setConnectTimeout(8000);
+    client.setConnectTimeout(15000);
     // Set send data timeout time in milliseconds.
-    client.setSendTimeout(8000);
+    client.setSendTimeout(15000);
     // Set transfer data time in milliseconds.
-    client.setReceiveTimeout(8000);
+    client.setReceiveTimeout(15000);
   }
 
   Future<void> ping() async {
@@ -76,7 +76,7 @@ class WebDAVClient {
       return await client.readDir(path);
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to list files in path $path.');
+      throw WebDAVClientException('Failed to list files in path $path');
     }
   }
 
@@ -91,7 +91,7 @@ class WebDAVClient {
       }
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to create the file $filename.');
+      throw WebDAVClientException('Failed to create the file $filename');
     }
   }
 
@@ -103,7 +103,7 @@ class WebDAVClient {
       await client.mkdir(path);
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to create the directory $path.');
+      throw WebDAVClientException('Failed to create the directory $path');
     }
   }
 
@@ -116,7 +116,7 @@ class WebDAVClient {
       return utf8.decode(content);
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to download the file $filename.');
+      throw WebDAVClientException('Failed to download the file $filename');
     }
   }
 
@@ -128,7 +128,7 @@ class WebDAVClient {
       await client.write(filename, utf8.encode(content));
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to upload the file $filename.');
+      throw WebDAVClientException('Failed to upload the file $filename');
     }
   }
 }

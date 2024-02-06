@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
@@ -5,12 +7,18 @@ import 'package:ntodotxt/client/webdav_client.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const String host = 'localhost';
-  const int port = 8080;
+  late final String host;
+  if (Platform.isAndroid) {
+    host = '10.0.2.2';
+  } else {
+    host = 'localhost';
+  }
+  const int port = 80;
   const String baseUrl = '/remote.php/dav/files';
   const String username = 'test';
   const String password = 'test';
   const String filename = 'test.txt';
+
   setUp(() async {});
 
   group('WebDAVClient', () {
@@ -44,6 +52,35 @@ void main() {
       });
     });
 
+    group('create()', () {
+      test('successful create', () async {
+        WebDAVClient client = WebDAVClient(
+            host: host,
+            port: port,
+            baseUrl: baseUrl,
+            username: username,
+            password: password);
+        try {
+          await client.create(filename);
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('successful create file and directory', () async {
+        WebDAVClient client = WebDAVClient(
+            host: host,
+            port: port,
+            baseUrl: baseUrl,
+            username: username,
+            password: password);
+        try {
+          await client.create('unknown_dir/$filename');
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+    });
+
     group('fileExists()', () {
       test('file exists', () async {
         WebDAVClient client = WebDAVClient(
@@ -53,6 +90,7 @@ void main() {
             username: username,
             password: password);
         try {
+          await client.create(filename); // Create file
           expectLater(
             await client.fileExists(filename),
             true,
@@ -90,7 +128,7 @@ void main() {
         try {
           await client.upload(content: 'abc', filename: filename);
         } catch (e) {
-          fail('An exception was thrown.');
+          fail('An exception was thrown: $e');
         }
       });
       test('exception while file upload', () async {
@@ -108,6 +146,7 @@ void main() {
         );
       });
     });
+
     group('download()', () {
       test('successful file download', () async {
         WebDAVClient client = WebDAVClient(
@@ -119,7 +158,7 @@ void main() {
         try {
           await client.download(filename: filename);
         } catch (e) {
-          fail('An exception was thrown.');
+          fail('An exception was thrown: $e');
         }
       });
       test('exception while file download', () async {
