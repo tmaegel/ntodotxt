@@ -5,7 +5,7 @@ description: App for managing your todos within a todo.txt file locally or via w
 
 publish_to: 'none'  # Remove this line if you wish to publish to pub.dev
 
-version: 0.4.6+10
+version: 0.4.7+11
 
 environment:
   sdk: '>=3.0.5 <4.0.0'
