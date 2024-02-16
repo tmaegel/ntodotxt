@@ -35,6 +35,23 @@ sealed class FilterState extends Equatable {
   String toString() => 'FilterState { filter: $filter }';
 }
 
+final class FilterLoading extends FilterState {
+  const FilterLoading({
+    required super.filter,
+  });
+
+  FilterLoading copyWith({
+    Filter? filter,
+  }) {
+    return FilterLoading(
+      filter: filter ?? this.filter,
+    );
+  }
+
+  @override
+  String toString() => 'FilterLoading { filter: $filter }';
+}
+
 final class FilterSuccess extends FilterState {
   const FilterSuccess({
     required super.filter,
@@ -47,11 +64,6 @@ final class FilterSuccess extends FilterState {
       filter: filter ?? this.filter,
     );
   }
-
-  @override
-  List<Object> get props => [
-        filter,
-      ];
 
   @override
   String toString() => 'FilterSuccess { filter: $filter }';

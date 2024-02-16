@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show ListFilter;
-import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart'
-    show DefaultFilterCubit;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart'
     show FilterCubit;
 
@@ -58,7 +56,7 @@ class FilterStateFilterDialog extends StatelessWidget {
 }
 
 class DefaultFilterStateFilterDialog extends StatelessWidget {
-  final DefaultFilterCubit cubit;
+  final FilterCubit cubit;
   final Map<String, ListFilter> items;
 
   const DefaultFilterStateFilterDialog({
@@ -72,7 +70,7 @@ class DefaultFilterStateFilterDialog extends StatelessWidget {
 
   static Future<void> dialog({
     required BuildContext context,
-    required DefaultFilterCubit cubit,
+    required FilterCubit cubit,
   }) async {
     return await showDialog<Future<void>>(
       context: context,
@@ -99,7 +97,7 @@ class DefaultFilterStateFilterDialog extends StatelessWidget {
             groupValue: cubit.state.filter.filter,
             onChanged: (ListFilter? value) {
               if (value != null) {
-                cubit.updateListFilter(value);
+                cubit.updateDefaultFilter(value);
               }
               Navigator.pop(context);
             },

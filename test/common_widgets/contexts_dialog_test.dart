@@ -3,24 +3,41 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart';
+import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
+import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MaterialAppContextListDialog extends StatelessWidget {
-  const MaterialAppContextListDialog({super.key});
+  final String databasePath;
+
+  const MaterialAppContextListDialog({
+    this.databasePath = inMemoryDatabasePath,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<FilterRepository>(
-      create: (BuildContext context) => FilterRepository(
-        FilterController(inMemoryDatabasePath),
-      ),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) => SettingRepository(
+            SettingController(databasePath),
+          ),
+        ),
+        RepositoryProvider<FilterRepository>(
+          create: (BuildContext context) => FilterRepository(
+            FilterController(databasePath),
+          ),
+        ),
+      ],
       child: BlocProvider(
         create: (BuildContext context) => FilterCubit(
-          repository: context.read<FilterRepository>(),
+          settingRepository: context.read<SettingRepository>(),
+          filterRepository: context.read<FilterRepository>(),
           filter: const Filter(),
         ),
         child: Builder(

@@ -113,15 +113,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                         style: Theme.of(context).textTheme.bodyMedium,
                         decoration: InputDecoration(
                           hintText: 'Enter <${widget.tagName}> tag ...',
-                          isDense: true,
-                          filled: false,
                           contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
                         ),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {

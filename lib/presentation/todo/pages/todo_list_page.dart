@@ -8,6 +8,7 @@ import 'package:ntodotxt/common_widgets/input_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
+import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
@@ -20,7 +21,7 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
 class TodoListPage extends StatelessWidget {
-  final Filter filter;
+  final Filter? filter;
 
   const TodoListPage({
     required this.filter,
@@ -31,9 +32,10 @@ class TodoListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
-        repository: context.read<FilterRepository>(),
+        settingRepository: context.read<SettingRepository>(),
+        filterRepository: context.read<FilterRepository>(),
         filter: filter,
-      ),
+      )..initial(),
       child: Builder(
         builder: (BuildContext context) {
           final bool isNarrowLayout =

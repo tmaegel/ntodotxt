@@ -30,16 +30,7 @@ class InputDialog extends StatelessWidget {
       title: Text(title),
       content: TextField(
         controller: controller,
-        decoration: InputDecoration(
-          hintText: label,
-          filled: false,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          disabledBorder: InputBorder.none,
-        ),
+        decoration: InputDecoration(hintText: label),
       ),
       actions: <Widget>[
         TextButton(

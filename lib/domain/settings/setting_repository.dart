@@ -12,6 +12,10 @@ class SettingRepository {
   Future<Setting?> get({required String key}) async =>
       await controller.get(identifier: key);
 
+  Future<Setting> getOrInsert(
+          {required String key, required String defaultValue}) async =>
+      await controller.getOrInsert(identifier: key, defaultValue: defaultValue);
+
   Future<int> insert(Setting model) async => await controller.insert(model);
 
   Future<int> update(Setting model) async => await controller.update(model);

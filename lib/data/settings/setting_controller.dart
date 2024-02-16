@@ -46,6 +46,18 @@ class SettingController extends ModelController<Setting> {
     return model;
   }
 
+  Future<Setting> getOrInsert(
+      {required dynamic identifier, required String defaultValue}) async {
+    Setting? result = await get(identifier: identifier);
+    if (result == null) {
+      Setting fallback = Setting(key: identifier, value: defaultValue);
+      await insert(fallback);
+      return fallback;
+    } else {
+      return result;
+    }
+  }
+
   @override
   Future<int> insert(Setting model) async {
     late final int id;

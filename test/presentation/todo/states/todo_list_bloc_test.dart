@@ -33,7 +33,7 @@ void main() {
 
     test('initial state', () {
       final TodoListBloc todoListBloc = TodoListBloc(repository: repository);
-      expect(todoListBloc.state is TodoListInitial, true);
+      expect(todoListBloc.state is TodoListLoading, true);
       expect(todoListBloc.state.todoList, []);
     });
   });
@@ -48,11 +48,14 @@ void main() {
 
     test('initial state', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
-      bloc.add(const TodoListSubscriptionRequested());
+      bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(const TodoListSynchronizationRequested());
 
       await expectLater(
         bloc.stream,
         emitsInOrder([
+          TodoListLoading(todoList: [todo]),
           TodoListSuccess(todoList: [todo]),
         ]),
       );
@@ -340,10 +343,8 @@ void main() {
           bloc.stream,
           emitsInOrder([
             // Initial & TodoListSubscriptionRequested
-            TodoListSuccess(todoList: [todo]),
-            // TodoListTodoCompletionToggled start
             TodoListLoading(todoList: [todo]),
-            // saveTodo() within TodoListTodoCompletionToggled
+            // TodoListTodoCompletionToggled start
             TodoListLoading(
               todoList: [todo.copyWith(completion: true)],
             ),
@@ -366,10 +367,8 @@ void main() {
           bloc.stream,
           emitsInOrder([
             // Initial & TodoListSubscriptionRequested
-            TodoListSuccess(todoList: [todo]),
-            // TodoListTodoCompletionToggled start
             TodoListLoading(todoList: [todo]),
-            // saveTodo() within TodoListTodoCompletionToggled
+            // TodoListTodoCompletionToggled start
             TodoListLoading(
               todoList: [todo, todo2.copyWith(completion: true)],
             ),
@@ -399,10 +398,8 @@ void main() {
           bloc.stream,
           emitsInOrder([
             // Initial & TodoListSubscriptionRequested
-            TodoListSuccess(todoList: [todo]),
-            // TodoListTodoCompletionToggled start
             TodoListLoading(todoList: [todo]),
-            // saveTodo() within TodoListTodoCompletionToggled
+            // TodoListTodoCompletionToggled start
             TodoListLoading(
               todoList: [todo.copyWith(completion: false)],
             ),
@@ -425,10 +422,8 @@ void main() {
           bloc.stream,
           emitsInOrder([
             // Initial & TodoListSubscriptionRequested
-            TodoListSuccess(todoList: [todo]),
-            // TodoListTodoCompletionToggled start
             TodoListLoading(todoList: [todo]),
-            // saveTodo() within TodoListTodoCompletionToggled
+            // TodoListTodoCompletionToggled start
             TodoListLoading(
               todoList: [todo, todo2.copyWith(completion: false)],
             ),

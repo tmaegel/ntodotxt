@@ -11,7 +11,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   TodoListBloc({
     required TodoListRepository repository,
   })  : _repository = repository,
-        super(const TodoListInitial()) {
+        super(const TodoListLoading()) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
     on<TodoListTodoSubmitted>(_onTodoSubmitted);
@@ -26,12 +26,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     await emit.forEach<List<Todo>>(
       _repository.getTodoList(),
       onData: (todoList) {
-        if (state is TodoListInitial) {
-          return state.success(todoList: todoList);
-        } else {
-          // Use copyWith here to keep the state (e.g. if loading)
-          return state.copyWith(todoList: todoList);
-        }
+        // Use copyWith here to keep the state (e.g. if loading)
+        return state.copyWith(todoList: todoList);
       },
       onError: (e, _) => state.error(message: e.toString()),
     );
@@ -41,13 +37,18 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListSynchronizationRequested event,
     Emitter<TodoListState> emit,
   ) async {
-    emit(state.loading());
     try {
-      await _repository.initSource();
-      await _repository.readFromSource();
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
+      // Initialize only if this is the first time.
+      if (state is TodoListLoading) {
+        await _repository
+            .initSource()
+            .whenComplete(() => emit(state.success()));
+      } else {
+        emit(state.loading());
+        await _repository
+            .readFromSource()
+            .whenComplete(() => emit(state.success()));
+      }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -59,8 +60,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     emit(state.loading());
     try {
-      // Re-read file and update state manually before write the changes.
-      await _repository.readFromSource();
       _repository.saveTodo(event.todo.copyWith());
       await _repository
           .writeToSource()
@@ -76,8 +75,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     emit(state.loading());
     try {
-      // Re-read file and update state manually before write the changes.
-      await _repository.readFromSource();
       _repository.deleteTodo(event.todo.copyWith());
       await _repository
           .writeToSource()
@@ -93,8 +90,6 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     emit(state.loading());
     try {
-      // Re-read file and update state manually before write the changes.
-      await _repository.readFromSource();
       if (_repository.existsTodo(event.todo)) {
         _repository.saveTodo(
           event.todo.copyDiff(completion: event.completion),

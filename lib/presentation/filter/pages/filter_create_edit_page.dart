@@ -14,6 +14,7 @@ import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
+import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
@@ -40,8 +41,9 @@ class FilterCreateEditPage extends StatelessWidget {
 
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
-        repository: context.read<FilterRepository>(),
-        filter: filter ?? const Filter(),
+        settingRepository: context.read<SettingRepository>(),
+        filterRepository: context.read<FilterRepository>(),
+        filter: filter,
       ),
       child: BlocConsumer<FilterCubit, FilterState>(
         listener: (BuildContext context, FilterState state) {
@@ -308,18 +310,10 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
           style: Theme.of(context).textTheme.titleMedium,
           decoration: const InputDecoration(
             hintText: 'Filter name',
-            isDense: true,
-            filled: false,
             contentPadding: EdgeInsets.symmetric(
               horizontal: 20.0,
               vertical: 16.0,
             ),
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
           ),
           onChanged: (String value) =>
               context.read<FilterCubit>().updateName(value),

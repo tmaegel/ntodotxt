@@ -1,35 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart'
     show SettingController;
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
-import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart'
     show SettingsPage;
+import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class SettingsPageBlocProvider extends StatelessWidget {
+  final String databasePath;
   final Filter? filter;
 
   const SettingsPageBlocProvider({
     this.filter,
+    this.databasePath = inMemoryDatabasePath,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<SettingRepository>(
-      create: (BuildContext context) =>
-          SettingRepository(SettingController(inMemoryDatabasePath)),
-      child: BlocProvider(
-        create: (BuildContext context) => DefaultFilterCubit(
-          filter: filter ?? const Filter(),
-          repository: context.read<SettingRepository>(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) => SettingRepository(
+            SettingController(databasePath),
+          ),
         ),
+        RepositoryProvider<FilterRepository>(
+          create: (BuildContext context) => FilterRepository(
+            FilterController(databasePath),
+          ),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<FilterCubit>(
+            create: (BuildContext context) => FilterCubit(
+              settingRepository: context.read<SettingRepository>(),
+              filterRepository: context.read<FilterRepository>(),
+              filter: filter ?? const Filter(),
+            )..initial(),
+          ),
+          BlocProvider<TodoFileCubit>(
+            create: (BuildContext context) => TodoFileCubit(
+              repository: context.read<SettingRepository>(),
+            )..initial(),
+          ),
+        ],
         child: Builder(
           builder: (BuildContext context) {
             return const MaterialApp(

@@ -117,6 +117,22 @@ void main() {
       });
     });
 
+    group('listFiles()', () {
+      test('successful file list', () async {
+        WebDAVClient client = WebDAVClient(
+            host: host,
+            port: port,
+            baseUrl: baseUrl,
+            username: username,
+            password: password);
+        try {
+          await client.listFiles(path: '/');
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+    });
+
     group('upload()', () {
       test('successful file upload', () async {
         WebDAVClient client = WebDAVClient(

@@ -2,13 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 
-enum TodoListStatus {
-  initial,
-  loading,
-  success,
-  error,
-}
-
 sealed class TodoListState extends Equatable {
   final List<Todo> todoList;
 
@@ -118,25 +111,6 @@ sealed class TodoListState extends Equatable {
 
   @override
   String toString() => 'TodoListState { }';
-}
-
-final class TodoListInitial extends TodoListState {
-  const TodoListInitial({
-    super.todoList,
-  });
-
-  @override
-  TodoListInitial copyWith({
-    List<Todo>? todoList,
-  }) {
-    return TodoListInitial(
-      todoList: todoList ?? this.todoList,
-    );
-  }
-
-  @override
-  String toString() =>
-      'TodoListInitial { todos: ${[for (var t in todoList) t]} }';
 }
 
 final class TodoListLoading extends TodoListState {

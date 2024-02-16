@@ -42,24 +42,13 @@ final ThemeData lightTheme = light.copyWith(
   ),
   inputDecorationTheme: light.inputDecorationTheme.copyWith(
     filled: false,
-    focusedBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: light.primaryColor),
-    ),
-    enabledBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: light.dividerColor),
-    ),
-    border: UnderlineInputBorder(
-      borderSide: BorderSide(color: light.dividerColor),
-    ),
-    disabledBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: light.disabledColor),
-    ),
-    focusedErrorBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.colorScheme.error),
-    ),
-    errorBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.colorScheme.error),
-    ),
+    isDense: true,
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    focusedErrorBorder: InputBorder.none,
+    errorBorder: InputBorder.none,
+    disabledBorder: InputBorder.none,
   ),
 );
 final ThemeData darkTheme = dark.copyWith(
@@ -94,26 +83,15 @@ final ThemeData darkTheme = dark.copyWith(
     focusElevation: 0.0,
     hoverElevation: 0.0,
   ),
-  inputDecorationTheme: dark.inputDecorationTheme.copyWith(
+  inputDecorationTheme: light.inputDecorationTheme.copyWith(
     filled: false,
-    focusedBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.primaryColor),
-    ),
-    enabledBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.dividerColor),
-    ),
-    border: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.dividerColor),
-    ),
-    disabledBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.disabledColor),
-    ),
-    focusedErrorBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.colorScheme.error),
-    ),
-    errorBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: dark.colorScheme.error),
-    ),
+    isDense: true,
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    focusedErrorBorder: InputBorder.none,
+    errorBorder: InputBorder.none,
+    disabledBorder: InputBorder.none,
   ),
 );
 

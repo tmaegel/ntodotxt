@@ -1,39 +1,152 @@
 import 'dart:io';
 
-import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart'
     show FilterController;
+import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
     show Filter, ListFilter, ListGroup, ListOrder;
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
+import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/main.dart';
+import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
+import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart'
-    show LoginOffline;
+    show LoginWebDAV;
+import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
+import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:integration_test/integration_test.dart';
 
+// https://developer.android.com/studio/run/emulator-networking#networkaddresses
+// Special alias to your host loopback interface (127.0.0.1 on your development machine)
+const String host = '10.0.2.2';
+const int port = 80;
+const String baseUrl = '/remote.php/dav/files';
+const String username = 'test';
+const String password = 'test';
+
+class FakeController extends Fake implements FilterController {
+  List<Filter> items = [
+    const Filter(
+      id: 1,
+      name: 'Agenda',
+      order: ListOrder.ascending,
+      filter: ListFilter.incompletedOnly,
+      group: ListGroup.upcoming,
+    ),
+    const Filter(
+      id: 2,
+      name: 'Highly prioritized',
+      order: ListOrder.ascending,
+      filter: ListFilter.incompletedOnly,
+      group: ListGroup.project,
+      priorities: {Priority.A},
+    ),
+    const Filter(
+      id: 3,
+      name: 'Projectideas',
+      order: ListOrder.ascending,
+      filter: ListFilter.completedOnly,
+      group: ListGroup.none,
+      projects: {'projectideas'},
+    ),
+    const Filter(
+      id: 4,
+      name: 'Completed only',
+      order: ListOrder.ascending,
+      filter: ListFilter.completedOnly,
+      group: ListGroup.none,
+    ),
+  ];
+
+  @override
+  Future<List<Filter>> list() async {
+    return Future.value(items);
+  }
+}
+
 class AppTester extends StatelessWidget {
-  final String databasePath;
-  final File todoFile;
   final ThemeMode? themeMode;
 
   const AppTester({
-    required this.todoFile,
-    required this.databasePath,
     this.themeMode,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return App(
-      filter: const Filter(),
-      loginState: const LoginOffline(),
-      databasePath: databasePath,
-      todoFile: todoFile,
-      themeMode: themeMode,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) => SettingRepository(
+            SettingController(inMemoryDatabasePath),
+          ),
+        ),
+        RepositoryProvider<FilterRepository>(
+          create: (BuildContext context) => FilterRepository(
+            FakeController(),
+          ),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginCubit>(
+            create: (BuildContext context) => LoginCubit(
+              state: const LoginWebDAV(
+                server: 'http://$host:$port',
+                baseUrl: baseUrl,
+                username: username,
+                password: password,
+              ),
+            ),
+          ),
+          BlocProvider<TodoFileCubit>(
+            create: (BuildContext context) => TodoFileCubit(
+              repository: context.read<SettingRepository>(),
+            )..initial(),
+          ),
+          BlocProvider<DrawerCubit>(
+            create: (BuildContext context) => DrawerCubit(),
+          ),
+          // Default filter
+          BlocProvider<FilterCubit>(
+            create: (BuildContext context) => FilterCubit(
+              settingRepository: context.read<SettingRepository>(),
+              filterRepository: context.read<FilterRepository>(),
+            )..initial(),
+          ),
+          BlocProvider<FilterListBloc>(
+            create: (BuildContext context) {
+              return FilterListBloc(
+                repository: context.read<FilterRepository>(),
+              )
+                ..add(const FilterListSubscriped())
+                ..add(const FilterListSynchronizationRequested());
+            },
+          ),
+        ],
+        child: Builder(
+          builder: (BuildContext context) {
+            return BlocBuilder<TodoFileCubit, TodoFileState>(
+              builder: (BuildContext context, TodoFileState todoFileState) {
+                if (todoFileState is TodoFileLoading) {
+                  return const SplashScreen();
+                } else {
+                  return App(themeMode: themeMode);
+                }
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -43,12 +156,6 @@ void main() async {
       IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final DateTime today = DateTime.now();
-
-  const String databasePath = inMemoryDatabasePath;
-  final FilterController controller = FilterController(databasePath);
-
-  final MemoryFileSystem fs = MemoryFileSystem();
-  final File todoFile = fs.file('todo.txt');
   final List<Todo> todoList = [
     Todo(
       creationDate: today.subtract(const Duration(days: 7)),
@@ -90,64 +197,30 @@ void main() async {
 
   setUp(() async {
     // Setup todos.
-    await todoFile.create();
-    await todoFile.writeAsString(
-      todoList.join(Platform.lineTerminator),
-      flush: true,
-    );
-    // Setup filters.
-    await (await controller.database).delete('filters'); // Clear
-    await controller.insert(
-      const Filter(
-        id: 1,
-        name: 'Agenda',
-        order: ListOrder.ascending,
-        filter: ListFilter.incompletedOnly,
-        group: ListGroup.upcoming,
-      ),
-    );
-    await controller.insert(
-      const Filter(
-        id: 2,
-        name: 'Highly prioritized',
-        order: ListOrder.ascending,
-        filter: ListFilter.incompletedOnly,
-        group: ListGroup.project,
-        priorities: {Priority.A},
-      ),
-    );
-    await controller.insert(
-      const Filter(
-        id: 3,
-        name: 'Projectideas',
-        order: ListOrder.ascending,
-        filter: ListFilter.completedOnly,
-        group: ListGroup.none,
-        projects: {'projectideas'},
-      ),
-    );
-    await controller.insert(
-      const Filter(
-        id: 4,
-        name: 'Completed only',
-        order: ListOrder.ascending,
-        filter: ListFilter.completedOnly,
-        group: ListGroup.none,
-      ),
-    );
+    WebDAVClient client = WebDAVClient(
+        host: host,
+        port: port,
+        baseUrl: baseUrl,
+        username: username,
+        password: password);
+    try {
+      await client.upload(
+          content: todoList.join(Platform.lineTerminator),
+          filename: 'todo.txt');
+    } catch (e) {
+      fail('An exception was thrown: $e');
+    }
   });
 
   group('dark mode', () {
     group('take screenshots', () {
       testWidgets('of todo list (default)', (tester) async {
         await tester.pumpWidget(
-          AppTester(
-            todoFile: todoFile,
-            databasePath: databasePath,
+          const AppTester(
             themeMode: ThemeMode.dark,
           ),
         );
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
         await binding.convertFlutterSurfaceToImage();
         await tester.pumpAndSettle();
@@ -155,13 +228,11 @@ void main() async {
       });
       testWidgets('of todo list (with open drawer)', (tester) async {
         await tester.pumpWidget(
-          AppTester(
-            todoFile: todoFile,
-            databasePath: databasePath,
+          const AppTester(
             themeMode: ThemeMode.dark,
           ),
         );
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
         await tester.tap(find.byTooltip('Open drawer'));
         await tester.pumpAndSettle();
@@ -176,13 +247,11 @@ void main() async {
       });
       testWidgets('of todo edit page', (tester) async {
         await tester.pumpWidget(
-          AppTester(
-            todoFile: todoFile,
-            databasePath: databasePath,
+          const AppTester(
             themeMode: ThemeMode.dark,
           ),
         );
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
         await tester.tap(find.text('Puplish this app'));
         await tester.pumpAndSettle();
@@ -193,13 +262,11 @@ void main() async {
       });
       testWidgets('of filter list (default)', (tester) async {
         await tester.pumpWidget(
-          AppTester(
-            todoFile: todoFile,
-            databasePath: databasePath,
+          const AppTester(
             themeMode: ThemeMode.dark,
           ),
         );
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
         await tester.tap(find.byTooltip('Open drawer'));
         await tester.pumpAndSettle();
@@ -217,13 +284,11 @@ void main() async {
       });
       testWidgets('of filter edit page', (tester) async {
         await tester.pumpWidget(
-          AppTester(
-            todoFile: todoFile,
-            databasePath: databasePath,
+          const AppTester(
             themeMode: ThemeMode.dark,
           ),
         );
-        await tester.pumpAndSettle();
+        await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
         await tester.tap(find.byTooltip('Open drawer'));
         await tester.pumpAndSettle();

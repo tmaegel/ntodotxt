@@ -1,23 +1,53 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
-    show Filter, ListFilter, ListGroup, ListOrder;
+    show Filter, Filters, Groups, ListFilter, ListGroup, ListOrder, Order;
 import 'package:ntodotxt/domain/filter/filter_repository.dart'
     show FilterRepository;
+import 'package:ntodotxt/domain/settings/setting_model.dart';
+import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 
 class FilterCubit extends Cubit<FilterState> {
-  final FilterRepository _repository;
+  final SettingRepository _settingRepository;
+  final FilterRepository _filterRepository;
 
   FilterCubit({
-    required FilterRepository repository,
-    required Filter filter,
-  })  : _repository = repository,
-        super(FilterSuccess(filter: filter));
+    required SettingRepository settingRepository,
+    required FilterRepository filterRepository,
+    Filter? filter,
+  })  : _settingRepository = settingRepository,
+        _filterRepository = filterRepository,
+        super(
+          filter != null
+              ? FilterSuccess(filter: filter)
+              : const FilterLoading(filter: Filter()),
+        );
+
+  Future<void> initial() async {
+    if (state is FilterLoading) {
+      emit(
+        state.success(
+          filter: Filter(
+            order: Order.byName(
+                (await _settingRepository.get(key: 'order'))?.value),
+            filter: Filters.byName(
+                (await _settingRepository.get(key: 'filter'))?.value),
+            group: Groups.byName(
+                (await _settingRepository.get(key: 'group'))?.value),
+          ),
+        ),
+      );
+    }
+  }
+
+  ///
+  /// Regular filter (saved filter)
+  ///
 
   Future<void> create(Filter filter) async {
     try {
-      int id = await _repository.insert(filter);
+      int id = await _filterRepository.insert(filter);
       if (id > 0) {
         emit(state.success(filter: filter.copyWith(id: id)));
       }
@@ -28,7 +58,7 @@ class FilterCubit extends Cubit<FilterState> {
 
   Future<void> update(Filter filter) async {
     try {
-      int id = await _repository.update(filter);
+      int id = await _filterRepository.update(filter);
       if (id > 0) {
         emit(state.success(filter: filter));
       }
@@ -40,7 +70,7 @@ class FilterCubit extends Cubit<FilterState> {
   Future<void> delete(Filter filter) async {
     try {
       if (filter.id != null) {
-        await _repository.delete(id: filter.id!);
+        await _filterRepository.delete(id: filter.id!);
       }
       emit(state.success(
         filter: filter.copyWithUnsaved(),
@@ -213,6 +243,59 @@ class FilterCubit extends Cubit<FilterState> {
       );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
+    }
+  }
+
+  ///
+  /// Default filter
+  ///
+
+  Future<void> resetToDefaults() async {
+    const Filter defaultFilter = Filter();
+    emit(state.success(
+      filter: defaultFilter,
+    ));
+    for (var k in ['order', 'filter', 'group']) {
+      await _settingRepository.delete(key: k);
+    }
+  }
+
+  Future<void> updateDefaultOrder(ListOrder? value) async {
+    if (value != null) {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(order: value),
+        ),
+      );
+      await _settingRepository.updateOrInsert(
+        Setting(key: 'order', value: value.name),
+      );
+    }
+  }
+
+  Future<void> updateDefaultFilter(ListFilter? value) async {
+    if (value != null) {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(filter: value),
+        ),
+      );
+      await _settingRepository.updateOrInsert(
+        Setting(key: 'filter', value: value.name),
+      );
+    }
+  }
+
+  Future<void> updateDefaultGroup(ListGroup? value) async {
+    if (value != null) {
+      emit(
+        state.success(
+          filter: state.filter.copyWith(group: value),
+        ),
+      );
+      await _settingRepository.updateOrInsert(
+        Setting(key: 'group', value: value.name),
+      );
     }
   }
 }

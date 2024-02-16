@@ -27,6 +27,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.18
   url_launcher: ^6.2.1
   webdav_client: ^1.2.1
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:

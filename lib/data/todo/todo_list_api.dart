@@ -107,6 +107,7 @@ class LocalTodoListApi extends TodoListApi {
 
   @override
   Future<void> initSource() async {
+    log.info('Initialize todo file');
     if (await todoFile.exists() == false) {
       await todoFile.create();
     }
@@ -226,20 +227,22 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   Future<void> initSource() async {
     await super.initSource();
     await client.ping();
-    await client.create(filename);
+    if (await client.fileExists(filename)) {
+      await readFromSource();
+    } else {
+      await writeToSource();
+    }
   }
 
   @override
   Future<void> readFromSource() async {
-    // Write downloaded file content directly to the file.
     await write(await downloadFromSource());
-    super.readFromSource();
+    await super.readFromSource();
   }
 
   @override
   Future<void> writeToSource() async {
-    super.writeToSource();
-    // Upload written file content to remote.
+    await super.writeToSource();
     await uploadToSource();
   }
 

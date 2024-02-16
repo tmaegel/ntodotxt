@@ -1,28 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Todo;
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
-
-class Debouncer {
-  Timer? _timer;
-  final int milliseconds;
-
-  Debouncer({required this.milliseconds});
-
-  void run(VoidCallback action) {
-    _timer?.cancel();
-    _timer = Timer(Duration(milliseconds: milliseconds), action);
-  }
-
-  void dispose() {
-    _timer?.cancel();
-    _timer = null;
-  }
-}
 
 class TodoStringTextField extends StatefulWidget {
   const TodoStringTextField({super.key});
@@ -71,16 +53,8 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
           ],
           style: Theme.of(context).textTheme.titleMedium,
           decoration: const InputDecoration(
-            isDense: true,
-            filled: false,
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
           ),
           onChanged: (String value) {
             _debouncer.run(

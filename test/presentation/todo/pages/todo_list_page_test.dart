@@ -14,7 +14,6 @@ import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
 import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
-import 'package:ntodotxt/presentation/default_filter/states/default_filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
@@ -56,10 +55,11 @@ class TodoListPageMaterialApp extends StatelessWidget {
         builder: (BuildContext context) {
           return MultiBlocProvider(
             providers: [
-              BlocProvider<DefaultFilterCubit>(
-                create: (BuildContext context) => DefaultFilterCubit(
+              BlocProvider<FilterCubit>(
+                create: (BuildContext context) => FilterCubit(
+                  settingRepository: context.read<SettingRepository>(),
+                  filterRepository: context.read<FilterRepository>(),
                   filter: filter ?? const Filter(),
-                  repository: context.read<SettingRepository>(),
                 ),
               ),
               BlocProvider(
@@ -75,13 +75,6 @@ class TodoListPageMaterialApp extends StatelessWidget {
                     repository: context.read<FilterRepository>(),
                   )..add(const FilterListSubscriped());
                 },
-              ),
-              BlocProvider(
-                create: (BuildContext context) => FilterCubit(
-                  repository: context.read<FilterRepository>(),
-                  filter:
-                      filter ?? context.read<DefaultFilterCubit>().state.filter,
-                ),
               ),
             ],
             child: MaterialApp(
