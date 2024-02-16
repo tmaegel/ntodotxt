@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-02-16
+
+### Added
+
+- Add possibility to customize the local path of the todo.txt file #7
+- Tests the connection to the webdav before login
+
+### Changed
+
+- Improve the appearance of the login screen
+
+### Fixed
+
+- Activate the previous item in the drawer when navigating back
+- Ignore empty lines in todo.txt file
+
 ## [0.4.7] - 2024-02-06
 
 ### Fixed
@@ -135,7 +151,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.4.7...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/tmaegel/ntodotxt/compare/v0.4.7...v0.5.0
 [0.4.7]: https://github.com/tmaegel/ntodotxt/compare/v0.4.6...v0.4.7
 [0.4.6]: https://github.com/tmaegel/ntodotxt/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/tmaegel/ntodotxt/compare/v0.4.4...v0.4.5
