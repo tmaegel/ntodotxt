@@ -5,6 +5,7 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
+import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
@@ -30,28 +31,31 @@ class FilterListViewNarrow extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FilterListBloc, FilterListState>(
       builder: (BuildContext context, FilterListState state) {
-        return Scaffold(
-          appBar: const MainAppBar(title: 'Filters'),
-          body: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            itemCount: state.filterList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return FilterListTile(filter: state.filterList[index]);
-            },
-          ),
-          drawer: Container(),
-          bottomNavigationBar: const BottomAppBar(
-            child: Row(
-              children: [],
+        return PopScopeDrawer(
+          child: Scaffold(
+            appBar: const MainAppBar(title: 'Filters'),
+            body: ListView.builder(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              itemCount: state.filterList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return FilterListTile(filter: state.filterList[index]);
+              },
             ),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.endContained,
-          floatingActionButton: FloatingActionButton(
-            tooltip: 'Add filter',
-            child: const Icon(Icons.add),
-            onPressed: () => context.push(
-              context.namedLocation('filter-create'),
+            drawer: Container(),
+            bottomNavigationBar: const BottomAppBar(
+              child: Row(
+                children: [],
+              ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.endContained,
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add filter',
+              child: const Icon(Icons.add),
+              onPressed: () => context.push(
+                context.namedLocation('filter-create'),
+              ),
             ),
           ),
         );
@@ -67,20 +71,23 @@ class FilterListViewWide extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FilterListBloc, FilterListState>(
       builder: (BuildContext context, FilterListState state) {
-        return Scaffold(
-          appBar: const MainAppBar(title: 'Filters'),
-          body: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            itemCount: state.filterList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return FilterListTile(filter: state.filterList[index]);
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            tooltip: 'Add filter',
-            child: const Icon(Icons.add),
-            onPressed: () => context.push(
-              context.namedLocation('filter-create'),
+        return PopScopeDrawer(
+          child: Scaffold(
+            appBar: const MainAppBar(title: 'Filters'),
+            body: ListView.builder(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              itemCount: state.filterList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return FilterListTile(filter: state.filterList[index]);
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add filter',
+              child: const Icon(Icons.add),
+              onPressed: () => context.push(
+                context.namedLocation('filter-create'),
+              ),
             ),
           ),
         );

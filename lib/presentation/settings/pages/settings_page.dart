@@ -6,6 +6,7 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
+import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
@@ -18,9 +19,11 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: MainAppBar(title: 'Settings'),
-      body: SettingsView(),
+    return const PopScopeDrawer(
+      child: Scaffold(
+        appBar: MainAppBar(title: 'Settings'),
+        body: SettingsView(),
+      ),
     );
   }
 }

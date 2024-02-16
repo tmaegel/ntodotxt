@@ -10,7 +10,7 @@ import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
-import 'package:ntodotxt/misc.dart';
+import 'package:ntodotxt/misc.dart' show PopScopeDrawer, SnackBarHandler;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart'
     show FilterListBloc;
@@ -24,7 +24,7 @@ class TodoListPage extends StatelessWidget {
   final Filter? filter;
 
   const TodoListPage({
-    required this.filter,
+    this.filter,
     super.key,
   });
 
@@ -69,25 +69,27 @@ class TodoListViewNarrow extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.name != state.filter.name,
       builder: (BuildContext context, FilterState state) {
-        return Scaffold(
-          appBar: MainAppBar(
-            title: state.filter.name.isEmpty
-                ? 'Todos'
-                : 'Filter: ${state.filter.name}',
-            bottom: const AppBarFilterList(),
-          ),
-          drawer: Container(),
-          bottomNavigationBar: const TodoListBottomAppBar(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.endContained,
-          floatingActionButton: FloatingActionButton(
-            tooltip: 'Add todo',
-            child: const Icon(Icons.add),
-            onPressed: () => context.push(
-              context.namedLocation('todo-create'),
+        return PopScopeDrawer(
+          child: Scaffold(
+            appBar: MainAppBar(
+              title: state.filter.name.isEmpty
+                  ? 'Todos'
+                  : 'Filter: ${state.filter.name}',
+              bottom: const AppBarFilterList(),
             ),
+            drawer: Container(),
+            bottomNavigationBar: const TodoListBottomAppBar(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.endContained,
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add todo',
+              child: const Icon(Icons.add),
+              onPressed: () => context.push(
+                context.namedLocation('todo-create'),
+              ),
+            ),
+            body: const TodoListLoadingWrapper(),
           ),
-          body: const TodoListLoadingWrapper(),
         );
       },
     );
@@ -103,33 +105,35 @@ class TodoListViewWide extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.name != state.filter.name,
       builder: (BuildContext context, FilterState state) {
-        return Scaffold(
-          appBar: MainAppBar(
-            title:
-                'Todo: ${state.filter.name.isEmpty ? 'all' : state.filter.name}',
-            toolbar: Row(
-              children: [
-                IconButton(
-                  tooltip: 'Search',
-                  icon: const Icon(Icons.search),
-                  onPressed: () => showSearch(
-                    context: context,
-                    delegate: TodoSearchPage(),
+        return PopScopeDrawer(
+          child: Scaffold(
+            appBar: MainAppBar(
+              title:
+                  'Todo: ${state.filter.name.isEmpty ? 'all' : state.filter.name}',
+              toolbar: Row(
+                children: [
+                  IconButton(
+                    tooltip: 'Search',
+                    icon: const Icon(Icons.search),
+                    onPressed: () => showSearch(
+                      context: context,
+                      delegate: TodoSearchPage(),
+                    ),
                   ),
-                ),
-                const TodoListSaveFilter(),
-              ],
+                  const TodoListSaveFilter(),
+                ],
+              ),
+              bottom: const AppBarFilterList(),
             ),
-            bottom: const AppBarFilterList(),
-          ),
-          floatingActionButton: FloatingActionButton(
-            tooltip: 'Add todo',
-            child: const Icon(Icons.add),
-            onPressed: () => context.push(
-              context.namedLocation('todo-create'),
+            floatingActionButton: FloatingActionButton(
+              tooltip: 'Add todo',
+              child: const Icon(Icons.add),
+              onPressed: () => context.push(
+                context.namedLocation('todo-create'),
+              ),
             ),
+            body: const TodoListLoadingWrapper(),
           ),
-          body: const TodoListLoadingWrapper(),
         );
       },
     );

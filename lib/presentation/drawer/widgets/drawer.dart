@@ -26,8 +26,8 @@ class NavigationRailDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DrawerCubit, int>(
-      builder: (BuildContext context, int drawerState) {
+    return BlocBuilder<DrawerCubit, DrawerState>(
+      builder: (BuildContext context, DrawerState drawerState) {
         return BlocBuilder<FilterListBloc, FilterListState>(
           builder: (BuildContext context, FilterListState filterListState) {
             List<DrawerDestination> destinations = <DrawerDestination>[
@@ -35,13 +35,14 @@ class NavigationRailDrawer extends StatelessWidget {
                 label: 'Todos',
                 icon: const Icon(Icons.playlist_add_check),
                 selectedIcon: const Icon(Icons.playlist_add_check),
-                onTap: (BuildContext context) => context.goNamed('todo-list'),
+                onTap: (BuildContext context) => context.pushNamed('todo-list'),
               ),
               DrawerDestination(
                 label: 'Filters',
                 icon: const Icon(Icons.filter_alt_outlined),
                 selectedIcon: const Icon(Icons.filter_alt),
-                onTap: (BuildContext context) => context.goNamed('filter-list'),
+                onTap: (BuildContext context) =>
+                    context.pushNamed('filter-list'),
               ),
               for (Filter filter in filterListState.filterList)
                 DrawerDestination(
@@ -49,25 +50,25 @@ class NavigationRailDrawer extends StatelessWidget {
                   icon: const Icon(Icons.favorite_border),
                   selectedIcon: const Icon(Icons.favorite),
                   onTap: (BuildContext context) =>
-                      context.goNamed('todo-list', extra: filter),
+                      context.pushNamed('todo-list', extra: filter),
                 ),
               DrawerDestination(
                 label: 'Settings',
                 icon: const Icon(Icons.settings_outlined),
                 selectedIcon: const Icon(Icons.settings),
-                onTap: (BuildContext context) => context.goNamed('settings'),
+                onTap: (BuildContext context) => context.pushNamed('settings'),
               ),
             ];
 
             return NavigationRail(
               extended: true,
-              selectedIndex: drawerState,
+              selectedIndex: drawerState.index,
               groupAlignment: -1,
               onDestinationSelected: (int index) {
                 final DrawerDestination d = destinations[index];
                 // Navigate if location will be changed only.
-                if (drawerState != index) {
-                  context.read<DrawerCubit>().select(index);
+                if (drawerState.index != index) {
+                  context.read<DrawerCubit>().next(index);
                   d.onTap(context);
                 }
               },
@@ -99,8 +100,8 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
       maxChildSize: 0.6,
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
-        return BlocBuilder<DrawerCubit, int>(
-          builder: (BuildContext context, int drawerState) {
+        return BlocBuilder<DrawerCubit, DrawerState>(
+          builder: (BuildContext context, DrawerState drawerState) {
             return BlocBuilder<FilterListBloc, FilterListState>(
               builder: (BuildContext context, FilterListState filterListState) {
                 List<DrawerDestination> destinations = <DrawerDestination>[
@@ -109,14 +110,14 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                     icon: const Icon(Icons.playlist_add_check),
                     selectedIcon: const Icon(Icons.playlist_add_check),
                     onTap: (BuildContext context) =>
-                        context.goNamed('todo-list'),
+                        context.pushNamed('todo-list'),
                   ),
                   DrawerDestination(
                     label: 'Filters',
                     icon: const Icon(Icons.filter_alt_outlined),
                     selectedIcon: const Icon(Icons.filter_alt),
                     onTap: (BuildContext context) =>
-                        context.goNamed('filter-list'),
+                        context.pushNamed('filter-list'),
                   ),
                   for (Filter filter in filterListState.filterList)
                     DrawerDestination(
@@ -146,15 +147,16 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2.0),
                         child: ListTile(
-                          selected: drawerState == index,
-                          leading:
-                              drawerState == index ? d.selectedIcon : d.icon,
+                          selected: drawerState.index == index,
+                          leading: drawerState.index == index
+                              ? d.selectedIcon
+                              : d.icon,
                           title: Text(d.label),
                           shape: const StadiumBorder(),
                           onTap: () {
                             // Navigate if location will be changed only.
-                            if (drawerState != index) {
-                              context.read<DrawerCubit>().select(index);
+                            if (drawerState.index != index) {
+                              context.read<DrawerCubit>().next(index);
                               d.onTap(context);
                             }
                             Navigator.pop(context);

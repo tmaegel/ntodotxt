@@ -43,11 +43,6 @@ class GenericActionChip extends StatelessWidget {
       label: label,
       padding: EdgeInsets.zero,
       labelPadding: const EdgeInsets.only(right: 8.0),
-      // Workaround: https://github.com/flutter/flutter/issues/67797
-      visualDensity: const VisualDensity(
-        horizontal: -4.0,
-        vertical: -4.0,
-      ),
       onPressed: () async => onPressed(),
     );
   }

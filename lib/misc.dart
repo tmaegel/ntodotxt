@@ -5,6 +5,8 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 
 class PlatformInfo {
   static bool get isDesktopOS {
@@ -71,5 +73,29 @@ class Debouncer {
   void dispose() {
     _timer?.cancel();
     _timer = null;
+  }
+}
+
+class PopScopeDrawer extends StatelessWidget {
+  final Widget child;
+
+  const PopScopeDrawer({
+    required this.child,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        if (didPop) {
+          return;
+        }
+        context.read<DrawerCubit>().back();
+        Navigator.of(context).pop();
+      },
+      child: child,
+    );
   }
 }
