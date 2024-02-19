@@ -23,19 +23,29 @@ enum MessageType { success, info, error }
 class SnackBarHandler {
   static void _call(BuildContext context, MessageType type, String message) {
     Color backgroundColor = Theme.of(context).colorScheme.primaryContainer;
+    Color foregroundColor = Theme.of(context).colorScheme.onPrimaryContainer;
     switch (type) {
       case MessageType.success:
         backgroundColor = Theme.of(context).colorScheme.primaryContainer;
+        foregroundColor = Theme.of(context).colorScheme.onPrimaryContainer;
         break;
       case MessageType.info:
         backgroundColor = Theme.of(context).colorScheme.primaryContainer;
+        foregroundColor = Theme.of(context).colorScheme.onPrimaryContainer;
         break;
       case MessageType.error:
         backgroundColor = Theme.of(context).colorScheme.errorContainer;
+        foregroundColor = Theme.of(context).colorScheme.onError;
         break;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(backgroundColor: backgroundColor, content: Text(message)),
+      SnackBar(
+        backgroundColor: backgroundColor,
+        content: Text(
+          message,
+          style: TextStyle(color: foregroundColor),
+        ),
+      ),
     );
   }
 
