@@ -11,11 +11,11 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
-    systemOverlayStyle: SystemUiOverlayStyle(
+    systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: light.colorScheme.surface,
+      systemNavigationBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   ),
@@ -40,10 +40,7 @@ final ThemeData lightTheme = light.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
-  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(
-    color: light.colorScheme.surface,
-    elevation: 0.0,
-  ),
+  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(),
   floatingActionButtonTheme: light.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
     focusElevation: 0.0,
@@ -62,11 +59,11 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
-    systemOverlayStyle: SystemUiOverlayStyle(
+    systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.light,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: dark.colorScheme.surface,
+      systemNavigationBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   ),
@@ -91,10 +88,7 @@ final ThemeData darkTheme = dark.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
-  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(
-    color: dark.colorScheme.surface,
-    elevation: 0.0,
-  ),
+  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(),
   floatingActionButtonTheme: dark.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
     focusElevation: 0.0,
