@@ -2,23 +2,31 @@ import 'package:flutter/material.dart';
 
 class BasicChip extends StatelessWidget {
   final String label;
+  final bool mono;
 
   const BasicChip({
     required this.label,
+    this.mono = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryContainer,
+        color: mono
+            ? Theme.of(context).colorScheme.surfaceVariant
+            : Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         label,
-        style: Theme.of(context).listTileTheme.subtitleTextStyle,
+        style: TextStyle(
+          color: mono
+              ? Theme.of(context).colorScheme.onSurfaceVariant
+              : Theme.of(context).colorScheme.onSecondaryContainer,
+        ),
       ),
     );
   }

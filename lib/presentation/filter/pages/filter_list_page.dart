@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
+import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
@@ -114,40 +115,35 @@ class FilterListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildSubtitle() {
-    int i = 0;
-    List<Widget> children = [];
+  Widget? _buildSubtitle() {
     final List<String> items = [
       filter.order.name,
       filter.filter.name,
       filter.group.name,
-      [for (Priority p in filter.priorities) p.name].join(' '),
-      [for (String p in filter.projects) '+$p'].join(' '),
-      [for (String c in filter.contexts) '@$c'].join(' '),
+      for (Priority p in filter.priorities) p.name,
+      for (String p in filter.projects) '+$p',
+      for (String c in filter.contexts) '@$c',
     ]..removeWhere((value) => value.isEmpty);
-    for (String attr in items) {
-      i++;
-      children.add(
-        Padding(
-          padding: const EdgeInsets.only(right: 4.0),
-          child: Text(attr),
-        ),
-      );
-      if (attr.isNotEmpty && i < items.length) {
-        children.add(
-          const Padding(
-            padding: EdgeInsets.only(right: 4.0),
-            child: Text('/'),
-          ),
-        );
-      }
+
+    if (items.isEmpty) {
+      return null;
+    }
+
+    List<String> shortenedItems;
+    if (items.length > 5) {
+      shortenedItems = items.sublist(0, 5);
+      shortenedItems.add('...');
+    } else {
+      shortenedItems = [...items];
     }
 
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 0.0, // gap between adjacent chips
+      spacing: 4.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
-      children: children,
+      children: <Widget>[
+        for (String attr in shortenedItems) BasicChip(label: attr, mono: true),
+      ],
     );
   }
 }

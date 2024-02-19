@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -109,45 +110,31 @@ class TodoSearchTile extends StatelessWidget {
   }
 
   Widget? _buildSubtitle() {
-    if (todo.creationDate == null &&
-        todo.priority == Priority.none &&
-        todo.projects.isEmpty &&
-        todo.contexts.isEmpty &&
-        todo.keyValues.isEmpty) {
+    final List<String> items = [
+      if (todo.priority != Priority.none) todo.priority.name,
+      for (String p in todo.fmtProjects) p,
+      for (String c in todo.fmtContexts) c,
+      for (String kv in todo.fmtKeyValues) kv,
+    ]..removeWhere((value) => value.isEmpty);
+
+    if (items.isEmpty) {
       return null;
+    }
+
+    List<String> shortenedItems;
+    if (items.length > 5) {
+      shortenedItems = items.sublist(0, 5);
+      shortenedItems.add('...');
+    } else {
+      shortenedItems = [...items];
     }
 
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 0.0, // gap between adjacent chips
+      spacing: 4.0, // gap between adjacent chips
       runSpacing: 4.0, // gap between lines
       children: <Widget>[
-        if (todo.priority != Priority.none)
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: Text(todo.fmtPriority),
-          ),
-        if (todo.creationDate != null && todo.completion == false)
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: Text(Todo.differenceToToday(todo.creationDate!)),
-          ),
-        if (todo.completionDate != null && todo.completion == true)
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: Text(Todo.differenceToToday(todo.completionDate!)),
-          ),
-        if (todo.projects.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: Text(todo.fmtProjects.join(' ')),
-          ),
-        if (todo.contexts.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(right: 4.0),
-            child: Text(todo.fmtContexts.join(' ')),
-          ),
-        if (todo.keyValues.isNotEmpty) Text(todo.fmtKeyValues.join(' ')),
+        for (String attr in shortenedItems) BasicChip(label: attr, mono: true),
       ],
     );
   }
