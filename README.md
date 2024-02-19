@@ -41,7 +41,7 @@ This application is under active development and will continue to be modified an
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
 - [ ] Build and publish to Microsoft Store (Windows)
 - [ ] [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
-- [ ] Custom todo.txt path
+- [x] Custom todo.txt path (local)
 - [ ] Import existing todo.txt
 - [ ] Add language localization
 - [ ] Archiving of all completed todos (done.txt)

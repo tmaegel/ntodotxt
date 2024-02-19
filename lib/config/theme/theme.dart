@@ -13,8 +13,7 @@ final ThemeData lightTheme = light.copyWith(
     backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
-    behavior: SnackBarBehavior.floating,
-    insetPadding: const EdgeInsets.all(16),
+    elevation: 0.0,
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
   chipTheme: light.chipTheme.copyWith(),
@@ -56,8 +55,7 @@ final ThemeData darkTheme = dark.copyWith(
     backgroundColor: Colors.transparent,
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
-    behavior: SnackBarBehavior.floating,
-    insetPadding: const EdgeInsets.all(16),
+    elevation: 0.0,
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
   chipTheme: dark.chipTheme.copyWith(),
