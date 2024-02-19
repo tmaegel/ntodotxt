@@ -2,6 +2,7 @@
 
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ntodotxt/misc.dart';
 
 final ThemeData light = CustomTheme.light;
@@ -10,7 +11,13 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
-    backgroundColor: Colors.transparent,
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: light.colorScheme.surface,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
     elevation: 0.0,
@@ -33,7 +40,10 @@ final ThemeData lightTheme = light.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
-  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(),
+  bottomAppBarTheme: light.bottomAppBarTheme.copyWith(
+    color: light.colorScheme.surface,
+    elevation: 0.0,
+  ),
   floatingActionButtonTheme: light.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
     focusElevation: 0.0,
@@ -52,7 +62,13 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
-    backgroundColor: Colors.transparent,
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: dark.colorScheme.surface,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
   ),
   snackBarTheme: light.snackBarTheme.copyWith(
     elevation: 0.0,
@@ -75,7 +91,10 @@ final ThemeData darkTheme = dark.copyWith(
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
-  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(),
+  bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(
+    color: dark.colorScheme.surface,
+    elevation: 0.0,
+  ),
   floatingActionButtonTheme: dark.floatingActionButtonTheme.copyWith(
     elevation: 0.0,
     focusElevation: 0.0,

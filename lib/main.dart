@@ -58,7 +58,6 @@ void main() async {
   log.info('Initialize main');
 
   log.info('Setup bloc oberserver');
-  WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = GenericBlocObserver();
 
   log.info('Run app');

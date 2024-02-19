@@ -77,7 +77,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   // Scaffold requires as appbar a class that implements PreferredSizeWidget.
   @override
   Size get preferredSize =>
-      Size.fromHeight(bottom == null ? kToolbarHeight : 89);
+      Size.fromHeight(bottom == null ? kToolbarHeight : 110);
 }
 
 class AppBarFilterList extends StatelessWidget {
