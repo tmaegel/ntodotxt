@@ -27,7 +27,7 @@ final ThemeData lightTheme = light.copyWith(
   expansionTileTheme: light.expansionTileTheme.copyWith(
     shape: const Border(),
     collapsedBackgroundColor: light.appBarTheme.backgroundColor,
-    textColor: dark.colorScheme.primary,
+    textColor: light.colorScheme.primary,
   ),
   listTileTheme: light.listTileTheme.copyWith(
     selectedColor: light.textTheme.bodySmall?.color,
@@ -37,7 +37,7 @@ final ThemeData lightTheme = light.copyWith(
       borderRadius: BorderRadius.circular(16),
     ),
   ),
-  scrollbarTheme: dark.scrollbarTheme.copyWith(
+  scrollbarTheme: light.scrollbarTheme.copyWith(
     thickness: MaterialStateProperty.all(5.0),
   ),
   bottomAppBarTheme: light.bottomAppBarTheme.copyWith(),
@@ -67,7 +67,7 @@ final ThemeData darkTheme = dark.copyWith(
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   ),
-  snackBarTheme: light.snackBarTheme.copyWith(
+  snackBarTheme: dark.snackBarTheme.copyWith(
     elevation: 0.0,
   ),
   splashColor: PlatformInfo.isAppOS ? Colors.transparent : null,
@@ -94,7 +94,7 @@ final ThemeData darkTheme = dark.copyWith(
     focusElevation: 0.0,
     hoverElevation: 0.0,
   ),
-  inputDecorationTheme: light.inputDecorationTheme.copyWith(
+  inputDecorationTheme: dark.inputDecorationTheme.copyWith(
     filled: false,
     isDense: true,
     border: InputBorder.none,
