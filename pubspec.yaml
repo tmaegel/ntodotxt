@@ -36,7 +36,7 @@ dev_dependencies:
     sdk: flutter
   flutter_driver:
     sdk: flutter
-  file: ^6.1.4
+  file: ^7.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^3.0.1
   flutter_oss_licenses: ^2.0.1
