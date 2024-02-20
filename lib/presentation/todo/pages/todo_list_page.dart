@@ -232,7 +232,7 @@ class LoadingIndicatorWrapper extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Container(
-              padding: const EdgeInsets.only(top: 90),
+              padding: const EdgeInsets.only(top: 50),
               child: Container(
                 height: 40,
                 width: 40,
@@ -242,7 +242,7 @@ class LoadingIndicatorWrapper extends StatelessWidget {
                 ),
                 child: const Padding(
                   padding: EdgeInsets.all(10),
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(strokeWidth: 3),
                 ),
               ),
             ),
