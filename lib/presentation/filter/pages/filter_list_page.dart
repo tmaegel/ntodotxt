@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/common_widgets/scroll_to_top.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
+import 'package:ntodotxt/misc.dart' show PopScopeDrawer, SnackBarHandler;
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
@@ -17,17 +18,32 @@ class FilterListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isNarrowLayout =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    if (isNarrowLayout) {
-      return const FilterListViewNarrow();
-    } else {
-      return const FilterListViewWide();
-    }
+    return BlocListener<FilterListBloc, FilterListState>(
+      listener: (BuildContext context, FilterListState state) {
+        if (state is FilterListError) {
+          SnackBarHandler.error(context, state.message);
+        }
+      },
+      child: isNarrowLayout
+          ? const FilterListViewNarrow()
+          : const FilterListViewWide(),
+    );
   }
 }
 
-class FilterListViewNarrow extends StatelessWidget {
+///
+/// Narrow layout
+///
+
+class FilterListViewNarrow extends ScollToTopView {
   const FilterListViewNarrow({super.key});
 
+  @override
+  State<FilterListViewNarrow> createState() => _FilterListViewNarrowState();
+}
+
+class _FilterListViewNarrowState
+    extends ScollToTopViewState<FilterListViewNarrow> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FilterListBloc, FilterListState>(
@@ -36,6 +52,7 @@ class FilterListViewNarrow extends StatelessWidget {
           child: Scaffold(
             appBar: const MainAppBar(title: 'Filters'),
             body: ListView.builder(
+              controller: scrollController,
               padding:
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               itemCount: state.filterList.length,
@@ -44,20 +61,19 @@ class FilterListViewNarrow extends StatelessWidget {
               },
             ),
             drawer: Container(),
-            bottomNavigationBar: const BottomAppBar(
-              child: Row(
-                children: [],
-              ),
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.endContained,
-            floatingActionButton: FloatingActionButton(
-              tooltip: 'Add filter',
-              child: const Icon(Icons.add),
-              onPressed: () => context.push(
-                context.namedLocation('filter-create'),
-              ),
-            ),
+            floatingActionButton: scrolledDown
+                ? FloatingActionButton.small(
+                    tooltip: 'Go to top',
+                    child: const Icon(Icons.keyboard_arrow_up),
+                    onPressed: () => scrollToTop(),
+                  )
+                : FloatingActionButton(
+                    tooltip: 'Add filter',
+                    child: const Icon(Icons.add),
+                    onPressed: () => context.push(
+                      context.namedLocation('filter-create'),
+                    ),
+                  ),
           ),
         );
       },
@@ -65,9 +81,18 @@ class FilterListViewNarrow extends StatelessWidget {
   }
 }
 
-class FilterListViewWide extends StatelessWidget {
+///
+/// Wide layout
+///
+
+class FilterListViewWide extends ScollToTopView {
   const FilterListViewWide({super.key});
 
+  @override
+  State<FilterListViewWide> createState() => _FilterListViewWideState();
+}
+
+class _FilterListViewWideState extends ScollToTopViewState<FilterListViewWide> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FilterListBloc, FilterListState>(
@@ -76,6 +101,7 @@ class FilterListViewWide extends StatelessWidget {
           child: Scaffold(
             appBar: const MainAppBar(title: 'Filters'),
             body: ListView.builder(
+              controller: scrollController,
               padding:
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               itemCount: state.filterList.length,
@@ -83,19 +109,29 @@ class FilterListViewWide extends StatelessWidget {
                 return FilterListTile(filter: state.filterList[index]);
               },
             ),
-            floatingActionButton: FloatingActionButton(
-              tooltip: 'Add filter',
-              child: const Icon(Icons.add),
-              onPressed: () => context.push(
-                context.namedLocation('filter-create'),
-              ),
-            ),
+            floatingActionButton: scrolledDown
+                ? FloatingActionButton.small(
+                    tooltip: 'Go to top',
+                    child: const Icon(Icons.keyboard_arrow_up),
+                    onPressed: () => scrollToTop(),
+                  )
+                : FloatingActionButton(
+                    tooltip: 'Add filter',
+                    child: const Icon(Icons.add),
+                    onPressed: () => context.push(
+                      context.namedLocation('filter-create'),
+                    ),
+                  ),
           ),
         );
       },
     );
   }
 }
+
+///
+/// Components
+///
 
 class FilterListTile extends StatelessWidget {
   final Filter filter;

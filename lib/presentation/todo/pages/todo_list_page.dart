@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +5,7 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/input_dialog.dart';
+import 'package:ntodotxt/common_widgets/scroll_to_top.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
@@ -41,19 +41,15 @@ class TodoListPage extends StatelessWidget {
         builder: (BuildContext context) {
           final bool isNarrowLayout =
               MediaQuery.of(context).size.width < maxScreenWidthCompact;
-          Widget child;
-          if (isNarrowLayout) {
-            child = const TodoListViewNarrow();
-          } else {
-            child = const TodoListViewWide();
-          }
           return BlocListener<TodoListBloc, TodoListState>(
             listener: (BuildContext context, TodoListState state) {
               if (state is TodoListError) {
                 SnackBarHandler.error(context, state.message);
               }
             },
-            child: child,
+            child: isNarrowLayout
+                ? const TodoListViewNarrow()
+                : const TodoListViewWide(),
           );
         },
       ),
@@ -61,150 +57,211 @@ class TodoListPage extends StatelessWidget {
   }
 }
 
-class TodoListViewNarrow extends StatelessWidget {
+///
+/// Narrow layout
+///
+
+class TodoListViewNarrow extends ScollToTopView {
   const TodoListViewNarrow({super.key});
 
   @override
+  State<TodoListViewNarrow> createState() => _TodoListViewNarrowState();
+}
+
+class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
-      buildWhen: (FilterState previousState, FilterState state) =>
-          previousState.filter.name != state.filter.name,
-      builder: (BuildContext context, FilterState state) {
-        return PopScopeDrawer(
-          child: Scaffold(
-            appBar: MainAppBar(
-              title: state.filter.name.isEmpty
-                  ? 'Todos'
-                  : 'Filter: ${state.filter.name}',
-              bottom: const AppBarFilterList(),
-            ),
-            drawer: Container(),
-            bottomNavigationBar: const TodoListBottomAppBar(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.endContained,
-            floatingActionButton: FloatingActionButton(
-              tooltip: 'Add todo',
-              child: const Icon(Icons.add),
-              onPressed: () => context.push(
-                context.namedLocation('todo-create'),
+    return BlocBuilder<TodoListBloc, TodoListState>(
+      buildWhen: (TodoListState previousState, TodoListState todoListState) =>
+          (previousState is! TodoListLoading &&
+              todoListState is TodoListLoading) ||
+          (previousState is TodoListLoading &&
+              todoListState is! TodoListLoading),
+      builder: (BuildContext context, TodoListState todoListState) {
+        return BlocBuilder<FilterCubit, FilterState>(
+          buildWhen: (FilterState previousState, FilterState filterState) =>
+              previousState.filter.name != filterState.filter.name,
+          builder: (BuildContext context, FilterState filterState) {
+            return PopScopeDrawer(
+              child: Scaffold(
+                appBar: MainAppBar(
+                  title:
+                      'Todo: ${filterState.filter.name.isEmpty ? 'all' : filterState.filter.name}',
+                  toolbar: Row(
+                    children: [
+                      IconButton(
+                        tooltip: 'Search',
+                        icon: const Icon(Icons.search),
+                        onPressed: () => showSearch(
+                          context: context,
+                          delegate: TodoSearchPage(),
+                        ),
+                      ),
+                      const TodoListSaveFilter(),
+                    ],
+                  ),
+                  bottom: const AppBarFilterList(),
+                ),
+                drawer: Container(),
+                floatingActionButton: scrolledDown
+                    ? FloatingActionButton.small(
+                        tooltip: 'Go to top',
+                        child: const Icon(Icons.keyboard_arrow_up),
+                        onPressed: () => scrollToTop(),
+                      )
+                    : FloatingActionButton(
+                        tooltip: 'Add todo',
+                        child: const Icon(Icons.add),
+                        onPressed: () => context.push(
+                          context.namedLocation('todo-create'),
+                        ),
+                      ),
+                body: RefreshIndicator(
+                  onRefresh: () async {
+                    context
+                        .read<TodoListBloc>()
+                        .add(const TodoListSynchronizationRequested());
+                  },
+                  child: LoadingIndicatorWrapper(
+                    loading: todoListState is TodoListLoading,
+                    child: TodoList(scrollController: scrollController),
+                  ),
+                ),
               ),
-            ),
-            body: const TodoListLoadingWrapper(),
-          ),
+            );
+          },
         );
       },
     );
   }
 }
 
-class TodoListViewWide extends StatelessWidget {
+///
+/// Wide layout
+///
+
+class TodoListViewWide extends ScollToTopView {
   const TodoListViewWide({super.key});
 
   @override
+  State<TodoListViewWide> createState() => _TodoListViewWideState();
+}
+
+class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
-      buildWhen: (FilterState previousState, FilterState state) =>
-          previousState.filter.name != state.filter.name,
-      builder: (BuildContext context, FilterState state) {
-        return PopScopeDrawer(
-          child: Scaffold(
-            appBar: MainAppBar(
-              title:
-                  'Todo: ${state.filter.name.isEmpty ? 'all' : state.filter.name}',
-              toolbar: Row(
-                children: [
-                  IconButton(
-                    tooltip: 'Search',
-                    icon: const Icon(Icons.search),
-                    onPressed: () => showSearch(
-                      context: context,
-                      delegate: TodoSearchPage(),
-                    ),
+    return BlocBuilder<TodoListBloc, TodoListState>(
+      buildWhen: (TodoListState previousState, TodoListState todoListState) =>
+          (previousState is! TodoListLoading &&
+              todoListState is TodoListLoading) ||
+          (previousState is TodoListLoading &&
+              todoListState is! TodoListLoading),
+      builder: (BuildContext context, TodoListState todoListState) {
+        return BlocBuilder<FilterCubit, FilterState>(
+          buildWhen: (FilterState previousState, FilterState filterState) =>
+              previousState.filter.name != filterState.filter.name,
+          builder: (BuildContext context, FilterState filterState) {
+            return PopScopeDrawer(
+              child: Scaffold(
+                appBar: MainAppBar(
+                  title:
+                      'Todo: ${filterState.filter.name.isEmpty ? 'all' : filterState.filter.name}',
+                  toolbar: Row(
+                    children: [
+                      IconButton(
+                        tooltip: 'Search',
+                        icon: const Icon(Icons.search),
+                        onPressed: () => showSearch(
+                          context: context,
+                          delegate: TodoSearchPage(),
+                        ),
+                      ),
+                      const TodoListSaveFilter(),
+                    ],
                   ),
-                  const TodoListSaveFilter(),
-                ],
+                  bottom: const AppBarFilterList(),
+                ),
+                floatingActionButton: FloatingActionButton(
+                  tooltip: 'Add todo',
+                  child: const Icon(Icons.add),
+                  onPressed: () => context.push(
+                    context.namedLocation('todo-create'),
+                  ),
+                ),
+                body: RefreshIndicator(
+                  onRefresh: () async {
+                    context
+                        .read<TodoListBloc>()
+                        .add(const TodoListSynchronizationRequested());
+                  },
+                  child: LoadingIndicatorWrapper(
+                    loading: todoListState is TodoListLoading,
+                    child: TodoList(scrollController: scrollController),
+                  ),
+                ),
               ),
-              bottom: const AppBarFilterList(),
-            ),
-            floatingActionButton: FloatingActionButton(
-              tooltip: 'Add todo',
-              child: const Icon(Icons.add),
-              onPressed: () => context.push(
-                context.namedLocation('todo-create'),
-              ),
-            ),
-            body: const TodoListLoadingWrapper(),
-          ),
+            );
+          },
         );
       },
     );
   }
 }
 
-class TodoListLoadingWrapper extends StatelessWidget {
-  const TodoListLoadingWrapper({super.key});
+///
+/// Components
+///
+
+class LoadingIndicatorWrapper extends StatelessWidget {
+  final Widget child;
+  final bool loading;
+
+  const LoadingIndicatorWrapper({
+    required this.child,
+    this.loading = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      key: GlobalKey<RefreshIndicatorState>(),
-      onRefresh: () async {
-        context
-            .read<TodoListBloc>()
-            .add(const TodoListSynchronizationRequested());
-      },
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-          },
-        ),
-        child: BlocBuilder<TodoListBloc, TodoListState>(
-          buildWhen: (TodoListState previousState, TodoListState state) {
-            // Rebuild if loading state is changed only.
-            return (previousState is TodoListLoading &&
-                    state is! TodoListLoading) ||
-                (previousState is! TodoListLoading && state is TodoListLoading);
-          },
-          builder: (BuildContext context, TodoListState state) {
-            if (state is TodoListLoading) {
-              return Stack(
-                children: <Widget>[
-                  const TodoList(),
-                  // Custom progress indicator.
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 90),
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).canvasColor,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return const TodoList();
-            }
-          },
-        ),
-      ),
-    );
+    if (loading) {
+      return Stack(
+        children: <Widget>[
+          child,
+          // Custom progress indicator.
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              padding: const EdgeInsets.only(top: 90),
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).canvasColor,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return child;
+    }
   }
 }
 
 class TodoList extends StatelessWidget {
-  const TodoList({super.key});
+  final ScrollController scrollController;
+
+  const TodoList({
+    required this.scrollController,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +274,8 @@ class TodoList extends StatelessWidget {
               filterState.filter,
             );
             return ListView.builder(
+              controller: scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
               padding:
                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               itemCount: sectionList.length,
@@ -343,29 +402,6 @@ class TodoListTile extends StatelessWidget {
       children: <Widget>[
         for (String attr in shortenedItems) BasicChip(label: attr, mono: true),
       ],
-    );
-  }
-}
-
-class TodoListBottomAppBar extends StatelessWidget {
-  const TodoListBottomAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      child: Row(
-        children: [
-          IconButton(
-            tooltip: 'Search',
-            icon: const Icon(Icons.search),
-            onPressed: () => showSearch(
-              context: context,
-              delegate: TodoSearchPage(),
-            ),
-          ),
-          const TodoListSaveFilter(),
-        ],
-      ),
     );
   }
 }
