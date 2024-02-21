@@ -1,1 +1,1 @@
-With ntodotxt you can manage your todos in the todo.txt format (i.e. all information is stored in a single file). You can save your todos locally on your device and/or synchronize the todo.txt file via webdav - for example with a self-hosted nextcloud instance.
+With ntodotxt you can manage your todos in a todo.txt file (i.e. all information is stored in a single file). You can save your todos locally on your device and/or synchronize the todo.txt file via webdav - for example with a self-hosted nextcloud instance.
