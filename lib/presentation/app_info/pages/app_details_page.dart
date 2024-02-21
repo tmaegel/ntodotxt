@@ -63,13 +63,6 @@ class AppInfoView extends StatelessWidget {
           subtitle: const Text('MIT License'),
           onTap: () => context.pushNamed('licenses'),
         ),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-          leading: const Icon(Icons.info_outline),
-          title: const Text('App icon'),
-          subtitle: const Text('Made by @colebemis'),
-          onTap: () => _openUrl('https://github.com/feathericons/feather'),
-        ),
       ],
     );
   }
