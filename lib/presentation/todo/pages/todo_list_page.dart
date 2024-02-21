@@ -367,7 +367,7 @@ class TodoListTile extends StatelessWidget {
         todo.description,
         style: TextStyle(
           decoration: todo.completion ? TextDecoration.lineThrough : null,
-          decorationThickness: 2.0,
+          decorationThickness: 5.0,
         ),
       ),
       subtitle: _buildSubtitle(),

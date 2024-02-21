@@ -54,7 +54,7 @@ class FakeController extends Fake implements FilterController {
       id: 3,
       name: 'Projectideas',
       order: ListOrder.ascending,
-      filter: ListFilter.completedOnly,
+      filter: ListFilter.incompletedOnly,
       group: ListGroup.none,
       projects: {'projectideas'},
     ),
