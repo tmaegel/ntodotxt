@@ -55,19 +55,17 @@ class FilterCreateEditPage extends StatelessWidget {
           return Scaffold(
             appBar: MainAppBar(
               title: createMode ? 'Create' : 'Edit',
-              toolbar: narrowView
-                  ? null
-                  : Row(
-                      children: <Widget>[
-                        if (!createMode)
-                          DeleteFilterButton(filter: state.filter),
-                        SaveFilterButton(
-                          filter: state.filter,
-                          create: createMode,
-                          narrowView: narrowView,
-                        ),
-                      ],
+              toolbar: Row(
+                children: <Widget>[
+                  if (!createMode) DeleteFilterButton(filter: state.filter),
+                  if (!narrowView)
+                    SaveFilterButton(
+                      filter: state.filter,
+                      create: createMode,
+                      narrowView: narrowView,
                     ),
+                ],
+              ),
             ),
             body: ListView(
               children: [
@@ -217,19 +215,6 @@ class FilterCreateEditPage extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
             ),
-            bottomNavigationBar: !narrowView
-                ? null
-                : BottomAppBar(
-                    child: Row(
-                      children: createMode
-                          ? []
-                          : [
-                              DeleteFilterButton(filter: state.filter),
-                            ],
-                    ),
-                  ),
-            floatingActionButtonLocation:
-                !narrowView ? null : FloatingActionButtonLocation.endContained,
             floatingActionButton: !narrowView
                 ? null
                 : SaveFilterButton(

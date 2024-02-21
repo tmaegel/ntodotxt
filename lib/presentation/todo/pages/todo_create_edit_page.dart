@@ -53,17 +53,16 @@ class TodoCreateEditPage extends StatelessWidget {
           return Scaffold(
             appBar: MainAppBar(
               title: createMode ? 'Create' : 'Edit',
-              toolbar: narrowView
-                  ? null
-                  : Row(
-                      children: <Widget>[
-                        if (!createMode) DeleteTodoButton(todo: state.todo),
-                        SaveTodoButton(
-                          todo: state.todo,
-                          narrowView: narrowView,
-                        ),
-                      ],
+              toolbar: Row(
+                children: <Widget>[
+                  if (!createMode) DeleteTodoButton(todo: state.todo),
+                  if (!narrowView)
+                    SaveTodoButton(
+                      todo: state.todo,
+                      narrowView: narrowView,
                     ),
+                ],
+              ),
             ),
             body: ListView(
               children: [
@@ -120,19 +119,6 @@ class TodoCreateEditPage extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
             ),
-            bottomNavigationBar: !narrowView
-                ? null
-                : BottomAppBar(
-                    child: Row(
-                      children: createMode
-                          ? []
-                          : [
-                              DeleteTodoButton(todo: state.todo),
-                            ],
-                    ),
-                  ),
-            floatingActionButtonLocation:
-                !narrowView ? null : FloatingActionButtonLocation.endContained,
             floatingActionButton: !narrowView
                 ? null
                 : SaveTodoButton(
