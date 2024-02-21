@@ -21,18 +21,18 @@ import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 
 class FilterCreateEditPage extends StatelessWidget {
-  final Filter? filter;
+  final Filter? initFilter;
   final Set<String> projects;
   final Set<String> contexts;
 
   const FilterCreateEditPage({
-    this.filter,
+    this.initFilter,
     this.projects = const {},
     this.contexts = const {},
     super.key,
   });
 
-  bool get createMode => filter == null;
+  bool get createMode => initFilter == null;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class FilterCreateEditPage extends StatelessWidget {
       create: (BuildContext context) => FilterCubit(
         settingRepository: context.read<SettingRepository>(),
         filterRepository: context.read<FilterRepository>(),
-        filter: filter,
+        filter: initFilter,
       ),
       child: BlocConsumer<FilterCubit, FilterState>(
         listener: (BuildContext context, FilterState state) {
@@ -58,7 +58,7 @@ class FilterCreateEditPage extends StatelessWidget {
               toolbar: Row(
                 children: <Widget>[
                   if (!createMode) DeleteFilterButton(filter: state.filter),
-                  if (!narrowView)
+                  if (!narrowView && initFilter != state.filter)
                     SaveFilterButton(
                       filter: state.filter,
                       create: createMode,
@@ -215,37 +215,16 @@ class FilterCreateEditPage extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
             ),
-            floatingActionButton: !narrowView
-                ? null
-                : SaveFilterButton(
+            floatingActionButton: narrowView && initFilter != state.filter
+                ? SaveFilterButton(
                     filter: state.filter,
                     create: createMode,
                     narrowView: narrowView,
-                  ),
+                  )
+                : null,
           );
         },
       ),
-    );
-  }
-}
-
-class FilterListSection extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  FilterListSection({
-    required this.title,
-    required this.children,
-    Key? key,
-  }) : super(key: PageStorageKey<String>(title));
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      key: key,
-      initiallyExpanded: true,
-      title: Text(title),
-      children: children,
     );
   }
 }

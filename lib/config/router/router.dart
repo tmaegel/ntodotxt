@@ -102,7 +102,7 @@ class AppRouter {
                   Set<String> keyValues =
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
-                    todo: todo,
+                    initTodo: todo,
                     availableProjectTags: projects
                         .where(
                           (p) => !todo.projects.contains(p),
@@ -148,7 +148,7 @@ class AppRouter {
                 builder: (BuildContext context, GoRouterState state) {
                   Filter filter = state.extra as Filter;
                   return FilterCreateEditPage(
-                    filter: filter,
+                    initFilter: filter,
                     projects: context.read<TodoListBloc>().state.projects,
                     contexts: context.read<TodoListBloc>().state.contexts,
                   );

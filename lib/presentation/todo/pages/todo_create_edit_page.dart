@@ -19,20 +19,20 @@ import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoCreateEditPage extends StatelessWidget {
-  final Todo? todo;
+  final Todo? initTodo;
   final Set<String> availableProjectTags;
   final Set<String> availableContextTags;
   final Set<String> availableKeyValueTags;
 
   const TodoCreateEditPage({
-    this.todo,
+    this.initTodo,
     this.availableProjectTags = const {},
     this.availableContextTags = const {},
     this.availableKeyValueTags = const {},
     super.key,
   });
 
-  bool get createMode => todo == null;
+  bool get createMode => initTodo == null;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class TodoCreateEditPage extends StatelessWidget {
 
     return BlocProvider(
       create: (context) => TodoCubit(
-        todo: todo ?? Todo(),
+        todo: initTodo ?? Todo(),
       ),
       child: BlocConsumer<TodoCubit, TodoState>(
         listener: (BuildContext context, TodoState state) {
@@ -56,7 +56,7 @@ class TodoCreateEditPage extends StatelessWidget {
               toolbar: Row(
                 children: <Widget>[
                   if (!createMode) DeleteTodoButton(todo: state.todo),
-                  if (!narrowView)
+                  if (!narrowView && initTodo != state.todo)
                     SaveTodoButton(
                       todo: state.todo,
                       narrowView: narrowView,
@@ -119,12 +119,12 @@ class TodoCreateEditPage extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
             ),
-            floatingActionButton: !narrowView
-                ? null
-                : SaveTodoButton(
+            floatingActionButton: narrowView && initTodo != state.todo
+                ? SaveTodoButton(
                     todo: state.todo,
                     narrowView: narrowView,
-                  ),
+                  )
+                : null,
           );
         },
       ),
