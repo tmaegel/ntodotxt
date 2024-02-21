@@ -16,6 +16,7 @@ class InputDialog extends StatelessWidget {
     required String label,
   }) async {
     return await showDialog<String?>(
+      useRootNavigator: false,
       context: context,
       barrierDismissible: false, // User must tap button.
       builder: (BuildContext context) =>

@@ -30,7 +30,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               name: 'filter',
               order: ListOrder.ascending,
@@ -54,7 +54,7 @@ void main() {
 
         await expectLater(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               id: 1,
               name: 'created',
@@ -82,7 +82,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               name: 'update',
               order: ListOrder.ascending,
@@ -102,7 +102,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.descending,
               filter: ListFilter.all,
@@ -121,7 +121,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.completedOnly,
@@ -140,7 +140,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -162,7 +162,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -182,7 +182,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -202,7 +202,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -222,7 +222,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -242,7 +242,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -265,7 +265,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -285,7 +285,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -305,7 +305,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -325,7 +325,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -345,7 +345,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -368,7 +368,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -388,7 +388,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -408,7 +408,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -428,7 +428,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -448,7 +448,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterChanged(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -472,7 +472,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -494,7 +494,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               order: ListOrder.descending,
               filter: ListFilter.all,
@@ -513,7 +513,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.completedOnly,
@@ -532,7 +532,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,
@@ -556,7 +556,7 @@ void main() {
 
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               order: ListOrder.descending,
               filter: ListFilter.completedOnly,
@@ -568,7 +568,7 @@ void main() {
         cubit.resetToDefaults();
         expect(
           cubit.state,
-          const FilterSuccess(
+          const FilterSaved(
             filter: Filter(
               order: ListOrder.ascending,
               filter: ListFilter.all,

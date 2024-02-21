@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
-import 'package:ntodotxt/common_widgets/input_dialog.dart';
 import 'package:ntodotxt/common_widgets/scroll_to_top.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
@@ -12,9 +11,8 @@ import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/misc.dart' show PopScopeDrawer, SnackBarHandler;
+import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart'
-    show FilterListBloc;
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -85,8 +83,9 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
             return PopScopeDrawer(
               child: Scaffold(
                 appBar: MainAppBar(
-                  title:
-                      'Todo: ${filterState.filter.name.isEmpty ? 'all' : filterState.filter.name}',
+                  title: filterState.filter.name.isEmpty
+                      ? 'Todos'
+                      : 'Filter: ${filterState.filter.name}',
                   toolbar: Row(
                     children: [
                       IconButton(
@@ -98,6 +97,7 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                         ),
                       ),
                       const TodoListSaveFilter(),
+                      const TodoListDeleteFilter(),
                     ],
                   ),
                   bottom: const AppBarFilterList(),
@@ -112,9 +112,7 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                     : FloatingActionButton(
                         tooltip: 'Add todo',
                         child: const Icon(Icons.add),
-                        onPressed: () => context.push(
-                          context.namedLocation('todo-create'),
-                        ),
+                        onPressed: () => context.pushNamed('todo-create'),
                       ),
                 body: RefreshIndicator(
                   onRefresh: () async {
@@ -164,8 +162,9 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
             return PopScopeDrawer(
               child: Scaffold(
                 appBar: MainAppBar(
-                  title:
-                      'Todo: ${filterState.filter.name.isEmpty ? 'all' : filterState.filter.name}',
+                  title: filterState.filter.name.isEmpty
+                      ? 'Todos'
+                      : 'Filter: ${filterState.filter.name}',
                   toolbar: Row(
                     children: [
                       IconButton(
@@ -177,6 +176,7 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                         ),
                       ),
                       const TodoListSaveFilter(),
+                      const TodoListDeleteFilter(),
                     ],
                   ),
                   bottom: const AppBarFilterList(),
@@ -184,9 +184,7 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                 floatingActionButton: FloatingActionButton(
                   tooltip: 'Add todo',
                   child: const Icon(Icons.add),
-                  onPressed: () => context.push(
-                    context.namedLocation('todo-create'),
-                  ),
+                  onPressed: () => context.pushNamed('todo-create'),
                 ),
                 body: RefreshIndicator(
                   onRefresh: () async {
@@ -406,6 +404,40 @@ class TodoListTile extends StatelessWidget {
   }
 }
 
+class TodoListDeleteFilter extends StatelessWidget {
+  const TodoListDeleteFilter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return state is! FilterSaved || state.filter.id == null
+            ? Container()
+            : IconButton(
+                tooltip: 'Delete filter',
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  final bool confirm = await ConfirmationDialog.dialog(
+                    context: context,
+                    title: 'Delete filter',
+                    message: 'Do you want to delete the filter?',
+                    actionLabel: 'Delete',
+                  );
+                  if (context.mounted && confirm) {
+                    await context.read<FilterCubit>().delete(state.filter);
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Filter deleted');
+                      context.pop();
+                      context.read<DrawerCubit>().back();
+                    }
+                  }
+                },
+              );
+      },
+    );
+  }
+}
+
 class TodoListSaveFilter extends StatelessWidget {
   const TodoListSaveFilter({super.key});
 
@@ -413,51 +445,20 @@ class TodoListSaveFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (BuildContext context, FilterState state) {
-        // Exclude the default filter.
-        if (state.filter == const Filter()) {
-          return Container();
-        }
-        if (context.read<FilterListBloc>().state.filterExists(state.filter)) {
-          return IconButton(
-            tooltip: 'Delete filter',
-            icon: const Icon(Icons.favorite),
-            onPressed: () async {
-              final bool confirm = await ConfirmationDialog.dialog(
-                context: context,
-                title: 'Delete filter',
-                message: 'Do you want to delete the filter?',
-                actionLabel: 'Delete',
+        return state is FilterSaved || state.filter.id == null
+            ? Container()
+            : IconButton(
+                tooltip: 'Save filter',
+                icon: const Icon(Icons.save),
+                onPressed: () async {
+                  await context
+                      .read<FilterCubit>()
+                      .update(state.filter.copyWith());
+                  if (context.mounted) {
+                    SnackBarHandler.info(context, 'Filter saved');
+                  }
+                },
               );
-              if (context.mounted && confirm) {
-                await context.read<FilterCubit>().delete(state.filter);
-                if (context.mounted) {
-                  SnackBarHandler.info(context, 'Filter deleted');
-                  context.go(context.namedLocation('todo-list'));
-                }
-              }
-            },
-          );
-        } else {
-          return IconButton(
-            tooltip: 'Save filter',
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () async {
-              final String? filterName = await InputDialog.dialog(
-                context: context,
-                title: 'Save filter',
-                label: 'Enter filter name',
-              );
-              if (context.mounted && filterName != null) {
-                await context
-                    .read<FilterCubit>()
-                    .create(state.filter.copyWith(name: filterName));
-                if (context.mounted) {
-                  SnackBarHandler.info(context, 'Filter saved');
-                }
-              }
-            },
-          );
-        }
       },
     );
   }

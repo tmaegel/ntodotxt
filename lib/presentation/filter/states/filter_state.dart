@@ -8,10 +8,18 @@ sealed class FilterState extends Equatable {
     required this.filter,
   });
 
-  FilterSuccess success({
+  FilterChanged update({
     Filter? filter,
   }) {
-    return FilterSuccess(
+    return FilterChanged(
+      filter: filter ?? this.filter,
+    );
+  }
+
+  FilterSaved save({
+    Filter? filter,
+  }) {
+    return FilterSaved(
       filter: filter ?? this.filter,
     );
   }
@@ -52,21 +60,38 @@ final class FilterLoading extends FilterState {
   String toString() => 'FilterLoading { filter: $filter }';
 }
 
-final class FilterSuccess extends FilterState {
-  const FilterSuccess({
+final class FilterChanged extends FilterState {
+  const FilterChanged({
     required super.filter,
   });
 
-  FilterSuccess copyWith({
+  FilterChanged copyWith({
     Filter? filter,
   }) {
-    return FilterSuccess(
+    return FilterChanged(
       filter: filter ?? this.filter,
     );
   }
 
   @override
-  String toString() => 'FilterSuccess { filter: $filter }';
+  String toString() => 'FilterChanged { filter: $filter }';
+}
+
+final class FilterSaved extends FilterState {
+  const FilterSaved({
+    required super.filter,
+  });
+
+  FilterSaved copyWith({
+    Filter? filter,
+  }) {
+    return FilterSaved(
+      filter: filter ?? this.filter,
+    );
+  }
+
+  @override
+  String toString() => 'FilterSaved { filter: $filter }';
 }
 
 final class FilterError extends FilterState {
@@ -94,5 +119,5 @@ final class FilterError extends FilterState {
       ];
 
   @override
-  String toString() => 'FilterError { message: $message filter: "$filter" }';
+  String toString() => 'FilterError { message: $message filter: $filter }';
 }

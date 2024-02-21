@@ -19,15 +19,15 @@ class FilterCubit extends Cubit<FilterState> {
   })  : _settingRepository = settingRepository,
         _filterRepository = filterRepository,
         super(
-          filter != null
-              ? FilterSuccess(filter: filter)
-              : const FilterLoading(filter: Filter()),
+          filter == null
+              ? const FilterLoading(filter: Filter())
+              : FilterSaved(filter: filter),
         );
 
   Future<void> initial() async {
     if (state is FilterLoading) {
       emit(
-        state.success(
+        state.save(
           filter: Filter(
             order: Order.byName(
                 (await _settingRepository.get(key: 'order'))?.value),
@@ -49,7 +49,7 @@ class FilterCubit extends Cubit<FilterState> {
     try {
       int id = await _filterRepository.insert(filter);
       if (id > 0) {
-        emit(state.success(filter: filter.copyWith(id: id)));
+        emit(state.save(filter: filter.copyWith(id: id)));
       }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -60,7 +60,7 @@ class FilterCubit extends Cubit<FilterState> {
     try {
       int id = await _filterRepository.update(filter);
       if (id > 0) {
-        emit(state.success(filter: filter));
+        emit(state.save(filter: filter));
       }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -72,9 +72,7 @@ class FilterCubit extends Cubit<FilterState> {
       if (filter.id != null) {
         await _filterRepository.delete(id: filter.id!);
       }
-      emit(state.success(
-        filter: filter.copyWithUnsaved(),
-      ));
+      emit(state.save(filter: filter.copyWithUnsaved()));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -82,7 +80,7 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateName(String name) {
     try {
-      emit(state.success(
+      emit(state.update(
         filter: state.filter.copyWith(name: name),
       ));
     } on Exception catch (e) {
@@ -92,7 +90,7 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateOrder(ListOrder order) {
     try {
-      emit(state.success(
+      emit(state.update(
         filter: state.filter.copyWith(order: order),
       ));
     } on Exception catch (e) {
@@ -102,7 +100,7 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateFilter(ListFilter filter) {
     try {
-      emit(state.success(
+      emit(state.update(
         filter: state.filter.copyWith(filter: filter),
       ));
     } on Exception catch (e) {
@@ -112,7 +110,7 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateGroup(ListGroup group) {
     try {
-      emit(state.success(
+      emit(state.update(
         filter: state.filter.copyWith(group: group),
       ));
     } on Exception catch (e) {
@@ -123,7 +121,7 @@ class FilterCubit extends Cubit<FilterState> {
   void addPriority(Priority priority) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             priorities: {...state.filter.priorities, priority},
           ),
@@ -137,7 +135,7 @@ class FilterCubit extends Cubit<FilterState> {
   void removePriority(Priority priority) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             priorities: {...state.filter.priorities}..remove(priority),
           ),
@@ -151,7 +149,7 @@ class FilterCubit extends Cubit<FilterState> {
   void updatePriorities(Set<Priority> priorities) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             priorities: {...priorities},
           ),
@@ -165,7 +163,7 @@ class FilterCubit extends Cubit<FilterState> {
   void addProject(String project) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             projects: {...state.filter.projects, project},
           ),
@@ -179,7 +177,7 @@ class FilterCubit extends Cubit<FilterState> {
   void removeProject(String project) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             projects: {...state.filter.projects}..remove(project),
           ),
@@ -193,7 +191,7 @@ class FilterCubit extends Cubit<FilterState> {
   void updateProjects(Set<String> projects) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             projects: {...projects},
           ),
@@ -207,7 +205,7 @@ class FilterCubit extends Cubit<FilterState> {
   void addContext(String context) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             contexts: {...state.filter.contexts, context},
           ),
@@ -221,7 +219,7 @@ class FilterCubit extends Cubit<FilterState> {
   void removeContext(String context) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             contexts: {...state.filter.contexts}..remove(context),
           ),
@@ -235,7 +233,7 @@ class FilterCubit extends Cubit<FilterState> {
   void updateContexts(Set<String> contexts) {
     try {
       emit(
-        state.success(
+        state.update(
           filter: state.filter.copyWith(
             contexts: {...contexts},
           ),
@@ -252,7 +250,7 @@ class FilterCubit extends Cubit<FilterState> {
 
   Future<void> resetToDefaults() async {
     const Filter defaultFilter = Filter();
-    emit(state.success(
+    emit(state.save(
       filter: defaultFilter,
     ));
     for (var k in ['order', 'filter', 'group']) {
@@ -263,7 +261,7 @@ class FilterCubit extends Cubit<FilterState> {
   Future<void> updateDefaultOrder(ListOrder? value) async {
     if (value != null) {
       emit(
-        state.success(
+        state.save(
           filter: state.filter.copyWith(order: value),
         ),
       );
@@ -276,7 +274,7 @@ class FilterCubit extends Cubit<FilterState> {
   Future<void> updateDefaultFilter(ListFilter? value) async {
     if (value != null) {
       emit(
-        state.success(
+        state.save(
           filter: state.filter.copyWith(filter: value),
         ),
       );
@@ -289,7 +287,7 @@ class FilterCubit extends Cubit<FilterState> {
   Future<void> updateDefaultGroup(ListGroup? value) async {
     if (value != null) {
       emit(
-        state.success(
+        state.save(
           filter: state.filter.copyWith(group: value),
         ),
       );

@@ -70,9 +70,7 @@ class _FilterListViewNarrowState
                 : FloatingActionButton(
                     tooltip: 'Add filter',
                     child: const Icon(Icons.add),
-                    onPressed: () => context.push(
-                      context.namedLocation('filter-create'),
-                    ),
+                    onPressed: () => context.pushNamed('filter-create'),
                   ),
           ),
         );
@@ -118,9 +116,7 @@ class _FilterListViewWideState extends ScollToTopViewState<FilterListViewWide> {
                 : FloatingActionButton(
                     tooltip: 'Add filter',
                     child: const Icon(Icons.add),
-                    onPressed: () => context.push(
-                      context.namedLocation('filter-create'),
-                    ),
+                    onPressed: () => context.pushNamed('filter-create'),
                   ),
           ),
         );

@@ -8,9 +8,6 @@ sealed class FilterListState extends Equatable {
     this.filterList = const [],
   });
 
-  bool filterExists(Filter filter) =>
-      filterList.indexWhere((Filter f) => f == filter) != -1;
-
   FilterListState success({
     List<Filter>? filterList,
   }) {
@@ -44,7 +41,7 @@ final class FilterListSuccess extends FilterListState {
   });
 
   @override
-  String toString() => 'FilterListSuccess { filters: [ "$filterList" ] }';
+  String toString() => 'FilterListSuccess { filters: $filterList }';
 }
 
 final class FilterListError extends FilterListState {
