@@ -448,6 +448,7 @@ class TodoDueDateItem extends StatelessWidget {
   void _pickDateDialog(BuildContext context) {
     final DateTime now = DateTime.now();
     showDatePicker(
+      useRootNavigator: false,
       context: context,
       initialDate: now,
       firstDate: now,

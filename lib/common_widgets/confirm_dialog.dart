@@ -19,6 +19,7 @@ class ConfirmationDialog extends StatelessWidget {
     required String actionLabel,
   }) async {
     bool? result = await showDialog<bool>(
+      useRootNavigator: false,
       context: context,
       barrierDismissible: false, // User must tap button.
       builder: (BuildContext context) => ConfirmationDialog(

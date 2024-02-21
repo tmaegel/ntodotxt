@@ -20,6 +20,7 @@ class FilterStateOrderDialog extends StatelessWidget {
     required FilterCubit cubit,
   }) async {
     return await showDialog<Future<void>>(
+      useRootNavigator: false,
       context: context,
       builder: (BuildContext context) => FilterStateOrderDialog(cubit: cubit),
     );
@@ -71,6 +72,7 @@ class DefaultFilterStateOrderDialog extends StatelessWidget {
     required FilterCubit cubit,
   }) async {
     return await showDialog<Future<void>>(
+      useRootNavigator: false,
       context: context,
       builder: (BuildContext context) =>
           DefaultFilterStateOrderDialog(cubit: cubit),

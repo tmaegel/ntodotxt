@@ -23,6 +23,7 @@ class FilterStateGroupDialog extends StatelessWidget {
     required FilterCubit cubit,
   }) async {
     return await showDialog<Future<void>>(
+      useRootNavigator: false,
       context: context,
       builder: (BuildContext context) => FilterStateGroupDialog(cubit: cubit),
     );
@@ -77,6 +78,7 @@ class DefaultFilterStateGroupDialog extends StatelessWidget {
     required FilterCubit cubit,
   }) async {
     return await showDialog<Future<void>>(
+      useRootNavigator: false,
       context: context,
       builder: (BuildContext context) =>
           DefaultFilterStateGroupDialog(cubit: cubit),
