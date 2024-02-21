@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2024-02-21
+
+### Added
+
+- Hide primary floating action button when scrolling down and show 'go to top' button instead
+
+### Changed
+
+- Remove bottom bar
+- Transparent bottom system navigation bar and edge to edge view
+- Small style adjustments of the snackbar and loading indicator
+- Replace app launcher icon
+
+### Fixed
+
+- Dismiss dialogs on back button
+- Resolve some build warnings
+- Resolve some minor theme issues
+
 ## [0.5.0] - 2024-02-16
 
 ### Added
@@ -151,7 +170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/tmaegel/ntodotxt/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/tmaegel/ntodotxt/compare/v0.4.7...v0.5.0
 [0.4.7]: https://github.com/tmaegel/ntodotxt/compare/v0.4.6...v0.4.7
 [0.4.6]: https://github.com/tmaegel/ntodotxt/compare/v0.4.5...v0.4.6
