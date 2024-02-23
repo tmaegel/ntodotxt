@@ -473,7 +473,64 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('add', (tester) async {
+      testWidgets('add (textfield)', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something'),
+        ));
+        await tester.pumpAndSettle();
+
+        // Add new tag.
+        await tester.enterText(
+            find.byType(TextFormField), 'Code something +project1');
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoProjectTagsItem),
+            matching: find.text('project1'),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove (textfield)', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something +project'),
+        ));
+        await tester.pumpAndSettle();
+
+        // Add new tag.
+        await tester.enterText(find.byType(TextFormField), 'Code something');
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoProjectTagsItem),
+            matching: find.text('project1'),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add (tag dialog)', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
@@ -517,7 +574,7 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('remove', (tester) async {
+      testWidgets('remove (tag dialog)', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
@@ -617,7 +674,64 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('add', (tester) async {
+      testWidgets('add (textfield)', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something'),
+        ));
+        await tester.pumpAndSettle();
+
+        // Add new tag.
+        await tester.enterText(
+            find.byType(TextFormField), 'Code something @context1');
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching: find.text('context1'),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove (textfield)', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something @context1'),
+        ));
+        await tester.pumpAndSettle();
+
+        // Add new tag.
+        await tester.enterText(find.byType(TextFormField), 'Code something');
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoContextTagsItem),
+            matching: find.text('context1'),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add (tag dialog)', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
@@ -661,7 +775,7 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('remove', (tester) async {
+      testWidgets('remove (tag dialog)', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
@@ -761,7 +875,64 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('add', (tester) async {
+      testWidgets('add (textfield)', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something'),
+        ));
+        await tester.pumpAndSettle();
+
+        // Add new tag.
+        await tester.enterText(
+            find.byType(TextFormField), 'Code something foo:bar');
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('foo:bar'),
+          ),
+          findsOneWidget,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('remove (textfield)', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        await tester.pumpWidget(TodoCreateEditPageMaterialApp(
+          todo: Todo(description: 'Code something foo:bar'),
+        ));
+        await tester.pumpAndSettle();
+
+        // Add new tag.
+        await tester.enterText(find.byType(TextFormField), 'Code something');
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(TodoKeyValueTagsItem),
+            matching: find.text('foo:bar'),
+          ),
+          findsNothing,
+        );
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('add (tag dialog)', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
@@ -805,7 +976,7 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('remove', (tester) async {
+      testWidgets('remove (tag dialog)', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
         tester.view.devicePixelRatio = 1.0;
