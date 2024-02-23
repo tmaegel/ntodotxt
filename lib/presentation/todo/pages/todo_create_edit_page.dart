@@ -39,7 +39,7 @@ class TodoCreateEditPage extends StatelessWidget {
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
 
     return BlocProvider(
-      create: (context) => TodoCubit(
+      create: (BuildContext context) => TodoCubit(
         todo: initTodo ?? Todo(),
       ),
       child: BlocListener<TodoCubit, TodoState>(

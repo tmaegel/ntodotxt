@@ -130,9 +130,13 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                       child: const Text('Add'),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
+                          String text = _controller.text.trim();
+                          if (text.startsWith('+') || text.startsWith('@')) {
+                            text = text.substring(1);
+                          }
                           setState(() {
                             tags.add(Tag(
-                              name: _controller.text.trim(),
+                              name: text,
                               selected: true,
                             ));
                           });
