@@ -37,6 +37,7 @@ class TodoCreateEditPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool narrowView =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return BlocProvider(
       create: (BuildContext context) => TodoCubit(
@@ -53,12 +54,8 @@ class TodoCreateEditPage extends StatelessWidget {
             title: createMode ? 'Create' : 'Edit',
             toolbar: Row(
               children: <Widget>[
-                if (!createMode) const DeleteTodoButton(),
-                if (!narrowView)
-                  SaveTodoButton(
-                    initTodo: initTodo,
-                    narrowView: narrowView,
-                  ),
+                if (!createMode) const DeleteTodoIconButton(),
+                if (!narrowView) SaveTodoIconButton(initTodo: initTodo),
               ],
             ),
           ),
@@ -105,20 +102,17 @@ class TodoCreateEditPage extends StatelessWidget {
               const SizedBox(height: 16),
             ],
           ),
-          floatingActionButton: !narrowView
+          floatingActionButton: keyboardIsOpen || !narrowView
               ? null
-              : SaveTodoButton(
-                  initTodo: initTodo,
-                  narrowView: narrowView,
-                ),
+              : SaveTodoFABButton(initTodo: initTodo),
         ),
       ),
     );
   }
 }
 
-class DeleteTodoButton extends StatelessWidget {
-  const DeleteTodoButton({super.key});
+class DeleteTodoIconButton extends StatelessWidget {
+  const DeleteTodoIconButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -150,13 +144,11 @@ class DeleteTodoButton extends StatelessWidget {
   }
 }
 
-class SaveTodoButton extends StatelessWidget {
+class SaveTodoIconButton extends StatelessWidget {
   final Todo? initTodo;
-  final bool narrowView;
 
-  const SaveTodoButton({
+  const SaveTodoIconButton({
     required this.initTodo,
-    required this.narrowView,
     super.key,
   });
 
@@ -164,39 +156,55 @@ class SaveTodoButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoCubit, TodoState>(
       builder: (BuildContext context, TodoState state) {
-        if (narrowView) {
-          return initTodo == state.todo
-              ? Container()
-              : FloatingActionButton(
-                  tooltip: 'Save',
-                  child: const Icon(Icons.save),
-                  onPressed: () async {
-                    context
-                        .read<TodoListBloc>()
-                        .add(TodoListTodoSubmitted(todo: state.todo));
-                    if (context.mounted) {
-                      SnackBarHandler.info(context, 'Todo saved');
-                      context.pop();
-                    }
-                  },
-                );
-        } else {
-          return initTodo == state.todo
-              ? Container()
-              : IconButton(
-                  tooltip: 'Save',
-                  icon: const Icon(Icons.save),
-                  onPressed: () async {
-                    context
-                        .read<TodoListBloc>()
-                        .add(TodoListTodoSubmitted(todo: state.todo));
-                    if (context.mounted) {
-                      SnackBarHandler.info(context, 'Todo saved');
-                      context.pop();
-                    }
-                  },
-                );
-        }
+        return Visibility(
+          visible: initTodo != state.todo && state.todo.description.isNotEmpty,
+          child: IconButton(
+            tooltip: 'Save',
+            icon: const Icon(Icons.save),
+            onPressed: () async {
+              context
+                  .read<TodoListBloc>()
+                  .add(TodoListTodoSubmitted(todo: state.todo));
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Todo saved');
+                context.pop();
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SaveTodoFABButton extends StatelessWidget {
+  final Todo? initTodo;
+
+  const SaveTodoFABButton({
+    required this.initTodo,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoCubit, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        return Visibility(
+          visible: initTodo != state.todo && state.todo.description.isNotEmpty,
+          child: FloatingActionButton(
+            tooltip: 'Save',
+            child: const Icon(Icons.save),
+            onPressed: () async {
+              context
+                  .read<TodoListBloc>()
+                  .add(TodoListTodoSubmitted(todo: state.todo));
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Todo saved');
+                context.pop();
+              }
+            },
+          ),
+        );
       },
     );
   }

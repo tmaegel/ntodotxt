@@ -38,6 +38,7 @@ class FilterCreateEditPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool narrowView =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
@@ -45,185 +46,58 @@ class FilterCreateEditPage extends StatelessWidget {
         filterRepository: context.read<FilterRepository>(),
         filter: initFilter,
       ),
-      child: BlocConsumer<FilterCubit, FilterState>(
+      child: BlocListener<FilterCubit, FilterState>(
         listener: (BuildContext context, FilterState state) {
           if (state is FilterError) {
             SnackBarHandler.error(context, state.message);
           }
         },
-        builder: (BuildContext context, FilterState state) {
-          return Scaffold(
-            appBar: MainAppBar(
-              title: createMode ? 'Create' : 'Edit',
-              toolbar: Row(
-                children: <Widget>[
-                  if (!createMode) DeleteFilterButton(filter: state.filter),
-                  if (!narrowView && initFilter != state.filter)
-                    SaveFilterButton(
-                      filter: state.filter,
-                      create: createMode,
-                      narrowView: narrowView,
-                    ),
-                ],
-              ),
-            ),
-            body: ListView(
-              children: [
-                const FilterNameTextField(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'General',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.sort),
-                    title: const Text('Order'),
-                    subtitle: GenericChipGroup(
-                      children: [
-                        BasicChip(label: state.filter.order.name),
-                      ],
-                    ),
-                    onTap: () async {
-                      await FilterStateOrderDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.filter_list),
-                    title: const Text('Filter'),
-                    subtitle: GenericChipGroup(
-                      children: [
-                        BasicChip(label: state.filter.filter.name),
-                      ],
-                    ),
-                    onTap: () async {
-                      await FilterStateFilterDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.workspaces_outlined),
-                    title: const Text('Group by'),
-                    subtitle: GenericChipGroup(
-                      children: [
-                        BasicChip(
-                          label: state.filter.group.name,
-                        ),
-                      ],
-                    ),
-                    onTap: () async {
-                      await FilterStateGroupDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                      );
-                    },
-                  ),
-                ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Tags',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.flag_outlined),
-                    title: const Text('Priorities'),
-                    subtitle: state.filter.priorities.isEmpty
-                        ? const Text('-')
-                        : GenericChipGroup(
-                            children: [
-                              for (var t in state.filter.priorities)
-                                BasicChip(label: t.name),
-                            ],
-                          ),
-                    onTap: () async {
-                      await FilterPriorityTagDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                        availableTags: Priority.values.toSet(),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.rocket_launch_outlined),
-                    title: const Text('Projects'),
-                    subtitle: state.filter.projects.isEmpty
-                        ? const Text('-')
-                        : GenericChipGroup(
-                            children: [
-                              for (var t in state.filter.projects)
-                                BasicChip(label: t),
-                            ],
-                          ),
-                    onTap: () async {
-                      await FilterProjectTagDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                        availableTags: projects,
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.join_inner),
-                    title: const Text('Contexts'),
-                    subtitle: state.filter.contexts.isEmpty
-                        ? const Text('-')
-                        : GenericChipGroup(
-                            children: [
-                              for (var t in state.filter.contexts)
-                                BasicChip(label: t),
-                            ],
-                          ),
-                    onTap: () async {
-                      await FilterContextTagDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                        availableTags: contexts,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
+        child: Scaffold(
+          appBar: MainAppBar(
+            title: createMode ? 'Create' : 'Edit',
+            toolbar: Row(
+              children: <Widget>[
+                if (!createMode) const DeleteFilterIconButton(),
+                if (!narrowView) SaveFilterIconButton(initFilter: initFilter),
               ],
             ),
-            floatingActionButton: narrowView && initFilter != state.filter
-                ? SaveFilterButton(
-                    filter: state.filter,
-                    create: createMode,
-                    narrowView: narrowView,
-                  )
-                : null,
-          );
-        },
+          ),
+          body: ListView(
+            children: [
+              const FilterNameTextField(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'General',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              const FilterOrderItem(),
+              const FilterFilterItem(),
+              const FilterGroupItem(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'Tags',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              const FilterPrioritiesItem(),
+              FilterProjectTagsItem(availableTags: projects),
+              FilterContextTagsItem(availableTags: contexts),
+              const SizedBox(height: 16),
+            ],
+          ),
+          floatingActionButton: keyboardIsOpen || !narrowView
+              ? null
+              : SaveFilterFABButton(initFilter: initFilter),
+        ),
       ),
     );
   }
@@ -287,84 +161,323 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
   }
 }
 
-class DeleteFilterButton extends StatelessWidget {
-  final Filter filter;
-
-  const DeleteFilterButton({
-    required this.filter,
-    super.key,
-  });
+class DeleteFilterIconButton extends StatelessWidget {
+  const DeleteFilterIconButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: 'Delete',
-      icon: const Icon(Icons.delete),
-      onPressed: () async {
-        final bool confirm = await ConfirmationDialog.dialog(
-          context: context,
-          title: 'Delete filter',
-          message: 'Do you want to delete the filter?',
-          actionLabel: 'Delete',
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return IconButton(
+          tooltip: 'Delete',
+          icon: const Icon(Icons.delete),
+          onPressed: () async {
+            final bool confirm = await ConfirmationDialog.dialog(
+              context: context,
+              title: 'Delete filter',
+              message: 'Do you want to delete the filter?',
+              actionLabel: 'Delete',
+            );
+            if (context.mounted && confirm) {
+              await context.read<FilterCubit>().delete(state.filter);
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Filter deleted');
+                context.pop();
+              }
+            }
+          },
         );
-        if (context.mounted && confirm) {
-          await context.read<FilterCubit>().delete(filter);
-          if (context.mounted) {
-            SnackBarHandler.info(context, 'Filter deleted');
-            context.pop();
-          }
-        }
       },
     );
   }
 }
 
-class SaveFilterButton extends StatelessWidget {
-  final Filter filter;
-  final bool create;
-  final bool narrowView;
+class SaveFilterIconButton extends StatelessWidget {
+  final Filter? initFilter;
 
-  const SaveFilterButton({
-    required this.filter,
-    required this.create,
-    required this.narrowView,
+  const SaveFilterIconButton({
+    required this.initFilter,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (narrowView) {
-      return FloatingActionButton(
-        tooltip: 'Save',
-        child: const Icon(Icons.save),
-        onPressed: () async {
-          if (create) {
-            await context.read<FilterCubit>().create(filter);
-          } else {
-            await context.read<FilterCubit>().update(filter);
-          }
-          if (context.mounted) {
-            SnackBarHandler.info(context, 'Filter saved');
-            context.pop();
-          }
-        },
-      );
-    } else {
-      return IconButton(
-        tooltip: 'Save',
-        icon: const Icon(Icons.save),
-        onPressed: () async {
-          if (create) {
-            await context.read<FilterCubit>().create(filter);
-          } else {
-            await context.read<FilterCubit>().update(filter);
-          }
-          if (context.mounted) {
-            SnackBarHandler.info(context, 'Filter saved');
-            context.pop();
-          }
-        },
-      );
-    }
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return Visibility(
+          visible: initFilter != state.filter && state.filter.name.isNotEmpty,
+          child: IconButton(
+            tooltip: 'Save',
+            icon: const Icon(Icons.save),
+            onPressed: () async {
+              if (initFilter == null) {
+                await context.read<FilterCubit>().create(state.filter);
+              } else {
+                await context.read<FilterCubit>().update(state.filter);
+              }
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Filter saved');
+                context.pop();
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SaveFilterFABButton extends StatelessWidget {
+  final Filter? initFilter;
+
+  const SaveFilterFABButton({
+    required this.initFilter,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return Visibility(
+          visible: initFilter != state.filter && state.filter.name.isNotEmpty,
+          child: FloatingActionButton(
+            tooltip: 'Save',
+            child: const Icon(Icons.save),
+            onPressed: () async {
+              if (initFilter == null) {
+                await context.read<FilterCubit>().create(state.filter);
+              } else {
+                await context.read<FilterCubit>().update(state.filter);
+              }
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Filter saved');
+                context.pop();
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FilterOrderItem extends StatelessWidget {
+  const FilterOrderItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.order != state.filter.order;
+      },
+      builder: (BuildContext context, FilterState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            leading: const Icon(Icons.sort),
+            title: const Text('Order'),
+            subtitle: GenericChipGroup(
+              children: [
+                BasicChip(label: state.filter.order.name),
+              ],
+            ),
+            onTap: () async {
+              await FilterStateOrderDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<FilterCubit>(context),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FilterFilterItem extends StatelessWidget {
+  const FilterFilterItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.filter != state.filter.filter;
+      },
+      builder: (BuildContext context, FilterState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            leading: const Icon(Icons.filter_list),
+            title: const Text('Filter'),
+            subtitle: GenericChipGroup(
+              children: [
+                BasicChip(label: state.filter.filter.name),
+              ],
+            ),
+            onTap: () async {
+              await FilterStateFilterDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<FilterCubit>(context),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FilterGroupItem extends StatelessWidget {
+  const FilterGroupItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.group != state.filter.group;
+      },
+      builder: (BuildContext context, FilterState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            leading: const Icon(Icons.workspaces_outlined),
+            title: const Text('Group by'),
+            subtitle: GenericChipGroup(
+              children: [
+                BasicChip(
+                  label: state.filter.group.name,
+                ),
+              ],
+            ),
+            onTap: () async {
+              await FilterStateGroupDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<FilterCubit>(context),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FilterPrioritiesItem extends StatelessWidget {
+  const FilterPrioritiesItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.priorities != state.filter.priorities;
+      },
+      builder: (BuildContext context, FilterState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            leading: const Icon(Icons.flag_outlined),
+            title: const Text('Priorities'),
+            subtitle: state.filter.priorities.isEmpty
+                ? const Text('-')
+                : GenericChipGroup(
+                    children: [
+                      for (var t in state.filter.priorities)
+                        BasicChip(label: t.name),
+                    ],
+                  ),
+            onTap: () async {
+              await FilterPriorityTagDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<FilterCubit>(context),
+                availableTags: Priority.values.toSet(),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FilterProjectTagsItem extends StatelessWidget {
+  final Set<String> availableTags;
+
+  const FilterProjectTagsItem({
+    this.availableTags = const {},
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.projects != state.filter.projects;
+      },
+      builder: (BuildContext context, FilterState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            leading: const Icon(Icons.rocket_launch_outlined),
+            title: const Text('Projects'),
+            subtitle: state.filter.projects.isEmpty
+                ? const Text('-')
+                : GenericChipGroup(
+                    children: [
+                      for (var t in state.filter.projects) BasicChip(label: t),
+                    ],
+                  ),
+            onTap: () async {
+              await FilterProjectTagDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<FilterCubit>(context),
+                availableTags: availableTags,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FilterContextTagsItem extends StatelessWidget {
+  final Set<String> availableTags;
+
+  const FilterContextTagsItem({
+    this.availableTags = const {},
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.contexts != state.filter.contexts;
+      },
+      builder: (BuildContext context, FilterState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            leading: const Icon(Icons.join_inner),
+            title: const Text('Contexts'),
+            subtitle: state.filter.contexts.isEmpty
+                ? const Text('-')
+                : GenericChipGroup(
+                    children: [
+                      for (var t in state.filter.contexts) BasicChip(label: t),
+                    ],
+                  ),
+            onTap: () async {
+              await FilterContextTagDialog.dialog(
+                context: context,
+                cubit: BlocProvider.of<FilterCubit>(context),
+                availableTags: availableTags,
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }
