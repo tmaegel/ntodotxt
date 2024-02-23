@@ -362,7 +362,7 @@ class TodoListTile extends StatelessWidget {
     return ListTile(
       key: key,
       title: Text(
-        todo.description,
+        todo.fmtDescription,
         style: TextStyle(
           decoration: todo.completion ? TextDecoration.lineThrough : null,
           decorationThickness: 5.0,

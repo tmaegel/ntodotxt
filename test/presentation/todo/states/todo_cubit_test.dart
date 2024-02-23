@@ -160,32 +160,29 @@ void main() {
         bloc.addProject('project1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1',
+            ),
+          ),
+        );
       });
       test('additional', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addProject('project2');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1', 'project2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1 +project2',
+            ),
+          ),
+        );
       });
       test('invalid format', () async {
         todo = Todo(description: 'Write some tests');
@@ -193,51 +190,45 @@ void main() {
         bloc.addProject('project 2');
 
         expect(
-            bloc.state,
-            TodoError(
-              message: 'Invalid project tag: project 2',
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid project tag: project 2',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('duplication', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addProject('project1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1',
+            ),
+          ),
+        );
       });
       test('duplication / case sensitive', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addProject('Project1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1',
+            ),
+          ),
+        );
       });
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
@@ -245,14 +236,29 @@ void main() {
         bloc.updateProjects({'project1', 'project2'});
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1', 'project2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1 +project2',
+            ),
+          ),
+        );
+      });
+      test('multiple entries (add & remove)', () async {
+        todo = Todo(description: 'Write some tests +project1');
+        final TodoCubit bloc = TodoCubit(todo: todo);
+        bloc.updateProjects({'project2'});
+
+        expect(
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project2',
+            ),
+          ),
+        );
       });
       test('multiple entries / invalid format', () async {
         todo = Todo(description: 'Write some tests');
@@ -260,89 +266,78 @@ void main() {
         bloc.updateProjects({'project1', 'project 2'});
 
         expect(
-            bloc.state,
-            TodoError(
-              message: 'Invalid project tag: project 2',
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid project tag: project 2',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('multiple entries / duplication', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateProjects({'project1', 'project2'});
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1', 'project2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1 +project2',
+            ),
+          ),
+        );
       });
       test('multiple entries / duplication / case sensitive', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateProjects({'Project1', 'Project2'});
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1', 'project2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1 +project2',
+            ),
+          ),
+        );
       });
     });
     group('remove', () {
       test('initial', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.removeProject('project1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('invalid format', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          projects: const {'project1'},
-        );
+        todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.removeProject('project 1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {'project1'},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid project tag: project 1',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests +project1',
+            ),
+          ),
+        );
       });
       test('not exists', () async {
         todo = Todo(description: 'Write some tests');
@@ -350,14 +345,14 @@ void main() {
         bloc.removeProject('project1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                projects: const {},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
     });
   });
@@ -370,32 +365,29 @@ void main() {
         bloc.addContext('context1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1',
+            ),
+          ),
+        );
       });
       test('additional', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1 @context2');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addContext('context2');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1', 'context2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1 @context2',
+            ),
+          ),
+        );
       });
       test('invalid format', () async {
         todo = Todo(description: 'Write some tests');
@@ -403,51 +395,45 @@ void main() {
         bloc.addContext('context 2');
 
         expect(
-            bloc.state,
-            TodoError(
-              message: 'Invalid context tag: context 2',
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid context tag: context 2',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('duplication', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addContext('context1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1',
+            ),
+          ),
+        );
       });
       test('duplication / case sensitive', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addContext('Context1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1',
+            ),
+          ),
+        );
       });
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
@@ -455,14 +441,29 @@ void main() {
         bloc.updateContexts({'context1', 'context2'});
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1', 'context2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1 @context2',
+            ),
+          ),
+        );
+      });
+      test('multiple entries (add & remove)', () async {
+        todo = Todo(description: 'Write some tests @context1');
+        final TodoCubit bloc = TodoCubit(todo: todo);
+        bloc.updateContexts({'context2'});
+
+        expect(
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context2',
+            ),
+          ),
+        );
       });
       test('multiple entries / invalid format', () async {
         todo = Todo(description: 'Write some tests');
@@ -470,89 +471,78 @@ void main() {
         bloc.updateContexts({'context1', 'context 2'});
 
         expect(
-            bloc.state,
-            TodoError(
-              message: 'Invalid context tag: context 2',
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid context tag: context 2',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('multiple entries / duplication', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateContexts({'context1', 'context2'});
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1', 'context2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1 @context2',
+            ),
+          ),
+        );
       });
       test('multiple entries / duplication / case sensitive', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateContexts({'context1', 'Context2'});
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1', 'context2'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1 @context2',
+            ),
+          ),
+        );
       });
     });
     group('remove', () {
       test('initial', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.removeContext('context1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('invalid format', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          contexts: const {'context1'},
-        );
+        todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.removeContext('context 1');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {'context1'},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid context tag: context 1',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests @context1',
+            ),
+          ),
+        );
       });
       test('not exists', () async {
         todo = Todo(description: 'Write some tests');
@@ -560,14 +550,14 @@ void main() {
         bloc.removeContext('context2');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                contexts: const {},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
     });
   });
@@ -580,32 +570,29 @@ void main() {
         bloc.addKeyValue('key:val');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                keyValues: const {'key': 'val'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests key:val',
+            ),
+          ),
+        );
       });
       test('additional', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addKeyValue('key:val');
 
         expect(
-            bloc.state,
-            TodoSuccess(
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                keyValues: const {'foo': 'bar', 'key': 'val'},
-              ),
-            ));
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests foo:bar key:val',
+            ),
+          ),
+        );
       });
       test('invalid format', () async {
         todo = Todo(description: 'Write some tests');
@@ -613,21 +600,18 @@ void main() {
         bloc.addKeyValue('key_val');
 
         expect(
-            bloc.state,
-            TodoError(
-              message: 'Invalid key value tag: key_val',
-              todo: Todo(
-                id: todo.id,
-                description: todo.description,
-                keyValues: const {},
-              ),
-            ));
+          bloc.state,
+          TodoError(
+            message: 'Invalid key value tag: key_val',
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests',
+            ),
+          ),
+        );
       });
       test('duplication', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addKeyValue('foo:bar');
 
@@ -636,17 +620,13 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'bar'},
+              description: 'Write some tests foo:bar',
             ),
           ),
         );
       });
       test('duplication / case sensitive', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addKeyValue('Foo:bar');
 
@@ -655,17 +635,13 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'bar'},
+              description: 'Write some tests foo:bar',
             ),
           ),
         );
       });
       test('duplication / update value', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addKeyValue('foo:new');
 
@@ -674,8 +650,7 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'new'},
+              description: 'Write some tests foo:new',
             ),
           ),
         );
@@ -690,8 +665,22 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'key1': 'val1', 'key2': 'val2'},
+              description: 'Write some tests key1:val1 key2:val2',
+            ),
+          ),
+        );
+      });
+      test('multiple entries (add & remove)', () async {
+        todo = Todo(description: 'Write some tests key1:val1');
+        final TodoCubit bloc = TodoCubit(todo: todo);
+        bloc.updateKeyValues({'key2:val2'});
+
+        expect(
+          bloc.state,
+          TodoSuccess(
+            todo: Todo(
+              id: todo.id,
+              description: 'Write some tests key2:val2',
             ),
           ),
         );
@@ -707,17 +696,13 @@ void main() {
             message: 'Invalid key value tag: key2_val2',
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {},
+              description: 'Write some tests',
             ),
           ),
         );
       });
       test('multiple entries / duplication', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateKeyValues({'key1:val1', 'foo:bar'});
 
@@ -726,17 +711,13 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'bar', 'key1': 'val1'},
+              description: 'Write some tests foo:bar key1:val1',
             ),
           ),
         );
       });
       test('multiple entries / duplication / case sensitive', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateKeyValues({'Key1:val1', 'Foo:bar'});
 
@@ -745,17 +726,13 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'bar', 'key1': 'val1'},
+              description: 'Write some tests foo:bar key1:val1',
             ),
           ),
         );
       });
       test('multiple entries / update value', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.updateKeyValues({'key1:val1', 'foo:new'});
 
@@ -764,8 +741,7 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'new', 'key1': 'val1'},
+              description: 'Write some tests foo:new key1:val1',
             ),
           ),
         );
@@ -773,10 +749,7 @@ void main() {
     });
     group('remove', () {
       test('add', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.removeKeyValue('foo:bar');
 
@@ -785,17 +758,13 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {},
+              description: 'Write some tests',
             ),
           ),
         );
       });
       test('invalid format', () async {
-        todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'foo': 'bar'},
-        );
+        todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.removeKeyValue('key_val');
 
@@ -805,8 +774,7 @@ void main() {
             message: 'Invalid key value tag: key_val',
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {'foo': 'bar'},
+              description: 'Write some tests foo:bar',
             ),
           ),
         );
@@ -821,8 +789,7 @@ void main() {
           TodoSuccess(
             todo: Todo(
               id: todo.id,
-              description: todo.description,
-              keyValues: const {},
+              description: 'Write some tests',
             ),
           ),
         );

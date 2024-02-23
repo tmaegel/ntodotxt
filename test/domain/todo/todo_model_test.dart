@@ -71,8 +71,7 @@ void main() {
         expect(todo.projects, []);
       });
       test('with initial projects', () {
-        final Todo todo =
-            Todo(description: 'Write some tests', projects: const {'project1'});
+        final Todo todo = Todo(description: 'Write some tests +project1');
         expect(todo.projects, {'project1'});
       });
     });
@@ -83,8 +82,7 @@ void main() {
         expect(todo.contexts, []);
       });
       test('with initial contexts', () {
-        final Todo todo =
-            Todo(description: 'Write some tests', contexts: const {'context1'});
+        final Todo todo = Todo(description: 'Write some tests @context1');
         expect(todo.contexts, {'context1'});
       });
     });
@@ -92,14 +90,11 @@ void main() {
     group('keyValues', () {
       test('no initial keyValues', () {
         final Todo todo = Todo(description: 'Write some tests');
-        expect(todo.keyValues, {});
+        expect(todo.keyValues, []);
       });
       test('with initial keyValues', () {
-        final Todo todo = Todo(
-          description: 'Write some tests',
-          keyValues: const {'key': 'value'},
-        );
-        expect(todo.keyValues, {'key': 'value'});
+        final Todo todo = Todo(description: 'Write some tests key:value');
+        expect(todo.keyValues, {'key:value'});
       });
     });
   });
@@ -163,12 +158,12 @@ void main() {
     group('projects', () {
       test('set projects', () {
         final Todo todo = Todo(description: 'Write some tests');
-        final todo2 = todo.copyWith(projects: const {'project2'});
+        final todo2 = todo.copyWith(description: 'Write some tests +project2');
         expect(todo2.projects, {'project2'});
       });
       test('unset projects', () {
-        final Todo todo = Todo(description: 'Write some tests');
-        final todo2 = todo.copyWith(projects: const {});
+        final Todo todo = Todo(description: 'Write some tests +project2');
+        final todo2 = todo.copyWith(description: 'Write some tests');
         expect(todo2.projects, []);
       });
     });
@@ -176,12 +171,12 @@ void main() {
     group('contexts', () {
       test('set contexts', () {
         final Todo todo = Todo(description: 'Write some tests');
-        final todo2 = todo.copyWith(contexts: const {'context2'});
+        final todo2 = todo.copyWith(description: 'Write some tests @context2');
         expect(todo2.contexts, {'context2'});
       });
       test('unset contexts', () {
-        final Todo todo = Todo(description: 'Write some tests');
-        final todo2 = todo.copyWith(contexts: const {});
+        final Todo todo = Todo(description: 'Write some tests @context2');
+        final todo2 = todo.copyWith(description: 'Write some tests');
         expect(todo2.contexts, []);
       });
     });
@@ -189,14 +184,13 @@ void main() {
     group('keyValues', () {
       test('set keyValues', () {
         final Todo todo = Todo(description: 'Write some tests');
-        final todo2 = todo.copyWith(keyValues: const {'key': 'value'});
-        expect(todo2.keyValues, {'key': 'value'});
+        final todo2 = todo.copyWith(description: 'Write some tests key:value');
+        expect(todo2.keyValues, {'key:value'});
       });
       test('unset keyValues', () {
-        final Todo todo =
-            Todo(description: 'Write some tests', keyValues: const {});
-        final todo2 = todo.copyWith(contexts: const {});
-        expect(todo2.keyValues, {});
+        final Todo todo = Todo(description: 'Write some tests key:value');
+        final todo2 = todo.copyWith(description: 'Write some tests');
+        expect(todo2.keyValues, []);
       });
     });
   });
@@ -224,25 +218,20 @@ void main() {
         completion: false,
         priority: Priority.A,
         creationDate: now,
-        description: 'Write some tests',
-        projects: const {'project1'},
-        contexts: const {'contexts1'},
-        keyValues: const {'key1': 'value1'},
+        description: 'Write some tests +project1 @context1 key:value',
       );
       final Todo diff = todo.copyDiff(completion: true);
       todo = todo.copyWith(
         priority: Priority.B,
-        description: 'Write more tests',
-        projects: const {'project2'},
-        contexts: const {'context2'},
-        keyValues: const {'key2': 'value2'},
+        description: 'Write more tests +project1 @context1 key:value',
       );
       final Todo todo2 = diff.copyMerge(todo);
       expect(todo2.priority, Priority.B);
-      expect(todo2.description, 'Write more tests');
-      expect(todo2.projects, {'project2'});
-      expect(todo2.contexts, {'context2'});
-      expect(todo2.keyValues, {'key2': 'value2'});
+      expect(
+          todo2.description, 'Write more tests +project1 @context1 key:value');
+      expect(todo2.projects, {'project1'});
+      expect(todo2.contexts, {'context1'});
+      expect(todo2.keyValues, {'key:value'});
       expect(todo2.completion, true);
       expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
     });
@@ -620,69 +609,67 @@ void main() {
     group('todo key values', () {
       test('no key value tag', () {
         final todo = Todo.fromString(value: 'Write some tests');
-        expect(todo.keyValues, {});
+        expect(todo.keyValues, []);
       });
       test('single key value tag', () {
         final todo = Todo.fromString(value: 'Write some tests key:value');
-        expect(todo.keyValues, {'key': 'value'});
+        expect(todo.keyValues, {'key:value'});
       });
       test('multiple key value tags', () {
         final todo =
             Todo.fromString(value: 'Write some tests key1:value1 key2:value2');
-        expect(todo.keyValues, {'key1': 'value1', 'key2': 'value2'});
+        expect(todo.keyValues, {'key1:value1', 'key2:value2'});
       });
       test('multiple key value tags (not in sequence)', () {
         final todo =
             Todo.fromString(value: 'Write some key1:value1 tests key2:value2');
-        expect(todo.keyValues, {'key1': 'value1', 'key2': 'value2'});
+        expect(todo.keyValues, {'key1:value1', 'key2:value2'});
       });
       test('key value tag with a special name', () {
         final todo =
             Todo.fromString(value: 'Write some tests key-@_123:value_@123');
-        expect(todo.keyValues, {'key-@_123': 'value_@123'});
+        expect(todo.keyValues, {'key-@_123:value_@123'});
       });
       test('key value tag with a name in capital letters', () {
         final todo = Todo.fromString(value: 'Write some tests Key:Value');
-        expect(todo.keyValues, {
-          'key': 'value',
-        });
+        expect(todo.keyValues, {'key:value'});
       });
       test('key value tag with key value duplication', () {
         final todo =
             Todo.fromString(value: 'Write some tests key:value key:value');
-        expect(todo.keyValues, {'key': 'value'});
+        expect(todo.keyValues, {'key:value'});
       });
       test('invalid key value tag', () {
         final todo =
             Todo.fromString(value: 'Write some tests key1:value1:invalid');
-        expect(todo.keyValues, {});
+        expect(todo.keyValues, []);
       });
       test('incompleted full todo', () {
         final todo = Todo.fromString(
           value: '2022-11-01 Write some tests +project @context due:2022-12-31',
         );
-        expect(todo.keyValues, {'due': '2022-12-31'});
+        expect(todo.keyValues, {'due:2022-12-31'});
       });
       test('incompleted with priority full todo', () {
         final todo = Todo.fromString(
           value:
               '(A) 2022-11-01 Write some tests +project @context due:2022-12-31',
         );
-        expect(todo.keyValues, {'due': '2022-12-31'});
+        expect(todo.keyValues, {'due:2022-12-31'});
       });
       test('completed full todo', () {
         final todo = Todo.fromString(
           value:
               'x 2022-11-16 2022-11-01 Write some tests +project @context due:2022-12-31',
         );
-        expect(todo.keyValues, {'due': '2022-12-31'});
+        expect(todo.keyValues, {'due:2022-12-31'});
       });
       test('completed with priority full todo', () {
         final todo = Todo.fromString(
           value:
               'x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31',
         );
-        expect(todo.keyValues, {'due': '2022-12-31'});
+        expect(todo.keyValues, {'due:2022-12-31'});
       });
     });
 
@@ -701,7 +688,8 @@ void main() {
             value:
                 '(A) 2022-11-01 Write some tests +project @context due:2022-12-31',
           );
-          expect(todo.description, 'Write some tests');
+          expect(todo.description,
+              'Write some tests +project @context due:2022-12-31');
         });
         test('completed with description', () {
           final todo = Todo.fromString(value: 'x 2022-11-16 Write some tests');
@@ -718,7 +706,8 @@ void main() {
             value:
                 'x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31',
           );
-          expect(todo.description, 'Write some tests');
+          expect(todo.description,
+              'Write some tests +project @context due:2022-12-31');
         });
       });
 
@@ -726,22 +715,22 @@ void main() {
         test('completed with projects', () {
           final Todo todo =
               Todo.fromString(value: 'x 2022-11-16 +project1 +project2');
-          expect(todo.description, '');
+          expect(todo.description, '+project1 +project2');
         });
         test('completed with contexts', () {
           final Todo todo =
               Todo.fromString(value: 'x 2022-11-16 @context1 @context2');
-          expect(todo.description, '');
+          expect(todo.description, '@context1 @context2');
         });
         test('completed with key-values', () {
           final Todo todo =
               Todo.fromString(value: 'x 2022-11-16 key1:val1 key2:val2');
-          expect(todo.description, '');
+          expect(todo.description, 'key1:val1 key2:val2');
         });
         test('completed with all kind of tags', () {
           final Todo todo =
               Todo.fromString(value: 'x 2022-11-16 +project @context key:val');
-          expect(todo.description, '');
+          expect(todo.description, '+project @context key:val');
         });
         test('completed', () {
           final Todo todo = Todo.fromString(value: 'x 2022-11-16');
@@ -758,19 +747,19 @@ void main() {
         });
         test('incompleted with projects', () {
           final Todo todo = Todo.fromString(value: '+project1 +project2');
-          expect(todo.description, '');
+          expect(todo.description, '+project1 +project2');
         });
         test('incompleted with contexts', () {
           final Todo todo = Todo.fromString(value: '@context1 @context2');
-          expect(todo.description, '');
+          expect(todo.description, '@context1 @context2');
         });
         test('incompleted with key-values', () {
           final Todo todo = Todo.fromString(value: 'key1:val1 key2:val2');
-          expect(todo.description, '');
+          expect(todo.description, 'key1:val1 key2:val2');
         });
         test('incompleted with all kind of tags', () {
           final Todo todo = Todo.fromString(value: '+project @context key:val');
-          expect(todo.description, '');
+          expect(todo.description, '+project @context key:val');
         });
         test('incompleted', () {
           final Todo todo = Todo.fromString(value: '');

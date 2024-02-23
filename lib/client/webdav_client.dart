@@ -52,7 +52,7 @@ class WebDAVClient {
       await client.ping();
     } on Exception catch (e) {
       log.severe(e);
-      throw const WebDAVClientException('Server cannot reached');
+      throw const WebDAVClientException('Server cannot be reached');
     }
   }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -43,164 +42,163 @@ class TodoCreateEditPage extends StatelessWidget {
       create: (context) => TodoCubit(
         todo: initTodo ?? Todo(),
       ),
-      child: BlocConsumer<TodoCubit, TodoState>(
+      child: BlocListener<TodoCubit, TodoState>(
         listener: (BuildContext context, TodoState state) {
           if (state is TodoError) {
             SnackBarHandler.error(context, state.message);
           }
         },
-        builder: (BuildContext context, TodoState state) {
-          return Scaffold(
-            appBar: MainAppBar(
-              title: createMode ? 'Create' : 'Edit',
-              toolbar: Row(
-                children: <Widget>[
-                  if (!createMode) DeleteTodoButton(todo: state.todo),
-                  if (!narrowView && initTodo != state.todo)
-                    SaveTodoButton(
-                      todo: state.todo,
-                      narrowView: narrowView,
-                    ),
-                ],
-              ),
-            ),
-            body: ListView(
-              children: [
-                const TodoStringTextField(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'General',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+        child: Scaffold(
+          appBar: MainAppBar(
+            title: createMode ? 'Create' : 'Edit',
+            toolbar: Row(
+              children: <Widget>[
+                if (!createMode) const DeleteTodoButton(),
+                if (!narrowView)
+                  SaveTodoButton(
+                    initTodo: initTodo,
+                    narrowView: narrowView,
                   ),
-                ),
-                const TodoPriorityItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Dates',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                const TodoCreationDateItem(),
-                if (!createMode) const TodoCompletionDateItem(),
-                const TodoDueDateItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Tags',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                TodoProjectTagsItem(
-                  availableTags: availableProjectTags
-                      .where((p) => !state.todo.projects.contains(p))
-                      .toSet(),
-                ),
-                TodoContextTagsItem(
-                  availableTags: availableContextTags
-                      .where((c) => !state.todo.contexts.contains(c))
-                      .toSet(),
-                ),
-                TodoKeyValueTagsItem(
-                  availableTags: availableKeyValueTags
-                      .where((kv) => !state.todo.fmtKeyValues.contains(kv))
-                      .toSet(),
-                ),
-                const SizedBox(height: 16),
               ],
             ),
-            floatingActionButton: narrowView && initTodo != state.todo
-                ? SaveTodoButton(
-                    todo: state.todo,
-                    narrowView: narrowView,
-                  )
-                : null,
-          );
-        },
+          ),
+          body: ListView(
+            children: [
+              const TodoStringTextField(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'General',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              const TodoPriorityItem(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'Dates',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              const TodoCreationDateItem(),
+              if (!createMode) const TodoCompletionDateItem(),
+              const TodoDueDateItem(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'Tags',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              TodoProjectTagsItem(availableTags: availableProjectTags),
+              TodoContextTagsItem(availableTags: availableContextTags),
+              TodoKeyValueTagsItem(availableTags: availableKeyValueTags),
+              const SizedBox(height: 16),
+            ],
+          ),
+          floatingActionButton: !narrowView
+              ? null
+              : SaveTodoButton(
+                  initTodo: initTodo,
+                  narrowView: narrowView,
+                ),
+        ),
       ),
     );
   }
 }
 
 class DeleteTodoButton extends StatelessWidget {
-  final Todo todo;
-
-  const DeleteTodoButton({
-    required this.todo,
-    super.key,
-  });
+  const DeleteTodoButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: 'Delete',
-      icon: const Icon(Icons.delete),
-      onPressed: () async {
-        final bool confirm = await ConfirmationDialog.dialog(
-          context: context,
-          title: 'Delete todo',
-          message: 'Do you want to delete the todo?',
-          actionLabel: 'Delete',
+    return BlocBuilder<TodoCubit, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        return IconButton(
+          tooltip: 'Delete',
+          icon: const Icon(Icons.delete),
+          onPressed: () async {
+            final bool confirm = await ConfirmationDialog.dialog(
+              context: context,
+              title: 'Delete todo',
+              message: 'Do you want to delete the todo?',
+              actionLabel: 'Delete',
+            );
+            if (context.mounted && confirm) {
+              context
+                  .read<TodoListBloc>()
+                  .add(TodoListTodoDeleted(todo: state.todo));
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Todo deleted');
+                context.pop();
+              }
+            }
+          },
         );
-        if (context.mounted && confirm) {
-          context.read<TodoListBloc>().add(TodoListTodoDeleted(todo: todo));
-          if (context.mounted) {
-            SnackBarHandler.info(context, 'Todo deleted');
-            context.pop();
-          }
-        }
       },
     );
   }
 }
 
 class SaveTodoButton extends StatelessWidget {
-  final Todo todo;
+  final Todo? initTodo;
   final bool narrowView;
 
   const SaveTodoButton({
-    required this.todo,
+    required this.initTodo,
     required this.narrowView,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (narrowView) {
-      return FloatingActionButton(
-        tooltip: 'Save',
-        child: const Icon(Icons.save),
-        onPressed: () async {
-          context.read<TodoListBloc>().add(TodoListTodoSubmitted(todo: todo));
-          if (context.mounted) {
-            SnackBarHandler.info(context, 'Todo saved');
-            context.pop();
-          }
-        },
-      );
-    } else {
-      return IconButton(
-        tooltip: 'Save',
-        icon: const Icon(Icons.save),
-        onPressed: () async {
-          context.read<TodoListBloc>().add(TodoListTodoSubmitted(todo: todo));
-          if (context.mounted) {
-            SnackBarHandler.info(context, 'Todo saved');
-            context.pop();
-          }
-        },
-      );
-    }
+    return BlocBuilder<TodoCubit, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        if (narrowView) {
+          return initTodo == state.todo
+              ? Container()
+              : FloatingActionButton(
+                  tooltip: 'Save',
+                  child: const Icon(Icons.save),
+                  onPressed: () async {
+                    context
+                        .read<TodoListBloc>()
+                        .add(TodoListTodoSubmitted(todo: state.todo));
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Todo saved');
+                      context.pop();
+                    }
+                  },
+                );
+        } else {
+          return initTodo == state.todo
+              ? Container()
+              : IconButton(
+                  tooltip: 'Save',
+                  icon: const Icon(Icons.save),
+                  onPressed: () async {
+                    context
+                        .read<TodoListBloc>()
+                        .add(TodoListTodoSubmitted(todo: state.todo));
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Todo saved');
+                      context.pop();
+                    }
+                  },
+                );
+        }
+      },
+    );
   }
 }
 
@@ -266,7 +264,9 @@ class TodoProjectTagsItem extends StatelessWidget {
             onTap: () => TodoProjectTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
-              availableTags: availableTags,
+              availableTags: availableTags
+                  .where((p) => !state.todo.projects.contains(p))
+                  .toSet(),
             ),
           ),
         );
@@ -306,7 +306,9 @@ class TodoContextTagsItem extends StatelessWidget {
             onTap: () => TodoContextTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
-              availableTags: availableTags,
+              availableTags: availableTags
+                  .where((c) => !state.todo.contexts.contains(c))
+                  .toSet(),
             ),
           ),
         );
@@ -327,8 +329,7 @@ class TodoKeyValueTagsItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        return mapEquals(previousState.todo.keyValues, state.todo.keyValues) ==
-            false;
+        return previousState.todo.keyValues != state.todo.keyValues;
       },
       builder: (BuildContext context, TodoState state) {
         return Padding(
@@ -348,7 +349,9 @@ class TodoKeyValueTagsItem extends StatelessWidget {
             onTap: () => TodoKeyValueTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
-              availableTags: availableTags,
+              availableTags: availableTags
+                  .where((kv) => !state.todo.fmtKeyValues.contains(kv))
+                  .toSet(),
             ),
           ),
         );
@@ -421,8 +424,7 @@ class TodoDueDateItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoCubit, TodoState>(
       buildWhen: (TodoState previousState, TodoState state) {
-        return mapEquals(previousState.todo.keyValues, state.todo.keyValues) ==
-            false;
+        return previousState.todo.keyValues != state.todo.keyValues;
       },
       builder: (BuildContext context, TodoState state) {
         final String? dueDate = Todo.date2Str(state.todo.dueDate);

@@ -106,13 +106,12 @@ void main() {
         flush: true,
       );
     });
-
     group('ascending', () {
       testWidgets('default filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
         Iterable<TodoListTile> todoTiles =
@@ -130,7 +129,7 @@ void main() {
             group: ListGroup.none,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
         Iterable<TodoListTile> todoTiles =
@@ -151,7 +150,7 @@ void main() {
             group: ListGroup.none,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
         Iterable<TodoListTile> todoTiles =
@@ -176,7 +175,6 @@ void main() {
         flush: true,
       );
     });
-
     group('all', () {
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
@@ -187,7 +185,7 @@ void main() {
             group: ListGroup.none,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(TodoListTile), findsNWidgets(3));
         Iterable<TodoListTile> todoTiles =
@@ -197,7 +195,6 @@ void main() {
         expect(todoTiles.elementAt(2).todo.description, 'TodoC');
       });
     });
-
     group('completed only', () {
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
@@ -208,7 +205,7 @@ void main() {
             group: ListGroup.none,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(TodoListTile), findsNWidgets(2));
         Iterable<TodoListTile> todoTiles =
@@ -217,7 +214,6 @@ void main() {
         expect(todoTiles.elementAt(1).todo.description, 'TodoC');
       });
     });
-
     group('incompleted only', () {
       testWidgets('by filter', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
@@ -228,7 +224,7 @@ void main() {
             group: ListGroup.none,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(TodoListTile), findsNWidgets(1));
         Iterable<TodoListTile> todoTiles =
@@ -239,8 +235,6 @@ void main() {
   });
 
   group('Group by', () {
-    setUp(() async {});
-
     group('none', () {
       setUp(() async {
         file = fs.file('todoGroupByNone.txt');
@@ -253,7 +247,6 @@ void main() {
           flush: true,
         );
       });
-
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
@@ -263,7 +256,7 @@ void main() {
             group: ListGroup.none,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(ExpansionTile), findsNWidgets(1));
         Iterable<ExpansionTile> todoListSections =
@@ -287,7 +280,6 @@ void main() {
         );
       });
     });
-
     group('upcoming', () {
       setUp(() async {
         final DateTime now = DateTime.now();
@@ -309,7 +301,6 @@ void main() {
           flush: true,
         );
       });
-
       testWidgets('check sections', (tester) async {
         // Increase size to ensure all elements in list are visible.
         tester.view.physicalSize = const Size(400, 1600);
@@ -323,7 +314,7 @@ void main() {
             group: ListGroup.upcoming,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(ExpansionTile), findsNWidgets(4));
         Iterable<ExpansionTile> todoListSections =
@@ -377,7 +368,6 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
       });
     });
-
     group('priority', () {
       setUp(() async {
         file = fs.file('todoGroupByPriority.txt');
@@ -392,7 +382,6 @@ void main() {
           flush: true,
         );
       });
-
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
@@ -402,7 +391,7 @@ void main() {
             group: ListGroup.priority,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(ExpansionTile), findsNWidgets(3));
         Iterable<ExpansionTile> todoListSections =
@@ -443,7 +432,6 @@ void main() {
         );
       });
     });
-
     group('project', () {
       setUp(() async {
         file = fs.file('todoGroupByProject.txt');
@@ -458,7 +446,6 @@ void main() {
           flush: true,
         );
       });
-
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
@@ -468,7 +455,7 @@ void main() {
             group: ListGroup.project,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(ExpansionTile), findsNWidgets(3));
         Iterable<ExpansionTile> todoListSections =
@@ -508,7 +495,6 @@ void main() {
         );
       });
     });
-
     group('context', () {
       setUp(() async {
         file = fs.file('todoGroupByContext.txt');
@@ -523,7 +509,6 @@ void main() {
           flush: true,
         );
       });
-
       testWidgets('check sections', (tester) async {
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
@@ -533,7 +518,7 @@ void main() {
             group: ListGroup.context,
           ),
         ));
-        await tester.pump();
+        await tester.pumpAndSettle();
 
         expect(find.byType(ExpansionTile), findsNWidgets(3));
         Iterable<ExpansionTile> todoListSections =

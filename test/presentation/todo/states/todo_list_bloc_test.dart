@@ -166,8 +166,7 @@ void main() {
 
     group('projects', () {
       setUp(() async {
-        todo =
-            Todo(projects: const {'project1'}, description: 'Write some tests');
+        todo = Todo(description: 'Write some tests +project1');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
         repository = TodoListRepository(api);
@@ -177,7 +176,8 @@ void main() {
         bloc
           ..add(const TodoListSubscriptionRequested())
           ..add(TodoListTodoSubmitted(
-            todo: todo.copyWith(projects: const {'project1', 'project2'}),
+            todo: todo.copyWith(
+                description: 'Write some tests +project1 +project2'),
           ));
 
         await expectLater(
@@ -186,8 +186,7 @@ void main() {
             TodoListSuccess(
               todoList: [
                 todo.copyWith(
-                  description: 'Write some tests',
-                  projects: const {'project1', 'project2'},
+                  description: 'Write some tests +project1 +project2',
                 )
               ],
             ),
@@ -198,7 +197,8 @@ void main() {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
-          ..add(TodoListTodoSubmitted(todo: todo.copyWith(projects: const {})));
+          ..add(TodoListTodoSubmitted(
+              todo: todo.copyWith(description: 'Write some tests')));
 
         await expectLater(
           bloc.stream,
@@ -207,7 +207,6 @@ void main() {
               todoList: [
                 todo.copyWith(
                   description: 'Write some tests',
-                  projects: const {},
                 )
               ],
             ),
@@ -218,8 +217,7 @@ void main() {
 
     group('contexts', () {
       setUp(() async {
-        todo =
-            Todo(contexts: const {'context1'}, description: 'Write some tests');
+        todo = Todo(description: 'Write some tests @context1');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
         repository = TodoListRepository(api);
@@ -229,7 +227,8 @@ void main() {
         bloc
           ..add(const TodoListSubscriptionRequested())
           ..add(TodoListTodoSubmitted(
-            todo: todo.copyWith(contexts: const {'context1', 'context2'}),
+            todo: todo.copyWith(
+                description: 'Write some tests @context1 @context2'),
           ));
 
         await expectLater(
@@ -238,8 +237,7 @@ void main() {
             TodoListSuccess(
               todoList: [
                 todo.copyWith(
-                  description: 'Write some tests',
-                  contexts: const {'context1', 'context2'},
+                  description: 'Write some tests @context1 @context2',
                 )
               ],
             ),
@@ -250,7 +248,8 @@ void main() {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
-          ..add(TodoListTodoSubmitted(todo: todo.copyWith(contexts: const {})));
+          ..add(TodoListTodoSubmitted(
+              todo: todo.copyWith(description: 'Write some tests')));
 
         await expectLater(
           bloc.stream,
@@ -259,7 +258,6 @@ void main() {
               todoList: [
                 todo.copyWith(
                   description: 'Write some tests',
-                  contexts: const {},
                 )
               ],
             ),
@@ -270,8 +268,7 @@ void main() {
 
     group('key values', () {
       setUp(() async {
-        todo = Todo(
-            keyValues: const {'foo': 'bar'}, description: 'Write some tests');
+        todo = Todo(description: 'Write some tests foo:bar');
         await file.writeAsString(todo.toString(), flush: true);
         api = LocalTodoListApi(todoFile: file);
         repository = TodoListRepository(api);
@@ -281,7 +278,8 @@ void main() {
         bloc
           ..add(const TodoListSubscriptionRequested())
           ..add(TodoListTodoSubmitted(
-            todo: todo.copyWith(keyValues: const {'foo': 'bar', 'key': 'val'}),
+            todo:
+                todo.copyWith(description: 'Write some tests foo:bar key:val'),
           ));
 
         await expectLater(
@@ -290,8 +288,7 @@ void main() {
             TodoListSuccess(
               todoList: [
                 todo.copyWith(
-                  description: 'Write some tests',
-                  keyValues: const {'foo': 'bar', 'key': 'val'},
+                  description: 'Write some tests foo:bar key:val',
                 )
               ],
             ),
@@ -303,7 +300,7 @@ void main() {
         bloc
           ..add(const TodoListSubscriptionRequested())
           ..add(TodoListTodoSubmitted(
-            todo: todo.copyWith(keyValues: const {}),
+            todo: todo.copyWith(description: 'Write some tests'),
           ));
 
         await expectLater(
@@ -313,7 +310,6 @@ void main() {
               todoList: [
                 todo.copyWith(
                   description: 'Write some tests',
-                  keyValues: {},
                 )
               ],
             ),

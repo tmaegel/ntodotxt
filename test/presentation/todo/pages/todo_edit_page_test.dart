@@ -262,8 +262,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            keyValues: const {'due': '2023-12-31'},
+            description: 'Code something due:2023-12-31',
           ),
         ));
         await tester.pumpAndSettle();
@@ -385,8 +384,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            keyValues: const {'due': '2023-12-31'},
+            description: 'Code something due:2023-12-31',
           ),
         ));
         await tester.pumpAndSettle();
@@ -429,8 +427,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            projects: const {'project1'},
+            description: 'Code something +project1',
           ),
         ));
         await tester.pumpAndSettle();
@@ -527,8 +524,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            projects: const {'project1'},
+            description: 'Code something +project1',
           ),
         ));
         await tester.pumpAndSettle();
@@ -575,8 +571,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            contexts: const {'context1'},
+            description: 'Code something @context1',
           ),
         ));
         await tester.pumpAndSettle();
@@ -673,8 +668,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            contexts: const {'context1'},
+            description: 'Code something @context1',
           ),
         ));
         await tester.pumpAndSettle();
@@ -721,8 +715,7 @@ void main() {
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
           todo: Todo(
-            description: 'Code something',
-            keyValues: const {'foo': 'bar'},
+            description: 'Code something foo:bar',
           ),
         ));
         await tester.pumpAndSettle();
@@ -818,11 +811,9 @@ void main() {
         tester.view.devicePixelRatio = 1.0;
 
         await tester.pumpWidget(TodoCreateEditPageMaterialApp(
-          todo: Todo(
-            description: 'Code something',
-            keyValues: const {'foo': 'bar'},
-          ),
-        ));
+            todo: Todo(
+          description: 'Code something foo:bar',
+        )));
         await tester.pumpAndSettle();
         await tester.drag(find.byType(ListView), const Offset(0, -500));
         await tester.pumpAndSettle();

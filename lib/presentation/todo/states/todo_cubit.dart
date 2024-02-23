@@ -62,24 +62,53 @@ class TodoCubit extends Cubit<TodoState> {
 
   void addProject(String project) {
     try {
-      emit(
-        state.success(
-          todo: state.todo.copyWith(
-            projects: {...state.todo.projects, project},
+      if (state.todo.containsProject(project)) {
+        emit(
+          state.success(todo: state.todo.copyWith()),
+        );
+      } else {
+        if (!Todo.matchProject(Todo.fmtProject(project))) {
+          throw TodoInvalidProjectTag(tag: project);
+        }
+        emit(
+          state.success(
+            todo: state.todo.copyWith(
+              description:
+                  '${state.todo.description} ${Todo.fmtProject(project)}',
+            ),
           ),
-        ),
-      );
+        );
+      }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
   }
 
-  void updateProjects(Set<String> projects) {
+  void updateProjects(Set<String> projectList) {
     try {
+      Set<String> projects = {for (String p in projectList) p.toLowerCase()};
+      for (String project in projects) {
+        if (!Todo.matchProject(Todo.fmtProject(project))) {
+          throw TodoInvalidProjectTag(tag: project);
+        }
+      }
+      String description = state.todo.description;
+      Iterable<String> addProjects =
+          projects.where((p) => !state.todo.containsProject(p));
+      Iterable<String> removeProjects =
+          state.todo.projects.where((p) => !projects.contains(p));
+      // Remove projects
+      for (String p in removeProjects) {
+        description = description.replaceAll(Todo.fmtProject(p), '');
+      }
+      // Add projects
+      description = '$description ${{
+        for (String p in addProjects) Todo.fmtProject(p)
+      }.join(" ")}';
       emit(
         state.success(
           todo: state.todo.copyWith(
-            projects: {...projects},
+            description: description,
           ),
         ),
       );
@@ -90,10 +119,14 @@ class TodoCubit extends Cubit<TodoState> {
 
   void removeProject(String project) {
     try {
+      if (!Todo.matchProject(Todo.fmtProject(project))) {
+        throw TodoInvalidProjectTag(tag: project);
+      }
       emit(
         state.success(
           todo: state.todo.copyWith(
-            projects: {...state.todo.projects}..remove(project),
+            description:
+                state.todo.description.replaceAll(Todo.fmtProject(project), ''),
           ),
         ),
       );
@@ -104,24 +137,53 @@ class TodoCubit extends Cubit<TodoState> {
 
   void addContext(String context) {
     try {
-      emit(
-        state.success(
-          todo: state.todo.copyWith(
-            contexts: {...state.todo.contexts, context},
+      if (state.todo.containsContext(context)) {
+        emit(
+          state.success(todo: state.todo.copyWith()),
+        );
+      } else {
+        if (!Todo.matchContext(Todo.fmtContext(context))) {
+          throw TodoInvalidContextTag(tag: context);
+        }
+        emit(
+          state.success(
+            todo: state.todo.copyWith(
+              description:
+                  '${state.todo.description} ${Todo.fmtContext(context)}',
+            ),
           ),
-        ),
-      );
+        );
+      }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
   }
 
-  void updateContexts(Set<String> contexts) {
+  void updateContexts(Set<String> contextList) {
     try {
+      Set<String> contexts = {for (String c in contextList) c.toLowerCase()};
+      for (String context in contexts) {
+        if (!Todo.matchContext(Todo.fmtContext(context))) {
+          throw TodoInvalidContextTag(tag: context);
+        }
+      }
+      String description = state.todo.description;
+      Iterable<String> addContexts =
+          contexts.where((c) => !state.todo.containsContext(c));
+      Iterable<String> removeContexts =
+          state.todo.contexts.where((c) => !contexts.contains(c));
+      // Remove projects
+      for (String c in removeContexts) {
+        description = description.replaceAll(Todo.fmtContext(c), '');
+      }
+      // Add projects
+      description = '$description ${{
+        for (String c in addContexts) Todo.fmtContext(c)
+      }.join(" ")}';
       emit(
         state.success(
           todo: state.todo.copyWith(
-            contexts: {...contexts},
+            description: description,
           ),
         ),
       );
@@ -132,10 +194,14 @@ class TodoCubit extends Cubit<TodoState> {
 
   void removeContext(String context) {
     try {
+      if (!Todo.matchContext(Todo.fmtContext(context))) {
+        throw TodoInvalidContextTag(tag: context);
+      }
       emit(
         state.success(
           todo: state.todo.copyWith(
-            contexts: {...state.todo.contexts}..remove(context),
+            description:
+                state.todo.description.replaceAll(Todo.fmtContext(context), ''),
           ),
         ),
       );
@@ -146,36 +212,77 @@ class TodoCubit extends Cubit<TodoState> {
 
   void addKeyValue(String kv) {
     try {
-      if (!Todo.patternKeyValue.hasMatch(kv)) {
+      if (!Todo.matchKeyValue(Todo.fmtKeyValue(kv))) {
         throw TodoInvalidKeyValueTag(tag: kv);
       }
-
-      Map<String, String> keyValues = {...state.todo.keyValues};
-      final List<String> splittedKeyValue = kv.split(':');
-      if (splittedKeyValue.length == 2) {
-        keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
+      if (state.todo.containsKeyValue(kv)) {
+        emit(
+          state.success(
+            todo: state.todo.copyWith(
+              description: state.todo.description.replaceAllMapped(
+                RegExp('${kv.split(':')[0]}:\\S+'),
+                (match) => Todo.fmtKeyValue(kv),
+              ),
+            ),
+          ),
+        );
+      } else {
+        emit(
+          state.success(
+            todo: state.todo.copyWith(
+              description: '${state.todo.description} ${Todo.fmtKeyValue(kv)}',
+            ),
+          ),
+        );
       }
-      final Todo todo = state.todo.copyWith(keyValues: keyValues);
-      emit(state.success(todo: todo));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
   }
 
-  void updateKeyValues(Set<String> kvs) {
+  void updateKeyValues(Set<String> keyValueList) {
     try {
-      Map<String, String> keyValues = {};
-      for (var kv in kvs) {
-        if (!Todo.patternKeyValue.hasMatch(kv)) {
+      Set<String> kvs = {for (String kv in keyValueList) kv.toLowerCase()};
+      for (String kv in kvs) {
+        if (!Todo.matchKeyValue(Todo.fmtKeyValue(kv))) {
           throw TodoInvalidKeyValueTag(tag: kv);
         }
-        final List<String> splittedKeyValue = kv.split(':');
-        if (splittedKeyValue.length == 2) {
-          keyValues[splittedKeyValue[0]] = splittedKeyValue[1];
-        }
       }
-      final Todo todo = state.todo.copyWith(keyValues: keyValues);
-      emit(state.success(todo: todo));
+      String description = state.todo.description;
+      Iterable<String> addKeyValues =
+          kvs.where((kv) => !state.todo.containsKeyValue(kv));
+      Iterable<String> removeKeyValues = state.todo.keyValues.where((kv) {
+        for (String keyVal in kvs) {
+          if (kv.toLowerCase().split(':')[0] ==
+              keyVal.toLowerCase().split(':')[0]) {
+            return false;
+          }
+        }
+        return true;
+      });
+      Iterable<String> existingKeyValues =
+          kvs.where((kv) => state.todo.containsKeyValue(kv));
+      // Remove projects
+      for (String kv in removeKeyValues) {
+        description = description.replaceAll(Todo.fmtKeyValue(kv), '');
+      }
+      description = '$description ${{
+        for (String kv in addKeyValues) Todo.fmtKeyValue(kv)
+      }.join(" ")}';
+      // Replace existing key values instead concat them.
+      for (String kv in existingKeyValues) {
+        description = description.replaceAllMapped(
+          RegExp('${kv.split(':')[0]}:\\S+'),
+          (match) => Todo.fmtKeyValue(kv),
+        );
+      }
+      emit(
+        state.success(
+          todo: state.todo.copyWith(
+            description: description,
+          ),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -183,17 +290,17 @@ class TodoCubit extends Cubit<TodoState> {
 
   void removeKeyValue(String kv) {
     try {
-      if (!Todo.patternKeyValue.hasMatch(kv)) {
+      if (!Todo.matchKeyValue(Todo.fmtKeyValue(kv))) {
         throw TodoInvalidKeyValueTag(tag: kv);
       }
-
-      Map<String, String> keyValues = {...state.todo.keyValues};
-      final List<String> splittedKeyValue = kv.split(':');
-      if (splittedKeyValue.length == 2) {
-        keyValues.remove(splittedKeyValue[0]);
-      }
-      final Todo todo = state.todo.copyWith(keyValues: keyValues);
-      emit(state.success(todo: todo));
+      emit(
+        state.success(
+          todo: state.todo.copyWith(
+            description:
+                state.todo.description.replaceAll(Todo.fmtKeyValue(kv), ''),
+          ),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
