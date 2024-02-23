@@ -160,39 +160,33 @@ void main() async {
     Todo(
       creationDate: today.subtract(const Duration(days: 7)),
       priority: Priority.A,
-      description: 'Automate the generation of app screenshots',
-      projects: const {'app', 'learnflutter'},
-      contexts: const {'development', 'automation', 'productivity'},
-      keyValues: {'due': Todo.date2Str(today.add(const Duration(days: 3)))!},
+      description:
+          'Automate the generation of app screenshots +app +learnflutter @development @automation @productivity due:${Todo.date2Str(today.add(const Duration(days: 3)))!}',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 14)),
       priority: Priority.B,
-      description: 'Puplish this app',
-      projects: const {'app', 'learnflutter'},
-      contexts: const {'development'},
-      keyValues: {'due': Todo.date2Str(today.add(const Duration(days: 7)))!},
+      description:
+          'Puplish this app +app +learnflutter @development due:${Todo.date2Str(today.add(const Duration(days: 7)))!}',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 2)),
-      description: 'Increase test coverage',
-      projects: const {'app', 'learnflutter'},
-      contexts: const {'development', 'testing', 'productivity'},
+      description:
+          'Increase test coverage +app +learnflutter @development @testing @productivity',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 2)),
       completion: true,
       completionDate: today.subtract(const Duration(days: 1)),
-      description: 'Write some tests',
-      projects: const {'app', 'learnflutter'},
-      contexts: const {'development', 'testing', 'productivity'},
+      description:
+          'Write some tests +app +learnflutter @development @testing @productivity',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 21)),
       priority: Priority.C,
-      description: 'Setup a good project management tool',
-      contexts: const {'development', 'productivity'},
-    ),
+      description:
+          'Setup a good project management tool @development @productivity',
+    )
   ];
 
   setUp(() async {
