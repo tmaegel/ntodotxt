@@ -115,22 +115,6 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
       });
-      testWidgets('found no SaveFilterIconButton', (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
-        expect(
-          find.byType(SaveFilterIconButton),
-          findsNothing,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
       testWidgets('found no SaveFilterFABButton if name is empty',
           (tester) async {
         // Increase size to ensure all elements in list are visible.

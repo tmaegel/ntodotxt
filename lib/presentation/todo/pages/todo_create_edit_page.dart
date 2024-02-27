@@ -19,15 +19,15 @@ import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoCreateEditPage extends StatelessWidget {
   final Todo? initTodo;
-  final Set<String> availableProjectTags;
-  final Set<String> availableContextTags;
-  final Set<String> availableKeyValueTags;
+  final Set<String> projects;
+  final Set<String> contexts;
+  final Set<String> keyValues;
 
   const TodoCreateEditPage({
     this.initTodo,
-    this.availableProjectTags = const {},
-    this.availableContextTags = const {},
-    this.availableKeyValueTags = const {},
+    this.projects = const {},
+    this.contexts = const {},
+    this.keyValues = const {},
     super.key,
   });
 
@@ -96,9 +96,9 @@ class TodoCreateEditPage extends StatelessWidget {
                   ),
                 ),
               ),
-              TodoProjectTagsItem(availableTags: availableProjectTags),
-              TodoContextTagsItem(availableTags: availableContextTags),
-              TodoKeyValueTagsItem(availableTags: availableKeyValueTags),
+              TodoProjectTagsItem(availableTags: projects),
+              TodoContextTagsItem(availableTags: contexts),
+              TodoKeyValueTagsItem(availableTags: keyValues),
               const SizedBox(height: 16),
             ],
           ),

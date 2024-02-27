@@ -80,9 +80,9 @@ class AppRouter {
                   Set<String> keyValues =
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
-                    availableProjectTags: projects,
-                    availableContextTags: contexts,
-                    availableKeyValueTags: keyValues
+                    projects: projects,
+                    contexts: contexts,
+                    keyValues: keyValues
                         .where(
                           (c) => !c.startsWith('due:'),
                         )
@@ -103,17 +103,17 @@ class AppRouter {
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
                     initTodo: todo,
-                    availableProjectTags: projects
+                    projects: projects
                         .where(
                           (p) => !todo.projects.contains(p),
                         )
                         .toSet(),
-                    availableContextTags: contexts
+                    contexts: contexts
                         .where(
                           (c) => !todo.contexts.contains(c),
                         )
                         .toSet(),
-                    availableKeyValueTags: keyValues
+                    keyValues: keyValues
                         .where(
                           (c) =>
                               !todo.fmtKeyValues.contains(c) &&
