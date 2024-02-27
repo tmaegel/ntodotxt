@@ -124,20 +124,22 @@ class AppWrapper extends StatelessWidget {
             },
           ),
         ],
-        child: Builder(builder: (BuildContext context) {
-          return BlocBuilder<LoginCubit, LoginState>(
-            builder: (BuildContext context, LoginState state) {
-              if (state is LoginLoading) {
-                return const LoadingApp();
-              }
-              if (state is LoginOffline || state is LoginWebDAV) {
-                return const App();
-              }
+        child: Builder(
+          builder: (BuildContext context) {
+            return BlocBuilder<LoginCubit, LoginState>(
+              builder: (BuildContext context, LoginState state) {
+                if (state is LoginLoading) {
+                  return const LoadingApp();
+                }
+                if (state is LoginOffline || state is LoginWebDAV) {
+                  return const App();
+                }
 
-              return const LoginApp();
-            },
-          );
-        }),
+                return const LoginApp();
+              },
+            );
+          },
+        ),
       ),
     );
   }
