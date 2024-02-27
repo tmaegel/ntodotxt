@@ -24,20 +24,24 @@ class FilterCubit extends Cubit<FilterState> {
               : FilterSaved(filter: filter),
         );
 
-  Future<void> initial() async {
-    if (state is FilterLoading) {
-      emit(
-        state.save(
-          filter: Filter(
-            order: Order.byName(
-                (await _settingRepository.get(key: 'order'))?.value),
-            filter: Filters.byName(
-                (await _settingRepository.get(key: 'filter'))?.value),
-            group: Groups.byName(
-                (await _settingRepository.get(key: 'group'))?.value),
+  Future<void> load() async {
+    try {
+      if (state is FilterLoading) {
+        emit(
+          state.save(
+            filter: Filter(
+              order: Order.byName(
+                  (await _settingRepository.get(key: 'order'))?.value),
+              filter: Filters.byName(
+                  (await _settingRepository.get(key: 'filter'))?.value),
+              group: Groups.byName(
+                  (await _settingRepository.get(key: 'group'))?.value),
+            ),
           ),
-        ),
-      );
+        );
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -249,51 +253,65 @@ class FilterCubit extends Cubit<FilterState> {
   ///
 
   Future<void> resetToDefaults() async {
-    const Filter defaultFilter = Filter();
-    emit(state.save(
-      filter: defaultFilter,
-    ));
-    for (var k in ['order', 'filter', 'group']) {
-      await _settingRepository.delete(key: k);
+    try {
+      const Filter defaultFilter = Filter();
+      emit(state.save(filter: defaultFilter));
+      for (var k in ['order', 'filter', 'group']) {
+        await _settingRepository.delete(key: k);
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
   Future<void> updateDefaultOrder(ListOrder? value) async {
-    if (value != null) {
-      emit(
-        state.save(
-          filter: state.filter.copyWith(order: value),
-        ),
-      );
-      await _settingRepository.updateOrInsert(
-        Setting(key: 'order', value: value.name),
-      );
+    try {
+      if (value != null) {
+        emit(
+          state.save(
+            filter: state.filter.copyWith(order: value),
+          ),
+        );
+        await _settingRepository.updateOrInsert(
+          Setting(key: 'order', value: value.name),
+        );
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
   Future<void> updateDefaultFilter(ListFilter? value) async {
-    if (value != null) {
-      emit(
-        state.save(
-          filter: state.filter.copyWith(filter: value),
-        ),
-      );
-      await _settingRepository.updateOrInsert(
-        Setting(key: 'filter', value: value.name),
-      );
+    try {
+      if (value != null) {
+        emit(
+          state.save(
+            filter: state.filter.copyWith(filter: value),
+          ),
+        );
+        await _settingRepository.updateOrInsert(
+          Setting(key: 'filter', value: value.name),
+        );
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 
   Future<void> updateDefaultGroup(ListGroup? value) async {
-    if (value != null) {
-      emit(
-        state.save(
-          filter: state.filter.copyWith(group: value),
-        ),
-      );
-      await _settingRepository.updateOrInsert(
-        Setting(key: 'group', value: value.name),
-      );
+    try {
+      if (value != null) {
+        emit(
+          state.save(
+            filter: state.filter.copyWith(group: value),
+          ),
+        );
+        await _settingRepository.updateOrInsert(
+          Setting(key: 'group', value: value.name),
+        );
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 }

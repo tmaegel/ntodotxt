@@ -34,13 +34,16 @@ class SnackBarHandler {
         foregroundColor = Theme.of(context).colorScheme.onPrimaryContainer;
         break;
       case MessageType.error:
-        backgroundColor = Theme.of(context).colorScheme.errorContainer;
+        backgroundColor = Theme.of(context).colorScheme.error;
         foregroundColor = Theme.of(context).colorScheme.onError;
         break;
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: backgroundColor,
+        duration: type == MessageType.error
+            ? const Duration(seconds: 10)
+            : const Duration(seconds: 4),
         content: Text(
           message,
           style: TextStyle(color: foregroundColor),

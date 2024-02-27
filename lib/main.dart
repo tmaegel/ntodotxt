@@ -63,152 +63,91 @@ void main() async {
   Bloc.observer = GenericBlocObserver();
 
   log.info('Run app');
-  runApp(const FutureApp());
+  runApp(
+    AppWrapper(appCacheDir: (await getApplicationCacheDirectory()).path),
+  );
 }
 
-Future<LoginState> _initialLogin() async {
-  String? backendFromsecureStorage = await secureStorage.read(key: 'backend');
-  Backend backend;
+class AppWrapper extends StatelessWidget {
+  final String appCacheDir;
 
-  if (backendFromsecureStorage == null) {
-    return const Logout();
-  }
+  const AppWrapper({
+    required this.appCacheDir,
+    super.key,
+  });
 
-  try {
-    backend = Backend.values.byName(backendFromsecureStorage);
-  } on Exception {
-    return const Logout();
-  }
-
-  if (backend == Backend.none) {
-    return const Logout();
-  }
-  if (backend == Backend.offline) {
-    return const LoginOffline();
-  }
-  if (backend == Backend.webdav) {
-    String? server = await secureStorage.read(key: 'server');
-    String? baseUrl = await secureStorage.read(key: 'baseUrl');
-    String? username = await secureStorage.read(key: 'username');
-    String? password = await secureStorage.read(key: 'password');
-    if (server != null &&
-        baseUrl != null &&
-        username != null &&
-        password != null) {
-      return LoginWebDAV(
-        server: server,
-        baseUrl: baseUrl,
-        username: username,
-        password: password,
-      );
-    }
-  }
-
-  return const Logout();
-}
-
-class FutureApp extends StatefulWidget {
-  const FutureApp({super.key});
-
-  @override
-  State<FutureApp> createState() => _FutureAppState();
-}
-
-class _FutureAppState extends State<FutureApp> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: Future.wait([
-        _initialLogin(),
-        getApplicationCacheDirectory(),
-      ]),
-      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SplashScreen();
-        }
+    final String databasePath = path.join(appCacheDir, 'data.db');
 
-        if (snapshot.hasError) {
-          return const SplashScreen(message: 'Something went wrong!');
-        }
-
-        if (snapshot.hasData) {
-          final String databasePath =
-              path.join(snapshot.data![1].path, 'data.db');
-
-          return MultiRepositoryProvider(
-            providers: [
-              RepositoryProvider<SettingRepository>(
-                create: (BuildContext context) => SettingRepository(
-                  SettingController(databasePath),
-                ),
-              ),
-              RepositoryProvider<FilterRepository>(
-                create: (BuildContext context) => FilterRepository(
-                  FilterController(databasePath),
-                ),
-              ),
-            ],
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider<LoginCubit>(
-                  create: (BuildContext context) => LoginCubit(
-                    state: snapshot.data![0] as LoginState,
-                  ),
-                ),
-                BlocProvider<TodoFileCubit>(
-                  create: (BuildContext context) => TodoFileCubit(
-                    repository: context.read<SettingRepository>(),
-                  )..initial(),
-                ),
-                BlocProvider<DrawerCubit>(
-                  create: (BuildContext context) => DrawerCubit(),
-                ),
-                // Default filter
-                BlocProvider<FilterCubit>(
-                  create: (BuildContext context) => FilterCubit(
-                    settingRepository: context.read<SettingRepository>(),
-                    filterRepository: context.read<FilterRepository>(),
-                  )..initial(),
-                ),
-                BlocProvider<FilterListBloc>(
-                  create: (BuildContext context) {
-                    return FilterListBloc(
-                      repository: context.read<FilterRepository>(),
-                    )
-                      ..add(const FilterListSubscriped())
-                      ..add(const FilterListSynchronizationRequested());
-                  },
-                ),
-              ],
-              child: Builder(
-                builder: (BuildContext context) {
-                  return BlocBuilder<TodoFileCubit, TodoFileState>(
-                    builder:
-                        (BuildContext context, TodoFileState todoFileState) {
-                      if (todoFileState is TodoFileLoading) {
-                        return const SplashScreen();
-                      } else {
-                        return const App();
-                      }
-                    },
-                  );
-                },
-              ),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) => SettingRepository(
+            SettingController(databasePath),
+          ),
+        ),
+        RepositoryProvider<FilterRepository>(
+          create: (BuildContext context) => FilterRepository(
+            FilterController(databasePath),
+          ),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginCubit>(
+            create: (BuildContext context) => LoginCubit(),
+          ),
+          BlocProvider<TodoFileCubit>(
+            create: (BuildContext context) => TodoFileCubit(
+              repository: context.read<SettingRepository>(),
+              defaultLocalPath: appCacheDir,
             ),
-          );
-        }
+          ),
+          BlocProvider<DrawerCubit>(
+            create: (BuildContext context) => DrawerCubit(),
+          ),
+          // Default filter
+          BlocProvider<FilterCubit>(
+            create: (BuildContext context) => FilterCubit(
+              settingRepository: context.read<SettingRepository>(),
+              filterRepository: context.read<FilterRepository>(),
+            ),
+          ),
+          BlocProvider<FilterListBloc>(
+            create: (BuildContext context) {
+              return FilterListBloc(
+                repository: context.read<FilterRepository>(),
+              )
+                ..add(const FilterListSubscriped()) // @todo: Move to LoadingApp
+                ..add(const FilterListSynchronizationRequested());
+            },
+          ),
+        ],
+        child: Builder(builder: (BuildContext context) {
+          return BlocBuilder<LoginCubit, LoginState>(
+            builder: (BuildContext context, LoginState state) {
+              if (state is LoginLoading) {
+                return const LoadingApp();
+              }
+              if (state is LoginOffline || state is LoginWebDAV) {
+                return const App();
+              }
 
-        return const SplashScreen();
-      },
+              return const LoginApp();
+            },
+          );
+        }),
+      ),
     );
   }
 }
 
-class SplashScreen extends StatelessWidget {
+class LoadingApp extends StatelessWidget {
   final String message;
 
-  const SplashScreen({
-    this.message = 'Loading ...',
+  const LoadingApp({
+    this.message = 'Loading',
     super.key,
   });
 
@@ -219,10 +158,62 @@ class SplashScreen extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home: Scaffold(
-        body: Center(
-          child: Text(message),
-        ),
+      home: Builder(
+        builder: (BuildContext context) {
+          context.read<TodoFileCubit>().load();
+          return BlocListener<TodoFileCubit, TodoFileState>(
+            listener: (BuildContext context, TodoFileState state) {
+              if (state is TodoFileReady) {
+                context.read<LoginCubit>().login();
+              } else if (state is TodoFileError) {
+                context.read<LoginCubit>().logout();
+              }
+            },
+            child: Scaffold(
+              body: Center(
+                child: Text(message),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class LoginApp extends StatelessWidget {
+  final ThemeMode? themeMode;
+
+  const LoginApp({
+    this.themeMode,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
+      home: MultiBlocListener(
+        listeners: [
+          BlocListener<LoginCubit, LoginState>(
+            listener: (BuildContext context, LoginState state) {
+              if (state is LoginError) {
+                SnackBarHandler.error(context, state.message);
+              }
+            },
+          ),
+          BlocListener<TodoFileCubit, TodoFileState>(
+            listener: (BuildContext context, TodoFileState state) {
+              if (state is TodoFileError) {
+                SnackBarHandler.error(context, state.message);
+              }
+            },
+          ),
+        ],
+        child: const LoginPage(),
       ),
     );
   }
@@ -239,8 +230,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginState>(
-      listenWhen: (LoginState previous, LoginState current) =>
-          current is LoginError,
+      listenWhen: (LoginState previous, LoginState state) =>
+          state is LoginError,
       listener: (BuildContext context, LoginState state) {
         if (state is LoginError) {
           SnackBarHandler.error(context, state.message);
@@ -265,25 +256,14 @@ class App extends StatelessWidget {
                 value: todoListBloc,
                 child: Builder(
                   builder: (BuildContext context) {
-                    if (loginState is Logout ||
-                        todoFileState.localPath == null) {
-                      return MaterialApp(
-                        debugShowCheckedModeBanner: false,
-                        theme: lightTheme,
-                        darkTheme: darkTheme,
-                        themeMode: themeMode,
-                        home: const LoginPage(),
-                      );
-                    } else {
-                      return MaterialApp.router(
-                        title: 'ntodotxt',
-                        debugShowCheckedModeBanner: false,
-                        theme: lightTheme,
-                        darkTheme: darkTheme,
-                        themeMode: themeMode,
-                        routerConfig: AppRouter().config,
-                      );
-                    }
+                    return MaterialApp.router(
+                      title: 'ntodotxt',
+                      debugShowCheckedModeBanner: false,
+                      theme: lightTheme,
+                      darkTheme: darkTheme,
+                      themeMode: themeMode,
+                      routerConfig: AppRouter().config,
+                    );
                   },
                 ),
               ),

@@ -7,6 +7,7 @@ import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
+import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
@@ -112,20 +113,19 @@ class SettingsView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ListTile(
-              title: const Text('Reset settings'),
+              title: const Text('Reset and logout'),
               subtitle: const Text(
-                  'Resets setting to the defaults. Login data and todos are preserved.'),
-              onTap: () async =>
-                  await context.read<FilterCubit>().resetToDefaults(),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: const Text('Logout'),
-              subtitle: const Text(
-                  'Disconnects the connection to the backend. Settings and todos are preserved.'),
-              onTap: () => context.read<LoginCubit>().logout(),
+                  'Resets settings to the defaults and disconnects the connection to the backend.'),
+              onTap: () async {
+                context.read<DrawerCubit>().reset();
+                await context.read<LoginCubit>().logout();
+                if (context.mounted) {
+                  await context.read<TodoFileCubit>().resetToDefaults();
+                }
+                if (context.mounted) {
+                  await context.read<FilterCubit>().resetToDefaults();
+                }
+              },
             ),
           ),
           const Divider(),

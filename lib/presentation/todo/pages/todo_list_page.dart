@@ -34,7 +34,7 @@ class TodoListPage extends StatelessWidget {
         settingRepository: context.read<SettingRepository>(),
         filterRepository: context.read<FilterRepository>(),
         filter: filter,
-      )..initial(),
+      )..load(),
       child: Builder(
         builder: (BuildContext context) {
           final bool isNarrowLayout =

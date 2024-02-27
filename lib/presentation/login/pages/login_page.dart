@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/data/todo/todo_list_api.dart';
-import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
@@ -64,14 +62,21 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class LocalLoginView extends StatelessWidget {
+class LocalLoginView extends StatefulWidget {
   const LocalLoginView({super.key});
 
   @override
+  State<LocalLoginView> createState() => _LocalLoginViewState();
+}
+
+class _LocalLoginViewState extends State<LocalLoginView> {
+  bool loading = false;
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoFileCubit, TodoFileState>(
-      builder: (BuildContext context, TodoFileState state) {
-        return Scaffold(
+    return Stack(
+      children: [
+        Scaffold(
           appBar: AppBar(
             titleSpacing: 0.0,
             title: const Text('Login - Offline'),
@@ -82,16 +87,37 @@ class LocalLoginView extends StatelessWidget {
               LocalPathInput(),
             ],
           ),
-          floatingActionButton: state.localPath == null
-              ? null
-              : FloatingActionButton.extended(
-                  heroTag: 'offlineLogin',
-                  label: const Text('Login'),
-                  tooltip: 'Login',
-                  onPressed: () => context.read<LoginCubit>().loginOffline(),
-                ),
-        );
-      },
+          floatingActionButton: BlocBuilder<TodoFileCubit, TodoFileState>(
+            builder: (BuildContext context, TodoFileState state) {
+              return FloatingActionButton.extended(
+                heroTag: 'offlineLogin',
+                label: const Text('Login'),
+                tooltip: 'Login',
+                onPressed: () async {
+                  try {
+                    setState(() => loading = true);
+                    await context.read<LoginCubit>().loginOffline(
+                          todoFile: File(
+                              '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
+                        );
+                  } finally {
+                    setState(() => loading = false);
+                  }
+                },
+              );
+            },
+          ),
+        ),
+        if (loading)
+          const Opacity(
+            opacity: 0.8,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
+          ),
+        if (loading)
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+      ],
     );
   }
 }
@@ -138,153 +164,148 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoFileCubit, TodoFileState>(
-      builder: (BuildContext context, TodoFileState state) {
-        serverTextFieldController.text = serverAddr;
-        baseUrlTextFieldController.text = baseUrl;
-        usernameTextFieldController.text = username;
-        passwordTextFieldController.text = password;
+    bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+    serverTextFieldController.text = serverAddr;
+    baseUrlTextFieldController.text = baseUrl;
+    usernameTextFieldController.text = username;
+    passwordTextFieldController.text = password;
 
-        return Stack(
-          children: [
-            Scaffold(
-              appBar: AppBar(
-                titleSpacing: 0.0,
-                title: const Text('Login - WebDAV'),
-              ),
-              body: Form(
-                key: formKey,
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0, vertical: 8.0),
-                  children: [
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 8.0),
-                      leading: const Icon(Icons.dns),
-                      title: TextFormField(
-                        controller: serverTextFieldController,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        decoration: InputDecoration(
-                          labelText: 'Server',
-                          hintText: 'http[s]://<server>[:<port>]',
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Missing server address';
-                          }
-                          if (!value.startsWith('http://') &&
-                              !value.startsWith('https://')) {
-                            return 'Missing protocol';
-                          }
-                          if (!RegExp(
-                                  r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
-                              .hasMatch(value)) {
-                            return 'Invalid format';
-                          }
-                          return null;
-                        },
-                        onChanged: (String value) {
-                          setState(() {
-                            serverAddr = serverTextFieldController.text;
-                          });
-                        },
-                      ),
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            titleSpacing: 0.0,
+            title: const Text('Login - WebDAV'),
+          ),
+          body: Form(
+            key: formKey,
+            child: ListView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              children: [
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  leading: const Icon(Icons.dns),
+                  title: TextFormField(
+                    controller: serverTextFieldController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: InputDecoration(
+                      labelText: 'Server',
+                      hintText: 'http[s]://<server>[:<port>]',
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
                     ),
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 8.0),
-                      leading: const Icon(Icons.http),
-                      title: TextFormField(
-                        controller: baseUrlTextFieldController,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        decoration: InputDecoration(
-                          labelText: 'Base URL',
-                          hintText: 'e.g. /remote.php/dav/files',
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Missing base URL';
-                          }
-                          return null;
-                        },
-                        onChanged: (String value) {
-                          setState(() {
-                            baseUrl = baseUrlTextFieldController.text;
-                          });
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 8.0),
-                      leading: const Icon(Icons.person),
-                      title: TextFormField(
-                        controller: usernameTextFieldController,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          hintText: 'Username',
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Missing username';
-                          }
-                          return null;
-                        },
-                        onChanged: (String value) {
-                          setState(() {
-                            username = usernameTextFieldController.text;
-                          });
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 8.0),
-                      leading: const Icon(Icons.password),
-                      title: TextFormField(
-                        controller: passwordTextFieldController,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Password',
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        obscureText: true,
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Missing password';
-                          }
-                          return null;
-                        },
-                        onChanged: (String value) {
-                          setState(() {
-                            password = passwordTextFieldController.text;
-                          });
-                        },
-                      ),
-                    ),
-                    const LocalPathInput(),
-                  ],
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Missing server address';
+                      }
+                      if (!value.startsWith('http://') &&
+                          !value.startsWith('https://')) {
+                        return 'Missing protocol';
+                      }
+                      if (!RegExp(
+                              r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
+                          .hasMatch(value)) {
+                        return 'Invalid format';
+                      }
+                      return null;
+                    },
+                    onChanged: (String value) {
+                      setState(() {
+                        serverAddr = serverTextFieldController.text;
+                      });
+                    },
+                  ),
                 ),
-              ),
-              floatingActionButton:
-                  loading || state.localPath == null || state.remotePath == null
-                      ? null
-                      : FloatingActionButton.extended(
-                          heroTag: 'webdavLogin',
-                          label: const Text('Login'),
-                          tooltip: 'Login',
-                          onPressed: () async {
-                            // Validate returns true if the form is valid, or false otherwise.
-                            if (formKey.currentState!.validate()) {
-                              setState(() => loading = true);
-                              try {
-                                WebDAVTodoListApi api = WebDAVTodoListApi(
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  leading: const Icon(Icons.http),
+                  title: TextFormField(
+                    controller: baseUrlTextFieldController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: InputDecoration(
+                      labelText: 'Base URL',
+                      hintText: 'e.g. /remote.php/dav/files',
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Missing base URL';
+                      }
+                      return null;
+                    },
+                    onChanged: (String value) {
+                      setState(() {
+                        baseUrl = baseUrlTextFieldController.text;
+                      });
+                    },
+                  ),
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  leading: const Icon(Icons.person),
+                  title: TextFormField(
+                    controller: usernameTextFieldController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      hintText: 'Username',
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Missing username';
+                      }
+                      return null;
+                    },
+                    onChanged: (String value) {
+                      setState(() {
+                        username = usernameTextFieldController.text;
+                      });
+                    },
+                  ),
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  leading: const Icon(Icons.password),
+                  title: TextFormField(
+                    controller: passwordTextFieldController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      hintText: 'Password',
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    obscureText: true,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Missing password';
+                      }
+                      return null;
+                    },
+                    onChanged: (String value) {
+                      setState(() {
+                        password = passwordTextFieldController.text;
+                      });
+                    },
+                  ),
+                ),
+                const LocalPathInput(),
+              ],
+            ),
+          ),
+          floatingActionButton: keyboardIsOpen
+              ? null
+              : BlocBuilder<TodoFileCubit, TodoFileState>(
+                  builder: (BuildContext context, TodoFileState state) {
+                    return FloatingActionButton.extended(
+                      heroTag: 'webdavLogin',
+                      label: const Text('Login'),
+                      tooltip: 'Login',
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          try {
+                            setState(() => loading = true);
+                            await context.read<LoginCubit>().loginWebDAV(
                                   todoFile: File(
                                       '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
                                   server: serverAddr,
@@ -292,38 +313,25 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                                   username: username,
                                   password: password,
                                 );
-                                await api.client.ping();
-                                if (context.mounted) {
-                                  context.read<LoginCubit>().loginWebDAV(
-                                        server: serverAddr,
-                                        baseUrl: baseUrl,
-                                        username: username,
-                                        password: password,
-                                      );
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  SnackBarHandler.error(context, e.toString());
-                                }
-                              } finally {
-                                setState(() => loading = false);
-                              }
-                            }
-                          },
-                        ),
-            ),
-            if (loading)
-              const Opacity(
-                opacity: 0.8,
-                child: ModalBarrier(dismissible: false, color: Colors.black),
-              ),
-            if (loading)
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
-          ],
-        );
-      },
+                          } finally {
+                            setState(() => loading = false);
+                          }
+                        }
+                      },
+                    );
+                  },
+                ),
+        ),
+        if (loading)
+          const Opacity(
+            opacity: 0.8,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
+          ),
+        if (loading)
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+      ],
     );
   }
 }
@@ -334,6 +342,8 @@ class LocalPathInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoFileCubit, TodoFileState>(
+      buildWhen: (TodoFileState previousState, TodoFileState state) =>
+          previousState.localPath != state.localPath,
       builder: (BuildContext context, TodoFileState state) {
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -344,13 +354,13 @@ class LocalPathInput extends StatelessWidget {
           ),
           subtitle: state.localPath != null ? Text(state.localPath!) : null,
           onTap: () async {
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
             String fallbackDirectory =
                 (await getApplicationCacheDirectory()).path;
+            String? selectedDirectory =
+                await FilePicker.platform.getDirectoryPath();
             if (context.mounted) {
               // If user canceled the directory picker use app cache directory as fallback.
-              context.read<TodoFileCubit>().updateLocalPath(
+              await context.read<TodoFileCubit>().updateLocalPath(
                   selectedDirectory ?? (state.localPath ?? fallbackDirectory));
             }
           },

@@ -1,59 +1,83 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
-import 'package:path_provider/path_provider.dart';
 
 class TodoFileCubit extends Cubit<TodoFileState> {
-  final SettingRepository _repository;
+  final SettingRepository repository;
+  final String defaultLocalPath;
 
   TodoFileCubit({
-    required SettingRepository repository,
+    required this.repository,
+    required this.defaultLocalPath,
     TodoFileState? state,
-  })  : _repository = repository,
-        super(state ?? const TodoFileLoading());
+  }) : super(state ?? TodoFileLoading(localPath: defaultLocalPath));
 
-  Future<void> initial() async {
-    if (state is TodoFileLoading) {
-      // Use app caches directory as default.
-      String appCacheDir = (await getApplicationCacheDirectory()).path;
-      emit(
-        state.copyWith(
-          localPath: (await _repository.getOrInsert(
-                  key: 'localPath', defaultValue: appCacheDir))
-              .value,
-          remotePath: (await _repository.getOrInsert(
-                  key: 'remotePath', defaultValue: '/'))
-              .value,
-        ),
-      );
+  Future<void> checkPermission(String filename) async {
+    try {
+      await File(filename).create();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> load() async {
+    try {
+      final Setting? localPath = await repository.get(key: 'localPath');
+      if (localPath == null) {
+        await repository.insert(
+          Setting(key: 'localPath', value: defaultLocalPath),
+        );
+        await checkPermission(
+            '$defaultLocalPath${Platform.pathSeparator}${state.todoFilename}');
+        emit(state.ready(localPath: defaultLocalPath));
+      } else {
+        await checkPermission(
+            '${localPath.value}${Platform.pathSeparator}${state.todoFilename}');
+        emit(state.ready(localPath: localPath.value));
+      }
+    } on Exception catch (e) {
+      emit(state.error(localPath: defaultLocalPath, message: e.toString()));
     }
   }
 
   Future<void> updateLocalPath(String? value) async {
-    if (value != null) {
-      emit(
-        state.copyWith(
-          localPath: value,
-        ),
-      );
-      await _repository.updateOrInsert(
-        Setting(key: 'localPath', value: value),
-      );
+    try {
+      if (value != null) {
+        emit(state.ready(localPath: value));
+        await repository.updateOrInsert(
+          Setting(key: 'localPath', value: value),
+        );
+      }
+    } on Exception catch (e) {
+      emit(state.error(localPath: value, message: e.toString()));
     }
   }
 
   Future<void> updateRemotePath(String? value) async {
-    if (value != null) {
-      emit(
-        state.copyWith(
-          remotePath: value,
-        ),
-      );
-      await _repository.updateOrInsert(
-        Setting(key: 'remotePath', value: value),
-      );
+    try {
+      if (value != null) {
+        emit(state.ready(remotePath: value));
+        await repository.updateOrInsert(
+          Setting(key: 'remotePath', value: value),
+        );
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  Future<void> resetToDefaults() async {
+    try {
+      emit(TodoFileLoading(localPath: defaultLocalPath));
+      for (var k in ['localPath', 'remotePath']) {
+        await repository.delete(key: k);
+      }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 }

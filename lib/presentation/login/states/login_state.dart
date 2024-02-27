@@ -21,6 +21,63 @@ sealed class LoginState extends Equatable {
   String toString() => 'LoginState { }';
 }
 
+final class LoginLoading extends LoginState {
+  const LoginLoading({
+    super.backend,
+  });
+
+  @override
+  LoginLoading copyWith() {
+    return const LoginLoading();
+  }
+
+  @override
+  List<Object> get props => [
+        backend,
+      ];
+
+  @override
+  String toString() => 'LoginLoading { }';
+}
+
+final class Logout extends LoginState {
+  const Logout({
+    super.backend,
+  });
+
+  @override
+  Logout copyWith() {
+    return const Logout();
+  }
+
+  @override
+  List<Object> get props => [
+        backend,
+      ];
+
+  @override
+  String toString() => 'Logout { }';
+}
+
+final class LoginOffline extends LoginState {
+  const LoginOffline({
+    super.backend = Backend.offline,
+  });
+
+  @override
+  LoginOffline copyWith() {
+    return const LoginOffline();
+  }
+
+  @override
+  List<Object> get props => [
+        backend,
+      ];
+
+  @override
+  String toString() => 'LoginOffline { }';
+}
+
 final class LoginWebDAV extends LoginState {
   /// Backend server.
   final String server;
@@ -69,25 +126,6 @@ final class LoginWebDAV extends LoginState {
   String toString() => 'LoginWebDAV { }';
 }
 
-final class LoginOffline extends LoginState {
-  const LoginOffline({
-    super.backend = Backend.offline,
-  });
-
-  @override
-  LoginOffline copyWith() {
-    return const LoginOffline();
-  }
-
-  @override
-  List<Object> get props => [
-        backend,
-      ];
-
-  @override
-  String toString() => 'LoginOffline { }';
-}
-
 final class LoginError extends LoginState {
   /// Error message.
   final String message;
@@ -113,23 +151,4 @@ final class LoginError extends LoginState {
 
   @override
   String toString() => 'LoginError { message: $message }';
-}
-
-final class Logout extends LoginState {
-  const Logout({
-    super.backend,
-  });
-
-  @override
-  Logout copyWith() {
-    return const Logout();
-  }
-
-  @override
-  List<Object> get props => [
-        backend,
-      ];
-
-  @override
-  String toString() => 'Logout { }';
 }

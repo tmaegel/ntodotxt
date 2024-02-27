@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 class DrawerCubit extends Cubit<DrawerState> {
   DrawerCubit() : super(const DrawerState(index: 0));
 
+  void reset() => emit(state.copyWith(index: 0));
+
   void next(int index) {
     emit(
       state.copyWith(
