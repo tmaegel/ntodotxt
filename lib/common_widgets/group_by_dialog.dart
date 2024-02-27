@@ -40,7 +40,7 @@ class FilterStateGroupDialog extends StatelessWidget {
           String key = items.keys.elementAt(index);
           ListGroup value = items[key]!;
           return RadioListTile<ListGroup>(
-            key: Key('${value.name}BottomSheetRadioButton'),
+            key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
             title: Text(key),
             value: value,

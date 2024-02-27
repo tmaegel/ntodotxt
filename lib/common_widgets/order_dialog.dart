@@ -37,7 +37,7 @@ class FilterStateOrderDialog extends StatelessWidget {
           String key = items.keys.elementAt(index);
           ListOrder value = items[key]!;
           return RadioListTile<ListOrder>(
-            key: Key('${value.name}BottomSheetRadioButton'),
+            key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
             title: Text(key),
             value: value,

@@ -38,7 +38,7 @@ class FilterStateFilterDialog extends StatelessWidget {
           String key = items.keys.elementAt(index);
           ListFilter value = items[key]!;
           return RadioListTile<ListFilter>(
-            key: Key('${value.name}BottomSheetRadioButton'),
+            key: Key('${value.name}DialogRadioButton'),
             contentPadding: EdgeInsets.zero,
             title: Text(key),
             value: value,
