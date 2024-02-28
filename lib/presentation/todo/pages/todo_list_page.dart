@@ -267,26 +267,35 @@ class TodoList extends StatelessWidget {
       builder: (BuildContext context, TodoListState todoListState) {
         return BlocBuilder<FilterCubit, FilterState>(
           builder: (BuildContext context, FilterState filterState) {
-            Map<String, Iterable<Todo>?> sectionList =
+            final Map<String, Iterable<Todo>?> sectionList =
                 todoListState.groupedTodoList(
               filterState.filter,
             );
             return ListView.builder(
               controller: scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
               itemCount: sectionList.length,
               itemBuilder: (BuildContext context, int index) {
                 String section = sectionList.keys.elementAt(index);
                 Iterable<Todo> todoList = sectionList[section]!;
-                return ExpansionTile(
-                  key: PageStorageKey<String>(section),
-                  initiallyExpanded: true,
-                  title: Text(section),
+                return Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ListTile(
+                        key: PageStorageKey<String>(section),
+                        title: Text(
+                          section,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                    ),
                     for (var todo in todoList)
-                      TodoListTileDismissable(todo: todo)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: TodoListTile(todo: todo),
+                      ),
+                    if (index < sectionList.length - 1) const Divider(),
                   ],
                 );
               },
@@ -294,57 +303,6 @@ class TodoList extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class TodoListTileDismissable extends StatelessWidget {
-  final Todo todo;
-
-  const TodoListTileDismissable({
-    required this.todo,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey<String>(todo.id),
-      background: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Icon(Icons.done),
-            ),
-            Text(todo.completion == true ? 'Undone' : 'Done'),
-            const Expanded(child: SizedBox()),
-          ],
-        ),
-      ),
-      secondaryBackground: Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            const Expanded(child: SizedBox()),
-            Text(todo.completion == true ? 'Undone' : 'Done'),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Icon(Icons.done),
-            ),
-          ],
-        ),
-      ),
-      onDismissed: (DismissDirection direction) {
-        context.read<TodoListBloc>().add(
-              TodoListTodoCompletionToggled(
-                  todo: todo, completion: !todo.completion),
-            );
-      },
-      child: TodoListTile(
-        todo: todo,
-      ),
     );
   }
 }

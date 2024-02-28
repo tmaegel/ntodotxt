@@ -37,7 +37,6 @@ class SettingsView extends StatelessWidget {
     return BlocBuilder<FilterCubit, FilterState>(
         builder: (BuildContext context, FilterState state) {
       return ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),

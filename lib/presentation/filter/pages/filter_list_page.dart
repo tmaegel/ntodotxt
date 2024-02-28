@@ -53,8 +53,7 @@ class _FilterListViewNarrowState
             appBar: const MainAppBar(title: 'Filters'),
             body: ListView.builder(
               controller: scrollController,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               itemCount: state.filterList.length,
               itemBuilder: (BuildContext context, int index) {
                 return FilterListTile(filter: state.filterList[index]);
@@ -100,8 +99,7 @@ class _FilterListViewWideState extends ScollToTopViewState<FilterListViewWide> {
             appBar: const MainAppBar(title: 'Filters'),
             body: ListView.builder(
               controller: scrollController,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               itemCount: state.filterList.length,
               itemBuilder: (BuildContext context, int index) {
                 return FilterListTile(filter: state.filterList[index]);

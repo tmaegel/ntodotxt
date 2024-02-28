@@ -25,7 +25,7 @@ class AppInfoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       children: [
         ListTile(
           // Overwrite the default in themeData
