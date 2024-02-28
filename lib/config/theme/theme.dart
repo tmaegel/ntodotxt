@@ -11,6 +11,7 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
+    backgroundColor: Colors.transparent,
     systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark,
@@ -59,6 +60,7 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
+    backgroundColor: Colors.transparent,
     systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.light,
