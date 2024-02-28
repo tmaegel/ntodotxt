@@ -76,7 +76,68 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
+        testWidgets('found no SaveFilterIconButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(SaveFilterIconButton),
+            findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found no SaveFilterFABButton if name is empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterFABButton),
+              matching: find.byType(FloatingActionButton),
+            ),
+            findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found SaveFilterFABButton if name is not empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+
+          await tester.enterText(find.byType(TextFormField), 'Filter name');
+          await tester.pumpAndSettle();
+
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterFABButton),
+              matching: find.byType(FloatingActionButton),
+            ),
+            findsOneWidget,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
       });
+
       group('edit mode', () {
         testWidgets('found DeleteFilterIconButton', (tester) async {
           // Increase size to ensure all elements in list are visible.
@@ -98,66 +159,127 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-      });
-      testWidgets('found no SaveFilterIconButton', (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
+        testWidgets('found no SaveFilterIconButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
-        expect(
-          find.byType(SaveFilterIconButton),
-          findsNothing,
-        );
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(SaveFilterIconButton),
+            findsNothing,
+          );
 
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found no SaveFilterFABButton if name is empty',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found no SaveFilterFABButton if name is empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
-        expect(
-          find.descendant(
-            of: find.byType(SaveFilterFABButton),
-            matching: find.byType(FloatingActionButton),
-          ),
-          findsNothing,
-        );
+          await tester.pumpWidget(
+            BlocRepositoryWrapper(
+              initFilter: const Filter().copyWith(name: 'filter'),
+            ),
+          );
+          await tester.pumpAndSettle();
 
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found SaveFilterFABButton if name is not empty',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
+          await tester.enterText(find.byType(TextFormField), '');
+          await tester.pumpAndSettle();
 
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterFABButton),
+              matching: find.byType(FloatingActionButton),
+            ),
+            findsNothing,
+          );
 
-        await tester.enterText(find.byType(TextFormField), 'Filter name');
-        await tester.pumpAndSettle();
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found no SaveFilterFABButton if filter has not be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        expect(
-          find.descendant(
-            of: find.byType(SaveFilterFABButton),
-            matching: find.byType(FloatingActionButton),
-          ),
-          findsOneWidget,
-        );
+          await tester.pumpWidget(
+            BlocRepositoryWrapper(
+              initFilter: const Filter().copyWith(name: 'filter'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterFABButton),
+              matching: find.byType(FloatingActionButton),
+            ),
+            findsNothing,
+          );
 
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found SaveFilterFABButton if filter has be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(
+            BlocRepositoryWrapper(
+              initFilter: const Filter().copyWith(name: 'filter'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          await tester.dragUntilVisible(
+            find.byType(FilterOrderItem),
+            find.byType(ListView),
+            const Offset(0, -100),
+          );
+
+          await tester.tap(find.byType(FilterOrderItem));
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(find.byType(FilterStateOrderDialog));
+          await tester.pumpAndSettle();
+          await tester.tap(
+            find.descendant(
+              of: find.byType(FilterStateOrderDialog),
+              matching: find.text('Descending'),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(
+            find.descendant(
+              of: find.byType(FilterOrderItem),
+              matching: find.byWidgetPredicate(
+                (Widget widget) =>
+                    widget is BasicChip &&
+                    widget.label == ListOrder.descending.name,
+              ),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterFABButton),
+              matching: find.byType(FloatingActionButton),
+            ),
+            findsOneWidget,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
       });
     });
 
@@ -173,6 +295,67 @@ void main() {
           expect(
             find.byType(DeleteFilterIconButton),
             findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found no SaveFilterFABButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(SaveFilterFABButton),
+            findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found no SaveFilterIconButton if name is empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found SaveFilterIconButton if name is not empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+
+          await tester.enterText(find.byType(TextFormField), 'Filter name');
+          await tester.pumpAndSettle();
+
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsOneWidget,
           );
 
           // resets the screen to its original size after the test end
@@ -201,67 +384,128 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-      });
-      testWidgets('found no SaveFilterFABButton', (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(800, 800);
-        tester.view.devicePixelRatio = 1.0;
+        testWidgets('found no SaveFilterFABButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
-        expect(
-          find.byType(SaveFilterFABButton),
-          findsNothing,
-        );
+          await tester.pumpWidget(const BlocRepositoryWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(SaveFilterFABButton),
+            findsNothing,
+          );
 
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found no SaveFilterIconButton if name is empty',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(800, 800);
-        tester.view.devicePixelRatio = 1.0;
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found no SaveFilterIconButton if name is empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
+          await tester.pumpWidget(
+            BlocRepositoryWrapper(
+              initFilter: const Filter().copyWith(name: 'filter'),
+            ),
+          );
+          await tester.pumpAndSettle();
 
-        expect(
-          find.descendant(
-            of: find.byType(SaveFilterIconButton),
-            matching: find.byType(IconButton),
-          ),
-          findsNothing,
-        );
+          await tester.enterText(find.byType(TextFormField), '');
+          await tester.pumpAndSettle();
 
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found SaveFilterIconButton if name is not empty',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(800, 800);
-        tester.view.devicePixelRatio = 1.0;
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
 
-        await tester.pumpWidget(const BlocRepositoryWrapper());
-        await tester.pumpAndSettle();
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets(
+            'found no SaveFilterIconButton if filter has not be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        await tester.enterText(find.byType(TextFormField), 'Filter name');
-        await tester.pumpAndSettle();
+          await tester.pumpWidget(
+            BlocRepositoryWrapper(
+              initFilter: const Filter().copyWith(name: 'filter'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
 
-        expect(
-          find.descendant(
-            of: find.byType(SaveFilterIconButton),
-            matching: find.byType(IconButton),
-          ),
-          findsOneWidget,
-        );
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found SaveFilterIconButton if filter has be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
 
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
+          await tester.pumpWidget(
+            BlocRepositoryWrapper(
+              initFilter: const Filter().copyWith(name: 'filter'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          await tester.dragUntilVisible(
+            find.byType(FilterOrderItem),
+            find.byType(ListView),
+            const Offset(0, -100),
+          );
+
+          await tester.tap(find.byType(FilterOrderItem));
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(find.byType(FilterStateOrderDialog));
+          await tester.pumpAndSettle();
+          await tester.tap(
+            find.descendant(
+              of: find.byType(FilterStateOrderDialog),
+              matching: find.text('Descending'),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(
+            find.descendant(
+              of: find.byType(FilterOrderItem),
+              matching: find.byWidgetPredicate(
+                (Widget widget) =>
+                    widget is BasicChip &&
+                    widget.label == ListOrder.descending.name,
+              ),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(SaveFilterIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsOneWidget,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
       });
     });
 
