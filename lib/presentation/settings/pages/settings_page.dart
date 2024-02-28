@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
+import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
@@ -113,16 +114,24 @@ class SettingsView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ListTile(
               title: const Text('Reset and logout'),
-              subtitle: const Text(
-                  'Resets settings to the defaults and disconnects the connection to the backend.'),
+              subtitle: const Text('Restore default settings and logout.'),
               onTap: () async {
-                context.read<DrawerCubit>().reset();
-                await context.read<LoginCubit>().logout();
-                if (context.mounted) {
-                  await context.read<TodoFileCubit>().resetToDefaults();
-                }
-                if (context.mounted) {
-                  await context.read<FilterCubit>().resetToDefaults();
+                final bool confirm = await ConfirmationDialog.dialog(
+                  context: context,
+                  title: 'Logout',
+                  message:
+                      'Do you want to restoret the default settings and logout?',
+                  actionLabel: 'Logout',
+                );
+                if (context.mounted && confirm) {
+                  context.read<DrawerCubit>().reset();
+                  await context.read<LoginCubit>().logout();
+                  if (context.mounted) {
+                    await context.read<TodoFileCubit>().resetToDefaults();
+                  }
+                  if (context.mounted) {
+                    await context.read<FilterCubit>().resetToDefaults();
+                  }
                 }
               },
             ),
