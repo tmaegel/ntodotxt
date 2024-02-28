@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2024-02-28
+
+### Added
+
+- Add new widget tests and refactor existing ones
+
+### Changed
+
+- Disable landscape mode
+- Add a confirmation dialog when the app settings are reset
+- Improve the appearance of the todo list page
+- Make app bar transparent
+- Hide floating action button if keyboard is open
+- Hide floating action button (save) if todo or filter has not be changed
+- Hide floating action button (save) if name todo or filter is empty
+
+### Removed
+
+- Remove the functionality to set the todo completion state by swiping
+
+### Fixed
+
+- Improved error handling on login screen
+- Improved text field behavior when creating or editing todos #27
+- Prevention of + and @ characters at the beginning of the tag when displayed in the tag dialog
+
 ## [0.5.1] - 2024-02-21
 
 ### Added
@@ -170,7 +196,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.5.1...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/tmaegel/ntodotxt/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/tmaegel/ntodotxt/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/tmaegel/ntodotxt/compare/v0.4.7...v0.5.0
 [0.4.7]: https://github.com/tmaegel/ntodotxt/compare/v0.4.6...v0.4.7
