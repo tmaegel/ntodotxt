@@ -35,127 +35,169 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
-        builder: (BuildContext context, FilterState state) {
-      return ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: Text(
-                'Todo.txt',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: Text(
+              'Todo.txt',
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: LocalPathSettingsItem(),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: Text(
-                'Display',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: LocalPathSettingsItem(),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: Text(
+              'Display',
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: const Text('Default order'),
-              subtitle: Text(state.filter.order.name),
-              onTap: () async {
-                await DefaultFilterStateOrderDialog.dialog(
-                  context: context,
-                  cubit: BlocProvider.of<FilterCubit>(context),
-                );
-              },
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: DefaultListOrderSettingsItem(),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: DefaultListFilterSettingsItem(),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: DefaultListGroupSettiungsItem(),
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: Text(
+              'Reset',
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: const Text('Default filter'),
-              subtitle: Text(state.filter.filter.name),
-              onTap: () async {
-                await DefaultFilterStateFilterDialog.dialog(
-                  context: context,
-                  cubit: BlocProvider.of<FilterCubit>(context),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: const Text('Default grouping'),
-              subtitle: Text(state.filter.group.name),
-              onTap: () async {
-                await DefaultFilterStateGroupDialog.dialog(
-                  context: context,
-                  cubit: BlocProvider.of<FilterCubit>(context),
-                );
-              },
-            ),
-          ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: Text(
-                'Reset',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: const Text('Reset and logout'),
-              subtitle: const Text('Restore default settings and logout.'),
-              onTap: () async {
-                final bool confirm = await ConfirmationDialog.dialog(
-                  context: context,
-                  title: 'Logout',
-                  message:
-                      'Do you want to restoret the default settings and logout?',
-                  actionLabel: 'Logout',
-                );
-                if (context.mounted && confirm) {
-                  context.read<DrawerCubit>().reset();
-                  await context.read<LoginCubit>().logout();
-                  if (context.mounted) {
-                    await context.read<TodoFileCubit>().resetToDefaults();
-                  }
-                  if (context.mounted) {
-                    await context.read<FilterCubit>().resetToDefaults();
-                  }
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: const Text('Reset and logout'),
+            subtitle: const Text('Restore default settings and logout.'),
+            onTap: () async {
+              final bool confirm = await ConfirmationDialog.dialog(
+                context: context,
+                title: 'Logout',
+                message:
+                    'Do you want to restoret the default settings and logout?',
+                actionLabel: 'Logout',
+              );
+              if (context.mounted && confirm) {
+                context.read<DrawerCubit>().reset();
+                await context.read<LoginCubit>().logout();
+                if (context.mounted) {
+                  await context.read<TodoFileCubit>().resetToDefaults();
                 }
-              },
+                if (context.mounted) {
+                  await context.read<FilterCubit>().resetToDefaults();
+                }
+              }
+            },
+          ),
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: Text(
+              'Others',
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: Text(
-                'Others',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: const Text('About'),
+            onTap: () => context.pushNamed('app-info'),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListTile(
-              title: const Text('About'),
-              onTap: () => context.pushNamed('app-info'),
-            ),
-          ),
-        ],
-      );
-    });
+        ),
+      ],
+    );
+  }
+}
+
+class DefaultListOrderSettingsItem extends StatelessWidget {
+  const DefaultListOrderSettingsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) =>
+          previousState.filter.order != state.filter.order,
+      builder: (BuildContext context, FilterState state) {
+        return ListTile(
+          title: const Text('Default order'),
+          subtitle: Text(state.filter.order.name),
+          onTap: () async {
+            await DefaultFilterStateOrderDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class DefaultListFilterSettingsItem extends StatelessWidget {
+  const DefaultListFilterSettingsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) =>
+          previousState.filter.filter != state.filter.filter,
+      builder: (BuildContext context, FilterState state) {
+        return ListTile(
+          title: const Text('Default filter'),
+          subtitle: Text(state.filter.filter.name),
+          onTap: () async {
+            await DefaultFilterStateFilterDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class DefaultListGroupSettiungsItem extends StatelessWidget {
+  const DefaultListGroupSettiungsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) =>
+          previousState.filter.group != state.filter.group,
+      builder: (BuildContext context, FilterState state) {
+        return ListTile(
+          title: const Text('Default grouping'),
+          subtitle: Text(state.filter.group.name),
+          onTap: () async {
+            await DefaultFilterStateGroupDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
+        );
+      },
+    );
   }
 }
 
@@ -170,10 +212,10 @@ class LocalPathSettingsItem extends StatelessWidget {
           title: const Text('Local path'),
           subtitle: Text(state.localPath ?? '-'),
           onTap: () async {
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
             String fallbackDirectory =
                 (await getApplicationCacheDirectory()).path;
+            String? selectedDirectory =
+                await FilePicker.platform.getDirectoryPath();
             if (context.mounted) {
               // If user canceled the directory picker use app cache directory as fallback.
               context.read<TodoFileCubit>().updateLocalPath(
