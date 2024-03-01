@@ -9,7 +9,7 @@ import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/misc.dart' show CustomScrollBehavior, PlatformInfo;
+import 'package:ntodotxt/misc.dart' show CustomScrollBehavior;
 import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
@@ -55,12 +55,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: toolbar == null
           ? null
           : <Widget>[
-              PlatformInfo.isDesktopOS
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: toolbar!,
-                    )
-                  : toolbar!,
+              toolbar!,
+              const SizedBox(width: 8),
             ],
       bottom: bottom == null
           ? null

@@ -13,6 +13,7 @@ import 'package:ntodotxt/presentation/licenses/pages/licenses_page.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_list_page.dart';
+import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 
 class AppRouter {
@@ -64,9 +65,7 @@ class AppRouter {
             name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
               Filter? filter = state.extra as Filter?;
-              return TodoListPage(
-                filter: filter,
-              );
+              return TodoListPage(filter: filter);
             },
             routes: <RouteBase>[
               GoRoute(
@@ -121,6 +120,14 @@ class AppRouter {
                         )
                         .toSet(),
                   );
+                },
+              ),
+              GoRoute(
+                path: 'todo/search',
+                name: 'todo-search',
+                builder: (BuildContext context, GoRouterState state) {
+                  Filter? filter = state.extra as Filter?;
+                  return TodoSearchPage(filter: filter);
                 },
               ),
             ],

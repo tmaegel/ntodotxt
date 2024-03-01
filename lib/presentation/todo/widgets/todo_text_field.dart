@@ -48,8 +48,6 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
         return TextFormField(
           key: _textFormKey,
           controller: _controller,
-          minLines: 1,
-          maxLines: 5,
           enableInteractiveSelection: true,
           enableSuggestions: false,
           enableIMEPersonalizedLearning: false,

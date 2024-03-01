@@ -1,85 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
+import 'package:ntodotxt/constants/app.dart';
+import 'package:ntodotxt/domain/filter/filter_model.dart';
+import 'package:ntodotxt/domain/filter/filter_repository.dart';
+import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
-class TodoSearchPage extends SearchDelegate {
+class TodoSearchPage extends StatelessWidget {
+  final Filter? filter;
+
+  const TodoSearchPage({
+    this.filter,
+    super.key,
+  });
+
   @override
-  ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context).copyWith(
-      inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
-            isDense: true,
-            filled: false,
-            contentPadding: EdgeInsets.zero,
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-          ),
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (BuildContext context) => FilterCubit(
+        settingRepository: context.read<SettingRepository>(),
+        filterRepository: context.read<FilterRepository>(),
+        filter: filter,
+      )..load(),
+      child: Builder(
+        builder: (BuildContext context) => const TodoSearchView(),
+      ),
     );
   }
+}
 
-  List<Todo> _getResults(List<Todo> todoList) {
-    List<Todo> matchQuery = [];
-    for (var todo in todoList) {
-      if (todo.toString().toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(todo);
-      }
-    }
+class TodoSearchView extends StatefulWidget {
+  const TodoSearchView({super.key});
 
-    return matchQuery;
-  }
+  @override
+  State<TodoSearchView> createState() => _TodoSearchViewState();
+}
 
-  Widget _buildResults(BuildContext context) {
-    return BlocBuilder<TodoListBloc, TodoListState>(
-      builder: (BuildContext context, TodoListState state) {
-        final List<Todo> matchQuery = _getResults(state.todoList);
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          itemCount: matchQuery.length,
-          itemBuilder: (BuildContext context, int index) {
-            Todo todo = matchQuery[index];
-            return TodoSearchTile(todo: todo);
-          },
-        );
-      },
-    );
+class _TodoSearchViewState extends State<TodoSearchView> {
+  String query = '';
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _controller.text = query;
   }
 
   @override
-  List<Widget> buildActions(BuildContext context) {
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Iterable<Todo> _getResults(Iterable<Todo> todoList) {
+    return todoList.where(
+      (Todo t) => t.toString().toLowerCase().contains(query.toLowerCase()),
+    );
+  }
+
+  Widget _buildSearchField(BuildContext context) {
+    return TextFormField(
+      controller: _controller,
+      enableInteractiveSelection: true,
+      enableSuggestions: false,
+      enableIMEPersonalizedLearning: false,
+      keyboardType: TextInputType.text,
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp(r'\n')),
+      ],
+      style: Theme.of(context).textTheme.titleLarge,
+      decoration: const InputDecoration(hintText: 'Search ...'),
+      onChanged: (String value) => setState(() => query = _controller.text),
+    );
+  }
+
+  List<Widget> _buildActions(BuildContext context) {
     return [
       IconButton(
         icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
+        onPressed: query.isEmpty
+            ? null
+            : () {
+                setState(() => query = '');
+                _controller.text = query;
+              },
       ),
-      const SizedBox(width: 16),
+      const SizedBox(width: 8),
     ];
   }
 
   @override
-  String get searchFieldLabel => 'Search ...';
+  Widget build(BuildContext context) {
+    final bool narrowView =
+        MediaQuery.of(context).size.width < maxScreenWidthCompact;
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () => close(context, null),
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: narrowView ? 0.0 : null,
+        title: _buildSearchField(context),
+        actions: _buildActions(context),
+      ),
+      body: BlocBuilder<TodoListBloc, TodoListState>(
+        builder: (BuildContext context, TodoListState todoListState) {
+          return BlocBuilder<FilterCubit, FilterState>(
+            builder: (BuildContext context, FilterState filterState) {
+              final List<Todo> matchQuery = _getResults(
+                todoListState.filteredTodoList(filterState.filter),
+              ).toList();
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                itemCount: matchQuery.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Todo todo = matchQuery[index];
+                  return TodoSearchTile(todo: todo);
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
-
-  @override
-  Widget buildResults(BuildContext context) => _buildResults(context);
-
-  @override
-  Widget buildSuggestions(BuildContext context) => _buildResults(context);
 }
 
 class TodoSearchTile extends StatelessWidget {

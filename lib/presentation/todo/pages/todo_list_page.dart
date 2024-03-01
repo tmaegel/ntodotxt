@@ -14,7 +14,6 @@ import 'package:ntodotxt/misc.dart' show PopScopeDrawer, SnackBarHandler;
 import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/todo/pages/todo_search_page.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
@@ -91,10 +90,8 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                       IconButton(
                         tooltip: 'Search',
                         icon: const Icon(Icons.search),
-                        onPressed: () => showSearch(
-                          context: context,
-                          delegate: TodoSearchPage(),
-                        ),
+                        onPressed: () => context.pushNamed('todo-search',
+                            extra: filterState.filter),
                       ),
                       const TodoListSaveFilter(),
                       const TodoListDeleteFilter(),
@@ -170,10 +167,8 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                       IconButton(
                         tooltip: 'Search',
                         icon: const Icon(Icons.search),
-                        onPressed: () => showSearch(
-                          context: context,
-                          delegate: TodoSearchPage(),
-                        ),
+                        onPressed: () => context.pushNamed('todo-search',
+                            extra: filterState.filter),
                       ),
                       const TodoListSaveFilter(),
                       const TodoListDeleteFilter(),
