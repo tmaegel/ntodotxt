@@ -18,7 +18,7 @@ class AppInfoPage extends StatelessWidget {
 }
 
 class AppInfoView extends StatelessWidget {
-  static const String repoUrl = 'https://github.com/tmaegel/ntodo-txt';
+  static const String repoUrl = 'https://github.com/tmaegel/ntodotxt';
 
   const AppInfoView({super.key});
 
