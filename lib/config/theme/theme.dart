@@ -57,6 +57,11 @@ final ThemeData lightTheme = light.copyWith(
     errorBorder: InputBorder.none,
     disabledBorder: InputBorder.none,
   ),
+  progressIndicatorTheme: light.progressIndicatorTheme.copyWith(
+    color: light.colorScheme.primary,
+    circularTrackColor: light.colorScheme.primaryContainer,
+    refreshBackgroundColor: light.colorScheme.primaryContainer,
+  ),
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
@@ -105,6 +110,11 @@ final ThemeData darkTheme = dark.copyWith(
     focusedErrorBorder: InputBorder.none,
     errorBorder: InputBorder.none,
     disabledBorder: InputBorder.none,
+  ),
+  progressIndicatorTheme: dark.progressIndicatorTheme.copyWith(
+    color: dark.colorScheme.primary,
+    circularTrackColor: dark.colorScheme.primaryContainer,
+    refreshBackgroundColor: dark.colorScheme.primaryContainer,
   ),
 );
 

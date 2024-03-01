@@ -235,7 +235,7 @@ class LoadingIndicatorWrapper extends StatelessWidget {
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).canvasColor,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: const Padding(
