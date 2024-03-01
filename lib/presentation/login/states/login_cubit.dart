@@ -130,7 +130,10 @@ class LoginCubit extends Cubit<LoginState> {
         'password',
       ];
       for (var attr in attrs) {
-        await secureStorage.delete(key: attr);
+        final String? value = await secureStorage.read(key: attr);
+        if (value != null) {
+          await secureStorage.delete(key: attr);
+        }
       }
       emit(const Logout());
     } on Exception catch (e) {
