@@ -21,8 +21,8 @@ class LoginPage extends StatelessWidget {
             SizedBox(
               width: 150,
               child: FloatingActionButton.extended(
-                heroTag: 'offlineLoginView',
-                label: const Text('Offline'),
+                heroTag: 'localLoginView',
+                label: const Text('Local'),
                 tooltip: 'Use this app offline',
                 icon: const Icon(Icons.cloud_off),
                 onPressed: () {
@@ -170,168 +170,172 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
     usernameTextFieldController.text = username;
     passwordTextFieldController.text = password;
 
-    return Stack(
-      children: [
-        Scaffold(
-          appBar: AppBar(
-            titleSpacing: 0.0,
-            title: const Text('Login - WebDAV'),
-          ),
-          body: Form(
-            key: formKey,
-            child: ListView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              children: [
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  leading: const Icon(Icons.dns),
-                  title: TextFormField(
-                    controller: serverTextFieldController,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    decoration: InputDecoration(
-                      labelText: 'Server',
-                      hintText: 'http[s]://<server>[:<port>]',
-                      labelStyle: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Missing server address';
-                      }
-                      if (!value.startsWith('http://') &&
-                          !value.startsWith('https://')) {
-                        return 'Missing protocol';
-                      }
-                      if (!RegExp(
-                              r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
-                          .hasMatch(value)) {
-                        return 'Invalid format';
-                      }
-                      return null;
-                    },
-                    onChanged: (String value) {
-                      setState(() {
-                        serverAddr = serverTextFieldController.text;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  leading: const Icon(Icons.http),
-                  title: TextFormField(
-                    controller: baseUrlTextFieldController,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    decoration: InputDecoration(
-                      labelText: 'Base URL',
-                      hintText: 'e.g. /remote.php/dav/files',
-                      labelStyle: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Missing base URL';
-                      }
-                      return null;
-                    },
-                    onChanged: (String value) {
-                      setState(() {
-                        baseUrl = baseUrlTextFieldController.text;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  leading: const Icon(Icons.person),
-                  title: TextFormField(
-                    controller: usernameTextFieldController,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      hintText: 'Username',
-                      labelStyle: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Missing username';
-                      }
-                      return null;
-                    },
-                    onChanged: (String value) {
-                      setState(() {
-                        username = usernameTextFieldController.text;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  leading: const Icon(Icons.password),
-                  title: TextFormField(
-                    controller: passwordTextFieldController,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Password',
-                      labelStyle: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    obscureText: true,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Missing password';
-                      }
-                      return null;
-                    },
-                    onChanged: (String value) {
-                      setState(() {
-                        password = passwordTextFieldController.text;
-                      });
-                    },
-                  ),
-                ),
-                const LocalPathInput(),
-              ],
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              titleSpacing: 0.0,
+              title: const Text('Login - WebDAV'),
             ),
-          ),
-          floatingActionButton: keyboardIsOpen
-              ? null
-              : BlocBuilder<TodoFileCubit, TodoFileState>(
-                  builder: (BuildContext context, TodoFileState state) {
-                    return FloatingActionButton.extended(
-                      heroTag: 'webdavLogin',
-                      label: const Text('Login'),
-                      tooltip: 'Login',
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          try {
-                            setState(() => loading = true);
-                            await context.read<LoginCubit>().loginWebDAV(
-                                  todoFile: File(
-                                      '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
-                                  server: serverAddr,
-                                  baseUrl: baseUrl,
-                                  username: username,
-                                  password: password,
-                                );
-                          } finally {
-                            setState(() => loading = false);
-                          }
+            body: Form(
+              key: formKey,
+              child: ListView(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                children: [
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    leading: const Icon(Icons.dns),
+                    title: TextFormField(
+                      controller: serverTextFieldController,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      decoration: const InputDecoration(
+                        labelText: 'Server',
+                        hintText: 'http[s]://<server>[:<port>]',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Missing server address';
                         }
+                        if (!value.startsWith('http://') &&
+                            !value.startsWith('https://')) {
+                          return 'Missing protocol';
+                        }
+                        if (!RegExp(
+                                r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
+                            .hasMatch(value)) {
+                          return 'Invalid format';
+                        }
+                        return null;
                       },
-                    );
-                  },
-                ),
-        ),
-        if (loading)
-          const Opacity(
-            opacity: 0.8,
-            child: ModalBarrier(dismissible: false, color: Colors.black),
+                      onChanged: (String value) {
+                        setState(() {
+                          serverAddr = serverTextFieldController.text;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    leading: const Icon(Icons.http),
+                    title: TextFormField(
+                      controller: baseUrlTextFieldController,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      decoration: const InputDecoration(
+                        labelText: 'Base URL',
+                        hintText: 'e.g. /remote.php/dav/files',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Missing base URL';
+                        }
+                        return null;
+                      },
+                      onChanged: (String value) {
+                        setState(() {
+                          baseUrl = baseUrlTextFieldController.text;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    leading: const Icon(Icons.person),
+                    title: TextFormField(
+                      controller: usernameTextFieldController,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        hintText: 'Username',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Missing username';
+                        }
+                        return null;
+                      },
+                      onChanged: (String value) {
+                        setState(() {
+                          username = usernameTextFieldController.text;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    leading: const Icon(Icons.password),
+                    title: TextFormField(
+                      controller: passwordTextFieldController,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        hintText: 'Password',
+                      ),
+                      obscureText: true,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Missing password';
+                        }
+                        return null;
+                      },
+                      onChanged: (String value) {
+                        setState(() {
+                          password = passwordTextFieldController.text;
+                        });
+                      },
+                    ),
+                  ),
+                  const LocalPathInput(),
+                ],
+              ),
+            ),
+            floatingActionButton: keyboardIsOpen
+                ? null
+                : BlocBuilder<TodoFileCubit, TodoFileState>(
+                    builder: (BuildContext context, TodoFileState state) {
+                      return FloatingActionButton.extended(
+                        heroTag: 'webdavLogin',
+                        label: const Text('Login'),
+                        tooltip: 'Login',
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            try {
+                              setState(() => loading = true);
+                              await context.read<LoginCubit>().loginWebDAV(
+                                    todoFile: File(
+                                        '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
+                                    server: serverAddr,
+                                    baseUrl: baseUrl,
+                                    username: username,
+                                    password: password,
+                                  );
+                            } finally {
+                              setState(() => loading = false);
+                            }
+                          }
+                        },
+                      );
+                    },
+                  ),
           ),
-        if (loading)
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
-      ],
+          if (loading)
+            const Opacity(
+              opacity: 0.8,
+              child: ModalBarrier(dismissible: false, color: Colors.black),
+            ),
+          if (loading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -350,7 +354,9 @@ class LocalPathInput extends StatelessWidget {
           leading: const Icon(Icons.folder),
           title: Text(
             'Local path',
-            style: Theme.of(context).textTheme.bodySmall,
+            style: state.localPath == null
+                ? null
+                : Theme.of(context).textTheme.bodySmall,
           ),
           subtitle: state.localPath != null ? Text(state.localPath!) : null,
           onTap: () async {

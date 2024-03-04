@@ -36,12 +36,6 @@ class MaterialAppWrapper extends StatelessWidget {
   }
 }
 
-Future safeTapByFinder(WidgetTester tester, Finder finder) async {
-  await tester.ensureVisible(finder);
-  await tester.pumpAndSettle();
-  await tester.tap(finder);
-}
-
 void main() {
   group('TodoCreateEditPage', () {
     group('narrow view', () {

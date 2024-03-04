@@ -89,7 +89,7 @@ class SettingsView extends StatelessWidget {
             onTap: () async {
               final bool confirm = await ConfirmationDialog.dialog(
                 context: context,
-                title: 'Logout',
+                title: 'Reset and logout',
                 message:
                     'Do you want to restoret the default settings and logout?',
                 actionLabel: 'Logout',
