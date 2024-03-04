@@ -103,6 +103,10 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                 floatingActionButton: scrolledDown
                     ? FloatingActionButton.small(
                         tooltip: 'Go to top',
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondaryContainer,
                         child: const Icon(Icons.keyboard_arrow_up),
                         onPressed: () => scrollToTop(),
                       )
@@ -176,11 +180,21 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                   ),
                   bottom: const AppBarFilterList(),
                 ),
-                floatingActionButton: FloatingActionButton(
-                  tooltip: 'Add todo',
-                  child: const Icon(Icons.add),
-                  onPressed: () => context.pushNamed('todo-create'),
-                ),
+                floatingActionButton: scrolledDown
+                    ? FloatingActionButton.small(
+                        tooltip: 'Go to top',
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondaryContainer,
+                        child: const Icon(Icons.keyboard_arrow_up),
+                        onPressed: () => scrollToTop(),
+                      )
+                    : FloatingActionButton(
+                        tooltip: 'Add todo',
+                        child: const Icon(Icons.add),
+                        onPressed: () => context.pushNamed('todo-create'),
+                      ),
                 body: RefreshIndicator(
                   onRefresh: () async {
                     context
@@ -267,6 +281,7 @@ class TodoList extends StatelessWidget {
               filterState.filter,
             );
             return ListView.builder(
+              key: const PageStorageKey('TodoList'),
               controller: scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: sectionList.length,
