@@ -52,51 +52,59 @@ class FilterCreateEditPage extends StatelessWidget {
             SnackBarHandler.error(context, state.message);
           }
         },
-        child: Scaffold(
-          appBar: MainAppBar(
-            title: createMode ? 'Create' : 'Edit',
-            toolbar: Row(
-              children: <Widget>[
-                if (!createMode) const DeleteFilterIconButton(),
-                if (!narrowView) SaveFilterIconButton(initFilter: initFilter),
+        child: GestureDetector(
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: Scaffold(
+            appBar: MainAppBar(
+              title: createMode ? 'Create' : 'Edit',
+              toolbar: Row(
+                children: <Widget>[
+                  if (!createMode) const DeleteFilterIconButton(),
+                  if (!narrowView) SaveFilterIconButton(initFilter: initFilter),
+                ],
+              ),
+            ),
+            body: ListView(
+              children: [
+                const FilterNameTextField(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'General',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const FilterOrderItem(),
+                const FilterFilterItem(),
+                const FilterGroupItem(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Tags',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const FilterPrioritiesItem(),
+                FilterProjectTagsItem(availableTags: projects),
+                FilterContextTagsItem(availableTags: contexts),
+                const SizedBox(height: 16),
               ],
             ),
+            floatingActionButton: keyboardIsOpen || !narrowView
+                ? null
+                : SaveFilterFABButton(initFilter: initFilter),
           ),
-          body: ListView(
-            children: [
-              const FilterNameTextField(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'General',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              const FilterOrderItem(),
-              const FilterFilterItem(),
-              const FilterGroupItem(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'Tags',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              const FilterPrioritiesItem(),
-              FilterProjectTagsItem(availableTags: projects),
-              FilterContextTagsItem(availableTags: contexts),
-              const SizedBox(height: 16),
-            ],
-          ),
-          floatingActionButton: keyboardIsOpen || !narrowView
-              ? null
-              : SaveFilterFABButton(initFilter: initFilter),
         ),
       ),
     );

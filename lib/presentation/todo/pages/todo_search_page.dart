@@ -102,30 +102,38 @@ class _TodoSearchViewState extends State<TodoSearchView> {
     final bool narrowView =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
 
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: narrowView ? 0.0 : null,
-        title: _buildSearchField(context),
-        actions: _buildActions(context),
-      ),
-      body: BlocBuilder<TodoListBloc, TodoListState>(
-        builder: (BuildContext context, TodoListState todoListState) {
-          return BlocBuilder<FilterCubit, FilterState>(
-            builder: (BuildContext context, FilterState filterState) {
-              final List<Todo> matchQuery = _getResults(
-                todoListState.filteredTodoList(filterState.filter),
-              ).toList();
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                itemCount: matchQuery.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Todo todo = matchQuery[index];
-                  return TodoSearchTile(todo: todo);
-                },
-              );
-            },
-          );
-        },
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: narrowView ? 0.0 : null,
+          title: _buildSearchField(context),
+          actions: _buildActions(context),
+        ),
+        body: BlocBuilder<TodoListBloc, TodoListState>(
+          builder: (BuildContext context, TodoListState todoListState) {
+            return BlocBuilder<FilterCubit, FilterState>(
+              builder: (BuildContext context, FilterState filterState) {
+                final List<Todo> matchQuery = _getResults(
+                  todoListState.filteredTodoList(filterState.filter),
+                ).toList();
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: matchQuery.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Todo todo = matchQuery[index];
+                    return TodoSearchTile(todo: todo);
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
