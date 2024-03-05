@@ -33,22 +33,22 @@ class NavigationRailDrawer extends StatelessWidget {
             List<DrawerDestination> destinations = <DrawerDestination>[
               DrawerDestination(
                 label: 'Todos',
-                icon: const Icon(Icons.playlist_add_check),
-                selectedIcon: const Icon(Icons.playlist_add_check),
+                icon: const Icon(Icons.checklist_outlined),
+                selectedIcon: const Icon(Icons.checklist),
                 onTap: (BuildContext context) => context.pushNamed('todo-list'),
               ),
               DrawerDestination(
                 label: 'Filters',
-                icon: const Icon(Icons.filter_alt_outlined),
-                selectedIcon: const Icon(Icons.filter_alt),
+                icon: const Icon(Icons.filter_list_outlined),
+                selectedIcon: const Icon(Icons.filter_list),
                 onTap: (BuildContext context) =>
                     context.pushNamed('filter-list'),
               ),
               for (Filter filter in filterListState.filterList)
                 DrawerDestination(
                   label: 'Filter: ${filter.name}',
-                  icon: const Icon(Icons.favorite_border),
-                  selectedIcon: const Icon(Icons.favorite),
+                  icon: const Icon(Icons.star_outline),
+                  selectedIcon: const Icon(Icons.star),
                   onTap: (BuildContext context) =>
                       context.pushNamed('todo-list', extra: filter),
                 ),
@@ -95,7 +95,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.3,
+      initialChildSize: 0.35,
       minChildSize: 0.15,
       maxChildSize: 0.6,
       expand: false,
@@ -107,23 +107,23 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                 List<DrawerDestination> destinations = <DrawerDestination>[
                   DrawerDestination(
                     label: 'Todos',
-                    icon: const Icon(Icons.playlist_add_check),
-                    selectedIcon: const Icon(Icons.playlist_add_check),
+                    icon: const Icon(Icons.checklist_outlined),
+                    selectedIcon: const Icon(Icons.checklist),
                     onTap: (BuildContext context) =>
                         context.pushNamed('todo-list'),
                   ),
                   DrawerDestination(
                     label: 'Filters',
-                    icon: const Icon(Icons.filter_alt_outlined),
-                    selectedIcon: const Icon(Icons.filter_alt),
+                    icon: const Icon(Icons.filter_list_outlined),
+                    selectedIcon: const Icon(Icons.filter_list),
                     onTap: (BuildContext context) =>
                         context.pushNamed('filter-list'),
                   ),
                   for (Filter filter in filterListState.filterList)
                     DrawerDestination(
                       label: 'Filter: ${filter.name}',
-                      icon: const Icon(Icons.favorite_border),
-                      selectedIcon: const Icon(Icons.favorite),
+                      icon: const Icon(Icons.star_outline),
+                      selectedIcon: const Icon(Icons.star),
                       onTap: (BuildContext context) =>
                           context.pushNamed('todo-list', extra: filter),
                     ),
@@ -139,29 +139,36 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                 return ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(16.0),
                     controller: scrollController,
                     itemCount: destinations.length,
                     itemBuilder: (BuildContext context, int index) {
                       final DrawerDestination d = destinations[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: ListTile(
-                          selected: drawerState.index == index,
-                          leading: drawerState.index == index
-                              ? d.selectedIcon
-                              : d.icon,
-                          title: Text(d.label),
-                          shape: const StadiumBorder(),
-                          onTap: () {
-                            // Navigate if location will be changed only.
-                            if (drawerState.index != index) {
-                              context.read<DrawerCubit>().next(index);
-                              d.onTap(context);
-                            }
-                            Navigator.pop(context);
-                          },
-                        ),
+                      return Column(
+                        children: [
+                          if (index == 0) const SizedBox(height: 14.0),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 2.0),
+                            child: ListTile(
+                              selected: drawerState.index == index,
+                              leading: drawerState.index == index
+                                  ? d.selectedIcon
+                                  : d.icon,
+                              title: Text(d.label),
+                              shape: const StadiumBorder(),
+                              onTap: () {
+                                // Navigate if location will be changed only.
+                                if (drawerState.index != index) {
+                                  context.read<DrawerCubit>().next(index);
+                                  d.onTap(context);
+                                }
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          if (index == destinations.length - 2 || index == 1)
+                            const Divider(),
+                        ],
                       );
                     },
                   ),
