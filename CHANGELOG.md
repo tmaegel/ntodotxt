@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2024-03-05
+
+### Added
+
+- Hide keyboard if tap outside of textfield
+
+### Changed
+
+- Bump file_picker to 6.2.0
+- Bump flutter_bloc to 8.1.4
+- Bump go_router to 13.2.0
+- Bump sqflite_common_ffi to 2.3.2+1
+- Bump sqlite3_flutter_libs to 0.5.20
+- Bump url_launcher to 6.2.5
+- Update style of drawer
+- Update style of loading spinner
+
+### Fixed
+
+- Filter todo list on search page correctly
+- Order todos for the different filters/groupings correctly
+- Keep scroll position of todo list if todo was created or edited
+- Solve error while initialization on desktop
+
 ## [0.6.0] - 2024-02-28
 
 ### Added
@@ -196,7 +220,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.6.0...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/tmaegel/ntodotxt/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/tmaegel/ntodotxt/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/tmaegel/ntodotxt/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/tmaegel/ntodotxt/compare/v0.4.7...v0.5.0

@@ -1053,7 +1053,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
     homepage: 'https://github.com/miguelpruivo/plugins_flutter_file_picker',
     repository: 'https://github.com/miguelpruivo/flutter_file_picker',
     authors: [],
-    version: '6.1.1',
+    version: '6.2.0',
     license: '''MIT License
 
 Copyright (c) 2018 Miguel Ruivo
@@ -1206,7 +1206,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
     repository:
         'https://github.com/felangel/bloc/tree/master/packages/flutter_bloc',
     authors: [],
-    version: '8.1.3',
+    version: '8.1.4',
     license: '''The MIT License (MIT)
 Copyright (c) 2018 Felix Angelov
 
@@ -1619,7 +1619,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
     repository:
         'https://github.com/flutter/packages/tree/main/packages/go_router',
     authors: [],
-    version: '13.1.0',
+    version: '13.2.0',
     license: '''Copyright 2013 The Flutter Authors. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -2761,7 +2761,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
     homepage:
         'https://github.com/tekartik/sqflite/tree/master/sqflite_common_ffi',
     authors: [],
-    version: '2.3.2',
+    version: '2.3.2+1',
     license: '''BSD 2-Clause License
 
 Copyright (c) 2019, Alexandre Roux Tekartik
@@ -2830,7 +2830,7 @@ SOFTWARE.''',
     homepage:
         'https://github.com/simolus3/sqlite3.dart/tree/main/sqlite3_flutter_libs',
     authors: [],
-    version: '0.5.19+1',
+    version: '0.5.20',
     license: '''MIT License
 
 Copyright (c) 2020 Simon Binder
@@ -3194,7 +3194,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
     repository:
         'https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher',
     authors: [],
-    version: '6.2.4',
+    version: '6.2.5',
     license: '''Copyright 2013 The Flutter Authors. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
