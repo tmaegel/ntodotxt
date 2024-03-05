@@ -106,59 +106,87 @@ void main() {
         flush: true,
       );
     });
-    group('ascending', () {
-      testWidgets('default filter', (tester) async {
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
-        ));
-        await tester.pumpAndSettle();
+    testWidgets('default', (tester) async {
+      final List<String> expectedTiles = [
+        'TodoA',
+        'TodoB',
+        'TodoC',
+      ];
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        todoFile: file,
+      ));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(TodoListTile), findsNWidgets(3));
-        Iterable<TodoListTile> todoTiles =
-            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
-        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
-        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
-        expect(todoTiles.elementAt(2).todo.description, 'TodoC');
-      });
-      testWidgets('by filter', (tester) async {
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.none,
-          ),
-        ));
-        await tester.pumpAndSettle();
+      Iterable<TodoListTile> todoTiles =
+          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      expect(todoTiles.length, expectedTiles.length);
 
-        expect(find.byType(TodoListTile), findsNWidgets(3));
-        Iterable<TodoListTile> todoTiles =
-            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
-        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
-        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
-        expect(todoTiles.elementAt(2).todo.description, 'TodoC');
-      });
+      for (int i = 0; i < expectedTiles.length; i++) {
+        Finder element = find.descendant(
+          of: find.byWidget(todoTiles.elementAt(i)),
+          matching: find.text(expectedTiles[i]),
+        );
+        await tester.ensureVisible(element);
+        expect(element, findsOneWidget);
+      }
     });
+    testWidgets('ascending', (tester) async {
+      final List<String> expectedTiles = [
+        'TodoA',
+        'TodoB',
+        'TodoC',
+      ];
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        todoFile: file,
+        filter: const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        ),
+      ));
+      await tester.pumpAndSettle();
 
-    group('descending', () {
-      testWidgets('by filter', (tester) async {
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
-          filter: const Filter(
-            order: ListOrder.descending,
-            filter: ListFilter.all,
-            group: ListGroup.none,
-          ),
-        ));
-        await tester.pumpAndSettle();
+      Iterable<TodoListTile> todoTiles =
+          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      expect(todoTiles.length, expectedTiles.length);
 
-        expect(find.byType(TodoListTile), findsNWidgets(3));
-        Iterable<TodoListTile> todoTiles =
-            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
-        expect(todoTiles.elementAt(0).todo.description, 'TodoC');
-        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
-        expect(todoTiles.elementAt(2).todo.description, 'TodoA');
-      });
+      for (int i = 0; i < expectedTiles.length; i++) {
+        Finder element = find.descendant(
+          of: find.byWidget(todoTiles.elementAt(i)),
+          matching: find.text(expectedTiles[i]),
+        );
+        await tester.ensureVisible(element);
+        expect(element, findsOneWidget);
+      }
+    });
+    testWidgets('descending', (tester) async {
+      final List<String> expectedTiles = [
+        'TodoC',
+        'TodoB',
+        'TodoA',
+      ];
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        todoFile: file,
+        filter: const Filter(
+          order: ListOrder.descending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      Iterable<TodoListTile> todoTiles =
+          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      expect(todoTiles.length, expectedTiles.length);
+
+      for (int i = 0; i < expectedTiles.length; i++) {
+        Finder element = find.descendant(
+          of: find.byWidget(todoTiles.elementAt(i)),
+          matching: find.text(expectedTiles[i]),
+        );
+        await tester.ensureVisible(element);
+        expect(element, findsOneWidget);
+      }
     });
   });
 
@@ -175,62 +203,89 @@ void main() {
         flush: true,
       );
     });
-    group('all', () {
-      testWidgets('by filter', (tester) async {
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.none,
-          ),
-        ));
-        await tester.pumpAndSettle();
+    testWidgets('all', (tester) async {
+      final List<String> expectedTiles = [
+        'TodoA',
+        'TodoB',
+        'TodoC',
+      ];
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        todoFile: file,
+        filter: const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.all,
+          group: ListGroup.none,
+        ),
+      ));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(TodoListTile), findsNWidgets(3));
-        Iterable<TodoListTile> todoTiles =
-            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
-        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
-        expect(todoTiles.elementAt(1).todo.description, 'TodoB');
-        expect(todoTiles.elementAt(2).todo.description, 'TodoC');
-      });
+      Iterable<TodoListTile> todoTiles =
+          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      expect(todoTiles.length, expectedTiles.length);
+
+      for (int i = 0; i < expectedTiles.length; i++) {
+        Finder element = find.descendant(
+          of: find.byWidget(todoTiles.elementAt(i)),
+          matching: find.text(expectedTiles[i]),
+        );
+        await tester.ensureVisible(element);
+        expect(element, findsOneWidget);
+      }
     });
-    group('completed only', () {
-      testWidgets('by filter', (tester) async {
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.completedOnly,
-            group: ListGroup.none,
-          ),
-        ));
-        await tester.pumpAndSettle();
+    testWidgets('completed only', (tester) async {
+      final List<String> expectedTiles = [
+        'TodoB',
+        'TodoC',
+      ];
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        todoFile: file,
+        filter: const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.completedOnly,
+          group: ListGroup.none,
+        ),
+      ));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(TodoListTile), findsNWidgets(2));
-        Iterable<TodoListTile> todoTiles =
-            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
-        expect(todoTiles.elementAt(0).todo.description, 'TodoB');
-        expect(todoTiles.elementAt(1).todo.description, 'TodoC');
-      });
+      Iterable<TodoListTile> todoTiles =
+          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      expect(todoTiles.length, expectedTiles.length);
+
+      for (int i = 0; i < expectedTiles.length; i++) {
+        Finder element = find.descendant(
+          of: find.byWidget(todoTiles.elementAt(i)),
+          matching: find.text(expectedTiles[i]),
+        );
+        await tester.ensureVisible(element);
+        expect(element, findsOneWidget);
+      }
     });
-    group('incompleted only', () {
-      testWidgets('by filter', (tester) async {
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.incompletedOnly,
-            group: ListGroup.none,
-          ),
-        ));
-        await tester.pumpAndSettle();
+    testWidgets('incompleted only', (tester) async {
+      final List<String> expectedTiles = [
+        'TodoA',
+      ];
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        todoFile: file,
+        filter: const Filter(
+          order: ListOrder.ascending,
+          filter: ListFilter.incompletedOnly,
+          group: ListGroup.none,
+        ),
+      ));
+      await tester.pumpAndSettle();
 
-        expect(find.byType(TodoListTile), findsNWidgets(1));
-        Iterable<TodoListTile> todoTiles =
-            tester.widgetList<TodoListTile>(find.byType(TodoListTile));
-        expect(todoTiles.elementAt(0).todo.description, 'TodoA');
-      });
+      Iterable<TodoListTile> todoTiles =
+          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      expect(todoTiles.length, expectedTiles.length);
+
+      for (int i = 0; i < expectedTiles.length; i++) {
+        Finder element = find.descendant(
+          of: find.byWidget(todoTiles.elementAt(i)),
+          matching: find.text(expectedTiles[i]),
+        );
+        await tester.ensureVisible(element);
+        expect(element, findsOneWidget);
+      }
     });
   });
 
@@ -248,6 +303,11 @@ void main() {
         );
       });
       testWidgets('check sections', (tester) async {
+        final List<String> expectedTiles = [
+          'All',
+          'TodoA',
+          'TodoB',
+        ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
           filter: const Filter(
@@ -258,25 +318,18 @@ void main() {
         ));
         await tester.pumpAndSettle();
 
-        expect(find.byType(ListTile), findsNWidgets(3));
         Iterable<ListTile> listTiles =
             tester.widgetList<ListTile>(find.byType(ListTile));
-        expect((listTiles.elementAt(0).title as Text).data, 'All');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(1)),
-            matching:
-                find.text('TodoA'), // 'TodoA' is undone but in group 'All'.
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(2)),
-            matching: find.text('TodoB'), // 'TodoB' is done but in group 'All'.
-          ),
-          findsOneWidget,
-        );
+        expect(listTiles.length, expectedTiles.length);
+
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
       });
     });
     group('upcoming', () {
@@ -291,20 +344,37 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            'x 2023-12-03 2023-12-02 TodoA',
-            '1970-01-01 TodoB due:1970-01-01',
-            '2023-12-02 TodoC due:$today',
-            '2023-12-02 TodoD due:$tomorrow',
-            '2023-12-02 TodoE',
+            '2023-12-02 TodoA1',
+            '2023-12-02 TodoB2 due:1970-01-01',
+            '2023-12-02 TodoB1 due:1970-01-01',
+            '2023-12-02 TodoC2 due:$today',
+            '2023-12-02 TodoC1 due:$today',
+            '2023-12-02 TodoD2 due:$tomorrow',
+            '2023-12-02 TodoD1 due:$tomorrow',
+            '2023-12-02 TodoA2',
           ].join('\n'),
           flush: true,
         );
       });
-      testWidgets('check sections', (tester) async {
+      testWidgets('ascending', (tester) async {
         // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 1600);
+        tester.view.physicalSize = const Size(800, 1600);
         tester.view.devicePixelRatio = 1.0;
 
+        final List<String> expectedTiles = [
+          'Deadline passed',
+          'TodoB1',
+          'TodoB2',
+          'Today',
+          'TodoC1',
+          'TodoC2',
+          'Upcoming',
+          'TodoD1',
+          'TodoD2',
+          'No deadline',
+          'TodoA1',
+          'TodoA2',
+        ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
           filter: const Filter(
@@ -315,50 +385,64 @@ void main() {
         ));
         await tester.pumpAndSettle();
 
-        expect(find.byType(ListTile), findsNWidgets(9));
         Iterable<ListTile> listTiles =
             tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
 
-        expect((listTiles.elementAt(0).title as Text).data, 'Deadline passed');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(1)),
-            matching: find.text('TodoB'), // 'TodoB's deadline is passed.
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
+
+        // resets the screen to its original size after the test end
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      });
+      testWidgets('descending', (tester) async {
+        // Increase size to ensure all elements in list are visible.
+        tester.view.physicalSize = const Size(800, 1600);
+        tester.view.devicePixelRatio = 1.0;
+
+        final List<String> expectedTiles = [
+          'Deadline passed',
+          'TodoB2',
+          'TodoB1',
+          'Today',
+          'TodoC2',
+          'TodoC1',
+          'Upcoming',
+          'TodoD2',
+          'TodoD1',
+          'No deadline',
+          'TodoA2',
+          'TodoA1',
+        ];
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: const Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.upcoming,
           ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(2).title as Text).data, 'Today');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(3)),
-            matching: find.text('TodoC'), // 'TodoC' is today.
-          ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(4).title as Text).data, 'Upcoming');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(5)),
-            matching: find.text('TodoD'), // 'TodoD' is upcoming.
-          ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(6).title as Text).data, 'No deadline');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(7)),
-            matching: find.text('TodoE'), // 'TodoE' has no deadline.
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(8)),
-            matching:
-                find.text('TodoA'), // 'TodoA' is done but has no deadline.
-          ),
-          findsOneWidget,
-        );
+        ));
+        await tester.pumpAndSettle();
+
+        Iterable<ListTile> listTiles =
+            tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
+
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
 
         // resets the screen to its original size after the test end
         addTearDown(tester.view.resetPhysicalSize);
@@ -371,15 +455,28 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            'x 2023-13-04 2023-12-02 TodoA',
-            '(E) 2023-12-02 TodoB',
-            '(F) 2023-12-02 TodoC',
             '2023-12-02 TodoD',
+            '(B) 2023-12-02 TodoB2',
+            '(B) 2023-12-02 TodoB1',
+            '(A) 2023-12-02 TodoA1',
+            '(A) 2023-12-02 TodoA2',
+            '2023-12-02 TodoC',
           ].join('\n'),
           flush: true,
         );
       });
-      testWidgets('check sections', (tester) async {
+      testWidgets('ascending', (tester) async {
+        final List<String> expectedTiles = [
+          'A',
+          'TodoA1',
+          'TodoA2',
+          'B',
+          'TodoB1',
+          'TodoB2',
+          'No priority',
+          'TodoC',
+          'TodoD',
+        ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
           filter: const Filter(
@@ -390,42 +487,53 @@ void main() {
         ));
         await tester.pumpAndSettle();
 
-        expect(find.byType(ListTile), findsNWidgets(7));
         Iterable<ListTile> listTiles =
             tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
 
-        expect((listTiles.elementAt(0).title as Text).data, 'E');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(1)),
-            matching: find.text('TodoB'), // 'TodoB' has priority E.
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
+      });
+      testWidgets('descending', (tester) async {
+        final List<String> expectedTiles = [
+          'No priority',
+          'TodoD',
+          'TodoC',
+          'B',
+          'TodoB2',
+          'TodoB1',
+          'A',
+          'TodoA2',
+          'TodoA1',
+        ];
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: const Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.priority,
           ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(2).title as Text).data, 'F');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(3)),
-            matching: find.text('TodoC'), // 'TodoC' has priority F.
-          ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(4).title as Text).data, 'No priority');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(5)),
-            matching: find.text('TodoD'), // 'TodoD' has no priority.
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(6)),
-            matching:
-                find.text('TodoA'), // 'TodoA' is done but has no priority.
-          ),
-          findsOneWidget,
-        );
+        ));
+        await tester.pumpAndSettle();
+
+        Iterable<ListTile> listTiles =
+            tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
+
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
       });
     });
     group('project', () {
@@ -434,15 +542,28 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            'x 2023-13-04 2023-12-02 TodoC',
-            '2023-12-02 TodoA +project1',
-            '2023-12-02 TodoB +project2',
             '2023-12-02 TodoD',
+            '2023-12-02 TodoB2 +project2',
+            '2023-12-02 TodoB1 +project1',
+            '2023-12-02 TodoA1 +project1',
+            '2023-12-02 TodoA2 +project2',
+            '2023-12-02 TodoC',
           ].join('\n'),
           flush: true,
         );
       });
-      testWidgets('check sections', (tester) async {
+      testWidgets('ascending', (tester) async {
+        final List<String> expectedTiles = [
+          'project1',
+          'TodoA1',
+          'TodoB1',
+          'project2',
+          'TodoA2',
+          'TodoB2',
+          'No project',
+          'TodoC',
+          'TodoD',
+        ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
           filter: const Filter(
@@ -453,41 +574,53 @@ void main() {
         ));
         await tester.pumpAndSettle();
 
-        expect(find.byType(ListTile), findsNWidgets(7));
         Iterable<ListTile> listTiles =
             tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
 
-        expect((listTiles.elementAt(0).title as Text).data, 'project1');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(1)),
-            matching: find.text('TodoA'), // 'TodoA' containts project1.
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
+      });
+      testWidgets('descending', (tester) async {
+        final List<String> expectedTiles = [
+          'project2',
+          'TodoB2',
+          'TodoA2',
+          'project1',
+          'TodoB1',
+          'TodoA1',
+          'No project',
+          'TodoD',
+          'TodoC',
+        ];
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: const Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.project,
           ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(2).title as Text).data, 'project2');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(3)),
-            matching: find.text('TodoB'), // 'TodoB' contains project2.
-          ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(4).title as Text).data, 'No project');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(5)),
-            matching: find.text('TodoD'), // 'TodoD' contains no project.
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(6)),
-            matching: find.text('TodoC'), // 'TodoC' is done but has no project.
-          ),
-          findsOneWidget,
-        );
+        ));
+        await tester.pumpAndSettle();
+
+        Iterable<ListTile> listTiles =
+            tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
+
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
       });
     });
     group('context', () {
@@ -496,15 +629,28 @@ void main() {
         await file.create();
         await file.writeAsString(
           [
-            'x 2023-13-04 2023-12-02 TodoC',
-            '2023-12-02 TodoA @context1',
-            '2023-12-02 TodoB @context2',
             '2023-12-02 TodoD',
+            '2023-12-02 TodoB2 @context2',
+            '2023-12-02 TodoB1 @context1',
+            '2023-12-02 TodoA1 @context1',
+            '2023-12-02 TodoA2 @context2',
+            '2023-12-02 TodoC',
           ].join('\n'),
           flush: true,
         );
       });
-      testWidgets('check sections', (tester) async {
+      testWidgets('ascending', (tester) async {
+        final List<String> expectedTiles = [
+          'context1',
+          'TodoA1',
+          'TodoB1',
+          'context2',
+          'TodoA2',
+          'TodoB2',
+          'No context',
+          'TodoC',
+          'TodoD',
+        ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
           filter: const Filter(
@@ -515,41 +661,53 @@ void main() {
         ));
         await tester.pumpAndSettle();
 
-        expect(find.byType(ListTile), findsNWidgets(7));
         Iterable<ListTile> listTiles =
             tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
 
-        expect((listTiles.elementAt(0).title as Text).data, 'context1');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(1)),
-            matching: find.text('TodoA'), // 'TodoA' containts context1.
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
+      });
+      testWidgets('descending', (tester) async {
+        final List<String> expectedTiles = [
+          'context2',
+          'TodoB2',
+          'TodoA2',
+          'context1',
+          'TodoB1',
+          'TodoA1',
+          'No context',
+          'TodoD',
+          'TodoC',
+        ];
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: const Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.context,
           ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(2).title as Text).data, 'context2');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(3)),
-            matching: find.text('TodoB'), // 'TodoB' contains context2.
-          ),
-          findsOneWidget,
-        );
-        expect((listTiles.elementAt(4).title as Text).data, 'No context');
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(5)),
-            matching: find.text('TodoD'), // 'TodoD' contains no context.
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byWidget(listTiles.elementAt(6)),
-            matching: find.text('TodoC'), // 'TodoC' is done but has no context.
-          ),
-          findsOneWidget,
-        );
+        ));
+        await tester.pumpAndSettle();
+
+        Iterable<ListTile> listTiles =
+            tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
+
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
       });
     });
   });

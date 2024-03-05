@@ -321,6 +321,47 @@ class Filter extends Equatable {
     return false;
   }
 
+  Map<String, Iterable<Todo>> grouped(Iterable<Todo> todoList) {
+    switch (group) {
+      case ListGroup.none:
+        return group.groupByNone(todoList: todoList);
+      case ListGroup.upcoming:
+        return group.groupByUpcoming(todoList: todoList);
+      case ListGroup.priority:
+        return group.groupByPriority(
+          todoList: todoList,
+          sections: order.sort(Priority.values).toSet(),
+        );
+      case ListGroup.project:
+        final Set<String> projects =
+            todoList.map((Todo todo) => todo.projects).fold<Set<String>>(
+          {},
+          (Set<String> previousValue, Set<String> value) {
+            return previousValue..addAll(value);
+          },
+        );
+        return group.groupByProject(
+          todoList: todoList,
+          sections: order.sort(projects).toSet(),
+        );
+      case ListGroup.context:
+        Set<String> contexts =
+            todoList.map((Todo todo) => todo.contexts).fold<Set<String>>(
+          {},
+          (Set<String> previousValue, Set<String> value) {
+            return previousValue..addAll(value);
+          },
+        );
+        return group.groupByContext(
+          todoList: todoList,
+          sections: order.sort(contexts).toSet(),
+        );
+      default:
+        // Default is none.
+        return group.groupByNone(todoList: todoList);
+    }
+  }
+
   Filter copyWith({
     int? id,
     String? name,

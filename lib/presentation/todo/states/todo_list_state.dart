@@ -41,38 +41,8 @@ sealed class TodoListState extends Equatable {
 
   Iterable<Todo> filteredTodoList(Filter filter) => filter.apply(todoList);
 
-  Map<String, Iterable<Todo>> groupedTodoList(Filter filter) {
-    switch (filter.group) {
-      case ListGroup.none:
-        return filter.group.groupByNone(
-          todoList: filteredTodoList(filter),
-        );
-      case ListGroup.upcoming:
-        return filter.group.groupByUpcoming(
-          todoList: filteredTodoList(filter),
-        );
-      case ListGroup.priority:
-        return filter.group.groupByPriority(
-          todoList: filteredTodoList(filter),
-          sections: filter.order.sort(Priority.values).toSet(),
-        );
-      case ListGroup.project:
-        return filter.group.groupByProject(
-          todoList: filteredTodoList(filter),
-          sections: projects,
-        );
-      case ListGroup.context:
-        return filter.group.groupByContext(
-          todoList: filteredTodoList(filter),
-          sections: contexts,
-        );
-      default:
-        // Default is none.
-        return filter.group.groupByNone(
-          todoList: filteredTodoList(filter),
-        );
-    }
-  }
+  Map<String, Iterable<Todo>> groupedTodoList(Filter filter) =>
+      filter.grouped(filteredTodoList(filter));
 
   TodoListState copyWith({
     List<Todo>? todoList,
