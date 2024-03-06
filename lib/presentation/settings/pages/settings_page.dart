@@ -96,12 +96,14 @@ class SettingsView extends StatelessWidget {
               );
               if (context.mounted && confirm) {
                 context.read<DrawerCubit>().reset();
-                await context.read<LoginCubit>().logout();
-                if (context.mounted) {
-                  await context.read<TodoFileCubit>().resetToDefaults();
-                }
                 if (context.mounted) {
                   await context.read<FilterCubit>().resetToDefaults();
+                }
+                if (context.mounted) {
+                  await context.read<LoginCubit>().logout();
+                }
+                if (context.mounted) {
+                  await context.read<TodoFileCubit>().resetToDefaults();
                 }
               }
             },
