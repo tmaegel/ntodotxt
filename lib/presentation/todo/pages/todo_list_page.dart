@@ -27,7 +27,25 @@ class TodoListPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      filter == null ? _build(context) : _buildWithFilter(context);
+
+  Widget _build(BuildContext context) {
+    final bool isNarrowLayout =
+        MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    return BlocListener<TodoListBloc, TodoListState>(
+      listener: (BuildContext context, TodoListState state) {
+        if (state is TodoListError) {
+          SnackBarHandler.error(context, state.message);
+        }
+      },
+      child: isNarrowLayout
+          ? const TodoListViewNarrow()
+          : const TodoListViewWide(),
+    );
+  }
+
+  Widget _buildWithFilter(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
         settingRepository: context.read<SettingRepository>(),
@@ -35,20 +53,7 @@ class TodoListPage extends StatelessWidget {
         filter: filter,
       )..load(),
       child: Builder(
-        builder: (BuildContext context) {
-          final bool isNarrowLayout =
-              MediaQuery.of(context).size.width < maxScreenWidthCompact;
-          return BlocListener<TodoListBloc, TodoListState>(
-            listener: (BuildContext context, TodoListState state) {
-              if (state is TodoListError) {
-                SnackBarHandler.error(context, state.message);
-              }
-            },
-            child: isNarrowLayout
-                ? const TodoListViewNarrow()
-                : const TodoListViewWide(),
-          );
-        },
+        builder: (BuildContext context) => _build(context),
       ),
     );
   }

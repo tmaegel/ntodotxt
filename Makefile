@@ -3,6 +3,19 @@
 APP_ID = "de.tnmgl.ntodotxt"
 FDROID_REPO = "${HOME}/Downloads/nosync/fdroiddata"
 
+sonarqube:
+	docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 127.0.0.1:9000:9000 sonarqube:10.4-community
+
+scan:
+	docker run \
+    --rm --name sonar-scanner-cli \
+    -e SONAR_HOST_URL="http://sonarqube:9000" \
+    -e SONAR_SCANNER_OPTS="-Dsonar.projectKey=ntodotxt" \
+    -e SONAR_TOKEN="token" \
+    -v "$(shell pwd):/usr/src" \
+		--link sonarqube \
+    sonarsource/sonar-scanner-cli
+
 licenses:
 	flutter pub run flutter_oss_licenses:generate.dart
 
@@ -71,11 +84,3 @@ fdroid_run:
 		-v $(FDROID_REPO):/repo \
 		-e ANDROID_HOME:/opt/android-sdk \
 		fdroidserver build -v -l $(APP_ID)
-
-setup_avd:
-	flutter config --android-sdk ${HOME}/.android-sdk/
-	sdkmanager --sdk_root=${HOME}/.android-sdk/ --install "cmdline-tools;latest"
-	sdkmanager --sdk_root=${HOME}/.android-sdk/ --install "platform-tools"
-	sdkmanager --sdk_root=${HOME}/.android-sdk/ --install "tools"
-	sdkmanager --sdk_root=${HOME}/.android-sdk/ --install "platforms;android-33"
-	sdkmanager --sdk_root=${HOME}/.android-sdk/ --install "build-tools;33.0.2"

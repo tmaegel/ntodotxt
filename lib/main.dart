@@ -167,6 +167,7 @@ class LoadingApp extends StatelessWidget {
       home: Builder(
         builder: (BuildContext context) {
           context.read<TodoFileCubit>().load();
+          context.read<FilterCubit>().load();
           return BlocListener<TodoFileCubit, TodoFileState>(
             listener: (BuildContext context, TodoFileState state) {
               if (state is TodoFileReady) {
