@@ -61,7 +61,11 @@ extension Order on ListOrder {
     if (b == null) {
       return -1;
     }
-    return a.toString().compareTo(b.toString());
+    if (a is Todo && b is Todo) {
+      return a.description.toLowerCase().compareTo(b.description.toLowerCase());
+    } else {
+      return a.toString().compareTo(b.toString());
+    }
   }
 
   int descending<T>(T a, T b) {
@@ -71,7 +75,11 @@ extension Order on ListOrder {
     if (b == null) {
       return 1;
     }
-    return b.toString().compareTo(a.toString());
+    if (a is Todo && b is Todo) {
+      return b.description.toLowerCase().compareTo(a.description.toLowerCase());
+    } else {
+      return b.toString().compareTo(a.toString());
+    }
   }
 
   Iterable<T> sort<T>(Iterable<T> list) => list.toList()..sort(_sort);
@@ -142,25 +150,25 @@ extension Groups on ListGroup {
   }) {
     Map<String, Iterable<Todo>> groups = {
       'Deadline passed': todoList.where(
-        (t) {
+        (Todo t) {
           DateTime? due = t.dueDate;
           return (due != null && Todo.compareToToday(due) < 0) ? true : false;
         },
       ),
       'Today': todoList.where(
-        (t) {
+        (Todo t) {
           DateTime? due = t.dueDate;
           return (due != null && Todo.compareToToday(due) == 0) ? true : false;
         },
       ),
       'Upcoming': todoList.where(
-        (t) {
+        (Todo t) {
           DateTime? due = t.dueDate;
           return (due != null && Todo.compareToToday(due) > 0) ? true : false;
         },
       ),
       'No deadline': todoList.where(
-        (t) => t.dueDate == null,
+        (Todo t) => t.dueDate == null,
       ),
     };
     groups.removeWhere((k, v) => v.isEmpty); // Remove empty sections.
@@ -174,7 +182,7 @@ extension Groups on ListGroup {
   }) {
     Map<String, Iterable<Todo>> groups = {};
     for (var p in sections) {
-      final Iterable<Todo> items = todoList.where((t) => t.priority == p);
+      final Iterable<Todo> items = todoList.where((Todo t) => t.priority == p);
       if (p == Priority.none) {
         groups['No priority'] = items;
       } else {
@@ -195,9 +203,9 @@ extension Groups on ListGroup {
     for (var p in [...sections, null]) {
       Iterable<Todo> items;
       if (p == null) {
-        items = todoList.where((t) => t.projects.isEmpty);
+        items = todoList.where((Todo t) => t.projects.isEmpty);
       } else {
-        items = todoList.where((t) => t.projects.contains(p));
+        items = todoList.where((Todo t) => t.projects.contains(p));
       }
       if (items.isNotEmpty) {
         groups[p ?? 'No project'] = items;
@@ -217,9 +225,9 @@ extension Groups on ListGroup {
     for (var c in [...sections, null]) {
       Iterable<Todo> items;
       if (c == null) {
-        items = todoList.where((t) => t.contexts.isEmpty);
+        items = todoList.where((Todo t) => t.contexts.isEmpty);
       } else {
-        items = todoList.where((t) => t.contexts.contains(c));
+        items = todoList.where((Todo t) => t.contexts.contains(c));
       }
       if (items.isNotEmpty) {
         groups[c ?? 'No context'] = items;
@@ -298,7 +306,11 @@ class Filter extends Equatable {
     if (contexts.isNotEmpty) {
       filtered = filtered.where(_applyContext);
     }
-    return order.sort(filtered);
+
+    // Completed todos come always at last.
+    filtered = order.sort(filtered);
+    return (filtered.where((Todo t) => !t.completion).toList() +
+        filtered.where((Todo t) => t.completion).toList());
   }
 
   bool _applyPriority(Todo todo) => priorities.contains(todo.priority);

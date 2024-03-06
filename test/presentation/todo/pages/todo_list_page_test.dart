@@ -99,8 +99,8 @@ void main() {
       await file.create();
       await file.writeAsString(
         [
-          '2023-12-02 TodoC',
-          '2023-12-02 TodoA',
+          '2023-12-02 TODOC',
+          '2023-12-02 todoA',
           '2023-12-02 TodoB',
         ].join('\n'),
         flush: true,
@@ -108,9 +108,9 @@ void main() {
     });
     testWidgets('default', (tester) async {
       final List<String> expectedTiles = [
-        'TodoA',
+        'todoA',
         'TodoB',
-        'TodoC',
+        'TODOC',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
         todoFile: file,
@@ -132,9 +132,9 @@ void main() {
     });
     testWidgets('ascending', (tester) async {
       final List<String> expectedTiles = [
-        'TodoA',
+        'todoA',
         'TodoB',
-        'TodoC',
+        'TODOC',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
         todoFile: file,
@@ -161,9 +161,9 @@ void main() {
     });
     testWidgets('descending', (tester) async {
       final List<String> expectedTiles = [
-        'TodoC',
+        'TODOC',
         'TodoB',
-        'TodoA',
+        'todoA',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
         todoFile: file,
@@ -297,21 +297,53 @@ void main() {
         await file.writeAsString(
           [
             'x 2023-13-04 2023-12-02 TodoB',
-            '2023-12-02 TodoA',
+            '2023-12-02 TodoC',
+            '(B) 2023-12-02 TodoA',
           ].join('\n'),
           flush: true,
         );
       });
-      testWidgets('check sections', (tester) async {
+      testWidgets('ascending', (tester) async {
         final List<String> expectedTiles = [
           'All',
           'TodoA',
-          'TodoB',
+          'TodoC',
+          'TodoB', // Completed todo come always at last.
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
           filter: const Filter(
             order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
+        ));
+        await tester.pumpAndSettle();
+
+        Iterable<ListTile> listTiles =
+            tester.widgetList<ListTile>(find.byType(ListTile));
+        expect(listTiles.length, expectedTiles.length);
+
+        for (int i = 0; i < expectedTiles.length; i++) {
+          Finder element = find.descendant(
+            of: find.byWidget(listTiles.elementAt(i)),
+            matching: find.text(expectedTiles[i]),
+          );
+          await tester.ensureVisible(element);
+          expect(element, findsOneWidget);
+        }
+      });
+      testWidgets('descending', (tester) async {
+        final List<String> expectedTiles = [
+          'All',
+          'TodoC',
+          'TodoA',
+          'TodoB', // Completed todo come always at last.
+        ];
+        await tester.pumpWidget(TodoListPageMaterialApp(
+          todoFile: file,
+          filter: const Filter(
+            order: ListOrder.descending,
             filter: ListFilter.all,
             group: ListGroup.none,
           ),
@@ -345,12 +377,12 @@ void main() {
         await file.writeAsString(
           [
             '2023-12-02 TodoA1',
-            '2023-12-02 TodoB2 due:1970-01-01',
+            'x 2023-12-04 2023-12-02 TodoB2 due:1970-01-01',
             '2023-12-02 TodoB1 due:1970-01-01',
             '2023-12-02 TodoC2 due:$today',
             '2023-12-02 TodoC1 due:$today',
             '2023-12-02 TodoD2 due:$tomorrow',
-            '2023-12-02 TodoD1 due:$tomorrow',
+            '(B) 2023-12-02 TodoD1 due:$tomorrow',
             '2023-12-02 TodoA2',
           ].join('\n'),
           flush: true,
@@ -364,7 +396,7 @@ void main() {
         final List<String> expectedTiles = [
           'Deadline passed',
           'TodoB1',
-          'TodoB2',
+          'TodoB2', // Completed todo come always at last.
           'Today',
           'TodoC1',
           'TodoC2',
@@ -409,8 +441,8 @@ void main() {
 
         final List<String> expectedTiles = [
           'Deadline passed',
-          'TodoB2',
           'TodoB1',
+          'TodoB2', // Completed todo come always at last.
           'Today',
           'TodoC2',
           'TodoC1',
@@ -456,9 +488,9 @@ void main() {
         await file.writeAsString(
           [
             '2023-12-02 TodoD',
-            '(B) 2023-12-02 TodoB2',
+            'x 2023-12-04 (B) 2023-12-02 TodoB2',
             '(B) 2023-12-02 TodoB1',
-            '(A) 2023-12-02 TodoA1',
+            'x 2023-12-04 (A) 2023-12-02 TodoA1',
             '(A) 2023-12-02 TodoA2',
             '2023-12-02 TodoC',
           ].join('\n'),
@@ -468,11 +500,11 @@ void main() {
       testWidgets('ascending', (tester) async {
         final List<String> expectedTiles = [
           'A',
-          'TodoA1',
           'TodoA2',
+          'TodoA1', // Completed todo come always at last.
           'B',
           'TodoB1',
-          'TodoB2',
+          'TodoB2', // Completed todo come always at last.
           'No priority',
           'TodoC',
           'TodoD',
@@ -506,11 +538,11 @@ void main() {
           'TodoD',
           'TodoC',
           'B',
-          'TodoB2',
           'TodoB1',
+          'TodoB2', // Completed todo come always at last.
           'A',
           'TodoA2',
-          'TodoA1',
+          'TodoA1', // Completed todo come always at last.
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
           todoFile: file,
@@ -543,9 +575,9 @@ void main() {
         await file.writeAsString(
           [
             '2023-12-02 TodoD',
-            '2023-12-02 TodoB2 +project2',
+            '(B) 2023-12-02 TodoB2 +project2',
             '2023-12-02 TodoB1 +project1',
-            '2023-12-02 TodoA1 +project1',
+            'x 2023-13-04 2023-12-02 TodoA1 +project1',
             '2023-12-02 TodoA2 +project2',
             '2023-12-02 TodoC',
           ].join('\n'),
@@ -555,8 +587,8 @@ void main() {
       testWidgets('ascending', (tester) async {
         final List<String> expectedTiles = [
           'project1',
-          'TodoA1',
           'TodoB1',
+          'TodoA1', // Completed todo come always at last.
           'project2',
           'TodoA2',
           'TodoB2',
@@ -594,7 +626,7 @@ void main() {
           'TodoA2',
           'project1',
           'TodoB1',
-          'TodoA1',
+          'TodoA1', // Completed todo come always at last.
           'No project',
           'TodoD',
           'TodoC',
@@ -630,9 +662,9 @@ void main() {
         await file.writeAsString(
           [
             '2023-12-02 TodoD',
-            '2023-12-02 TodoB2 @context2',
+            '(B) 2023-12-02 TodoB2 @context2',
             '2023-12-02 TodoB1 @context1',
-            '2023-12-02 TodoA1 @context1',
+            'x 2023-12-04 2023-12-02 TodoA1 @context1',
             '2023-12-02 TodoA2 @context2',
             '2023-12-02 TodoC',
           ].join('\n'),
@@ -642,8 +674,8 @@ void main() {
       testWidgets('ascending', (tester) async {
         final List<String> expectedTiles = [
           'context1',
-          'TodoA1',
           'TodoB1',
+          'TodoA1', // Completed todo come always at last.
           'context2',
           'TodoA2',
           'TodoB2',
@@ -681,7 +713,7 @@ void main() {
           'TodoA2',
           'context1',
           'TodoB1',
-          'TodoA1',
+          'TodoA1', // Completed todo come always at last.
           'No context',
           'TodoD',
           'TodoC',
