@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -360,14 +362,18 @@ class LocalPathInput extends StatelessWidget {
           ),
           subtitle: state.localPath != null ? Text(state.localPath!) : null,
           onTap: () async {
-            String fallbackDirectory =
-                (await getApplicationCacheDirectory()).path;
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
-            if (context.mounted) {
-              // If user canceled the directory picker use app cache directory as fallback.
-              await context.read<TodoFileCubit>().updateLocalPath(
-                  selectedDirectory ?? (state.localPath ?? fallbackDirectory));
+            if (!PlatformInfo.isAppOS ||
+                await Permission.manageExternalStorage.request().isGranted) {
+              String fallbackDirectory =
+                  (await getApplicationCacheDirectory()).path;
+              String? selectedDirectory =
+                  await FilePicker.platform.getDirectoryPath();
+              if (context.mounted) {
+                // If user canceled the directory picker use app cache directory as fallback.
+                await context.read<TodoFileCubit>().updateLocalPath(
+                    selectedDirectory ??
+                        (state.localPath ?? fallbackDirectory));
+              }
             }
           },
         );

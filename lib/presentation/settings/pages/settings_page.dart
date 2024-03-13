@@ -7,7 +7,7 @@ import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
-import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
+import 'package:ntodotxt/misc.dart' show PlatformInfo, PopScopeDrawer;
 import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
@@ -15,6 +15,7 @@ import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -214,14 +215,18 @@ class LocalPathSettingsItem extends StatelessWidget {
           title: const Text('Local path'),
           subtitle: Text(state.localPath ?? '-'),
           onTap: () async {
-            String fallbackDirectory =
-                (await getApplicationCacheDirectory()).path;
-            String? selectedDirectory =
-                await FilePicker.platform.getDirectoryPath();
-            if (context.mounted) {
-              // If user canceled the directory picker use app cache directory as fallback.
-              context.read<TodoFileCubit>().updateLocalPath(
-                  selectedDirectory ?? (state.localPath ?? fallbackDirectory));
+            if (!PlatformInfo.isAppOS ||
+                await Permission.manageExternalStorage.request().isGranted) {
+              String fallbackDirectory =
+                  (await getApplicationCacheDirectory()).path;
+              String? selectedDirectory =
+                  await FilePicker.platform.getDirectoryPath();
+              if (context.mounted) {
+                // If user canceled the directory picker use app cache directory as fallback.
+                await context.read<TodoFileCubit>().updateLocalPath(
+                    selectedDirectory ??
+                        (state.localPath ?? fallbackDirectory));
+              }
             }
           },
         );
