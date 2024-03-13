@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2024-03-13
+
+### Fixed
+
+- Requests folder permission on the initial setup screen #30
+- Base url may also ends with the username #28
+- Updates default filter directly if it has been changed in the settings
+- Sorts todos by description only and completed todos come always at last
+- Resets settings correctly if logout
+
 ## [0.6.1] - 2024-03-05
 
 ### Added
@@ -220,7 +230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.6.1...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/tmaegel/ntodotxt/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/tmaegel/ntodotxt/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/tmaegel/ntodotxt/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/tmaegel/ntodotxt/compare/v0.5.0...v0.5.1
