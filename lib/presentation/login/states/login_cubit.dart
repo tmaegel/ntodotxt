@@ -75,9 +75,9 @@ class LoginCubit extends Cubit<LoginState> {
     required todoFile,
   }) async {
     try {
+      LocalTodoListApi(todoFile: todoFile); // Check before login.
       await resetSecureStorage();
       await secureStorage.write(key: 'backend', value: Backend.offline.name);
-      LocalTodoListApi(todoFile: todoFile); // Check before login.
       emit(const LoginOffline());
     } on Exception catch (e) {
       emit(LoginError(message: e.toString()));
@@ -92,12 +92,6 @@ class LoginCubit extends Cubit<LoginState> {
     required String password,
   }) async {
     try {
-      await resetSecureStorage();
-      await secureStorage.write(key: 'backend', value: Backend.webdav.name);
-      await secureStorage.write(key: 'server', value: server);
-      await secureStorage.write(key: 'baseUrl', value: baseUrl);
-      await secureStorage.write(key: 'username', value: username);
-      await secureStorage.write(key: 'password', value: password);
       // Check before login.
       WebDAVTodoListApi api = WebDAVTodoListApi(
         todoFile: todoFile,
@@ -107,6 +101,13 @@ class LoginCubit extends Cubit<LoginState> {
         password: password,
       );
       await api.client.ping();
+      await api.client.listFiles();
+      await resetSecureStorage();
+      await secureStorage.write(key: 'backend', value: Backend.webdav.name);
+      await secureStorage.write(key: 'server', value: server);
+      await secureStorage.write(key: 'baseUrl', value: baseUrl);
+      await secureStorage.write(key: 'username', value: username);
+      await secureStorage.write(key: 'password', value: password);
       emit(
         LoginWebDAV(
           server: server,

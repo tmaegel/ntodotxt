@@ -31,7 +31,7 @@ class WebDAVClient {
         scheme: schema,
         host: host,
         port: port,
-        path: '$baseUrl/$username',
+        path: baseUrl.endsWith(username) ? baseUrl : '$baseUrl/$username',
       ).toString(),
       user: username,
       password: password,
@@ -76,7 +76,8 @@ class WebDAVClient {
       return await client.readDir(path);
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to list files in path $path');
+      throw WebDAVClientException(
+          'Failed to list files in directory $path on remote ${client.uri}');
     }
   }
 
@@ -91,7 +92,8 @@ class WebDAVClient {
       }
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to create the file $filename');
+      throw WebDAVClientException(
+          'Failed to create file $filename on remote ${client.uri}');
     }
   }
 
@@ -103,7 +105,8 @@ class WebDAVClient {
       await client.mkdir(path);
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to create the directory $path');
+      throw WebDAVClientException(
+          'Failed to create directory $path on remote ${client.uri}');
     }
   }
 
@@ -116,7 +119,8 @@ class WebDAVClient {
       return utf8.decode(content);
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to download the file $filename');
+      throw WebDAVClientException(
+          'Failed to download file $filename from remote ${client.uri}');
     }
   }
 
@@ -128,7 +132,8 @@ class WebDAVClient {
       await client.write(filename, utf8.encode(content));
     } on Exception catch (e) {
       log.severe(e);
-      throw WebDAVClientException('Failed to upload the file $filename');
+      throw WebDAVClientException(
+          'Failed to upload file $filename to remote ${client.uri}');
     }
   }
 }
