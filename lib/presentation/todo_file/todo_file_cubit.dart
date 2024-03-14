@@ -47,10 +47,10 @@ class TodoFileCubit extends Cubit<TodoFileState> {
   Future<void> updateLocalPath(String? value) async {
     try {
       if (value != null) {
-        emit(state.ready(localPath: value));
         await repository.updateOrInsert(
           Setting(key: 'localPath', value: value),
         );
+        emit(state.ready(localPath: value));
       }
     } on Exception catch (e) {
       emit(state.error(localPath: value, message: e.toString()));
@@ -60,10 +60,10 @@ class TodoFileCubit extends Cubit<TodoFileState> {
   Future<void> updateRemotePath(String? value) async {
     try {
       if (value != null) {
-        emit(state.ready(remotePath: value));
         await repository.updateOrInsert(
           Setting(key: 'remotePath', value: value),
         );
+        emit(state.ready(remotePath: value));
       }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -72,10 +72,10 @@ class TodoFileCubit extends Cubit<TodoFileState> {
 
   Future<void> resetToDefaults() async {
     try {
-      emit(TodoFileLoading(localPath: defaultLocalPath));
       for (var k in ['localPath', 'remotePath']) {
         await repository.delete(key: k);
       }
+      emit(TodoFileLoading(localPath: defaultLocalPath));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

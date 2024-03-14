@@ -23,7 +23,7 @@ import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/login/pages/login_page.dart';
+import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
@@ -45,9 +45,9 @@ void main() async {
   // Avoid errors caused by flutter upgrade.
   // Importing 'package:flutter/widgets.dart' is required.
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   // Disable landscape mode.
-  SystemChrome.setPreferredOrientations(
+  await SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   );
 
@@ -137,7 +137,7 @@ class App extends StatelessWidget {
                   return CoreApp(loginState: state);
                 } else {
                   return const InitialApp(
-                    child: LoginPage(),
+                    child: IntroPage(),
                   );
                 }
               },

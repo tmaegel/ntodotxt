@@ -3,66 +3,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/common_widgets/info_dialog.dart';
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 150,
-              child: FloatingActionButton.extended(
-                heroTag: 'localLoginView',
-                label: const Text('Local'),
-                tooltip: 'Use this app offline',
-                icon: const Icon(Icons.cloud_off),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return const LocalLoginView();
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: 150,
-              child: FloatingActionButton.extended(
-                heroTag: 'webdavLoginView',
-                label: const Text('WebDAV'),
-                tooltip: 'Login via WebDAV',
-                icon: const Icon(Icons.cloud_outlined),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return const WebDAVLoginView();
-                      },
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class LocalLoginView extends StatefulWidget {
   const LocalLoginView({super.key});
@@ -81,7 +28,7 @@ class _LocalLoginViewState extends State<LocalLoginView> {
         Scaffold(
           appBar: AppBar(
             titleSpacing: 0.0,
-            title: const Text('Login - Offline'),
+            title: const Text('Local'),
           ),
           body: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
@@ -92,9 +39,10 @@ class _LocalLoginViewState extends State<LocalLoginView> {
           floatingActionButton: BlocBuilder<TodoFileCubit, TodoFileState>(
             builder: (BuildContext context, TodoFileState state) {
               return FloatingActionButton.extended(
-                heroTag: 'offlineLogin',
-                label: const Text('Login'),
-                tooltip: 'Login',
+                heroTag: 'localUsage',
+                icon: const Icon(Icons.done),
+                label: const Text('Apply'),
+                tooltip: 'Apply',
                 onPressed: () async {
                   try {
                     setState(() => loading = true);
@@ -184,7 +132,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
           Scaffold(
             appBar: AppBar(
               titleSpacing: 0.0,
-              title: const Text('Login - WebDAV'),
+              title: const Text('WebDAV'),
             ),
             body: Form(
               key: formKey,
@@ -192,6 +140,8 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 children: [
+                  const LocalPathInput(),
+                  const Divider(),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                     leading: const Icon(Icons.dns),
@@ -294,7 +244,6 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                       },
                     ),
                   ),
-                  const LocalPathInput(),
                 ],
               ),
             ),
@@ -303,9 +252,10 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                 : BlocBuilder<TodoFileCubit, TodoFileState>(
                     builder: (BuildContext context, TodoFileState state) {
                       return FloatingActionButton.extended(
-                        heroTag: 'webdavLogin',
-                        label: const Text('Login'),
-                        tooltip: 'Login',
+                        heroTag: 'webdavUsage',
+                        icon: const Icon(Icons.done),
+                        label: const Text('Apply'),
+                        tooltip: 'Apply',
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
                             try {
@@ -361,6 +311,16 @@ class LocalPathInput extends StatelessWidget {
                 : Theme.of(context).textTheme.bodySmall,
           ),
           subtitle: state.localPath != null ? Text(state.localPath!) : null,
+          trailing: IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => InfoDialog.dialog(
+              context: context,
+              title: 'Local path',
+              message: '''Choose a directory by tapping the current local path.
+
+Use this option if it's important to you where your todos are stored on your device. Otherwise, the app's cache directory is used.''',
+            ),
+          ),
           onTap: () async {
             if (!PlatformInfo.isAppOS ||
                 await Permission.manageExternalStorage.request().isGranted) {

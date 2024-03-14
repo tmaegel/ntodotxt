@@ -59,7 +59,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'http://localhost');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -76,7 +76,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'https://localhost');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -93,7 +93,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'http://localhost:80');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -110,7 +110,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'http://localhost.local');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -125,25 +125,25 @@ void main() {
     group('failed', () {
       testWidgets('Missing base url', (tester) async {
         await tester.pumpWidget(const MaterialAppWebDAVLoginView());
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(find.text('Missing base URL'), findsOneWidget);
       });
       testWidgets('Missing username', (tester) async {
         await tester.pumpWidget(const MaterialAppWebDAVLoginView());
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(find.text('Missing username'), findsOneWidget);
       });
       testWidgets('Missing password', (tester) async {
         await tester.pumpWidget(const MaterialAppWebDAVLoginView());
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(find.text('Missing password'), findsOneWidget);
       });
       testWidgets('Missing server address', (tester) async {
         await tester.pumpWidget(const MaterialAppWebDAVLoginView());
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(find.text('Missing server address'), findsOneWidget);
       });
@@ -154,7 +154,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'localhost');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -171,7 +171,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'http://localhost:');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -188,7 +188,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'https://localhost:');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -208,7 +208,7 @@ void main() {
           formField,
           'https://localhost:abc',
         );
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -228,7 +228,7 @@ void main() {
           formField,
           'https://localhost:80:90',
         );
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
@@ -245,7 +245,7 @@ void main() {
           matching: find.byType(TextFormField),
         );
         await tester.enterText(formField, 'https://local host:80');
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(
           find.descendant(
