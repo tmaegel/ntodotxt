@@ -222,6 +222,9 @@ class LocalPathSettingsItem extends StatelessWidget {
               String? selectedDirectory =
                   await FilePicker.platform.getDirectoryPath();
               if (context.mounted) {
+                context.read<DrawerCubit>().reset();
+              }
+              if (context.mounted) {
                 // If user canceled the directory picker use app cache directory as fallback.
                 await context.read<TodoFileCubit>().updateLocalPath(
                     selectedDirectory ??

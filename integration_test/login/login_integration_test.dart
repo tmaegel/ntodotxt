@@ -19,20 +19,20 @@ void main() async {
     group('initial', () {
       testWidgets('screen is visible', (tester) async {
         await tester.pumpWidget(
-          AppWrapper(appCacheDir: appCacheDir),
+          App(appCacheDir: appCacheDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginApp), findsOneWidget);
+        expect(find.byType(LoginPage), findsOneWidget);
       });
     });
 
     group('local', () {
       testWidgets('default local path', (tester) async {
         await tester.pumpWidget(
-          AppWrapper(appCacheDir: appCacheDir),
+          App(appCacheDir: appCacheDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginApp), findsOneWidget);
+        expect(find.byType(LoginPage), findsOneWidget);
         await tester.tap(find.text('Local'));
         await tester.pumpAndSettle();
         expect(find.byType(LocalLoginView), findsOneWidget);
@@ -68,17 +68,17 @@ void main() async {
           ),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginApp), findsOneWidget);
+        expect(find.byType(LoginPage), findsOneWidget);
       });
     });
 
     group('webdav', () {
       testWidgets('default local path', (tester) async {
         await tester.pumpWidget(
-          AppWrapper(appCacheDir: appCacheDir),
+          App(appCacheDir: appCacheDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginApp), findsOneWidget);
+        expect(find.byType(LoginPage), findsOneWidget);
         await tester.tap(find.text('WebDAV'));
         await tester.pumpAndSettle();
         expect(find.byType(WebDAVLoginView), findsOneWidget);
@@ -146,7 +146,7 @@ void main() async {
           ),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginApp), findsOneWidget);
+        expect(find.byType(LoginPage), findsOneWidget);
       });
     });
   });

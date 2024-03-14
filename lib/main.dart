@@ -22,6 +22,7 @@ import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
@@ -55,7 +56,7 @@ void main() async {
     sqfliteFfiInit();
   }
 
-  Logger.root.level = Level.INFO; // defaults to Level.INFO
+  Logger.root.level = Level.FINER; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     // ignore: avoid_print
     print('${record.level.name}: ${record.time}: ${record.message}');
@@ -68,14 +69,14 @@ void main() async {
 
   log.info('Run app');
   runApp(
-    AppWrapper(appCacheDir: (await getApplicationCacheDirectory()).path),
+    App(appCacheDir: (await getApplicationCacheDirectory()).path),
   );
 }
 
-class AppWrapper extends StatelessWidget {
+class App extends StatelessWidget {
   final String appCacheDir;
 
-  const AppWrapper({
+  const App({
     required this.appCacheDir,
     super.key,
   });
@@ -119,13 +120,9 @@ class AppWrapper extends StatelessWidget {
             ),
           ),
           BlocProvider<FilterListBloc>(
-            create: (BuildContext context) {
-              return FilterListBloc(
-                repository: context.read<FilterRepository>(),
-              )
-                ..add(const FilterListSubscriped()) // @todo: Move to LoadingApp
-                ..add(const FilterListSynchronizationRequested());
-            },
+            create: (BuildContext context) => FilterListBloc(
+              repository: context.read<FilterRepository>(),
+            ),
           ),
         ],
         child: Builder(
@@ -133,13 +130,16 @@ class AppWrapper extends StatelessWidget {
             return BlocBuilder<LoginCubit, LoginState>(
               builder: (BuildContext context, LoginState state) {
                 if (state is LoginLoading) {
-                  return const LoadingApp();
+                  return const InitialApp(
+                    child: LoadingPage(),
+                  );
+                } else if (state is LoginOffline || state is LoginWebDAV) {
+                  return CoreApp(loginState: state);
+                } else {
+                  return const InitialApp(
+                    child: LoginPage(),
+                  );
                 }
-                if (state is LoginOffline || state is LoginWebDAV) {
-                  return const App();
-                }
-
-                return const LoginApp();
               },
             );
           },
@@ -149,49 +149,12 @@ class AppWrapper extends StatelessWidget {
   }
 }
 
-class LoadingApp extends StatelessWidget {
-  final String message;
-
-  const LoadingApp({
-    this.message = 'Loading',
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
-      home: Builder(
-        builder: (BuildContext context) {
-          context.read<TodoFileCubit>().load();
-          context.read<FilterCubit>().load();
-          return BlocListener<TodoFileCubit, TodoFileState>(
-            listener: (BuildContext context, TodoFileState state) {
-              if (state is TodoFileReady) {
-                context.read<LoginCubit>().login();
-              } else if (state is TodoFileError) {
-                context.read<LoginCubit>().logout();
-              }
-            },
-            child: Scaffold(
-              body: Center(
-                child: Text(message),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class LoginApp extends StatelessWidget {
+class InitialApp extends StatelessWidget {
+  final Widget child;
   final ThemeMode? themeMode;
 
-  const LoginApp({
+  const InitialApp({
+    required this.child,
     this.themeMode,
     super.key,
   });
@@ -214,68 +177,90 @@ class LoginApp extends StatelessWidget {
           ),
           BlocListener<TodoFileCubit, TodoFileState>(
             listener: (BuildContext context, TodoFileState state) {
-              if (state is TodoFileError) {
+              if (state is TodoFileReady) {
+                context.read<LoginCubit>().login();
+              } else if (state is TodoFileError) {
+                context.read<LoginCubit>().logout();
+                SnackBarHandler.error(context, state.message);
+              }
+            },
+          ),
+          BlocListener<FilterCubit, FilterState>(
+            listener: (BuildContext context, FilterState state) {
+              if (state is FilterError) {
                 SnackBarHandler.error(context, state.message);
               }
             },
           ),
         ],
-        child: const LoginPage(),
+        child: child,
       ),
     );
   }
 }
 
-class App extends StatelessWidget {
+class LoadingPage extends StatelessWidget {
+  final String message;
+
+  const LoadingPage({
+    this.message = 'Loading',
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    context.read<TodoFileCubit>().load();
+    context.read<FilterCubit>().load();
+    context.read<FilterListBloc>()
+      ..add(const FilterListSubscriped())
+      ..add(const FilterListSynchronizationRequested());
+
+    return Scaffold(
+      body: Center(
+        child: Text(message),
+      ),
+    );
+  }
+}
+
+class CoreApp extends StatelessWidget {
+  final LoginState loginState;
   final ThemeMode? themeMode;
 
-  const App({
+  const CoreApp({
+    required this.loginState,
     this.themeMode,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginCubit, LoginState>(
-      listenWhen: (LoginState previous, LoginState state) =>
-          state is LoginError,
-      listener: (BuildContext context, LoginState state) {
-        if (state is LoginError) {
-          SnackBarHandler.error(context, state.message);
-        }
-      },
-      buildWhen: (LoginState previousState, LoginState state) =>
-          (previousState is Logout && state is! Logout) ||
-          (previousState is! Logout && state is Logout),
-      builder: (BuildContext context, LoginState loginState) {
-        return BlocBuilder<TodoFileCubit, TodoFileState>(
-          builder: (BuildContext context, TodoFileState todoFileState) {
-            final TodoListRepository todoListRepository =
-                _createTodoListRepository(loginState, todoFileState);
-            final TodoListBloc todoListBloc = TodoListBloc(
-              repository: todoListRepository,
-            )
-              ..add(const TodoListSubscriptionRequested())
-              ..add(const TodoListSynchronizationRequested());
-            return RepositoryProvider(
-              create: (BuildContext context) => todoListRepository,
-              child: BlocProvider.value(
-                value: todoListBloc,
-                child: Builder(
-                  builder: (BuildContext context) {
-                    return MaterialApp.router(
-                      title: 'ntodotxt',
-                      debugShowCheckedModeBanner: false,
-                      theme: lightTheme,
-                      darkTheme: darkTheme,
-                      themeMode: themeMode,
-                      routerConfig: AppRouter().config,
-                    );
-                  },
-                ),
-              ),
-            );
-          },
+    return BlocBuilder<TodoFileCubit, TodoFileState>(
+      builder: (BuildContext context, TodoFileState todoFileState) {
+        final TodoListRepository todoListRepository =
+            _createTodoListRepository(loginState, todoFileState);
+        final TodoListBloc todoListBloc = TodoListBloc(
+          repository: todoListRepository,
+        )
+          ..add(const TodoListSubscriptionRequested())
+          ..add(const TodoListSynchronizationRequested());
+        return RepositoryProvider(
+          create: (BuildContext context) => todoListRepository,
+          child: BlocProvider.value(
+            value: todoListBloc,
+            child: Builder(
+              builder: (BuildContext context) {
+                return MaterialApp.router(
+                  title: 'ntodotxt',
+                  debugShowCheckedModeBanner: false,
+                  theme: lightTheme,
+                  darkTheme: darkTheme,
+                  themeMode: themeMode,
+                  routerConfig: AppRouter().config,
+                );
+              },
+            ),
+          ),
         );
       },
     );
