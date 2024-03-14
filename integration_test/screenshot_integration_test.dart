@@ -18,6 +18,7 @@ import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
+import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart'
     show LoginLoading, LoginOffline, LoginState, LoginWebDAV;
@@ -142,13 +143,16 @@ class AppTester extends StatelessWidget {
             return BlocBuilder<LoginCubit, LoginState>(
               builder: (BuildContext context, LoginState state) {
                 if (state is LoginLoading) {
-                  return const LoadingApp();
+                  return const InitialApp(
+                    child: LoadingPage(),
+                  );
+                } else if (state is LoginOffline || state is LoginWebDAV) {
+                  return CoreApp(loginState: state);
+                } else {
+                  return const InitialApp(
+                    child: IntroPage(),
+                  );
                 }
-                if (state is LoginOffline || state is LoginWebDAV) {
-                  return const App();
-                }
-
-                return const LoginApp();
               },
             );
           },

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ntodotxt/main.dart';
+import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -22,7 +23,7 @@ void main() async {
           App(appCacheDir: appCacheDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginPage), findsOneWidget);
+        expect(find.byType(IntroPage), findsOneWidget);
       });
     });
 
@@ -32,7 +33,7 @@ void main() async {
           App(appCacheDir: appCacheDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginPage), findsOneWidget);
+        expect(find.byType(IntroPage), findsOneWidget);
         await tester.tap(find.text('Local'));
         await tester.pumpAndSettle();
         expect(find.byType(LocalLoginView), findsOneWidget);
@@ -68,7 +69,7 @@ void main() async {
           ),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginPage), findsOneWidget);
+        expect(find.byType(IntroPage), findsOneWidget);
       });
     });
 
@@ -78,7 +79,7 @@ void main() async {
           App(appCacheDir: appCacheDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginPage), findsOneWidget);
+        expect(find.byType(IntroPage), findsOneWidget);
         await tester.tap(find.text('WebDAV'));
         await tester.pumpAndSettle();
         expect(find.byType(WebDAVLoginView), findsOneWidget);
@@ -146,7 +147,7 @@ void main() async {
           ),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
-        expect(find.byType(LoginPage), findsOneWidget);
+        expect(find.byType(IntroPage), findsOneWidget);
       });
     });
   });
