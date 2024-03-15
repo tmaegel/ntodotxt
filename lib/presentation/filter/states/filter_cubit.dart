@@ -83,12 +83,14 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   void updateName(String name) {
-    try {
-      emit(state.update(
-        filter: state.filter.copyWith(name: name),
-      ));
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
+    if (name.isNotEmpty) {
+      try {
+        emit(state.update(
+          filter: state.filter.copyWith(name: name.trim()),
+        ));
+      } on Exception catch (e) {
+        emit(state.error(message: e.toString()));
+      }
     }
   }
 
