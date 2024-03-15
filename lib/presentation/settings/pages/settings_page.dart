@@ -51,6 +51,7 @@ class SettingsView extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 8.0),
           child: LocalPathSettingsItem(),
         ),
+        const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(

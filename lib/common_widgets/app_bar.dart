@@ -154,7 +154,7 @@ class AppBarFilterList extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   GenericActionChip(
-                    avatar: const Icon(Icons.join_inner),
+                    avatar: const Icon(Icons.tag),
                     label: Text('contexts (${state.filter.contexts.length})'),
                     onPressed: () async {
                       await FilterContextTagDialog.dialog(
