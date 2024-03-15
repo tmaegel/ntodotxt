@@ -136,7 +136,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                           }
                           setState(() {
                             tags.add(Tag(
-                              name: text,
+                              name: text.toLowerCase(),
                               selected: true,
                             ));
                           });
@@ -146,29 +146,42 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                     ),
                   ),
                 ),
-              if (tags.isNotEmpty && widget.addTags) const Divider(),
-              if (tags.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    title: GenericChipGroup(
-                      children: [
-                        for (var t in sortedTags)
-                          GenericChoiceChip(
-                            label: Text(t.name),
-                            selected: t.selected,
-                            onSelected: (bool selected) {
-                              setState(() {
-                                t.selected = selected;
-                              });
-                            },
-                          ),
-                      ],
+              if (widget.addTags) const Divider(),
+              tags.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      child: ListTile(
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 8.0),
+                        title: GenericChipGroup(
+                          children: [
+                            for (var t in sortedTags)
+                              GenericChoiceChip(
+                                label: Text(t.name),
+                                selected: t.selected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    t.selected = selected;
+                                  });
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                        ),
+                        title: Text('No ${widget.tagName} tags available.'),
+                      ),
                     ),
-                  ),
-                ),
             ],
           ),
         );
