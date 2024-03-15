@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
-import 'package:ntodotxt/common_widgets/filter_dialog.dart';
-import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
-import 'package:ntodotxt/common_widgets/order_dialog.dart';
-import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
-import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/constants/app.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show CustomScrollBehavior;
 import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/widgets/filter_chip.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -82,95 +71,31 @@ class AppBarFilterList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ScrollController controller = ScrollController();
-    return BlocBuilder<FilterCubit, FilterState>(
-      builder: (BuildContext context, FilterState state) {
-        return ScrollConfiguration(
-          behavior: CustomScrollBehavior(),
-          child: SingleChildScrollView(
-            controller: controller,
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GenericActionChip(
-                    avatar: const Icon(Icons.sort),
-                    label: Text(state.filter.order.name),
-                    onPressed: () async {
-                      await FilterStateOrderDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  GenericActionChip(
-                    avatar: const Icon(Icons.filter_list),
-                    label: Text(state.filter.filter.name),
-                    onPressed: () async {
-                      await FilterStateFilterDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  GenericActionChip(
-                    avatar: const Icon(Icons.workspaces_outlined),
-                    label: Text(state.filter.group.name),
-                    onPressed: () async {
-                      await FilterStateGroupDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  GenericActionChip(
-                    avatar: const Icon(Icons.flag_outlined),
-                    label:
-                        Text('priorities (${state.filter.priorities.length})'),
-                    onPressed: () async {
-                      await FilterPriorityTagDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                        availableTags: Priority.values.toSet(),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  GenericActionChip(
-                    avatar: const Icon(Icons.rocket_launch_outlined),
-                    label: Text('projects (${state.filter.projects.length})'),
-                    onPressed: () async {
-                      await FilterProjectTagDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                        availableTags:
-                            context.read<TodoListBloc>().state.projects,
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  GenericActionChip(
-                    avatar: const Icon(Icons.tag),
-                    label: Text('contexts (${state.filter.contexts.length})'),
-                    onPressed: () async {
-                      await FilterContextTagDialog.dialog(
-                        context: context,
-                        cubit: BlocProvider.of<FilterCubit>(context),
-                        availableTags:
-                            context.read<TodoListBloc>().state.contexts,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+    return ScrollConfiguration(
+      behavior: CustomScrollBehavior(),
+      child: SingleChildScrollView(
+        controller: controller,
+        scrollDirection: Axis.horizontal,
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FilterOrderChip(),
+              SizedBox(width: 4),
+              FilterFilterChip(),
+              SizedBox(width: 4),
+              FilterGroupChip(),
+              SizedBox(width: 4),
+              FilterPrioritiesChip(),
+              SizedBox(width: 4),
+              FilterProjectsChip(),
+              SizedBox(width: 4),
+              FilterContextsChip(),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

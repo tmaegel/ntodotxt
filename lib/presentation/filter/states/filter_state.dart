@@ -1,18 +1,31 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 
 sealed class FilterState extends Equatable {
   final Filter filter;
+  final Filter? origin;
 
-  const FilterState({
+  FilterState({
     required this.filter,
-  });
+    Filter? origin,
+  }) : origin = origin ?? filter.copyWith();
+
+  FilterLoading loading({
+    Filter? filter,
+  }) {
+    return FilterLoading(
+      filter: filter ?? this.filter,
+      origin: origin,
+    );
+  }
 
   FilterChanged update({
     Filter? filter,
   }) {
     return FilterChanged(
       filter: filter ?? this.filter,
+      origin: origin,
     );
   }
 
@@ -31,81 +44,110 @@ sealed class FilterState extends Equatable {
     return FilterError(
       message: message,
       filter: filter ?? this.filter,
+      origin: origin,
     );
   }
 
+  bool get changed => origin != filter;
+
+  bool get orderChanged {
+    if (origin == null) {
+      return true;
+    } else {
+      return origin!.order != filter.order;
+    }
+  }
+
+  bool get filterChanged {
+    if (origin == null) {
+      return true;
+    } else {
+      return origin!.filter != filter.filter;
+    }
+  }
+
+  bool get groupChanged {
+    if (origin == null) {
+      return true;
+    } else {
+      return origin!.group != filter.group;
+    }
+  }
+
+  bool get prioritiesChanged {
+    if (origin == null) {
+      return true;
+    } else {
+      return !const SetEquality().equals(origin!.priorities, filter.priorities);
+    }
+  }
+
+  bool get projectsChanged {
+    if (origin == null) {
+      return true;
+    } else {
+      return !const SetEquality().equals(origin!.projects, filter.projects);
+    }
+  }
+
+  bool get contextsChanged {
+    if (origin == null) {
+      return true;
+    } else {
+      return !const SetEquality().equals(origin!.contexts, filter.contexts);
+    }
+  }
+
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         filter,
+        origin,
       ];
 
   @override
   String toString() => 'FilterState { filter: $filter }';
 }
 
-final class FilterInitial extends FilterState {
-  const FilterInitial({
-    required super.filter,
-  });
-
-  FilterInitial copyWith({
-    Filter? filter,
-  }) {
-    return FilterInitial(
-      filter: filter ?? this.filter,
-    );
-  }
-
-  @override
-  String toString() => 'FilterInitial { filter: $filter }';
-}
-
 final class FilterLoading extends FilterState {
-  const FilterLoading({
+  FilterLoading({
     required super.filter,
+    super.origin,
   });
 
   FilterLoading copyWith({
     Filter? filter,
-  }) {
-    return FilterLoading(
-      filter: filter ?? this.filter,
-    );
-  }
+  }) =>
+      super.loading(filter: filter ?? this.filter);
 
   @override
   String toString() => 'FilterLoading { filter: $filter }';
 }
 
 final class FilterChanged extends FilterState {
-  const FilterChanged({
+  FilterChanged({
     required super.filter,
+    super.origin,
   });
 
   FilterChanged copyWith({
     Filter? filter,
-  }) {
-    return FilterChanged(
-      filter: filter ?? this.filter,
-    );
-  }
+  }) =>
+      super.update(filter: filter ?? this.filter);
 
   @override
   String toString() => 'FilterChanged { filter: $filter }';
 }
 
 final class FilterSaved extends FilterState {
-  const FilterSaved({
+  FilterSaved({
     required super.filter,
+    super.origin,
   });
 
   FilterSaved copyWith({
     Filter? filter,
-  }) {
-    return FilterSaved(
-      filter: filter ?? this.filter,
-    );
-  }
+  }) =>
+      super.save(filter: filter ?? this.filter);
 
   @override
   String toString() => 'FilterSaved { filter: $filter }';
@@ -114,25 +156,24 @@ final class FilterSaved extends FilterState {
 final class FilterError extends FilterState {
   final String message;
 
-  const FilterError({
+  FilterError({
     required this.message,
     required super.filter,
+    super.origin,
   });
 
   FilterError copyWith({
     String? message,
     Filter? filter,
-  }) {
-    return FilterError(
-      message: message ?? this.message,
-      filter: filter ?? this.filter,
-    );
-  }
+  }) =>
+      super.error(
+          message: message ?? this.message, filter: filter ?? this.filter);
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         message,
         filter,
+        origin,
       ];
 
   @override

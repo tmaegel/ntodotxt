@@ -20,7 +20,7 @@ class FilterCubit extends Cubit<FilterState> {
         _filterRepository = filterRepository,
         super(
           filter == null
-              ? const FilterLoading(filter: Filter())
+              ? FilterLoading(filter: const Filter())
               : FilterSaved(filter: filter),
         );
 
@@ -83,14 +83,12 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   void updateName(String name) {
-    if (name.isNotEmpty) {
-      try {
-        emit(state.update(
-          filter: state.filter.copyWith(name: name.trim()),
-        ));
-      } on Exception catch (e) {
-        emit(state.error(message: e.toString()));
-      }
+    try {
+      emit(state.update(
+        filter: state.filter.copyWith(name: name.trim()),
+      ));
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
     }
   }
 

@@ -213,7 +213,7 @@ class SaveFilterIconButton extends StatelessWidget {
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (BuildContext context, FilterState state) {
         return Visibility(
-          visible: initFilter != state.filter && state.filter.name.isNotEmpty,
+          visible: state.changed && state.filter.name.isNotEmpty,
           child: IconButton(
             tooltip: 'Save',
             icon: const Icon(Icons.save),
@@ -248,7 +248,7 @@ class SaveFilterFABButton extends StatelessWidget {
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (BuildContext context, FilterState state) {
         return Visibility(
-          visible: initFilter != state.filter && state.filter.name.isNotEmpty,
+          visible: state.changed && state.filter.name.isNotEmpty,
           child: FloatingActionButton(
             tooltip: 'Save',
             child: const Icon(Icons.save),

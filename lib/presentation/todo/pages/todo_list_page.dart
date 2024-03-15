@@ -384,7 +384,7 @@ class TodoListDeleteFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (BuildContext context, FilterState state) {
-        return state is! FilterSaved || state.filter.id == null
+        return state.changed || state.filter.id == null
             ? Container()
             : IconButton(
                 tooltip: 'Delete filter',
@@ -418,7 +418,7 @@ class TodoListSaveFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FilterCubit, FilterState>(
       builder: (BuildContext context, FilterState state) {
-        return state is FilterSaved || state.filter.id == null
+        return !state.changed || state.filter.id == null
             ? Container()
             : IconButton(
                 tooltip: 'Save filter',

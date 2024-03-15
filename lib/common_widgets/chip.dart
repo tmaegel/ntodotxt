@@ -36,11 +36,13 @@ class GenericActionChip extends StatelessWidget {
   final Widget label;
   final Widget avatar;
   final Function() onPressed;
+  final bool selected;
 
   const GenericActionChip({
     required this.label,
     required this.avatar,
     required this.onPressed,
+    this.selected = false,
     super.key,
   });
 
@@ -50,6 +52,9 @@ class GenericActionChip extends StatelessWidget {
       avatar: avatar,
       label: label,
       padding: EdgeInsets.zero,
+      side: selected == true
+          ? BorderSide(color: Theme.of(context).colorScheme.primary)
+          : null,
       labelPadding: const EdgeInsets.only(right: 8.0),
       onPressed: () async => onPressed(),
     );
