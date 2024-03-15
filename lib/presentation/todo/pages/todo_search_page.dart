@@ -154,7 +154,7 @@ class TodoSearchTile extends StatelessWidget {
       child: ListTile(
         key: key,
         title: Text(
-          todo.description,
+          todo.fmtDescription,
           style: TextStyle(
             decoration: todo.completion ? TextDecoration.lineThrough : null,
             decorationThickness: 2.0,
