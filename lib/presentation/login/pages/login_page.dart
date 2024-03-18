@@ -46,7 +46,7 @@ class _LocalLoginViewState extends State<LocalLoginView> {
                 onPressed: () async {
                   try {
                     setState(() => loading = true);
-                    await context.read<LoginCubit>().loginOffline(
+                    await context.read<LoginCubit>().loginLocal(
                           todoFile: File(
                               '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
                         );

@@ -43,76 +43,69 @@ class TodoCreateEditPage extends StatelessWidget {
       create: (BuildContext context) => TodoCubit(
         todo: initTodo ?? Todo(),
       ),
-      child: BlocListener<TodoCubit, TodoState>(
-        listener: (BuildContext context, TodoState state) {
-          if (state is TodoError) {
-            SnackBarHandler.error(context, state.message);
+      child: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
           }
         },
-        child: GestureDetector(
-          onTap: () {
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-          },
-          child: Scaffold(
-            appBar: MainAppBar(
-              title: createMode ? 'Create' : 'Edit',
-              toolbar: Row(
-                children: <Widget>[
-                  if (!createMode) const DeleteTodoIconButton(),
-                  if (!narrowView) SaveTodoIconButton(initTodo: initTodo),
-                ],
-              ),
-            ),
-            body: ListView(
-              children: [
-                const TodoStringTextField(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'General',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                const TodoPriorityItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Dates',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                const TodoCreationDateItem(),
-                if (!createMode) const TodoCompletionDateItem(),
-                const TodoDueDateItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Tags',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                TodoProjectTagsItem(availableTags: projects),
-                TodoContextTagsItem(availableTags: contexts),
-                TodoKeyValueTagsItem(availableTags: keyValues),
-                const SizedBox(height: 16),
+        child: Scaffold(
+          appBar: MainAppBar(
+            title: createMode ? 'Create' : 'Edit',
+            toolbar: Row(
+              children: <Widget>[
+                if (!createMode) const DeleteTodoIconButton(),
+                if (!narrowView) SaveTodoIconButton(initTodo: initTodo),
               ],
             ),
-            floatingActionButton: keyboardIsOpen || !narrowView
-                ? null
-                : SaveTodoFABButton(initTodo: initTodo),
           ),
+          body: ListView(
+            children: [
+              const TodoStringTextField(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'General',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              const TodoPriorityItem(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'Dates',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              const TodoCreationDateItem(),
+              if (!createMode) const TodoCompletionDateItem(),
+              const TodoDueDateItem(),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: ListTile(
+                  title: Text(
+                    'Tags',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+              TodoProjectTagsItem(availableTags: projects),
+              TodoContextTagsItem(availableTags: contexts),
+              TodoKeyValueTagsItem(availableTags: keyValues),
+              const SizedBox(height: 16),
+            ],
+          ),
+          floatingActionButton: keyboardIsOpen || !narrowView
+              ? null
+              : SaveTodoFABButton(initTodo: initTodo),
         ),
       ),
     );

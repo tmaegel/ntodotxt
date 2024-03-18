@@ -540,7 +540,7 @@ void main() {
           filterRepository: FilterRepository(FilterController(databasePath)),
           filter: origin,
         );
-        cubit.updateDefaultOrder(ListOrder.descending);
+        await cubit.updateDefaultOrder(ListOrder.descending);
 
         expect(
           cubit.state,
@@ -565,7 +565,7 @@ void main() {
           filterRepository: FilterRepository(FilterController(databasePath)),
           filter: origin,
         );
-        cubit.updateDefaultFilter(ListFilter.completedOnly);
+        await cubit.updateDefaultFilter(ListFilter.completedOnly);
 
         expect(
           cubit.state,
@@ -590,7 +590,7 @@ void main() {
           filterRepository: FilterRepository(FilterController(databasePath)),
           filter: origin,
         );
-        cubit.updateDefaultGroup(ListGroup.priority);
+        await cubit.updateDefaultGroup(ListGroup.priority);
 
         expect(
           cubit.state,
@@ -618,9 +618,9 @@ void main() {
           filterRepository: FilterRepository(FilterController(databasePath)),
           filter: origin,
         );
-        cubit.updateDefaultOrder(ListOrder.descending);
-        cubit.updateDefaultFilter(ListFilter.completedOnly);
-        cubit.updateDefaultGroup(ListGroup.priority);
+        await cubit.updateDefaultOrder(ListOrder.descending);
+        await cubit.updateDefaultFilter(ListFilter.completedOnly);
+        await cubit.updateDefaultGroup(ListGroup.priority);
 
         expect(
           cubit.state,
@@ -638,7 +638,7 @@ void main() {
           ),
         );
 
-        cubit.resetToDefaults();
+        await cubit.resetToDefaults();
         expect(
           cubit.state,
           FilterSaved(

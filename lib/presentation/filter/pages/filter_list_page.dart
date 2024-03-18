@@ -7,7 +7,7 @@ import 'package:ntodotxt/common_widgets/scroll_to_top.dart';
 import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
-import 'package:ntodotxt/misc.dart' show PopScopeDrawer, SnackBarHandler;
+import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 
@@ -18,16 +18,9 @@ class FilterListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isNarrowLayout =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    return BlocListener<FilterListBloc, FilterListState>(
-      listener: (BuildContext context, FilterListState state) {
-        if (state is FilterListError) {
-          SnackBarHandler.error(context, state.message);
-        }
-      },
-      child: isNarrowLayout
-          ? const FilterListViewNarrow()
-          : const FilterListViewWide(),
-    );
+    return isNarrowLayout
+        ? const FilterListViewNarrow()
+        : const FilterListViewWide();
   }
 }
 

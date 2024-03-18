@@ -8,7 +8,19 @@ sealed class FilterListState extends Equatable {
     this.filterList = const [],
   });
 
-  FilterListState success({
+  FilterListState copyWith({
+    List<Filter>? filterList,
+  });
+
+  FilterListLoading loading({
+    List<Filter>? filterList,
+  }) {
+    return FilterListLoading(
+      filterList: filterList ?? this.filterList,
+    );
+  }
+
+  FilterListSuccess success({
     List<Filter>? filterList,
   }) {
     return FilterListSuccess(
@@ -16,7 +28,7 @@ sealed class FilterListState extends Equatable {
     );
   }
 
-  FilterListState error({
+  FilterListError error({
     required String message,
     List<Filter>? filterList,
   }) {
@@ -27,7 +39,7 @@ sealed class FilterListState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         filterList,
       ];
 
@@ -35,10 +47,27 @@ sealed class FilterListState extends Equatable {
   String toString() => 'FilterListState { filters: $filterList }';
 }
 
+final class FilterListLoading extends FilterListState {
+  const FilterListLoading({
+    super.filterList,
+  });
+
+  @override
+  FilterListLoading copyWith({List<Filter>? filterList}) =>
+      super.loading(filterList: filterList ?? this.filterList);
+
+  @override
+  String toString() => 'FilterListLoading { filters: $filterList }';
+}
+
 final class FilterListSuccess extends FilterListState {
   const FilterListSuccess({
     super.filterList,
   });
+
+  @override
+  FilterListSuccess copyWith({List<Filter>? filterList}) =>
+      super.success(filterList: filterList ?? this.filterList);
 
   @override
   String toString() => 'FilterListSuccess { filters: $filterList }';
@@ -53,7 +82,17 @@ final class FilterListError extends FilterListState {
   });
 
   @override
-  List<Object?> get props => [
+  FilterListError copyWith({
+    String? message,
+    List<Filter>? filterList,
+  }) =>
+      super.error(
+        message: message ?? this.message,
+        filterList: filterList ?? this.filterList,
+      );
+
+  @override
+  List<Object> get props => [
         message,
         filterList,
       ];

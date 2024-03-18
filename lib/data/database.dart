@@ -21,7 +21,6 @@ class DatabaseController {
   }
 
   Future<void> close() async {
-    log.info('Close database $path');
     if (_database != null) {
       await _database!.close();
     }
@@ -45,9 +44,7 @@ class DatabaseController {
           log.info('Perform database upgrade');
         }
       },
-      onOpen: (Database db) {
-        log.info('Open database $path');
-      },
+      onOpen: (Database db) {},
       singleInstance: true,
     );
   }
@@ -56,7 +53,16 @@ class DatabaseController {
 abstract class ModelController<T> extends DatabaseController {
   ModelController(super.path);
 
-  Future<Database> get database async => await instance;
+  Future<Database> get database async {
+    log.fine('Access database by $T');
+    return await instance;
+  }
+
+  @override
+  Future<void> close() async {
+    log.fine('Close database by $T');
+    await super.close();
+  }
 
   Future<List<T>> list();
 

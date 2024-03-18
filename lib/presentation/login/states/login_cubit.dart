@@ -12,27 +12,30 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> login() async {
     try {
-      emit(const LoginLoading());
+      emit(state.loading());
       String? backendFromsecureStorage =
           await secureStorage.read(key: 'backend');
       Backend backend;
 
       if (backendFromsecureStorage == null) {
-        return emit(const Logout());
+        return emit(state.logout());
       }
 
       try {
         backend = Backend.values.byName(backendFromsecureStorage);
       } on Exception {
-        return emit(const Logout());
+        return emit(state.logout());
       }
 
       if (backend == Backend.none) {
-        return emit(const Logout());
+        return emit(state.logout());
       }
 
-      if (backend == Backend.offline) {
-        return emit(const LoginOffline());
+      // @todo: Keep 'offline' for backward compatibility.
+      if (backend == Backend.local || backend == Backend.offline) {
+        // @todo: Remove with the next releases.
+        await secureStorage.write(key: 'backend', value: Backend.local.name);
+        return emit(state.loginLocal());
       }
       if (backend == Backend.webdav) {
         String? server = await secureStorage.read(key: 'server');
@@ -44,7 +47,7 @@ class LoginCubit extends Cubit<LoginState> {
             username != null &&
             password != null) {
           emit(
-            LoginWebDAV(
+            state.loginWebDAV(
               server: server,
               baseUrl: baseUrl,
               username: username,
@@ -54,33 +57,29 @@ class LoginCubit extends Cubit<LoginState> {
         }
       }
     } on Exception catch (e) {
-      emit(LoginError(message: e.toString()));
+      emit(state.error(message: e.toString()));
     }
-  }
-
-  void loginError(String message) {
-    emit(LoginError(message: message));
   }
 
   Future<void> logout() async {
     try {
       await resetSecureStorage();
-      emit(const Logout());
+      emit(state.logout());
     } on Exception catch (e) {
-      emit(LoginError(message: e.toString()));
+      emit(state.error(message: e.toString()));
     }
   }
 
-  Future<void> loginOffline({
+  Future<void> loginLocal({
     required todoFile,
   }) async {
     try {
       LocalTodoListApi(todoFile: todoFile); // Check before login.
       await resetSecureStorage();
-      await secureStorage.write(key: 'backend', value: Backend.offline.name);
-      emit(const LoginOffline());
+      await secureStorage.write(key: 'backend', value: Backend.local.name);
+      emit(state.loginLocal());
     } on Exception catch (e) {
-      emit(LoginError(message: e.toString()));
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -109,7 +108,7 @@ class LoginCubit extends Cubit<LoginState> {
       await secureStorage.write(key: 'username', value: username);
       await secureStorage.write(key: 'password', value: password);
       emit(
-        LoginWebDAV(
+        state.loginWebDAV(
           server: server,
           baseUrl: baseUrl,
           username: username,
@@ -117,7 +116,7 @@ class LoginCubit extends Cubit<LoginState> {
         ),
       );
     } on Exception catch (e) {
-      emit(LoginError(message: e.toString()));
+      emit(state.error(message: e.toString()));
     }
   }
 
@@ -136,9 +135,9 @@ class LoginCubit extends Cubit<LoginState> {
           await secureStorage.delete(key: attr);
         }
       }
-      emit(const Logout());
+      emit(state.logout());
     } on Exception catch (e) {
-      emit(LoginError(message: e.toString()));
+      emit(state.error(message: e.toString()));
     }
   }
 }

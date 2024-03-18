@@ -33,16 +33,9 @@ class TodoListPage extends StatelessWidget {
   Widget _build(BuildContext context) {
     final bool isNarrowLayout =
         MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    return BlocListener<TodoListBloc, TodoListState>(
-      listener: (BuildContext context, TodoListState state) {
-        if (state is TodoListError) {
-          SnackBarHandler.error(context, state.message);
-        }
-      },
-      child: isNarrowLayout
-          ? const TodoListViewNarrow()
-          : const TodoListViewWide(),
-    );
+    return isNarrowLayout
+        ? const TodoListViewNarrow()
+        : const TodoListViewWide();
   }
 
   Widget _buildWithFilter(BuildContext context) {

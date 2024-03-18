@@ -4,9 +4,13 @@ import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
+import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
 
@@ -58,9 +62,23 @@ class NotificationWrapper extends StatelessWidget {
             }
           },
         ),
+        BlocListener<FilterListBloc, FilterListState>(
+          listener: (BuildContext context, FilterListState state) {
+            if (state is FilterListError) {
+              SnackBarHandler.error(context, state.message);
+            }
+          },
+        ),
         BlocListener<FilterCubit, FilterState>(
           listener: (BuildContext context, FilterState state) {
             if (state is FilterError) {
+              SnackBarHandler.error(context, state.message);
+            }
+          },
+        ),
+        BlocListener<TodoListBloc, TodoListState>(
+          listener: (BuildContext context, TodoListState state) {
+            if (state is TodoListError) {
               SnackBarHandler.error(context, state.message);
             }
           },

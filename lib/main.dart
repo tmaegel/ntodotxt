@@ -22,6 +22,7 @@ import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
@@ -129,16 +130,10 @@ class App extends StatelessWidget {
           builder: (BuildContext context) {
             return BlocBuilder<LoginCubit, LoginState>(
               builder: (BuildContext context, LoginState state) {
-                if (state is LoginLoading) {
-                  return const InitialApp(
-                    child: LoadingPage(),
-                  );
-                } else if (state is LoginOffline || state is LoginWebDAV) {
+                if (state is LoginLocal || state is LoginWebDAV) {
                   return CoreApp(loginState: state);
                 } else {
-                  return const InitialApp(
-                    child: IntroPage(),
-                  );
+                  return const InitialApp();
                 }
               },
             );
@@ -150,14 +145,31 @@ class App extends StatelessWidget {
 }
 
 class InitialApp extends StatelessWidget {
-  final Widget child;
   final ThemeMode? themeMode;
 
   const InitialApp({
-    required this.child,
     this.themeMode,
     super.key,
   });
+
+  Future<bool> _initialize(BuildContext context) async {
+    if (context.mounted) {
+      await context.read<FilterCubit>().load();
+    }
+    if (context.mounted) {
+      await context.read<TodoFileCubit>().load();
+    }
+    if (context.mounted) {
+      context.read<FilterListBloc>()
+        ..add(const FilterListSubscriped())
+        ..add(const FilterListSynchronizationRequested());
+    }
+    if (context.mounted) {
+      await context.read<LoginCubit>().login();
+    }
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,10 +189,14 @@ class InitialApp extends StatelessWidget {
           ),
           BlocListener<TodoFileCubit, TodoFileState>(
             listener: (BuildContext context, TodoFileState state) {
-              if (state is TodoFileReady) {
-                context.read<LoginCubit>().login();
-              } else if (state is TodoFileError) {
-                context.read<LoginCubit>().logout();
+              if (state is TodoFileError) {
+                SnackBarHandler.error(context, state.message);
+              }
+            },
+          ),
+          BlocListener<FilterListBloc, FilterListState>(
+            listener: (BuildContext context, FilterListState state) {
+              if (state is FilterListError) {
                 SnackBarHandler.error(context, state.message);
               }
             },
@@ -193,31 +209,45 @@ class InitialApp extends StatelessWidget {
             },
           ),
         ],
-        child: child,
+        child: FutureBuilder<bool>(
+          future: _initialize(context),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData) {
+              return BlocBuilder<LoginCubit, LoginState>(
+                builder: (BuildContext context, LoginState state) {
+                  if (state is LoginLoading ||
+                      state is LoginLocal ||
+                      state is LoginWebDAV) {
+                    // Keep loading screen to prevent screen flickering.
+                    return _loadingScreen();
+                  } else {
+                    return const IntroPage();
+                  }
+                },
+              );
+            } else if (snapshot.hasError) {
+              return _errorScreen();
+            } else {
+              return _loadingScreen();
+            }
+          },
+        ),
       ),
     );
   }
-}
 
-class LoadingPage extends StatelessWidget {
-  final String message;
-
-  const LoadingPage({
-    this.message = 'Loading',
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    context.read<TodoFileCubit>().load();
-    context.read<FilterCubit>().load();
-    context.read<FilterListBloc>()
-      ..add(const FilterListSubscriped())
-      ..add(const FilterListSynchronizationRequested());
-
-    return Scaffold(
+  Widget _loadingScreen() {
+    return const Scaffold(
       body: Center(
-        child: Text(message),
+        child: Text('Loading'),
+      ),
+    );
+  }
+
+  Widget _errorScreen() {
+    return const Scaffold(
+      body: Center(
+        child: Text('Something went wrong.'),
       ),
     );
   }
@@ -273,7 +303,7 @@ class CoreApp extends StatelessWidget {
         '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.todoFilename}');
     log.info('Use todo file ${todoFile.path}');
     switch (loginState) {
-      case LoginOffline():
+      case LoginLocal():
         log.info('Use local backend');
         api = LocalTodoListApi(todoFile: todoFile);
       case LoginWebDAV():

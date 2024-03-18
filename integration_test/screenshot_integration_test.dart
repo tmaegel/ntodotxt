@@ -17,11 +17,9 @@ import 'package:ntodotxt/main.dart';
 import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
-import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart'
-    show LoginLoading, LoginOffline, LoginState, LoginWebDAV;
+    show LoginLocal, LoginState, LoginWebDAV;
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -116,7 +114,7 @@ class AppTester extends StatelessWidget {
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
               defaultLocalPath: appCacheDir,
-            )..load(),
+            ),
           ),
           BlocProvider<DrawerCubit>(
             create: (BuildContext context) => DrawerCubit(),
@@ -126,32 +124,22 @@ class AppTester extends StatelessWidget {
             create: (BuildContext context) => FilterCubit(
               settingRepository: context.read<SettingRepository>(),
               filterRepository: context.read<FilterRepository>(),
-            )..load(),
+            ),
           ),
           BlocProvider<FilterListBloc>(
-            create: (BuildContext context) {
-              return FilterListBloc(
-                repository: context.read<FilterRepository>(),
-              )
-                ..add(const FilterListSubscriped())
-                ..add(const FilterListSynchronizationRequested());
-            },
+            create: (BuildContext context) => FilterListBloc(
+              repository: context.read<FilterRepository>(),
+            ),
           ),
         ],
         child: Builder(
           builder: (BuildContext context) {
             return BlocBuilder<LoginCubit, LoginState>(
               builder: (BuildContext context, LoginState state) {
-                if (state is LoginLoading) {
-                  return const InitialApp(
-                    child: LoadingPage(),
-                  );
-                } else if (state is LoginOffline || state is LoginWebDAV) {
+                if (state is LoginLocal || state is LoginWebDAV) {
                   return CoreApp(loginState: state);
                 } else {
-                  return const InitialApp(
-                    child: IntroPage(),
-                  );
+                  return const InitialApp();
                 }
               },
             );

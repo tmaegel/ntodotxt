@@ -1,16 +1,40 @@
 import 'package:equatable/equatable.dart';
 
-enum Backend { none, offline, webdav }
+// Keep 'offline' for backward compatibility.
+enum Backend { none, local, offline, webdav }
 
 sealed class LoginState extends Equatable {
-  /// Backend to use to store todos.
-  final Backend backend;
+  final Backend backend; // Backend to use to store todos.
 
   const LoginState({
     this.backend = Backend.none,
   });
 
   LoginState copyWith();
+
+  LoginLoading loading() => const LoginLoading();
+
+  Logout logout() => const Logout();
+
+  LoginLocal loginLocal() => const LoginLocal();
+
+  LoginWebDAV loginWebDAV({
+    required String server,
+    required String baseUrl,
+    required String username,
+    required String password,
+  }) =>
+      LoginWebDAV(
+        server: server,
+        baseUrl: baseUrl,
+        username: username,
+        password: password,
+      );
+
+  LoginError error({
+    required String message,
+  }) =>
+      LoginError(message: message);
 
   @override
   List<Object> get props => [
@@ -27,9 +51,7 @@ final class LoginLoading extends LoginState {
   });
 
   @override
-  LoginLoading copyWith() {
-    return const LoginLoading();
-  }
+  LoginLoading copyWith() => super.loading();
 
   @override
   List<Object> get props => [
@@ -42,13 +64,11 @@ final class LoginLoading extends LoginState {
 
 final class Logout extends LoginState {
   const Logout({
-    super.backend,
+    super.backend = Backend.none,
   });
 
   @override
-  Logout copyWith() {
-    return const Logout();
-  }
+  Logout copyWith() => super.logout();
 
   @override
   List<Object> get props => [
@@ -59,15 +79,13 @@ final class Logout extends LoginState {
   String toString() => 'Logout { }';
 }
 
-final class LoginOffline extends LoginState {
-  const LoginOffline({
-    super.backend = Backend.offline,
+final class LoginLocal extends LoginState {
+  const LoginLocal({
+    super.backend = Backend.local,
   });
 
   @override
-  LoginOffline copyWith() {
-    return const LoginOffline();
-  }
+  LoginLocal copyWith() => super.loginLocal();
 
   @override
   List<Object> get props => [
@@ -75,7 +93,7 @@ final class LoginOffline extends LoginState {
       ];
 
   @override
-  String toString() => 'LoginOffline { }';
+  String toString() => 'LoginLocal { }';
 }
 
 final class LoginWebDAV extends LoginState {
@@ -105,14 +123,13 @@ final class LoginWebDAV extends LoginState {
     String? baseUrl,
     String? username,
     String? password,
-  }) {
-    return LoginWebDAV(
-      server: server ?? this.server,
-      baseUrl: baseUrl ?? this.baseUrl,
-      username: username ?? this.username,
-      password: password ?? this.password,
-    );
-  }
+  }) =>
+      super.loginWebDAV(
+        server: server ?? this.server,
+        baseUrl: baseUrl ?? this.baseUrl,
+        username: username ?? this.username,
+        password: password ?? this.password,
+      );
 
   @override
   List<Object> get props => [
@@ -138,11 +155,8 @@ final class LoginError extends LoginState {
   @override
   LoginError copyWith({
     String? message,
-  }) {
-    return LoginError(
-      message: message ?? this.message,
-    );
-  }
+  }) =>
+      super.error(message: message ?? this.message);
 
   @override
   List<Object> get props => [

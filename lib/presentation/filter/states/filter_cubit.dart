@@ -255,10 +255,10 @@ class FilterCubit extends Cubit<FilterState> {
   Future<void> resetToDefaults() async {
     try {
       const Filter defaultFilter = Filter();
-      emit(state.save(filter: defaultFilter));
       for (var k in ['order', 'filter', 'group']) {
         await _settingRepository.delete(key: k);
       }
+      emit(state.save(filter: defaultFilter));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
