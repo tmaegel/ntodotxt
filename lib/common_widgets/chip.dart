@@ -1,5 +1,46 @@
 import 'package:flutter/material.dart';
 
+class BasicIconChip extends StatelessWidget {
+  final String label;
+  final IconData iconData;
+  final bool mono;
+
+  const BasicIconChip({
+    required this.label,
+    required this.iconData,
+    this.mono = false,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
+      decoration: BoxDecoration(
+        color: mono
+            ? Theme.of(context).colorScheme.surfaceVariant
+            : Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(iconData, size: 14.0),
+          const SizedBox(width: 2.0),
+          Text(
+            label,
+            style: TextStyle(
+              color: mono
+                  ? Theme.of(context).colorScheme.onSurfaceVariant
+                  : Theme.of(context).colorScheme.onSecondaryContainer,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class BasicChip extends StatelessWidget {
   final String label;
   final bool mono;

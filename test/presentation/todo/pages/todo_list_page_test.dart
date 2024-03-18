@@ -124,7 +124,7 @@ void main() {
       for (int i = 0; i < expectedTiles.length; i++) {
         Finder element = find.descendant(
           of: find.byWidget(todoTiles.elementAt(i)),
-          matching: find.text(expectedTiles[i]),
+          matching: find.text(expectedTiles[i], findRichText: true),
         );
         await tester.ensureVisible(element);
         expect(element, findsOneWidget);
@@ -153,7 +153,7 @@ void main() {
       for (int i = 0; i < expectedTiles.length; i++) {
         Finder element = find.descendant(
           of: find.byWidget(todoTiles.elementAt(i)),
-          matching: find.text(expectedTiles[i]),
+          matching: find.text(expectedTiles[i], findRichText: true),
         );
         await tester.ensureVisible(element);
         expect(element, findsOneWidget);
@@ -182,7 +182,7 @@ void main() {
       for (int i = 0; i < expectedTiles.length; i++) {
         Finder element = find.descendant(
           of: find.byWidget(todoTiles.elementAt(i)),
-          matching: find.text(expectedTiles[i]),
+          matching: find.text(expectedTiles[i], findRichText: true),
         );
         await tester.ensureVisible(element);
         expect(element, findsOneWidget);
@@ -226,7 +226,7 @@ void main() {
       for (int i = 0; i < expectedTiles.length; i++) {
         Finder element = find.descendant(
           of: find.byWidget(todoTiles.elementAt(i)),
-          matching: find.text(expectedTiles[i]),
+          matching: find.text(expectedTiles[i], findRichText: true),
         );
         await tester.ensureVisible(element);
         expect(element, findsOneWidget);
@@ -254,7 +254,7 @@ void main() {
       for (int i = 0; i < expectedTiles.length; i++) {
         Finder element = find.descendant(
           of: find.byWidget(todoTiles.elementAt(i)),
-          matching: find.text(expectedTiles[i]),
+          matching: find.text(expectedTiles[i], findRichText: true),
         );
         await tester.ensureVisible(element);
         expect(element, findsOneWidget);
@@ -281,7 +281,7 @@ void main() {
       for (int i = 0; i < expectedTiles.length; i++) {
         Finder element = find.descendant(
           of: find.byWidget(todoTiles.elementAt(i)),
-          matching: find.text(expectedTiles[i]),
+          matching: find.text(expectedTiles[i], findRichText: true),
         );
         await tester.ensureVisible(element);
         expect(element, findsOneWidget);
@@ -327,7 +327,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -357,7 +357,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -424,7 +424,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -470,7 +470,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -526,7 +526,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -561,7 +561,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -587,11 +587,11 @@ void main() {
       testWidgets('ascending', (tester) async {
         final List<String> expectedTiles = [
           'project1',
-          'TodoB1',
-          'TodoA1', // Completed todo come always at last.
+          'TodoB1 +project1',
+          'TodoA1 +project1', // Completed todo come always at last.
           'project2',
-          'TodoA2',
-          'TodoB2',
+          'TodoA2 +project2',
+          'TodoB2 +project2',
           'No project',
           'TodoC',
           'TodoD',
@@ -613,7 +613,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -622,11 +622,11 @@ void main() {
       testWidgets('descending', (tester) async {
         final List<String> expectedTiles = [
           'project2',
-          'TodoB2',
-          'TodoA2',
+          'TodoB2 +project2',
+          'TodoA2 +project2',
           'project1',
-          'TodoB1',
-          'TodoA1', // Completed todo come always at last.
+          'TodoB1 +project1',
+          'TodoA1 +project1', // Completed todo come always at last.
           'No project',
           'TodoD',
           'TodoC',
@@ -648,7 +648,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -674,11 +674,11 @@ void main() {
       testWidgets('ascending', (tester) async {
         final List<String> expectedTiles = [
           'context1',
-          'TodoB1',
-          'TodoA1', // Completed todo come always at last.
+          'TodoB1 @context1',
+          'TodoA1 @context1', // Completed todo come always at last.
           'context2',
-          'TodoA2',
-          'TodoB2',
+          'TodoA2 @context2',
+          'TodoB2 @context2',
           'No context',
           'TodoC',
           'TodoD',
@@ -700,7 +700,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);
@@ -709,11 +709,11 @@ void main() {
       testWidgets('descending', (tester) async {
         final List<String> expectedTiles = [
           'context2',
-          'TodoB2',
-          'TodoA2',
+          'TodoB2 @context2',
+          'TodoA2 @context2',
           'context1',
-          'TodoB1',
-          'TodoA1', // Completed todo come always at last.
+          'TodoB1 @context1',
+          'TodoA1 @context1', // Completed todo come always at last.
           'No context',
           'TodoD',
           'TodoC',
@@ -735,7 +735,7 @@ void main() {
         for (int i = 0; i < expectedTiles.length; i++) {
           Finder element = find.descendant(
             of: find.byWidget(listTiles.elementAt(i)),
-            matching: find.text(expectedTiles[i]),
+            matching: find.text(expectedTiles[i], findRichText: true),
           );
           await tester.ensureVisible(element);
           expect(element, findsOneWidget);

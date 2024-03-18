@@ -153,45 +153,77 @@ class TodoSearchTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: ListTile(
         key: key,
-        title: Text(
-          todo.fmtDescription,
-          style: TextStyle(
-            decoration: todo.completion ? TextDecoration.lineThrough : null,
-            decorationThickness: 2.0,
-          ),
+        title: _buildTitle(context),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 2.0),
+          child: _buildSubtitle(),
         ),
-        subtitle: _buildSubtitle(),
         onTap: () => _onTapAction(context),
       ),
     );
   }
 
+  Widget _buildTitle(BuildContext context) {
+    final List<String> items = todo.description.split(' ')
+      ..removeWhere(
+        (String item) => item.startsWith('due:'),
+      );
+
+    return RichText(
+      text: TextSpan(
+        style: todo.completion
+            ? Theme.of(context).textTheme.titleMedium?.copyWith(
+                  decoration: TextDecoration.lineThrough,
+                  decorationThickness: 4.0,
+                )
+            : Theme.of(context).textTheme.titleMedium,
+        text: '',
+        children: <TextSpan>[
+          for (int i = 0; i < items.length; i++)
+            TextSpan(
+                text: i == items.length - 1 ? items[i] : '${items[i]} ',
+                style: Todo.matchProject(items[i]) ||
+                        Todo.matchContext(items[i]) ||
+                        Todo.matchKeyValue(items[i])
+                    ? const TextStyle(fontWeight: FontWeight.bold)
+                    : null),
+        ],
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
   Widget? _buildSubtitle() {
-    final List<String> items = [
-      if (todo.priority != Priority.none) todo.priority.name,
-      for (String p in todo.fmtProjects) p,
-      for (String c in todo.fmtContexts) c,
-      for (String kv in todo.fmtKeyValues) kv,
-    ]..removeWhere((value) => value.isEmpty);
-
-    if (items.isEmpty) {
-      return null;
-    }
-
-    List<String> shortenedItems;
-    if (items.length > 5) {
-      shortenedItems = items.sublist(0, 5);
-      shortenedItems.add('...');
-    } else {
-      shortenedItems = [...items];
-    }
-
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 4.0, // gap between adjacent chips
-      runSpacing: 4.0, // gap between lines
+      spacing: 2.0, // gap between adjacent chips
+      runSpacing: 2.0, // gap between lines
       children: <Widget>[
-        for (String attr in shortenedItems) BasicChip(label: attr, mono: true),
+        if (todo.priority != Priority.none)
+          BasicIconChip(
+            mono: true,
+            iconData: Icons.flag_outlined,
+            label: todo.priority.name,
+          ),
+        if (todo.creationDate != null)
+          BasicIconChip(
+            mono: true,
+            iconData: Icons.edit_calendar,
+            label: Todo.differenceToToday(todo.creationDate!),
+          ),
+        if (todo.completionDate != null && todo.completion)
+          BasicIconChip(
+            mono: true,
+            iconData: Icons.event_available,
+            label: Todo.differenceToToday(todo.completionDate!),
+          ),
+        if (todo.dueDate != null)
+          BasicIconChip(
+            mono: true,
+            iconData: Icons.event,
+            label: Todo.date2Str(todo.dueDate!)!,
+          )
       ],
     );
   }
