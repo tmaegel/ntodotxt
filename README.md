@@ -27,11 +27,12 @@ This application is under active development and will continue to be modified an
 ## Features
 
 - Manage your todos in [todo.txt](https://github.com/todotxt/todo.txt) format
-- Manage your todos offline if you want
+- Manage your todos locally only if you want
 - Synchronize your todos via webdav with a server of your choice
 - Completely customizable filters
   - Ordering
   - Filter by project, context, priorities and completion
+- Custom path of todo file on device
 
 ## Planned features
 
@@ -40,12 +41,13 @@ This application is under active development and will continue to be modified an
 - [ ] Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
 - [ ] Build and publish to Microsoft Store (Windows)
+- [ ] Add language localization (e.g. english, german)
+- [ ] Custom path of todo file on remote side
+- [ ] Custom todo filename on device and remote side
+- [ ] Import existing todos from file
+- [ ] Export todos to file
+- [ ] Archiving of completed todos (done.txt)
 - [ ] [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
-- [x] Custom todo.txt path (local)
-- [ ] Import existing todo.txt
-- [ ] Add language localization
-- [ ] Archiving of all completed todos (done.txt)
-- [ ] Animations
 
 ## Build
 
@@ -62,5 +64,6 @@ flutter build  # release version
 - [Nextcloud](https://nextcloud.com/) instance or other webdav server running (**webdav-sync only**)
 
 ## Alternatives
+
 There are other note taking apps with the WebDAV support.
-See them in [Awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps)
+See them in [awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps)
