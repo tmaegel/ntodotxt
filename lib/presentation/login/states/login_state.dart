@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-// Keep 'offline' for backward compatibility.
+// @todo: Keep 'offline' for backward compatibility.
 enum Backend { none, local, offline, webdav }
 
 sealed class LoginState extends Equatable {

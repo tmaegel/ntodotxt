@@ -52,6 +52,8 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
           enableSuggestions: false,
           enableIMEPersonalizedLearning: false,
           keyboardType: TextInputType.text,
+          minLines: 1,
+          maxLines: 3,
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r'\n')),
           ],
