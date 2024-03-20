@@ -17,6 +17,7 @@ import 'package:ntodotxt/main.dart';
 import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
+import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/login/states/login_state.dart'
     show LoginLocal, LoginState, LoginWebDAV;
@@ -114,7 +115,7 @@ class AppTester extends StatelessWidget {
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
               defaultLocalPath: appCacheDir,
-            ),
+            )..load(),
           ),
           BlocProvider<DrawerCubit>(
             create: (BuildContext context) => DrawerCubit(),
@@ -124,12 +125,14 @@ class AppTester extends StatelessWidget {
             create: (BuildContext context) => FilterCubit(
               settingRepository: context.read<SettingRepository>(),
               filterRepository: context.read<FilterRepository>(),
-            ),
+            )..load(),
           ),
           BlocProvider<FilterListBloc>(
             create: (BuildContext context) => FilterListBloc(
               repository: context.read<FilterRepository>(),
-            ),
+            )
+              ..add(const FilterListSubscriped())
+              ..add(const FilterListSynchronizationRequested()),
           ),
         ],
         child: Builder(
@@ -161,25 +164,25 @@ void main() async {
       creationDate: today.subtract(const Duration(days: 7)),
       priority: Priority.A,
       description:
-          'Automate the generation of app screenshots +app +learnflutter @development @automation @productivity due:${Todo.date2Str(today.add(const Duration(days: 3)))!}',
+          'Automate the generation of +app screenshots +learnflutter @development @automation @productivity due:${Todo.date2Str(today.add(const Duration(days: 3)))!}',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 14)),
       priority: Priority.B,
       description:
-          'Puplish this app +app +learnflutter @development due:${Todo.date2Str(today.add(const Duration(days: 7)))!}',
+          'Publish this +app +learnflutter @development due:${Todo.date2Str(today.add(const Duration(days: 7)))!}',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 2)),
       description:
-          'Increase test coverage +app +learnflutter @development @testing @productivity',
+          'Increase test +coverage for this +app +learnflutter @development @testing @productivity',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 2)),
       completion: true,
       completionDate: today.subtract(const Duration(days: 1)),
       description:
-          'Write some tests +app +learnflutter @development @testing @productivity',
+          'Write some tests for this +app +learnflutter @development @testing @productivity',
     ),
     Todo(
       creationDate: today.subtract(const Duration(days: 21)),
@@ -250,7 +253,10 @@ void main() async {
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
-        await tester.tap(find.text('Puplish this app'));
+        await tester.tap(find.text(
+          'Publish this +app +learnflutter @development',
+          findRichText: true,
+        ));
         await tester.pumpAndSettle();
 
         await binding.convertFlutterSurfaceToImage();
