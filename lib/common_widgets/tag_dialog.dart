@@ -147,8 +147,20 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                   ),
                 ),
               if (widget.addTags) const Divider(),
-              tags.isNotEmpty
+              tags.isEmpty
                   ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                        ),
+                        title: Text('No ${widget.tagName} tags available.'),
+                      ),
+                    )
+                  : Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 8.0),
                       child: ListTile(
@@ -168,18 +180,6 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                               ),
                           ],
                         ),
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                        ),
-                        title: Text('No ${widget.tagName} tags available.'),
                       ),
                     ),
             ],

@@ -12,7 +12,6 @@ import 'package:ntodotxt/domain/filter/filter_model.dart'
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 
 class FilterOrderChip extends StatelessWidget {
   const FilterOrderChip({super.key});
@@ -140,7 +139,12 @@ class FilterPrioritiesChip extends StatelessWidget {
 }
 
 class FilterProjectsChip extends StatelessWidget {
-  const FilterProjectsChip({super.key});
+  final Set<String> availableTags;
+
+  const FilterProjectsChip({
+    this.availableTags = const {},
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +160,7 @@ class FilterProjectsChip extends StatelessWidget {
             await FilterProjectTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<FilterCubit>(context),
-              availableTags: context.read<TodoListBloc>().state.projects,
+              availableTags: {...availableTags, ...state.filter.projects},
             );
           },
         );
@@ -166,7 +170,12 @@ class FilterProjectsChip extends StatelessWidget {
 }
 
 class FilterContextsChip extends StatelessWidget {
-  const FilterContextsChip({super.key});
+  final Set<String> availableTags;
+
+  const FilterContextsChip({
+    this.availableTags = const {},
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +190,7 @@ class FilterContextsChip extends StatelessWidget {
             await FilterContextTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<FilterCubit>(context),
-              availableTags: context.read<TodoListBloc>().state.contexts,
+              availableTags: {...availableTags, ...state.filter.contexts},
             );
           },
         );
