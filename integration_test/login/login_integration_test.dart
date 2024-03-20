@@ -34,7 +34,9 @@ void main() async {
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
         expect(find.byType(IntroPage), findsOneWidget);
-        await tester.tap(find.text('Local'));
+        await tester.tap(find.byTooltip('Next page'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Use local mode'));
         await tester.pumpAndSettle();
         expect(find.byType(LocalLoginView), findsOneWidget);
         expect(
@@ -48,7 +50,7 @@ void main() async {
           ),
           findsOneWidget,
         );
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(find.byType(App), findsOneWidget);
 
@@ -80,7 +82,11 @@ void main() async {
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
         expect(find.byType(IntroPage), findsOneWidget);
-        await tester.tap(find.text('WebDAV'));
+        await tester.tap(find.byTooltip('Next page'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip('Next page'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Use webdav mode'));
         await tester.pumpAndSettle();
         expect(find.byType(WebDAVLoginView), findsOneWidget);
         expect(
@@ -126,7 +132,7 @@ void main() async {
         await tester.pumpAndSettle();
         await tester.tap(find.byType(AppBar));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Login'));
+        await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
         expect(find.byType(App), findsOneWidget);
 
