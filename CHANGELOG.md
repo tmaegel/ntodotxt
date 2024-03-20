@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2024-03-20
+
+### Added
+
+- Add an intro screen #31
+- Highlights filter chip in a different color if filter has updated
+- Tags can now also occur inline of a todo on the list view
+- Long todos are displayed shortened on the list view
+
+### Changed
+
+- Update login screen #31
+- Refactor initial loading and login routines
+- Add hint if no tags are available on tag dialog
+- Improve error handling and the resulting messages
+
+### Fixed
+
+- Trim whitespaces of filter name before updating
+- Fix issue of todo textfield if todo is very long
+- Fix small style issues
+
 ## [0.6.2] - 2024-03-13
 
 ### Fixed
@@ -230,7 +252,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.6.2...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/tmaegel/ntodotxt/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/tmaegel/ntodotxt/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/tmaegel/ntodotxt/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/tmaegel/ntodotxt/compare/v0.5.1...v0.6.0
