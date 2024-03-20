@@ -93,7 +93,7 @@ class SettingsView extends StatelessWidget {
                 context: context,
                 title: 'Reset and logout',
                 message:
-                    'Do you want to restoret the default settings and logout?',
+                    'Do you want to restore the default settings and logout?',
                 actionLabel: 'Logout',
               );
               if (context.mounted && confirm) {

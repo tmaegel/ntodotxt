@@ -1,5 +1,6 @@
 import 'dart:convert' show utf8;
 
+import 'package:dio/dio.dart';
 import 'package:ntodotxt/main.dart' show log;
 import 'package:webdav_client/webdav_client.dart' as webdav;
 
@@ -47,12 +48,94 @@ class WebDAVClient {
     client.setReceiveTimeout(15000);
   }
 
+  (String, String) _handleDioError(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return ('Timeout', 'Timeout occurred while sending or receiving');
+      case DioExceptionType.badResponse:
+        final statusCode = error.response?.statusCode;
+        if (statusCode != null) {
+          switch (statusCode) {
+            case 400:
+              return (
+                'Bad Request',
+                'Something went wrong',
+              );
+            case 401:
+              return (
+                'Unauthorized',
+                'It seems that the credentials are incorrect',
+              );
+            case 403:
+              return (
+                'Forbidden',
+                'The request was rejected by the server',
+              );
+            case 404:
+              return (
+                'Not Found',
+                'The requested resource could not be found',
+              );
+            case 405:
+              return (
+                'Method Not Allowed',
+                'The request method is not supported for the requested resource',
+              );
+            case 409:
+              return (
+                'Conflict',
+                'The request could not be processed because of conflict in the current state of the resource',
+              );
+            case 500:
+              return (
+                'Internal Server Error',
+                'An unexpected error was encountered',
+              );
+          }
+        }
+        break;
+      case DioExceptionType.cancel:
+        break;
+      case DioExceptionType.unknown:
+        return (
+          'Unknown Error',
+          'Server cannot be reached',
+        );
+      case DioExceptionType.badCertificate:
+        return (
+          'Internal Server Error',
+          'The certificate is invalid',
+        );
+      case DioExceptionType.connectionError:
+        return (
+          'Connection Error',
+          'Server cannot be reached',
+        );
+      default:
+        return (
+          'Unknown Error',
+          'Something went wrong',
+        );
+    }
+
+    return (
+      'Unknown Error',
+      'Something went wrong',
+    );
+  }
+
   Future<void> ping() async {
     try {
       await client.ping();
+    } on DioException catch (e) {
+      log.severe(e);
+      final (String, String) error = _handleDioError(e);
+      throw WebDAVClientException('${error.$1}: ${error.$2}');
     } on Exception catch (e) {
       log.severe(e);
-      throw const WebDAVClientException('Server cannot be reached');
+      throw const WebDAVClientException('Unknown Error: Something went wrong');
     }
   }
 

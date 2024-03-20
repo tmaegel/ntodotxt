@@ -15,6 +15,7 @@ dependencies:
     sdk: flutter
   collection: ^1.17.2
   cupertino_icons: ^1.0.6
+  dio: ^5.1.0
   equatable: ^2.0.5
   file_picker: ^6.1.1
   flex_color_scheme: ^7.3.1

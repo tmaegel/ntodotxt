@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 
 // @todo: Keep 'offline' for backward compatibility.
@@ -144,13 +146,17 @@ final class LoginWebDAV extends LoginState {
 }
 
 final class LoginError extends LoginState {
+  /// Random id to force updates/rebuilds
+  /// if there occure the same errors in row.
+  final int id;
+
   /// Error message.
   final String message;
 
-  const LoginError({
+  LoginError({
     required this.message,
     super.backend,
-  });
+  }) : id = Random().nextInt(999);
 
   @override
   LoginError copyWith({
@@ -160,7 +166,9 @@ final class LoginError extends LoginState {
 
   @override
   List<Object> get props => [
+        id,
         backend,
+        message,
       ];
 
   @override
