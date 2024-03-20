@@ -132,7 +132,11 @@ class FilterListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       key: ValueKey<int>(filter.id!),
-      title: Text(filter.name),
+      title: Text(
+        filter.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: _buildSubtitle(),
       onTap: () => context.pushNamed('filter-edit', extra: filter),
     );

@@ -76,7 +76,11 @@ class NavigationRailDrawer extends StatelessWidget {
               destinations: <NavigationRailDestination>[
                 for (DrawerDestination d in destinations)
                   NavigationRailDestination(
-                    label: Text(d.label),
+                    label: Text(
+                      d.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     icon: d.icon,
                     selectedIcon: d.selectedIcon,
                   ),
@@ -154,7 +158,11 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                               leading: drawerState.index == index
                                   ? d.selectedIcon
                                   : d.icon,
-                              title: Text(d.label),
+                              title: Text(
+                                d.label,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               shape: const StadiumBorder(),
                               onTap: () {
                                 // Navigate if location will be changed only.
