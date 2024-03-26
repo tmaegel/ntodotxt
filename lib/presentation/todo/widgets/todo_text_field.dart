@@ -48,12 +48,9 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
         return TextFormField(
           key: _textFormKey,
           controller: _controller,
-          enableInteractiveSelection: true,
-          enableSuggestions: false,
-          enableIMEPersonalizedLearning: false,
-          keyboardType: TextInputType.text,
           minLines: 1,
           maxLines: 3,
+          keyboardType: TextInputType.text,
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r'\n')),
           ],

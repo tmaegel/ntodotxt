@@ -139,9 +139,6 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
           controller: _controller,
           minLines: 1,
           maxLines: 1,
-          enableInteractiveSelection: true,
-          enableSuggestions: false,
-          enableIMEPersonalizedLearning: false,
           keyboardType: TextInputType.text,
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r'\n')),

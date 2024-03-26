@@ -69,9 +69,6 @@ class _TodoSearchViewState extends State<TodoSearchView> {
   Widget _buildSearchField(BuildContext context) {
     return TextFormField(
       controller: _controller,
-      enableInteractiveSelection: true,
-      enableSuggestions: false,
-      enableIMEPersonalizedLearning: false,
       keyboardType: TextInputType.text,
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'\n')),
