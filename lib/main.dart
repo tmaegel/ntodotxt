@@ -237,9 +237,13 @@ class InitialApp extends StatelessWidget {
   }
 
   Widget _loadingScreen() {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Loading'),
+        child: FractionallySizedBox(
+          widthFactor: 0.5,
+          heightFactor: 0.5,
+          child: Image.asset('assets/icon/icon.png'),
+        ),
       ),
     );
   }

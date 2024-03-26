@@ -51,6 +51,8 @@ flutter_launcher_icons:
   min_sdk_android: 21
 
 flutter:
+  assets:
+    - assets/icon/icon.png
   fonts:
     - family: OpenSans
       fonts:
