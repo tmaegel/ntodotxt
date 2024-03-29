@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,16 +5,15 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
 import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
+import 'package:ntodotxt/common_widgets/info_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
-import 'package:ntodotxt/misc.dart' show PlatformInfo, PopScopeDrawer;
+import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
 import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -42,21 +40,7 @@ class SettingsView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             title: Text(
-              'Todo.txt',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
-          child: LocalPathSettingsItem(),
-        ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: Text(
-              'Display',
+              'Filter',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
@@ -78,7 +62,25 @@ class SettingsView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
             title: Text(
-              'Reset',
+              'Storage',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: LocalFilenameSettingsItem(),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: LocalPathSettingsItem(),
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: Text(
+              'App',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
@@ -86,27 +88,18 @@ class SettingsView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
-            title: const Text('Reset and logout'),
-            subtitle: const Text('Restore default settings and logout.'),
+            title: const Text('Reinitialization'),
+            subtitle: const Text('Reinitialization of the app.'),
             onTap: () async {
               final bool confirm = await ConfirmationDialog.dialog(
                 context: context,
-                title: 'Reset and logout',
-                message:
-                    'Do you want to restore the default settings and logout?',
-                actionLabel: 'Logout',
+                title: 'Reinitialization',
+                message: 'Do you want to reinitializate the app?',
+                actionLabel: 'Reninitialize',
               );
               if (context.mounted && confirm) {
                 context.read<DrawerCubit>().reset();
-                if (context.mounted) {
-                  await context.read<FilterCubit>().resetToDefaults();
-                }
-                if (context.mounted) {
-                  await context.read<LoginCubit>().logout();
-                }
-                if (context.mounted) {
-                  await context.read<TodoFileCubit>().resetToDefaults();
-                }
+                await context.read<LoginCubit>().logout();
               }
             },
           ),
@@ -211,28 +204,42 @@ class LocalPathSettingsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoFileCubit, TodoFileState>(
+      buildWhen: (TodoFileState previousState, TodoFileState state) =>
+          previousState.localPath != state.localPath,
       builder: (BuildContext context, TodoFileState state) {
         return ListTile(
           title: const Text('Local path'),
-          subtitle: Text(state.localPath ?? '-'),
-          onTap: () async {
-            if (!PlatformInfo.isAppOS ||
-                await Permission.manageExternalStorage.request().isGranted) {
-              String fallbackDirectory =
-                  (await getApplicationCacheDirectory()).path;
-              String? selectedDirectory =
-                  await FilePicker.platform.getDirectoryPath();
-              if (context.mounted) {
-                context.read<DrawerCubit>().reset();
-              }
-              if (context.mounted) {
-                // If user canceled the directory picker use app cache directory as fallback.
-                await context.read<TodoFileCubit>().updateLocalPath(
-                    selectedDirectory ??
-                        (state.localPath ?? fallbackDirectory));
-              }
-            }
-          },
+          subtitle: Text(state.localPath),
+          onTap: () => InfoDialog.dialog(
+            context: context,
+            title: 'Local path',
+            message:
+                'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
+          ),
+        );
+      },
+    );
+  }
+}
+
+class LocalFilenameSettingsItem extends StatelessWidget {
+  const LocalFilenameSettingsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoFileCubit, TodoFileState>(
+      buildWhen: (TodoFileState previousState, TodoFileState state) =>
+          previousState.localFilename != state.localFilename,
+      builder: (BuildContext context, TodoFileState state) {
+        return ListTile(
+          title: const Text('Local filename'),
+          subtitle: Text(state.localFilename),
+          onTap: () => InfoDialog.dialog(
+            context: context,
+            title: 'Local filename',
+            message:
+                'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
+          ),
         );
       },
     );

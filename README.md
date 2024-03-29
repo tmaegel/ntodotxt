@@ -32,7 +32,7 @@ This application is under active development and will continue to be modified an
 - Completely customizable filters
   - Ordering
   - Filter by project, context, priorities and completion
-- Custom path of todo file on device
+- Custom path and filename of todo file on device
 
 ## Planned features
 
@@ -43,7 +43,7 @@ This application is under active development and will continue to be modified an
 - [ ] Build and publish to Microsoft Store (Windows)
 - [ ] Add language localization (e.g. english, german)
 - [ ] Custom path of todo file on remote side
-- [ ] Custom todo filename on device and remote side
+- [ ] Custom todo filename remote side
 - [ ] Import existing todos from file
 - [ ] Export todos to file
 - [ ] Archiving of completed todos (done.txt)

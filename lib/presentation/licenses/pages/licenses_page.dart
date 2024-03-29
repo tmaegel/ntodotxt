@@ -20,7 +20,7 @@ class LicenseListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       itemCount: ossLicenses.length,
       itemBuilder: (BuildContext context, int index) {
         Package package = ossLicenses[index];

@@ -30,7 +30,11 @@ class MaterialAppWebDAVLoginView extends StatelessWidget {
         create: (BuildContext context) => TodoFileCubit(
           repository: context.read<SettingRepository>(),
           defaultLocalPath: '/',
-          state: const TodoFileReady(localPath: '/', remotePath: '/'),
+          state: const TodoFileReady(
+            localPath: '/',
+            localFilename: 'todo.txt',
+            remotePath: '/',
+          ),
         )..load(),
         child: Builder(
           builder: (BuildContext context) {

@@ -61,13 +61,13 @@ void main() async {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(find.text('Reset and logout'), 500);
-        await tester.tap(find.text('Reset and logout'));
+        await tester.scrollUntilVisible(find.text('Reinitialization'), 500);
+        await tester.tap(find.text('Reinitialization'));
         await tester.pumpAndSettle();
         await tester.tap(
           find.descendant(
             of: find.byType(AlertDialog),
-            matching: find.text('Logout'),
+            matching: find.text('Reninitialize'),
           ),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
@@ -143,13 +143,14 @@ void main() async {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(find.text('Reset and logout'), 500);
-        await tester.tap(find.text('Reset and logout'));
+
+        await tester.scrollUntilVisible(find.text('Reinitialization'), 500);
+        await tester.tap(find.text('Reinitialization'));
         await tester.pumpAndSettle();
         await tester.tap(
           find.descendant(
             of: find.byType(AlertDialog),
-            matching: find.text('Logout'),
+            matching: find.text('Reninitialize'),
           ),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));

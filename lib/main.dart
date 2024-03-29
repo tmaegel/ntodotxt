@@ -304,7 +304,7 @@ class CoreApp extends StatelessWidget {
       LoginState loginState, TodoFileState todoFileState) {
     late TodoListApi api;
     File todoFile = File(
-        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.todoFilename}');
+        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.localFilename}');
     log.info('Use todo file ${todoFile.path}');
     switch (loginState) {
       case LoginLocal():

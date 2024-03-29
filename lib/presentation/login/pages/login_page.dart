@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/info_dialog.dart';
+import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
 import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class LocalLoginView extends StatefulWidget {
@@ -26,34 +27,41 @@ class _LocalLoginViewState extends State<LocalLoginView> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(
-            titleSpacing: 0.0,
-            title: const Text('Local'),
-          ),
+          appBar: const MainAppBar(title: 'Local'),
           body: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            children: const [
-              LocalPathInput(),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            children: [
+              ListTile(
+                title: Text(
+                  'Local storage',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              const LocalFilenameInput(),
+              const LocalPathInput(),
             ],
           ),
           floatingActionButton: BlocBuilder<TodoFileCubit, TodoFileState>(
             builder: (BuildContext context, TodoFileState state) {
-              return FloatingActionButton.extended(
-                heroTag: 'localUsage',
-                icon: const Icon(Icons.done),
-                label: const Text('Apply'),
-                tooltip: 'Apply',
-                onPressed: () async {
-                  try {
-                    setState(() => loading = true);
-                    await context.read<LoginCubit>().loginLocal(
-                          todoFile: File(
-                              '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
-                        );
-                  } finally {
-                    setState(() => loading = false);
-                  }
-                },
+              return Visibility(
+                visible: state is! TodoFileLoading,
+                child: FloatingActionButton.extended(
+                  heroTag: 'localUsage',
+                  icon: const Icon(Icons.done),
+                  label: const Text('Apply'),
+                  tooltip: 'Apply',
+                  onPressed: () async {
+                    try {
+                      setState(() => loading = true);
+                      await context.read<LoginCubit>().loginLocal(
+                            todoFile: File(
+                                '${state.localPath}${Platform.pathSeparator}${state.localFilename}'),
+                          );
+                    } finally {
+                      setState(() => loading = false);
+                    }
+                  },
+                ),
               );
             },
           ),
@@ -130,20 +138,19 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
       child: Stack(
         children: [
           Scaffold(
-            appBar: AppBar(
-              titleSpacing: 0.0,
-              title: const Text('WebDAV'),
-            ),
+            appBar: const MainAppBar(title: 'WebDAV'),
             body: Form(
               key: formKey,
               child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 children: [
-                  const LocalPathInput(),
-                  const Divider(),
                   ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    title: Text(
+                      'Remote storage',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.dns),
                     title: TextFormField(
                       controller: serverTextFieldController,
@@ -175,7 +182,6 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                     ),
                   ),
                   ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                     leading: const Icon(Icons.http),
                     title: TextFormField(
                       controller: baseUrlTextFieldController,
@@ -198,7 +204,6 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                     ),
                   ),
                   ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                     leading: const Icon(Icons.person),
                     title: TextFormField(
                       controller: usernameTextFieldController,
@@ -221,7 +226,6 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                     ),
                   ),
                   ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                     leading: const Icon(Icons.password),
                     title: TextFormField(
                       controller: passwordTextFieldController,
@@ -244,6 +248,15 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                       },
                     ),
                   ),
+                  const Divider(),
+                  ListTile(
+                    title: Text(
+                      'Local storage',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                  const LocalFilenameInput(),
+                  const LocalPathInput(),
                 ],
               ),
             ),
@@ -262,7 +275,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                               setState(() => loading = true);
                               await context.read<LoginCubit>().loginWebDAV(
                                     todoFile: File(
-                                        '${state.localPath}${Platform.pathSeparator}${state.todoFilename}'),
+                                        '${state.localPath}${Platform.pathSeparator}${state.localFilename}'),
                                     server: serverAddr,
                                     baseUrl: baseUrl,
                                     username: username,
@@ -302,15 +315,12 @@ class LocalPathInput extends StatelessWidget {
           previousState.localPath != state.localPath,
       builder: (BuildContext context, TodoFileState state) {
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.folder),
           title: Text(
             'Local path',
-            style: state.localPath == null
-                ? null
-                : Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
-          subtitle: state.localPath != null ? Text(state.localPath!) : null,
+          subtitle: Text(state.localPath),
           trailing: IconButton(
             icon: const Icon(Icons.help_outline),
             onPressed: () => InfoDialog.dialog(
@@ -324,18 +334,81 @@ Use this option if it's important to you where your todos are stored on your dev
           onTap: () async {
             if (!PlatformInfo.isAppOS ||
                 await Permission.manageExternalStorage.request().isGranted) {
-              String fallbackDirectory =
-                  (await getApplicationCacheDirectory()).path;
               String? selectedDirectory =
                   await FilePicker.platform.getDirectoryPath();
               if (context.mounted) {
                 // If user canceled the directory picker use app cache directory as fallback.
-                await context.read<TodoFileCubit>().updateLocalPath(
-                    selectedDirectory ??
-                        (state.localPath ?? fallbackDirectory));
+                await context
+                    .read<TodoFileCubit>()
+                    .saveLocalPath(selectedDirectory ?? state.localPath);
               }
             }
           },
+        );
+      },
+    );
+  }
+}
+
+class LocalFilenameInput extends StatefulWidget {
+  const LocalFilenameInput({super.key});
+
+  @override
+  State<LocalFilenameInput> createState() => _LocalFilenameInputState();
+}
+
+class _LocalFilenameInputState extends State<LocalFilenameInput> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoFileCubit, TodoFileState>(
+      builder: (BuildContext context, TodoFileState state) {
+        controller.text = state.localFilename;
+        return ListTile(
+          leading: const Icon(Icons.description),
+          title: TextFormField(
+            controller: controller,
+            style: Theme.of(context).textTheme.bodyMedium,
+            decoration: const InputDecoration(
+              labelText: 'Local filename',
+              hintText: defaultTodoFilename,
+            ),
+            onChanged: (String value) =>
+                context.read<TodoFileCubit>().updateLocalFilename(value),
+          ),
+          trailing: state is! TodoFileLoading
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.save),
+                  onPressed: () async {
+                    if (controller.text.isEmpty) {
+                      SnackBarHandler.info(
+                        context,
+                        'Empty local filename is not allowed. Using default one.',
+                      );
+                      await context
+                          .read<TodoFileCubit>()
+                          .saveLocalFilename(defaultTodoFilename);
+                    } else {
+                      await context
+                          .read<TodoFileCubit>()
+                          .saveLocalFilename(controller.text);
+                    }
+                  },
+                ),
         );
       },
     );

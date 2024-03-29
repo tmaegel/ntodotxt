@@ -33,7 +33,7 @@ final ThemeData lightTheme = light.copyWith(
   listTileTheme: light.listTileTheme.copyWith(
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
@@ -87,7 +87,7 @@ final ThemeData darkTheme = dark.copyWith(
   listTileTheme: dark.listTileTheme.copyWith(
     selectedColor: dark.textTheme.bodySmall?.color,
     selectedTileColor: dark.hoverColor,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),

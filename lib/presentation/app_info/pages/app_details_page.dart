@@ -28,7 +28,6 @@ class AppInfoView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       children: [
         ListTile(
-          // Overwrite the default in themeData
           contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.update),
           title: const Text('Version'),

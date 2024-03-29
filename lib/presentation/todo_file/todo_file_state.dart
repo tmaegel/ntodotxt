@@ -1,32 +1,36 @@
 import 'package:equatable/equatable.dart';
 
 sealed class TodoFileState extends Equatable {
-  final String todoFilename;
-  final String? localPath;
+  final String localFilename;
+  final String localPath;
   final String? remotePath;
 
   const TodoFileState({
-    this.todoFilename = 'todo.txt',
-    this.localPath,
+    required this.localFilename,
+    required this.localPath,
     this.remotePath,
   });
 
   TodoFileLoading load({
     String? localPath,
+    String? localFilename,
     String? remotePath,
   }) {
     return TodoFileLoading(
       localPath: localPath ?? this.localPath,
+      localFilename: localFilename ?? this.localFilename,
       remotePath: remotePath ?? this.remotePath,
     );
   }
 
   TodoFileReady ready({
     String? localPath,
+    String? localFilename,
     String? remotePath,
   }) {
     return TodoFileReady(
       localPath: localPath ?? this.localPath,
+      localFilename: localFilename ?? this.localFilename,
       remotePath: remotePath ?? this.remotePath,
     );
   }
@@ -34,69 +38,75 @@ sealed class TodoFileState extends Equatable {
   TodoFileError error({
     required String message,
     String? localPath,
+    String? localFilename,
     String? remotePath,
   }) {
     return TodoFileError(
       message: message,
       localPath: localPath ?? this.localPath,
+      localFilename: localFilename ?? this.localFilename,
       remotePath: remotePath ?? this.remotePath,
     );
   }
 
   @override
   List<Object?> get props => [
-        todoFilename,
+        localFilename,
         localPath,
         remotePath,
       ];
 
   @override
   String toString() =>
-      'TodoFileState { todoFilename $todoFilename localPath: $localPath remotePath: $remotePath }';
+      'TodoFileState { localFile $localPath/$localFilename remotePath: $remotePath }';
 }
 
 final class TodoFileLoading extends TodoFileState {
   const TodoFileLoading({
-    super.todoFilename,
-    super.localPath,
+    required super.localFilename,
+    required super.localPath,
     super.remotePath,
   });
 
   TodoFileLoading copyWith({
     String? localPath,
+    String? localFilename,
     String? remotePath,
   }) {
     return TodoFileLoading(
       localPath: localPath ?? this.localPath,
+      localFilename: localFilename ?? this.localFilename,
       remotePath: remotePath ?? this.remotePath,
     );
   }
 
   @override
   String toString() =>
-      'TodoFileLoading { todoFilename: $todoFilename localPath: $localPath remotePath: $remotePath }';
+      'TodoFileLoading { localFile $localPath/$localFilename remotePath: $remotePath }';
 }
 
 final class TodoFileReady extends TodoFileState {
   const TodoFileReady({
-    super.todoFilename,
-    super.localPath,
+    required super.localFilename,
+    required super.localPath,
     super.remotePath,
   });
 
   TodoFileReady copyWith({
     String? localPath,
+    String? localFilename,
     String? remotePath,
   }) {
     return TodoFileReady(
       localPath: localPath ?? this.localPath,
+      localFilename: localFilename ?? this.localFilename,
       remotePath: remotePath ?? this.remotePath,
     );
   }
 
   @override
   String toString() =>
-      'TodoFileReady { todoFilename: $todoFilename localPath: $localPath remotePath: $remotePath }';
+      'TodoFileReady { localFile $localPath/$localFilename remotePath: $remotePath }';
 }
 
 final class TodoFileError extends TodoFileState {
@@ -104,19 +114,21 @@ final class TodoFileError extends TodoFileState {
 
   const TodoFileError({
     required this.message,
-    super.todoFilename,
-    super.localPath,
+    required super.localFilename,
+    required super.localPath,
     super.remotePath,
   });
 
   TodoFileError copyWith({
     String? message,
     String? localPath,
+    String? localFilename,
     String? remotePath,
   }) {
     return TodoFileError(
       message: message ?? this.message,
       localPath: localPath ?? this.localPath,
+      localFilename: localFilename ?? this.localFilename,
       remotePath: remotePath ?? this.remotePath,
     );
   }
@@ -124,12 +136,12 @@ final class TodoFileError extends TodoFileState {
   @override
   List<Object?> get props => [
         message,
-        todoFilename,
+        localFilename,
         localPath,
         remotePath,
       ];
 
   @override
   String toString() =>
-      'TodoFileError { message $message todoFilename: $todoFilename localPath: $localPath remotePath: $remotePath }';
+      'TodoFileError { message $message localFile $localPath/$localFilename remotePath: $remotePath }';
 }

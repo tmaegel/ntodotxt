@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
@@ -14,7 +15,11 @@ class TodoFileCubit extends Cubit<TodoFileState> {
     required this.repository,
     required this.defaultLocalPath,
     TodoFileState? state,
-  }) : super(state ?? TodoFileLoading(localPath: defaultLocalPath));
+  }) : super(state ??
+            TodoFileLoading(
+              localPath: defaultLocalPath,
+              localFilename: defaultTodoFilename,
+            ));
 
   Future<void> checkPermission(String filename) async {
     try {
@@ -27,24 +32,35 @@ class TodoFileCubit extends Cubit<TodoFileState> {
   Future<void> load() async {
     try {
       final Setting? localPath = await repository.get(key: 'localPath');
-      if (localPath == null) {
-        await repository.insert(
-          Setting(key: 'localPath', value: defaultLocalPath),
-        );
-        await checkPermission(
-            '$defaultLocalPath${Platform.pathSeparator}${state.todoFilename}');
-        emit(state.ready(localPath: defaultLocalPath));
-      } else {
-        await checkPermission(
-            '${localPath.value}${Platform.pathSeparator}${state.todoFilename}');
-        emit(state.ready(localPath: localPath.value));
+      final Setting? localFilename = await repository.get(key: 'localFilename');
+      if (localFilename != null) {
+        emit(state.load(localFilename: localFilename.value));
       }
+      if (localPath != null) {
+        emit(state.load(localPath: localPath.value));
+      }
+      await checkPermission(
+        '${state.localPath}${Platform.pathSeparator}${state.localFilename}',
+      );
+      emit(state.ready());
     } on Exception catch (e) {
-      emit(state.error(localPath: defaultLocalPath, message: e.toString()));
+      emit(
+        state.error(
+          message: e.toString(),
+          localPath: defaultLocalPath,
+          localFilename: defaultTodoFilename,
+        ),
+      );
     }
   }
 
   Future<void> updateLocalPath(String? value) async {
+    if (value != null) {
+      emit(state.load(localPath: value));
+    }
+  }
+
+  Future<void> saveLocalPath(String? value) async {
     try {
       if (value != null) {
         await repository.updateOrInsert(
@@ -53,11 +69,46 @@ class TodoFileCubit extends Cubit<TodoFileState> {
         emit(state.ready(localPath: value));
       }
     } on Exception catch (e) {
-      emit(state.error(localPath: value, message: e.toString()));
+      emit(
+        state.error(
+          message: e.toString(),
+          localPath: value,
+        ),
+      );
+    }
+  }
+
+  Future<void> updateLocalFilename(String? value) async {
+    if (value != null) {
+      emit(state.load(localFilename: value));
+    }
+  }
+
+  Future<void> saveLocalFilename(String? value) async {
+    try {
+      if (value != null) {
+        await repository.updateOrInsert(
+          Setting(key: 'localFilename', value: value),
+        );
+        emit(state.ready(localFilename: value));
+      }
+    } on Exception catch (e) {
+      emit(
+        state.error(
+          message: e.toString(),
+          localFilename: value,
+        ),
+      );
     }
   }
 
   Future<void> updateRemotePath(String? value) async {
+    if (value != null) {
+      emit(state.load(remotePath: value));
+    }
+  }
+
+  Future<void> saveRemotePath(String? value) async {
     try {
       if (value != null) {
         await repository.updateOrInsert(
@@ -72,10 +123,19 @@ class TodoFileCubit extends Cubit<TodoFileState> {
 
   Future<void> resetToDefaults() async {
     try {
-      for (var k in ['localPath', 'remotePath']) {
+      for (var k in [
+        'localPath',
+        'localFilename',
+        'remotePath',
+      ]) {
         await repository.delete(key: k);
       }
-      emit(TodoFileLoading(localPath: defaultLocalPath));
+      emit(
+        TodoFileLoading(
+          localPath: defaultLocalPath,
+          localFilename: defaultTodoFilename,
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
