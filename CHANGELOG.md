@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2024-04-01
+
+### Added
+
+- Custome file name of the local todo file while initialization of the app #35
+
+### Changed
+
+- File name and path can no longer be changed after initializing the app #35
+- Update splash screen
+
 ## [0.7.1] - 2024-03-26
 
 ### Changed
@@ -258,7 +269,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.7.1...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/tmaegel/ntodotxt/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/tmaegel/ntodotxt/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/tmaegel/ntodotxt/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/tmaegel/ntodotxt/compare/v0.6.1...v0.6.2
