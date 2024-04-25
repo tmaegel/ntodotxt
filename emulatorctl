@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+function show_usage() {
+  echo "Usage:
+    $(basename "$") [options]"
+  echo ""
+  echo "Options:
+    -r        Run emulator
+    -e        Exit emulator
+    -v [api]  Anroid API
+    -h        Display this message"
+}
+
+if [[ $# -eq 0 ]]; then
+  show_usage
+  exit 1
+fi
+
+ACTION=0
+ANDROID_API=34
+
+while getopts ":hrev:" arg; do
+  case "${arg}" in
+    r)
+      ACTION="run"
+      ;;
+    e)
+      ACTION="exit"
+      ;;
+    v)
+      ANDROID_API="${OPTARG}"
+      ;;
+    h | *)
+      show_usage
+      exit 0
+      ;;
+  esac
+done
+
+if [[ ${ACTION} == "run" ]]; then
+  echo "Starting emulator ..."
+  flutter emulators --launch "Android_API_${ANDROID_API}"
+elif [[ ${ACTION} == "exit" ]]; then
+  echo "Stopping emulator ..."
+  adb emu kill
+fi
+
+exit 0

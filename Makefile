@@ -34,12 +34,6 @@ integration_env_configure:
 integration_env_stop:
 	docker stop nextcloud_local
 
-emulator_start:
-	flutter emulators --launch "Pixel_7_API_34_extension_level_7_x86_64"
-
-emulator_stop:
-	adb emu kill
-
 screenshots:
 	flutter emulators --launch "Pixel_7_API_34_extension_level_7_x86_64" && sleep 10
 	flutter drive \

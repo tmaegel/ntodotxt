@@ -333,7 +333,8 @@ Use this option if it's important to you where your todos are stored on your dev
           ),
           onTap: () async {
             if (!PlatformInfo.isAppOS ||
-                await Permission.manageExternalStorage.request().isGranted) {
+                await Permission.manageExternalStorage.request().isGranted ||
+                await Permission.storage.request().isGranted) {
               String? selectedDirectory =
                   await FilePicker.platform.getDirectoryPath();
               if (context.mounted) {
