@@ -3,7 +3,35 @@ import 'dart:math';
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 
-enum Priority { none, A, B, C, D, E, F }
+enum Priority {
+  none,
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+  N,
+  O,
+  P,
+  Q,
+  R,
+  S,
+  T,
+  U,
+  V,
+  W,
+  X,
+  Y,
+  Z
+}
 
 extension Priorities on Priority {
   static Set<Priority> get priorities => {
@@ -71,7 +99,7 @@ extension Priorities on Priority {
 class Todo extends Equatable {
   static final RegExp patternWord = RegExp(r'^\S+$');
   // Limit priorities from A-F.
-  static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-F])\)$');
+  static final RegExp patternPriority = RegExp(r'^\((?<priority>[A-Z])\)$');
   static final RegExp patternDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static final RegExp patternProject = RegExp(r'^\+\S+$');
   static final RegExp patternContext = RegExp(r'^\@\S+$');

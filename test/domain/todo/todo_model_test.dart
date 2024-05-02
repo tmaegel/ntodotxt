@@ -309,6 +309,10 @@ void main() {
           );
           expect(todo.priority, Priority.A);
         });
+        test('incompleted todo with very low priority', () {
+          final todo = Todo.fromString(value: '(Z) Todo');
+          expect(todo.priority, Priority.Z);
+        });
         test('completed short todo (RangeError)', () {
           final todo = Todo.fromString(value: 'x 2022-11-16 (A) Todo');
           expect(todo.priority, Priority.A);
@@ -324,6 +328,10 @@ void main() {
                 'x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31',
           );
           expect(todo.priority, Priority.A);
+        });
+        test('completed todo with very low priority', () {
+          final todo = Todo.fromString(value: 'x 2022-11-16 (Z) Todo');
+          expect(todo.priority, Priority.Z);
         });
       });
       group('without priority', () {
