@@ -7,21 +7,27 @@ void main() {
   group('todo Todo()', () {
     group('completion & completionDate', () {
       test('initial incompleted', () {
-        final todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.completion, false);
         expect(todo.completionDate, null);
       });
       test('initial completed', () {
         final DateTime now = DateTime.now();
-        final todo = Todo(completion: true, description: 'Write some tests');
+        final Todo todo = Todo(
+          completion: true,
+          description: 'Write some tests',
+        );
         expect(todo.completion, true);
         expect(todo.completionDate, DateTime(now.year, now.month, now.day));
       });
       test('initial completed & completionDate', () {
-        final todo = Todo(
-            completion: true,
-            completionDate: DateTime(1970, 1, 1),
-            description: 'Write some tests');
+        final Todo todo = Todo(
+          completion: true,
+          completionDate: DateTime(1970, 1, 1),
+          description: 'Write some tests',
+        );
         expect(todo.completion, true);
         expect(todo.completionDate, DateTime(1970, 1, 1));
       });
@@ -29,11 +35,13 @@ void main() {
 
     group('priority', () {
       test('no initial priority', () {
-        final todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.priority, Priority.none);
       });
       test('with initial priority', () {
-        final todo = Todo(
+        final Todo todo = Todo(
           priority: Priority.A,
           description: 'Write some tests',
         );
@@ -44,56 +52,75 @@ void main() {
     group('creationDate', () {
       test('no initial creationDate', () {
         final DateTime now = DateTime.now();
-        final todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.creationDate, DateTime(now.year, now.month, now.day));
       });
       test('with initial creationDate', () {
         final DateTime now = DateTime.now();
-        final todo = Todo(creationDate: now, description: 'Write some tests');
+        final Todo todo = Todo(
+          creationDate: now,
+          description: 'Write some tests',
+        );
         expect(todo.creationDate, DateTime(now.year, now.month, now.day));
       });
     });
 
     group('description', () {
       test('no initial description', () {
-        final todo = Todo();
+        final Todo todo = Todo();
         expect(todo.description, '');
       });
       test('with initial description', () {
-        final todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.description, 'Write some tests');
       });
     });
 
     group('projects', () {
       test('no initial projects', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.projects, []);
       });
       test('with initial projects', () {
-        final Todo todo = Todo(description: 'Write some tests +project1');
+        final Todo todo = Todo(
+          description: 'Write some tests +project1',
+        );
         expect(todo.projects, {'project1'});
       });
     });
 
     group('contexts', () {
       test('no initial contexts', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.contexts, []);
       });
       test('with initial contexts', () {
-        final Todo todo = Todo(description: 'Write some tests @context1');
+        final Todo todo = Todo(
+          description: 'Write some tests @context1',
+        );
         expect(todo.contexts, {'context1'});
       });
     });
 
     group('keyValues', () {
       test('no initial keyValues', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         expect(todo.keyValues, []);
       });
       test('with initial keyValues', () {
-        final Todo todo = Todo(description: 'Write some tests key:value');
+        final Todo todo = Todo(
+          description: 'Write some tests key:value',
+        );
         expect(todo.keyValues, {'key:value'});
       });
     });
@@ -103,21 +130,27 @@ void main() {
     group('completion & completionDate', () {
       test('set completion', () {
         final DateTime now = DateTime.now();
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(completion: true);
         expect(todo2.completion, true);
         expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
       });
       test('set completion & completionDate', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(
             completion: true, completionDate: DateTime(1970, 1, 1));
         expect(todo2.completion, true);
         expect(todo2.completionDate, DateTime(1970, 1, 1));
       });
       test('unset completion', () {
-        final Todo todo =
-            Todo(completion: true, description: 'Write some tests');
+        final Todo todo = Todo(
+          completion: true,
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(completion: false);
         expect(todo2.completion, false);
         expect(todo2.completionDate, null);
@@ -126,7 +159,9 @@ void main() {
 
     group('priority', () {
       test('set priority', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(priority: Priority.A);
         expect(todo2.priority, Priority.A);
       });
@@ -144,12 +179,16 @@ void main() {
 
     group('description', () {
       test('set description', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(description: 'Write more tests');
         expect(todo2.description, 'Write more tests');
       });
       test('unset description', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(description: '');
         expect(todo2.description, '');
       });
@@ -157,12 +196,16 @@ void main() {
 
     group('projects', () {
       test('set projects', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(description: 'Write some tests +project2');
         expect(todo2.projects, {'project2'});
       });
       test('unset projects', () {
-        final Todo todo = Todo(description: 'Write some tests +project2');
+        final Todo todo = Todo(
+          description: 'Write some tests +project2',
+        );
         final todo2 = todo.copyWith(description: 'Write some tests');
         expect(todo2.projects, []);
       });
@@ -170,12 +213,16 @@ void main() {
 
     group('contexts', () {
       test('set contexts', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(description: 'Write some tests @context2');
         expect(todo2.contexts, {'context2'});
       });
       test('unset contexts', () {
-        final Todo todo = Todo(description: 'Write some tests @context2');
+        final Todo todo = Todo(
+          description: 'Write some tests @context2',
+        );
         final todo2 = todo.copyWith(description: 'Write some tests');
         expect(todo2.contexts, []);
       });
@@ -183,12 +230,16 @@ void main() {
 
     group('keyValues', () {
       test('set keyValues', () {
-        final Todo todo = Todo(description: 'Write some tests');
+        final Todo todo = Todo(
+          description: 'Write some tests',
+        );
         final todo2 = todo.copyWith(description: 'Write some tests key:value');
         expect(todo2.keyValues, {'key:value'});
       });
       test('unset keyValues', () {
-        final Todo todo = Todo(description: 'Write some tests key:value');
+        final Todo todo = Todo(
+          description: 'Write some tests key:value',
+        );
         final todo2 = todo.copyWith(description: 'Write some tests');
         expect(todo2.keyValues, []);
       });
@@ -813,7 +864,7 @@ void main() {
       final todo = Todo.fromString(
         value: value,
       );
-      expect(todo.toString(), '$value id:${todo.id}');
+      expect(todo.toString(), value);
     });
     test('full todo with multiple whitespace', () {
       final todo = Todo.fromString(
@@ -821,7 +872,7 @@ void main() {
             'x  2022-11-16  (A)  2022-11-01  Write some tests +project @context due:2022-12-31',
       );
       expect(todo.toString(),
-          'x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31 id:${todo.id}');
+          'x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31');
     });
   });
 }

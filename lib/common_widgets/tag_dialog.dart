@@ -12,7 +12,7 @@ class Tag {
   });
 
   @override
-  String toString() => name;
+  String toString() => '$name ($selected)';
 }
 
 class TagDialog extends StatefulWidget {

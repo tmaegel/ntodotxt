@@ -30,8 +30,7 @@ void main() {
         );
       });
       test('initial file with initial todo', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
+        const String todoStr = '2023-11-23 Code something';
         await file.writeAsString(todoStr, flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
@@ -40,7 +39,7 @@ void main() {
         await expectLater(
           repository.getTodoList(),
           emitsInOrder([
-            [todo],
+            [Todo.fromString(value: todoStr)],
           ]),
         );
       });
@@ -52,10 +51,6 @@ void main() {
           '2023-12-02 TodoD due:2023-12-05 id:4',
           '2023-11-11 TodoE id:5',
         ];
-        List<Todo> todoList = [
-          for (var s in todoListStr) Todo.fromString(value: s)
-        ];
-
         await file.writeAsString(todoListStr.join('\n'), flush: true);
 
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
@@ -65,13 +60,7 @@ void main() {
           repository.getTodoList(),
           emitsInOrder(
             [
-              [
-                todoList[0],
-                todoList[1],
-                todoList[2],
-                todoList[3],
-                todoList[4],
-              ],
+              [for (var s in todoListStr) Todo.fromString(value: s)],
             ],
           ),
         );
@@ -79,12 +68,14 @@ void main() {
     });
 
     group('saveTodo()', () {
-      test('create new todo without id', () async {
-        const String todoStr = '2023-11-23 Code something';
-        final Todo todo = Todo.fromString(value: todoStr);
-
+      test('create new todo', () async {
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+
         repository.saveTodo(todo);
 
         await expectLater(
@@ -95,40 +86,22 @@ void main() {
         );
 
         await repository.writeToSource();
-        expect(await file.readAsLines(), ['$todoStr id:${todo.id}']);
-      });
-
-      test('create new todo with id', () async {
-        const String todoStr =
-            '2023-11-23 Code something id:d181bdf4-3c0b-483c-a350-62db3c19ff36';
-        final Todo todo = Todo.fromString(value: todoStr);
-
-        final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api);
-        repository.saveTodo(todo);
-
-        await expectLater(
-          repository.getTodoList(),
-          emitsInOrder([
-            [todo],
-          ]),
-        );
-
-        await repository.writeToSource();
-        expect(await file.readAsLines(), [todoStr]);
+        expect(await file.readAsLines(), [todo.toString()]);
       });
       test('update existing todo', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        // Update existing todo.
-        final Todo todo2 = todo.copyWith(
-          description: 'Code something other',
-        );
-        await file.writeAsString(todoStr, flush: true);
-
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
-        repository.saveTodo(todo2);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something other',
+        );
+
+        repository.saveTodo(todo);
+        repository.saveTodo(todo2); // Update existing one.
 
         await expectLater(
           repository.getTodoList(),
@@ -140,19 +113,23 @@ void main() {
         await repository.writeToSource();
         expect(
           await file.readAsLines(),
-          ['2023-11-23 Code something other id:1'],
+          [todo2.toString()],
         );
       });
       test('update/save non-existing todo', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        const String todoStr2 = '2023-11-23 Code something other id:2';
-        final Todo todo2 = Todo.fromString(value: todoStr2);
-        await file.writeAsString(todoStr, flush: true);
-
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
-        repository.saveTodo(todo2);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: '2',
+          value: '2023-11-23 Code something other',
+        );
+
+        repository.saveTodo(todo);
+        repository.saveTodo(todo2); // Update non-existing one.
 
         await expectLater(
           repository.getTodoList(),
@@ -162,42 +139,20 @@ void main() {
         );
 
         await repository.writeToSource();
-        expect(await file.readAsLines(), [todoStr, todoStr2]);
-      });
-      test('partial update', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        const String todoStr2 = '2023-11-23 Code something other id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        final Todo todo2 = Todo.fromString(value: todoStr2);
-        // Get diff for changes.
-        final Todo todoDiff = todo.copyDiff(priority: Priority.A);
-        // Simulate changes
-        await file.writeAsString(todoStr2, flush: true);
-
-        final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
-        final TodoListRepository repository = TodoListRepository(api);
-        repository.saveTodo(todoDiff);
-
-        await expectLater(
-          repository.getTodoList(),
-          emitsInOrder([
-            [todo2.copyWith(priority: Priority.A)],
-          ]),
-        );
-
-        await repository.writeToSource();
-        expect(await file.readAsLines(), ['(A) $todoStr2']);
+        expect(await file.readAsLines(), [todo.toString(), todo2.toString()]);
       });
     });
 
     group('deleteTodo()', () {
       test('delete existing todo', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        await file.writeAsString(todoStr, flush: true);
-
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+
+        repository.saveTodo(todo);
         repository.deleteTodo(todo);
 
         await expectLater(
@@ -211,14 +166,18 @@ void main() {
         expect(await file.readAsLines(), []);
       });
       test('delete non-existing todo', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        const String todoStr2 = '2023-11-23 Code something other id:2';
-        final Todo todo2 = Todo.fromString(value: todoStr2);
-        await file.writeAsString(todoStr, flush: true);
-
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: '2',
+          value: '2023-11-23 Code something other',
+        );
+
+        repository.saveTodo(todo);
         repository.deleteTodo(todo2); // Delete non-existing todo.
 
         await expectLater(
@@ -235,18 +194,19 @@ void main() {
 
     group('saveMultipleTodos()', () {
       test('update todos', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        const String todoStr2 = '2023-11-23 Code something other id:2';
-        final Todo todo2 = Todo.fromString(value: todoStr2);
-
-        await file.writeAsString(
-          [todoStr, todoStr2].join(Platform.lineTerminator),
-          flush: true,
-        );
-
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: '2',
+          value: '2023-11-23 Code something other',
+        );
+
+        repository.saveTodo(todo);
+        repository.saveTodo(todo2);
 
         await expectLater(
           repository.getTodoList(),
@@ -287,18 +247,19 @@ void main() {
 
     group('deleteMultipleTodos()', () {
       test('delete todos', () async {
-        const String todoStr = '2023-11-23 Code something id:1';
-        final Todo todo = Todo.fromString(value: todoStr);
-        const String todoStr2 = '2023-11-23 Code something other id:2';
-        final Todo todo2 = Todo.fromString(value: todoStr2);
-
-        await file.writeAsString(
-          [todo, todo2].join(Platform.lineTerminator),
-          flush: true,
-        );
-
         final LocalTodoListApi api = LocalTodoListApi(todoFile: file);
         final TodoListRepository repository = TodoListRepository(api);
+        final Todo todo = Todo.fromString(
+          id: '1',
+          value: '2023-11-23 Code something',
+        );
+        final Todo todo2 = Todo.fromString(
+          id: '2',
+          value: '2023-11-23 Code something other',
+        );
+
+        repository.saveTodo(todo);
+        repository.saveTodo(todo2);
 
         await expectLater(
           repository.getTodoList(),

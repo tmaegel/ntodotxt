@@ -28,7 +28,6 @@ void main() {
         bloc.state,
         TodoSuccess(
           todo: Todo(
-            id: todo.id,
             completion: true,
             description: todo.description,
           ),
@@ -44,7 +43,6 @@ void main() {
         bloc.state,
         TodoSuccess(
           todo: Todo(
-            id: todo.id,
             description: todo.description,
           ),
         ),
@@ -59,7 +57,6 @@ void main() {
         bloc.state,
         TodoSuccess(
           todo: Todo(
-            id: todo.id,
             completion: true,
             description: todo.description,
           ),
@@ -78,7 +75,6 @@ void main() {
         bloc.state,
         TodoSuccess(
           todo: Todo(
-            id: todo.id,
             description: 'Write more tests',
           ),
         ),
@@ -96,7 +92,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               priority: Priority.A,
               description: todo.description,
             ),
@@ -114,7 +109,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               priority: Priority.B,
               description: todo.description,
             ),
@@ -129,7 +123,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               priority: Priority.none,
               description: todo.description,
             ),
@@ -144,7 +137,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               priority: Priority.none,
               description: todo.description,
             ),
@@ -163,7 +155,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1',
             ),
           ),
@@ -178,7 +169,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1 +project2',
             ),
           ),
@@ -194,7 +184,6 @@ void main() {
           TodoError(
             message: 'Invalid project tag: project 2',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -209,7 +198,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1',
             ),
           ),
@@ -224,7 +212,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1',
             ),
           ),
@@ -239,7 +226,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1 +project2',
             ),
           ),
@@ -254,7 +240,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project2',
             ),
           ),
@@ -270,7 +255,6 @@ void main() {
           TodoError(
             message: 'Invalid project tag: project 2',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -285,7 +269,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1 +project2',
             ),
           ),
@@ -300,7 +283,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1 +project2',
             ),
           ),
@@ -317,7 +299,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -333,7 +314,6 @@ void main() {
           TodoError(
             message: 'Invalid project tag: project 1',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests +project1',
             ),
           ),
@@ -348,7 +328,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -368,7 +347,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1',
             ),
           ),
@@ -383,7 +361,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1 @context2',
             ),
           ),
@@ -399,7 +376,6 @@ void main() {
           TodoError(
             message: 'Invalid context tag: context 2',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -414,7 +390,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1',
             ),
           ),
@@ -429,7 +404,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1',
             ),
           ),
@@ -444,7 +418,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1 @context2',
             ),
           ),
@@ -459,7 +432,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context2',
             ),
           ),
@@ -475,7 +447,6 @@ void main() {
           TodoError(
             message: 'Invalid context tag: context 2',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -490,7 +461,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1 @context2',
             ),
           ),
@@ -505,7 +475,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1 @context2',
             ),
           ),
@@ -522,7 +491,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -538,7 +506,6 @@ void main() {
           TodoError(
             message: 'Invalid context tag: context 1',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests @context1',
             ),
           ),
@@ -553,7 +520,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -573,7 +539,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests key:val',
             ),
           ),
@@ -588,7 +553,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:bar key:val',
             ),
           ),
@@ -604,7 +568,6 @@ void main() {
           TodoError(
             message: 'Invalid key value tag: key_val',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -619,7 +582,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:bar',
             ),
           ),
@@ -634,7 +596,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:bar',
             ),
           ),
@@ -649,7 +610,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:new',
             ),
           ),
@@ -664,7 +624,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests key1:val1 key2:val2',
             ),
           ),
@@ -679,7 +638,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests key2:val2',
             ),
           ),
@@ -695,7 +653,6 @@ void main() {
           TodoError(
             message: 'Invalid key value tag: key2_val2',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -710,7 +667,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:bar key1:val1',
             ),
           ),
@@ -725,7 +681,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:bar key1:val1',
             ),
           ),
@@ -740,7 +695,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:new key1:val1',
             ),
           ),
@@ -757,7 +711,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),
@@ -773,7 +726,6 @@ void main() {
           TodoError(
             message: 'Invalid key value tag: key_val',
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests foo:bar',
             ),
           ),
@@ -788,7 +740,6 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              id: todo.id,
               description: 'Write some tests',
             ),
           ),

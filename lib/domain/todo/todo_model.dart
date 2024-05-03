@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ntodotxt/exceptions/exceptions.dart';
 
@@ -106,10 +108,7 @@ class Todo extends Equatable {
   // Prevent +, @ at the beginning and additional ':' within.
   static final RegExp patternKeyValue =
       RegExp(r'^([^\+\@].*[^:\s]):(.*[^:\s])$'); // @todo: a:b failed
-  static final RegExp patternId = RegExp(r'^id:[a-zA-Z0-9\-]+$');
 
-  /// Unique [id]
-  /// [id] is mandatory.
   final String id;
 
   /// Whether the [Todo] is completed.
@@ -132,8 +131,6 @@ class Todo extends Equatable {
   /// The description of the [Todo].
   /// Defaults to null (unset).
   final String? _description;
-
-  String get fmtId => 'id:$id';
 
   /// Whether the [Todo] is completed.
   /// Defaults to false.
@@ -172,7 +169,6 @@ class Todo extends Equatable {
   String get fmtDescription {
     final List<String> descriptionList = [];
     for (String item in description.split(' ')) {
-      if (patternId.hasMatch(item)) continue;
       if (matchProject(item)) continue;
       if (matchContext(item)) continue;
       if (matchKeyValue(item)) continue;
@@ -248,7 +244,6 @@ class Todo extends Equatable {
       if (matchKeyValue(item)) {
         List<String> kvSplitted = item.split(':');
         if (kvSplitted.length > 2) continue;
-        if (kvSplitted[0] == 'id') continue; // Exclude id here.
         keyValues.add(item.toLowerCase());
       }
     }
@@ -358,6 +353,7 @@ class Todo extends Equatable {
   }
 
   factory Todo.fromString({
+    String? id,
     required String value,
   }) {
     final todoStr = _trim(value);
@@ -422,7 +418,7 @@ class Todo extends Equatable {
     }
 
     return Todo(
-      id: _str2Id(fullDescriptionList) ?? Todo.genId(),
+      id: id ?? Todo.genId(),
       completion: completion,
       priority: priority,
       completionDate: completionDate,
@@ -487,7 +483,6 @@ class Todo extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
         completion,
         completionDate,
         priority,
@@ -496,26 +491,25 @@ class Todo extends Equatable {
       ];
 
   @override
-  String toString({
-    bool includeId = true,
-  }) {
+  String toString() {
     final List<String> items = [
       fmtCompletion,
       fmtCompletionDate,
       fmtPriority,
       fmtCreationDate,
       description,
-      if (includeId) fmtId,
     ]..removeWhere((value) => value.isEmpty);
 
     return items.join(' ');
   }
 
-  static String genId({int len = 10}) {
+  static String genId({int len = 32}) {
     final Random r = Random();
     const chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
+    final String randomId =
+        List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
+    return sha256.convert(utf8.encode(randomId)).toString();
   }
 
   static DateTime? str2date(String value) {
@@ -599,25 +593,16 @@ class Todo extends Equatable {
     return Priority.none;
   }
 
-  /// Trim projects, contexts and key-values from description.
   static String _str2description(List<String> strList) {
     final List<String> descriptionList = [];
     for (var item in strList) {
-      if (patternId.hasMatch(item)) continue;
-      descriptionList.add(item);
-    }
-
-    return descriptionList.join(' ');
-  }
-
-  static String? _str2Id(List<String> strList) {
-    for (var item in strList) {
-      if (patternId.hasMatch(item)) {
-        final List<String> splittedId = item.split(':');
-        return splittedId[1];
+      if (matchProject(item) || matchContext(item) || matchKeyValue(item)) {
+        descriptionList.add(item.toLowerCase());
+      } else {
+        descriptionList.add(item);
       }
     }
 
-    return null;
+    return descriptionList.join(' ');
   }
 }

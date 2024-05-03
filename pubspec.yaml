@@ -14,6 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   collection: ^1.17.2
+  crypto: ^3.0.3
   cupertino_icons: ^1.0.6
   dio: ^5.1.0
   equatable: ^2.0.5
