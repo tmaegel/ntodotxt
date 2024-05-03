@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2024-05-03
+
+### Added
+
+- Adds the full range of priorities from A to Z #48
+
+### Fixed
+
+- Removes id from the the todo key values #34
+
 ## [0.8.1] - 2024-04-25
 
 ### Fixed
@@ -275,7 +285,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.8.1...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/tmaegel/ntodotxt/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/tmaegel/ntodotxt/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/tmaegel/ntodotxt/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/tmaegel/ntodotxt/compare/v0.7.0...v0.7.1
