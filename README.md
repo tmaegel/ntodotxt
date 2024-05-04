@@ -75,4 +75,4 @@ See them in [awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/b
 #### One UI Core (Samsung)
 
 - Open `Settings`
-- Go to `Battery and device care` > `More options (three dots at top right corner)` > `Storage booster` > Toggle off `Auto delete unnecessary data` .
+- Go to `Battery and device care` > `More options` (three dots at top right corner) > `Storage booster` > Toggle off `Auto delete unnecessary data` .
