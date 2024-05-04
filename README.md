@@ -69,3 +69,10 @@ There are other note taking apps with the WebDAV support.
 See them in [awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps)
 
 ## Troubleshoot
+
+### Prevent the file path of todo.txt from being automatically reset.
+
+#### One UI Core (Samsung)
+
+- Open `Settings`
+- Go to `Battery and device care` > `More options (three dots at top right corner)` > `Storage booster` > Toggle off `Auto delete unnecessary data` .
