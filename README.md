@@ -67,3 +67,5 @@ flutter build  # release version
 
 There are other note taking apps with the WebDAV support.
 See them in [awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps)
+
+## Troubleshoot
