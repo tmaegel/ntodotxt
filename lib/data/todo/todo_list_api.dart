@@ -85,19 +85,21 @@ class LocalTodoListApi extends TodoListApi {
     controller.close();
   }
 
-  Future<List<Todo>> read() async {
-    log.info('Async-read todos from file');
-    final lines = await todoFile.readAsLines();
+  List<Todo> _read(List<String> rawTodoList) {
     return [
-      for (var t in lines)
+      for (var t in rawTodoList)
         if (t.isNotEmpty) Todo.fromString(value: t)
     ];
   }
 
+  Future<List<Todo>> read() async {
+    log.info('Async-read todos from file');
+    return _read(await todoFile.readAsLines());
+  }
+
   List<Todo> readSync() {
     log.info('Sync-read todos from file');
-    final lines = todoFile.readAsLinesSync();
-    return [for (var t in lines) Todo.fromString(value: t)];
+    return _read(todoFile.readAsLinesSync());
   }
 
   Future<void> write(String content) async {
