@@ -14,18 +14,26 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late String databasePath;
+  late SettingRepository settingRepository;
+  late FilterRepository filterRepository;
 
   setUp(() {
     databasePath = inMemoryDatabasePath;
+    settingRepository = SettingRepository(
+      SettingController(databasePath),
+    );
+    filterRepository = FilterRepository(
+      FilterController(databasePath),
+    );
   });
 
   group('saved filter', () {
     group('initial', () {
       test('initial filter', () async {
-        const Filter origin = Filter(name: 'filter');
+        const Filter origin = Filter(name: 'default');
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
 
@@ -33,7 +41,7 @@ void main() {
           cubit.state,
           FilterSaved(
             filter: const Filter(
-              name: 'filter',
+              name: 'default',
               order: ListOrder.ascending,
               filter: ListFilter.all,
               group: ListGroup.none,
@@ -44,12 +52,12 @@ void main() {
       });
     });
 
-    group('create (repository)', () {
-      test('not exists', () async {
-        const Filter origin = Filter();
+    group('create filter', () {
+      test('non-existing', () async {
+        const Filter origin = Filter(name: 'default');
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         await cubit.create(origin.copyWith(name: 'created'));
@@ -76,16 +84,67 @@ void main() {
       });
     });
 
-    group('update (repository)', () {});
+    // @todo: Fix testcase
+    // group('update filter', () {
+    //   test('existing', () async {
+    //     const Filter origin = Filter(name: 'default');
+    //     final FilterCubit cubit = FilterCubit(
+    //       settingRepository: settingRepository,
+    //       filterRepository: filterRepository,
+    //       filter: origin,
+    //     );
+    //     await cubit.create(origin);
+    //     await cubit.update(origin.copyWith(id: 1, name: 'updated'));
+    //
+    //     await expectLater(
+    //       cubit.state,
+    //       FilterSaved(
+    //         filter: const Filter(
+    //           id: 1,
+    //           name: 'updated',
+    //           order: ListOrder.ascending,
+    //           filter: ListFilter.all,
+    //           group: ListGroup.none,
+    //         ),
+    //         origin: const Filter(
+    //           id: 1,
+    //           name: 'updated',
+    //           order: ListOrder.ascending,
+    //           filter: ListFilter.all,
+    //           group: ListGroup.none,
+    //         ),
+    //       ),
+    //     );
+    //   });
+    // });
 
-    group('delete (repository)', () {});
-
-    group('update', () {
-      test('name', () async {
-        const Filter origin = Filter(name: 'filter');
+    group('delete filter', () {
+      test('existing', () async {
+        const Filter origin = Filter(name: 'default');
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
+          filter: origin,
+        );
+        await cubit.create(origin);
+        await cubit.delete(origin.copyWith(id: 1, name: 'deleted'));
+
+        await expectLater(
+          cubit.state,
+          FilterSaved(
+            filter: const Filter(),
+            origin: const Filter(),
+          ),
+        );
+      });
+    });
+
+    group('update attributes', () {
+      test('name', () async {
+        const Filter origin = Filter(name: 'default');
+        final FilterCubit cubit = FilterCubit(
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updateName('update');
@@ -93,12 +152,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              name: 'update',
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-            ),
+            filter: const Filter().copyWith(name: 'update'),
             origin: origin,
           ),
         );
@@ -106,8 +160,8 @@ void main() {
       test('order', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updateOrder(ListOrder.descending);
@@ -115,11 +169,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.descending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-            ),
+            filter: const Filter().copyWith(order: ListOrder.descending),
             origin: origin,
           ),
         );
@@ -127,8 +177,8 @@ void main() {
       test('filter', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updateFilter(ListFilter.completedOnly);
@@ -136,11 +186,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.completedOnly,
-              group: ListGroup.none,
-            ),
+            filter: const Filter().copyWith(filter: ListFilter.completedOnly),
             origin: origin,
           ),
         );
@@ -148,8 +194,8 @@ void main() {
       test('group', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updateGroup(ListGroup.priority);
@@ -157,11 +203,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.priority,
-            ),
+            filter: const Filter().copyWith(group: ListGroup.priority),
             origin: origin,
           ),
         );
@@ -172,8 +214,8 @@ void main() {
       test('add', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.addPriority(Priority.A);
@@ -181,12 +223,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              priorities: {Priority.A},
-            ),
+            filter: const Filter().copyWith(priorities: {Priority.A}),
             origin: origin,
           ),
         );
@@ -194,8 +231,8 @@ void main() {
       test('add (already exists)', () async {
         const Filter origin = Filter(priorities: {Priority.A});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.addPriority(Priority.A);
@@ -203,12 +240,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              priorities: {Priority.A},
-            ),
+            filter: const Filter().copyWith(priorities: {Priority.A}),
             origin: origin,
           ),
         );
@@ -216,8 +248,8 @@ void main() {
       test('remove', () async {
         const Filter origin = Filter(priorities: {Priority.A});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.removePriority(Priority.A);
@@ -225,34 +257,24 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              priorities: {},
-            ),
+            filter: const Filter().copyWith(priorities: {}),
             origin: origin,
           ),
         );
       });
       test('remove (not exists)', () async {
-        const Filter origin = Filter();
+        const Filter origin = Filter(priorities: {Priority.A});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
-        cubit.removePriority(Priority.A);
+        cubit.removePriority(Priority.B);
 
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              priorities: {},
-            ),
+            filter: const Filter().copyWith(priorities: {Priority.A}),
             origin: origin,
           ),
         );
@@ -260,8 +282,8 @@ void main() {
       test('update multiple', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updatePriorities({Priority.A, Priority.B});
@@ -269,10 +291,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
+            filter: const Filter().copyWith(
               priorities: {Priority.A, Priority.B},
             ),
             origin: origin,
@@ -285,8 +304,8 @@ void main() {
       test('add', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.addProject('project1');
@@ -294,12 +313,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              projects: {'project1'},
-            ),
+            filter: const Filter().copyWith(projects: {'project1'}),
             origin: origin,
           ),
         );
@@ -307,8 +321,8 @@ void main() {
       test('add (already exists)', () async {
         const Filter origin = Filter(projects: {'project1'});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.addProject('project1');
@@ -316,12 +330,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              projects: {'project1'},
-            ),
+            filter: const Filter().copyWith(projects: {'project1'}),
             origin: origin,
           ),
         );
@@ -329,8 +338,8 @@ void main() {
       test('remove', () async {
         const Filter origin = Filter(projects: {'project1'});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.removeProject('project1');
@@ -338,34 +347,24 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              projects: {},
-            ),
+            filter: const Filter().copyWith(projects: {}),
             origin: origin,
           ),
         );
       });
       test('remove (not exists)', () async {
-        const Filter origin = Filter();
+        const Filter origin = Filter(projects: {'project1'});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
-        cubit.removeProject('project1');
+        cubit.removeProject('project2');
 
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              projects: {},
-            ),
+            filter: const Filter().copyWith(projects: {'project1'}),
             origin: origin,
           ),
         );
@@ -373,8 +372,8 @@ void main() {
       test('update multiple', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updateProjects({'project1', 'project2'});
@@ -382,12 +381,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              projects: {'project1', 'project2'},
-            ),
+            filter: const Filter().copyWith(projects: {'project1', 'project2'}),
             origin: origin,
           ),
         );
@@ -398,8 +392,8 @@ void main() {
       test('add', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.addContext('context1');
@@ -407,12 +401,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              contexts: {'context1'},
-            ),
+            filter: const Filter().copyWith(contexts: {'context1'}),
             origin: origin,
           ),
         );
@@ -420,8 +409,8 @@ void main() {
       test('add (already exists)', () async {
         const Filter origin = Filter(contexts: {'context1'});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.addContext('context1');
@@ -429,12 +418,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              contexts: {'context1'},
-            ),
+            filter: const Filter().copyWith(contexts: {'context1'}),
             origin: origin,
           ),
         );
@@ -442,8 +426,8 @@ void main() {
       test('remove', () async {
         const Filter origin = Filter(contexts: {'context1'});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.removeContext('context1');
@@ -451,34 +435,24 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              contexts: {},
-            ),
+            filter: const Filter().copyWith(contexts: {}),
             origin: origin,
           ),
         );
       });
       test('remove (not exists)', () async {
-        const Filter origin = Filter();
+        const Filter origin = Filter(contexts: {'context1'});
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
-        cubit.removeContext('context1');
+        cubit.removeContext('context2');
 
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              contexts: {},
-            ),
+            filter: const Filter().copyWith(contexts: {'context1'}),
             origin: origin,
           ),
         );
@@ -486,8 +460,8 @@ void main() {
       test('update multiple', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         cubit.updateContexts({'context1', 'context2'});
@@ -495,12 +469,7 @@ void main() {
         expect(
           cubit.state,
           FilterChanged(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-              contexts: {'context1', 'context2'},
-            ),
+            filter: const Filter().copyWith(contexts: {'context1', 'context2'}),
             origin: origin,
           ),
         );
@@ -508,36 +477,13 @@ void main() {
     });
   });
 
-  group('saved filter', () {
-    group('initial', () {
-      test('initial filter', () async {
-        const Filter origin = Filter();
-        final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
-          filter: origin,
-        );
-
-        expect(
-          cubit.state,
-          FilterSaved(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-            ),
-            origin: origin,
-          ),
-        );
-      });
-    });
-
+  group('default filter', () {
     group('update', () {
       test('order', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         await cubit.updateDefaultOrder(ListOrder.descending);
@@ -545,24 +491,16 @@ void main() {
         expect(
           cubit.state,
           FilterSaved(
-            filter: const Filter(
-              order: ListOrder.descending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-            ),
-            origin: const Filter(
-              order: ListOrder.descending,
-              filter: ListFilter.all,
-              group: ListGroup.none,
-            ),
+            filter: const Filter().copyWith(order: ListOrder.descending),
+            origin: const Filter().copyWith(order: ListOrder.descending),
           ),
         );
       });
       test('filter', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         await cubit.updateDefaultFilter(ListFilter.completedOnly);
@@ -570,24 +508,16 @@ void main() {
         expect(
           cubit.state,
           FilterSaved(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.completedOnly,
-              group: ListGroup.none,
-            ),
-            origin: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.completedOnly,
-              group: ListGroup.none,
-            ),
+            filter: const Filter().copyWith(filter: ListFilter.completedOnly),
+            origin: const Filter().copyWith(filter: ListFilter.completedOnly),
           ),
         );
       });
       test('group', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         await cubit.updateDefaultGroup(ListGroup.priority);
@@ -595,16 +525,8 @@ void main() {
         expect(
           cubit.state,
           FilterSaved(
-            filter: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.priority,
-            ),
-            origin: const Filter(
-              order: ListOrder.ascending,
-              filter: ListFilter.all,
-              group: ListGroup.priority,
-            ),
+            filter: const Filter().copyWith(group: ListGroup.priority),
+            origin: const Filter().copyWith(group: ListGroup.priority),
           ),
         );
       });
@@ -614,8 +536,8 @@ void main() {
       test('full', () async {
         const Filter origin = Filter();
         final FilterCubit cubit = FilterCubit(
-          settingRepository: SettingRepository(SettingController(databasePath)),
-          filterRepository: FilterRepository(FilterController(databasePath)),
+          settingRepository: settingRepository,
+          filterRepository: filterRepository,
           filter: origin,
         );
         await cubit.updateDefaultOrder(ListOrder.descending);
