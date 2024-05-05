@@ -20,7 +20,10 @@ void main() {
 
   group('completion', () {
     test('set', () async {
-      todo = Todo(description: 'Write some tests');
+      todo = Todo(
+        completion: false,
+        description: 'Write some tests',
+      );
       final TodoCubit bloc = TodoCubit(todo: todo);
       bloc.toggleCompletion(completion: true);
 
@@ -35,7 +38,10 @@ void main() {
       );
     });
     test('unset', () async {
-      todo = Todo(completion: true, description: 'Write some tests');
+      todo = Todo(
+        completion: true,
+        description: 'Write some tests',
+      );
       final TodoCubit bloc = TodoCubit(todo: todo);
       bloc.toggleCompletion(completion: false);
 
@@ -49,7 +55,10 @@ void main() {
       );
     });
     test('toggle', () async {
-      todo = Todo(description: 'Write some tests');
+      todo = Todo(
+        completion: false,
+        description: 'Write some tests',
+      );
       final TodoCubit bloc = TodoCubit(todo: todo);
       bloc.toggleCompletion();
 
@@ -84,20 +93,24 @@ void main() {
 
   group('priority', () {
     test('set', () async {
-      todo = Todo(description: 'Write some tests');
+      todo = Todo(
+        priority: Priority.none,
+        description: 'Write some tests',
+      );
       final TodoCubit bloc = TodoCubit(todo: todo);
       bloc.setPriority(Priority.A);
 
       expect(
-          bloc.state,
-          TodoSuccess(
-            todo: Todo(
-              priority: Priority.A,
-              description: todo.description,
-            ),
-          ));
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            priority: Priority.A,
+            description: todo.description,
+          ),
+        ),
+      );
     });
-    test('set (update)', () async {
+    test('update', () async {
       todo = Todo(
         priority: Priority.A,
         description: 'Write some tests',
@@ -106,41 +119,50 @@ void main() {
       bloc.setPriority(Priority.B);
 
       expect(
-          bloc.state,
-          TodoSuccess(
-            todo: Todo(
-              priority: Priority.B,
-              description: todo.description,
-            ),
-          ));
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            priority: Priority.B,
+            description: todo.description,
+          ),
+        ),
+      );
     });
     test('unset', () async {
-      todo = Todo(priority: Priority.A, description: 'Write some tests');
+      todo = Todo(
+        priority: Priority.A,
+        description: 'Write some tests',
+      );
       final TodoCubit bloc = TodoCubit(todo: todo);
       bloc.unsetPriority();
 
       expect(
-          bloc.state,
-          TodoSuccess(
-            todo: Todo(
-              priority: Priority.none,
-              description: todo.description,
-            ),
-          ));
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            priority: Priority.none,
+            description: todo.description,
+          ),
+        ),
+      );
     });
-    test('unset (not set)', () async {
-      todo = Todo(description: 'Write some tests');
+    test('unset (already unset)', () async {
+      todo = Todo(
+        priority: Priority.none,
+        description: 'Write some tests',
+      );
       final TodoCubit bloc = TodoCubit(todo: todo);
       bloc.unsetPriority();
 
       expect(
-          bloc.state,
-          TodoSuccess(
-            todo: Todo(
-              priority: Priority.none,
-              description: todo.description,
-            ),
-          ));
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            priority: Priority.none,
+            description: todo.description,
+          ),
+        ),
+      );
     });
   });
 
@@ -217,6 +239,8 @@ void main() {
           ),
         );
       });
+    });
+    group('update', () {
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
@@ -409,6 +433,8 @@ void main() {
           ),
         );
       });
+    });
+    group('update', () {
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
@@ -615,6 +641,8 @@ void main() {
           ),
         );
       });
+    });
+    group('update', () {
       test('multiple entries', () async {
         todo = Todo(description: 'Write some tests');
         final TodoCubit bloc = TodoCubit(todo: todo);
