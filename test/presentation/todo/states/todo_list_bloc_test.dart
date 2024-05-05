@@ -9,22 +9,35 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_state.dart';
 
+File mockTodoListFile(List<String> rawTodoList) {
+  final MemoryFileSystem fs = MemoryFileSystem();
+  final File file = fs.file('todo.txt');
+  file.createSync();
+  file.writeAsStringSync(
+    rawTodoList.join(Platform.lineTerminator),
+    flush: true,
+  );
+
+  return file;
+}
+
+TodoListRepository mockLocalTodoListRepository(File todoFile) {
+  final LocalTodoListApi api = LocalTodoListApi(todoFile: todoFile);
+  final TodoListRepository repository = TodoListRepository(api);
+
+  return repository;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late LocalTodoListApi api;
+  late File todoFile;
   late TodoListRepository repository;
-  late MemoryFileSystem fs;
-  late File file;
   late Todo todo;
 
-  setUp(() async {
-    fs = MemoryFileSystem();
-    file = fs.file('todo.test');
-    await file.create();
-    await file.writeAsString('', flush: true); // Empty file
-    api = LocalTodoListApi(todoFile: file);
-    repository = TodoListRepository(api);
+  setUp(() {
+    todoFile = mockTodoListFile([]);
+    repository = mockLocalTodoListRepository(todoFile);
   });
 
   group('Initial', () {
@@ -35,7 +48,7 @@ void main() {
     });
   });
 
-  group('TodoListSubscriptionRequested', () {
+  group('TodoListSynchronizationRequested', () {
     test('initial state', () async {
       final TodoListBloc bloc = TodoListBloc(repository: repository);
       bloc
@@ -416,7 +429,71 @@ void main() {
     });
   });
 
-  group('TodoListTodoDeleted', () {});
+  group('TodoListTodoDeleted', () {
+    setUp(() async {
+      todo = Todo(
+        id: '1',
+        description: 'Write some tests',
+      );
+    });
+    test('delete existing', () async {
+      final TodoListBloc bloc = TodoListBloc(repository: repository);
+      bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(
+          TodoListTodoSubmitted(
+            todo: todo,
+          ),
+        )
+        ..add(
+          TodoListTodoDeleted(todo: todo),
+        );
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder(
+          [
+            emitsThrough(
+              const TodoListSuccess(todoList: []),
+            ),
+          ],
+        ),
+      );
+    });
+    test('delete non-existing', () async {
+      final TodoListBloc bloc = TodoListBloc(repository: repository);
+      bloc
+        ..add(const TodoListSubscriptionRequested())
+        ..add(
+          TodoListTodoSubmitted(
+            todo: todo,
+          ),
+        )
+        ..add(
+          TodoListTodoDeleted(
+            todo: Todo(
+              id: '2',
+              description: 'Write some tests!!!',
+            ),
+          ),
+        );
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder(
+          [
+            emitsThrough(
+              TodoListSuccess(
+                todoList: [
+                  todo,
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  });
 
   group('TodoListTodoCompletionToggled', () {
     group('toggle to completed', () {
@@ -426,7 +503,7 @@ void main() {
           description: 'Write some tests',
         );
       });
-      test('set', () async {
+      test('toggle existing', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
@@ -452,7 +529,7 @@ void main() {
           ),
         );
       });
-      test('set (not exists)', () async {
+      test('toggle non-existing', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
@@ -483,7 +560,7 @@ void main() {
           description: 'Write some tests',
         );
       });
-      test('unset', () async {
+      test('toggle existing', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
@@ -509,7 +586,7 @@ void main() {
           ),
         );
       });
-      test('unset (not exists)', () async {
+      test('toggle non-existing', () async {
         final TodoListBloc bloc = TodoListBloc(repository: repository);
         bloc
           ..add(const TodoListSubscriptionRequested())
