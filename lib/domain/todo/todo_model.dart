@@ -348,7 +348,9 @@ class Todo extends Equatable {
       priority: priority,
       completionDate: completionDate,
       creationDate: creationDate,
-      description: description != null ? _trim(description) : description,
+      description: description != null
+          ? description.replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' ')
+          : description,
     );
   }
 
@@ -356,7 +358,8 @@ class Todo extends Equatable {
     String? id,
     required String value,
   }) {
-    final todoStr = _trim(value);
+    final todoStr =
+        value.trim().replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' ');
 
     bool completion = _str2completion(
       _todoStringElementAt(todoStr, 0),
@@ -557,13 +560,6 @@ class Todo extends Equatable {
       final int years = days ~/ 365;
       return years == 1 ? '$years year ago' : '$years years ago';
     }
-  }
-
-  static String _trim(String value) {
-    // Trim duplicate whitespaces.
-    return value.trim().replaceAllMapped(RegExp(r'\s{2,}'), (match) {
-      return ' ';
-    });
   }
 
   static String _todoStringElementAt(String value, int index) {

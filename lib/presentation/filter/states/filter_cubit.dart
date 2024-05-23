@@ -49,8 +49,9 @@ class FilterCubit extends Cubit<FilterState> {
   /// Regular filter (saved filter)
   ///
 
-  Future<void> create(Filter filter) async {
+  Future<void> create(Filter f) async {
     try {
+      final Filter filter = f.copyWith(name: f.name.trim());
       int id = await _filterRepository.insert(filter);
       if (id > 0) {
         emit(state.save(filter: filter.copyWith(id: id)));
@@ -60,8 +61,9 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  Future<void> update(Filter filter) async {
+  Future<void> update(Filter f) async {
     try {
+      final Filter filter = f.copyWith(name: f.name.trim());
       int id = await _filterRepository.update(filter);
       if (id > 0) {
         emit(state.save(filter: filter));
@@ -85,7 +87,9 @@ class FilterCubit extends Cubit<FilterState> {
   void updateName(String name) {
     try {
       emit(state.update(
-        filter: state.filter.copyWith(name: name.trim()),
+        filter: state.filter.copyWith(
+          name: name.replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' '),
+        ),
       ));
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));

@@ -125,8 +125,9 @@ class TodoCubit extends Cubit<TodoState> {
       emit(
         state.success(
           todo: state.todo.copyWith(
-            description:
-                state.todo.description.replaceAll(Todo.fmtProject(project), ''),
+            description: state.todo.description
+                .replaceAll(Todo.fmtProject(project), '')
+                .trim(),
           ),
         ),
       );
@@ -200,8 +201,9 @@ class TodoCubit extends Cubit<TodoState> {
       emit(
         state.success(
           todo: state.todo.copyWith(
-            description:
-                state.todo.description.replaceAll(Todo.fmtContext(context), ''),
+            description: state.todo.description
+                .replaceAll(Todo.fmtContext(context), '')
+                .trim(),
           ),
         ),
       );
@@ -296,8 +298,9 @@ class TodoCubit extends Cubit<TodoState> {
       emit(
         state.success(
           todo: state.todo.copyWith(
-            description:
-                state.todo.description.replaceAll(Todo.fmtKeyValue(kv), ''),
+            description: state.todo.description
+                .replaceAll(Todo.fmtKeyValue(kv), '')
+                .trim(),
           ),
         ),
       );
