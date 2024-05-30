@@ -8,11 +8,9 @@ import 'package:ntodotxt/main.dart' show log;
 import 'package:rxdart/subjects.dart';
 
 abstract class TodoListApi {
-  final File todoFile;
+  final File localTodoFile;
 
-  const TodoListApi({required this.todoFile});
-
-  String get filename => todoFile.uri.pathSegments.last;
+  const TodoListApi({required this.localTodoFile});
 
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
@@ -44,14 +42,14 @@ abstract class TodoListApi {
 
 class LocalTodoListApi extends TodoListApi {
   LocalTodoListApi({
-    required super.todoFile,
+    required super.localTodoFile,
   }) {
     // Use synchronize versions here.
-    if (todoFile.existsSync() == false) {
-      log.fine('File ${todoFile.path} does not exist. Creating.');
-      todoFile.createSync();
+    if (localTodoFile.existsSync() == false) {
+      log.fine('File ${localTodoFile.path} does not exist. Creating.');
+      localTodoFile.createSync();
     } else {
-      log.fine('File ${todoFile.path} exists already.');
+      log.fine('File ${localTodoFile.path} exists already.');
     }
     updateList(readSync()); // Read synchrone here.
   }
@@ -63,6 +61,8 @@ class LocalTodoListApi extends TodoListApi {
       BehaviorSubject<List<Todo>>.seeded(const []);
 
   List<Todo> get _todoList => controller.value;
+
+  String get filename => localTodoFile.uri.pathSegments.last;
 
   void updateList(List<Todo> todoList) {
     // Update only if list does'nt match to prevent weird state changes.
@@ -94,17 +94,17 @@ class LocalTodoListApi extends TodoListApi {
 
   Future<List<Todo>> read() async {
     log.info('Async-read todos from file');
-    return _read(await todoFile.readAsLines());
+    return _read(await localTodoFile.readAsLines());
   }
 
   List<Todo> readSync() {
     log.info('Sync-read todos from file');
-    return _read(todoFile.readAsLinesSync());
+    return _read(localTodoFile.readAsLinesSync());
   }
 
   Future<void> write(String content) async {
     log.info('Sync-write todos to file');
-    await todoFile.writeAsString(content);
+    await localTodoFile.writeAsString(content);
   }
 
   @override
@@ -113,8 +113,8 @@ class LocalTodoListApi extends TodoListApi {
   @override
   Future<void> initSource() async {
     log.info('Initialize todo file');
-    if (await todoFile.exists() == false) {
-      await todoFile.create();
+    if (await localTodoFile.exists() == false) {
+      await localTodoFile.create();
     }
   }
 
@@ -187,14 +187,17 @@ class LocalTodoListApi extends TodoListApi {
 
 class WebDAVTodoListApi extends LocalTodoListApi {
   final WebDAVClient client;
+  final String remoteTodoFile;
 
   WebDAVTodoListApi._({
-    required super.todoFile,
+    required super.localTodoFile,
+    required this.remoteTodoFile,
     required this.client,
   });
 
   factory WebDAVTodoListApi({
-    required File todoFile,
+    required File localTodoFile,
+    required String remoteTodoFile,
     required String server,
     required String baseUrl,
     required String username,
@@ -223,7 +226,8 @@ class WebDAVTodoListApi extends LocalTodoListApi {
     }
 
     return WebDAVTodoListApi._(
-      todoFile: todoFile,
+      localTodoFile: localTodoFile,
+      remoteTodoFile: remoteTodoFile,
       client: client,
     );
   }
@@ -232,7 +236,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   Future<void> initSource() async {
     await super.initSource();
     await client.ping();
-    if (await client.fileExists(filename)) {
+    if (await client.fileExists(filename: filename)) {
       await readFromSource();
     } else {
       await writeToSource();
@@ -253,13 +257,13 @@ class WebDAVTodoListApi extends LocalTodoListApi {
 
   Future<String> downloadFromSource() async {
     log.info('Download todos from server');
-    return await client.download(filename: filename);
+    return await client.download(filename: remoteTodoFile);
   }
 
   Future<void> uploadToSource() async {
     log.info('Upload todos to server');
     await client.upload(
-      filename: filename,
+      filename: remoteTodoFile,
       content: _todoList.join(Platform.lineTerminator),
     );
   }

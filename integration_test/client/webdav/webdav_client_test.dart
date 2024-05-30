@@ -1,48 +1,57 @@
 import 'dart:io' show Platform;
+import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
 
+WebDAVClient createWebDAVClient({
+  String? host,
+  int? port,
+  String? baseUrl,
+  String? username,
+  String? password,
+}) {
+  return WebDAVClient(
+    host: host ?? (Platform.isAndroid ? '10.0.2.2' : 'localhost'),
+    port: port ?? 80,
+    baseUrl: baseUrl ?? '/remote.php/dav/files/test',
+    username: username ?? 'test',
+    password: password ?? 'test',
+  );
+}
+
+String randomString({int len = 8}) {
+  final Random r = Random();
+  const chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late final String host;
-  if (Platform.isAndroid) {
-    host = '10.0.2.2';
-  } else {
-    host = 'localhost';
-  }
-  const int port = 80;
-  const String baseUrl = '/remote.php/dav/files';
-  const String username = 'test';
-  const String password = 'test';
-  const String filename = 'test.txt';
-
-  setUp(() async {});
-
   group('WebDAVClient', () {
     group('ping()', () {
-      test('successful ping', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
+      test('correct connection', () async {
+        final WebDAVClient client = createWebDAVClient();
         try {
           await client.ping();
         } catch (e) {
           fail('An exception was thrown: $e');
         }
       });
-      test('failed ping', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: 9999,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
+      test('wrong host', () async {
+        final WebDAVClient client = createWebDAVClient(host: 'webdav');
+        expectLater(
+          () async => await client.ping(),
+          throwsA(
+            isA<WebDAVClientException>(),
+          ),
+        );
+      });
+      test('wrong port', () async {
+        final WebDAVClient client = createWebDAVClient(port: 9999);
         expectLater(
           () async => await client.ping(),
           throwsA(
@@ -52,79 +61,9 @@ void main() {
       });
     });
 
-    group('create()', () {
-      test('successful create', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
-        try {
-          await client.create(filename);
-        } catch (e) {
-          fail('An exception was thrown: $e');
-        }
-      });
-      test('successful create file and directory', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
-        try {
-          await client.create('unknown_dir/$filename');
-        } catch (e) {
-          fail('An exception was thrown: $e');
-        }
-      });
-    });
-
-    group('fileExists()', () {
-      test('file exists', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
-        try {
-          await client.create(filename); // Create file
-          expectLater(
-            await client.fileExists(filename),
-            true,
-          );
-        } catch (e) {
-          fail('An exception was thrown: $e');
-        }
-      });
-      test('file not exists', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
-        try {
-          expectLater(
-            await client.fileExists('abc.xyz'),
-            false,
-          );
-        } catch (e) {
-          fail('An exception was thrown: $e');
-        }
-      });
-    });
-
     group('listFiles()', () {
-      test('successful file list', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
+      test('list', () async {
+        final WebDAVClient client = createWebDAVClient();
         try {
           await client.listFiles(path: '/');
         } catch (e) {
@@ -133,29 +72,212 @@ void main() {
       });
     });
 
-    group('upload()', () {
-      test('successful file upload', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
+    group('file create() & fileExists()', () {
+      group('root', () {
+        test('file does exist (1)', () async {
+          final String filename = '${randomString()}.txt';
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.create(filename); // Create file
+            expectLater(await client.fileExists(filename: filename), true);
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('file does exist (2)', () async {
+          final String filename = '${randomString()}.txt';
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.create(filename); // Create file
+            expectLater(
+                await client.fileExists(path: '/', filename: filename), true);
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('file doesn\'t exist (1)', () async {
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            expectLater(await client.fileExists(filename: 'abc.xyz'), false);
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('file doesn\'t exist (2)', () async {
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            expectLater(
+              await client.fileExists(path: '/', filename: 'abc.xyz'),
+              false,
+            );
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+      });
+      group('nested', () {
+        test('directory/file does exist (1)', () async {
+          final String filename = '${randomString()}.txt';
+          final String directory = randomString();
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.create('$directory/$filename');
+            expectLater(
+              await client.fileExists(path: directory, filename: filename),
+              true,
+            );
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('directory/file does exist (2)', () async {
+          final String filename = '${randomString()}.txt';
+          final String directory = randomString();
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.create('$directory/$filename');
+            expectLater(
+              await client.fileExists(path: '/$directory/', filename: filename),
+              true,
+            );
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('directory/file doesn\'t exist (1)', () async {
+          final String directory = randomString();
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.mkdir(directory: directory);
+            expectLater(
+              await client.fileExists(path: directory, filename: 'abc.xyz'),
+              false,
+            );
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('directory/file doesn\'t exist (2)', () async {
+          final String directory = randomString();
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.mkdir(directory: directory);
+            expectLater(
+              await client.fileExists(
+                  path: '/$directory/', filename: 'abc.xyz'),
+              false,
+            );
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+        test('directory/file doesn\'t exist in this path', () async {
+          final String filename = '${randomString()}.txt';
+          final String directory = randomString();
+          final WebDAVClient client = createWebDAVClient();
+          try {
+            await client.create(filename);
+            await client.mkdir(directory: directory);
+            expectLater(
+              await client.fileExists(path: directory, filename: filename),
+              false,
+            );
+          } catch (e) {
+            fail('An exception was thrown: $e');
+          }
+        });
+      });
+    });
+
+    group('directory mkdir() & directoryExists()', () {
+      test('directory exists', () async {
+        final String directory = randomString();
+        final WebDAVClient client = createWebDAVClient();
         try {
-          await client.upload(content: 'abc', filename: filename);
+          await client.mkdir(directory: directory);
+          expectLater(await client.directoryExists(directory: directory), true);
         } catch (e) {
           fail('An exception was thrown: $e');
         }
       });
-      test('exception while file upload', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: 'wrong');
+      test('nested directory exists', () async {
+        final String path = randomString();
+        final String directory = randomString();
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.mkdir(directory: '$path/$directory', recursive: true);
+          expectLater(
+            await client.directoryExists(path: path, directory: directory),
+            true,
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('directory doesn\' exists', () async {
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          expectLater(await client.directoryExists(directory: 'dir123'), false);
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('nested directory doesn\'t exists', () async {
+        final WebDAVClient client = createWebDAVClient();
         expectLater(
-          () async => await client.upload(content: 'abc', filename: filename),
+          () async =>
+              await client.directoryExists(path: 'abc', directory: '123'),
+          throwsA(
+            isA<WebDAVClientException>(),
+          ),
+        );
+      });
+    });
+
+    group('upload()', () {
+      test('file upload', () async {
+        final String filename = '${randomString()}.txt';
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.upload(content: 'abc', filename: filename);
+          expectLater(await client.fileExists(filename: filename), true);
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('file upload within already existing directory', () async {
+        final String filename = '${randomString()}.txt';
+        final String directory = randomString();
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.mkdir(directory: directory);
+          await client.upload(content: 'abc', filename: '$directory/$filename');
+          expectLater(
+            await client.fileExists(path: directory, filename: filename),
+            true,
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('file upload within non existing directory', () async {
+        final String filename = '${randomString()}.txt';
+        final String directory = randomString();
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.upload(content: 'abc', filename: '$directory/$filename');
+          expectLater(
+            await client.fileExists(path: directory, filename: filename),
+            true,
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('exception', () async {
+        final WebDAVClient client = createWebDAVClient(password: 'wrong');
+        expectLater(
+          () async => await client.upload(content: 'abc', filename: 'todo.txt'),
           throwsA(
             isA<WebDAVClientException>(),
           ),
@@ -164,28 +286,34 @@ void main() {
     });
 
     group('download()', () {
-      test('successful file download', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: password);
+      test('file download', () async {
+        final String filename = '${randomString()}.txt';
+        final WebDAVClient client = createWebDAVClient();
         try {
-          await client.download(filename: filename);
+          await client.upload(content: 'abc', filename: filename);
+          expectLater(await client.download(filename: filename), 'abc');
         } catch (e) {
           fail('An exception was thrown: $e');
         }
       });
-      test('exception while file download', () async {
-        WebDAVClient client = WebDAVClient(
-            host: host,
-            port: port,
-            baseUrl: baseUrl,
-            username: username,
-            password: 'wrong');
+      test('file download within directory', () async {
+        final String filename = '${randomString()}.txt';
+        final String directory = randomString();
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.upload(content: 'abc', filename: '$directory/$filename');
+          expectLater(
+            await client.download(filename: '$directory/$filename'),
+            'abc',
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('exception', () async {
+        final WebDAVClient client = createWebDAVClient(password: 'wrong');
         expectLater(
-          () async => await client.download(filename: filename),
+          () async => await client.download(filename: 'todo.txt'),
           throwsA(
             isA<WebDAVClientException>(),
           ),

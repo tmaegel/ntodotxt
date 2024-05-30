@@ -10,6 +10,7 @@ import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart'
     show SettingRepository;
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
+import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
 import 'package:ntodotxt/presentation/settings/pages/settings_page.dart'
     show SettingsPage;
 import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
@@ -29,6 +30,9 @@ class SettingsPageBlocProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        BlocProvider<LoginCubit>(
+          create: (BuildContext context) => LoginCubit(),
+        ),
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
             SettingController(databasePath),
@@ -52,7 +56,6 @@ class SettingsPageBlocProvider extends StatelessWidget {
           BlocProvider<TodoFileCubit>(
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
-              defaultLocalPath: '/',
             )..load(),
           ),
         ],

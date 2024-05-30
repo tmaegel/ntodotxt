@@ -71,10 +71,10 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginLocal({
-    required todoFile,
+    required File localTodoFile,
   }) async {
     try {
-      LocalTodoListApi(todoFile: todoFile); // Check before login.
+      LocalTodoListApi(localTodoFile: localTodoFile); // Check before login.
       await resetSecureStorage();
       await secureStorage.write(key: 'backend', value: Backend.local.name);
       emit(state.loginLocal());
@@ -84,7 +84,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWebDAV({
-    required File todoFile,
+    required File localTodoFile,
+    required String remoteTodoFile,
     required String server,
     required String baseUrl,
     required String username,
@@ -93,7 +94,8 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       // Check before login.
       WebDAVTodoListApi api = WebDAVTodoListApi(
-        todoFile: todoFile,
+        localTodoFile: localTodoFile,
+        remoteTodoFile: remoteTodoFile,
         server: server,
         baseUrl: baseUrl,
         username: username,

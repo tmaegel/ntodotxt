@@ -113,7 +113,7 @@ void main() async {
             of: find.text('Base URL'),
             matching: find.byType(TextFormField),
           ),
-          '/remote.php/dav/files',
+          '/remote.php/dav/files/test',
         );
         await tester.enterText(
           find.ancestor(

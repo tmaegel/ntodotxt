@@ -23,11 +23,11 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class TodoListPageMaterialApp extends StatelessWidget {
-  final File todoFile;
+  final File localTodoFile;
   final Filter? filter;
 
   const TodoListPageMaterialApp({
-    required this.todoFile,
+    required this.localTodoFile,
     this.filter,
     super.key,
   });
@@ -42,7 +42,8 @@ class TodoListPageMaterialApp extends StatelessWidget {
         ),
         RepositoryProvider<TodoListRepository>(
           create: (BuildContext context) {
-            return TodoListRepository(LocalTodoListApi(todoFile: todoFile));
+            return TodoListRepository(
+                LocalTodoListApi(localTodoFile: localTodoFile));
           },
         ),
         RepositoryProvider<FilterRepository>(
@@ -113,7 +114,7 @@ void main() {
         'TODOC',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
-        todoFile: file,
+        localTodoFile: file,
       ));
       await tester.pumpAndSettle();
 
@@ -137,7 +138,7 @@ void main() {
         'TODOC',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
-        todoFile: file,
+        localTodoFile: file,
         filter: const Filter(
           order: ListOrder.ascending,
           filter: ListFilter.all,
@@ -166,7 +167,7 @@ void main() {
         'todoA',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
-        todoFile: file,
+        localTodoFile: file,
         filter: const Filter(
           order: ListOrder.descending,
           filter: ListFilter.all,
@@ -210,7 +211,7 @@ void main() {
         'TodoC',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
-        todoFile: file,
+        localTodoFile: file,
         filter: const Filter(
           order: ListOrder.ascending,
           filter: ListFilter.all,
@@ -238,7 +239,7 @@ void main() {
         'TodoC',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
-        todoFile: file,
+        localTodoFile: file,
         filter: const Filter(
           order: ListOrder.ascending,
           filter: ListFilter.completedOnly,
@@ -265,7 +266,7 @@ void main() {
         'TodoA',
       ];
       await tester.pumpWidget(TodoListPageMaterialApp(
-        todoFile: file,
+        localTodoFile: file,
         filter: const Filter(
           order: ListOrder.ascending,
           filter: ListFilter.incompletedOnly,
@@ -311,7 +312,7 @@ void main() {
           'TodoB', // Completed todo come always at last.
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.ascending,
             filter: ListFilter.all,
@@ -341,7 +342,7 @@ void main() {
           'TodoB', // Completed todo come always at last.
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.descending,
             filter: ListFilter.all,
@@ -408,7 +409,7 @@ void main() {
           'TodoA2',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.ascending,
             filter: ListFilter.all,
@@ -454,7 +455,7 @@ void main() {
           'TodoA1',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.descending,
             filter: ListFilter.all,
@@ -510,7 +511,7 @@ void main() {
           'TodoD',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.ascending,
             filter: ListFilter.all,
@@ -545,7 +546,7 @@ void main() {
           'TodoA1', // Completed todo come always at last.
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.descending,
             filter: ListFilter.all,
@@ -597,7 +598,7 @@ void main() {
           'TodoD',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.ascending,
             filter: ListFilter.all,
@@ -632,7 +633,7 @@ void main() {
           'TodoC',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.descending,
             filter: ListFilter.all,
@@ -684,7 +685,7 @@ void main() {
           'TodoD',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.ascending,
             filter: ListFilter.all,
@@ -719,7 +720,7 @@ void main() {
           'TodoC',
         ];
         await tester.pumpWidget(TodoListPageMaterialApp(
-          todoFile: file,
+          localTodoFile: file,
           filter: const Filter(
             order: ListOrder.descending,
             filter: ListFilter.all,

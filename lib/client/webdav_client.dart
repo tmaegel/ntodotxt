@@ -32,7 +32,7 @@ class WebDAVClient {
         scheme: schema,
         host: host,
         port: port,
-        path: baseUrl.endsWith(username) ? baseUrl : '$baseUrl/$username',
+        path: baseUrl,
       ).toString(),
       user: username,
       password: password,
@@ -128,6 +128,7 @@ class WebDAVClient {
 
   Future<void> ping() async {
     try {
+      log.fine('Ping');
       await client.ping();
     } on DioException catch (e) {
       log.severe(e);
@@ -139,57 +140,110 @@ class WebDAVClient {
     }
   }
 
-  Future<bool> fileExists(String filename) async {
-    if (!filename.startsWith('/')) {
-      filename = '/$filename';
+  Future<bool> _exists({
+    required String path,
+    required String target,
+  }) async {
+    if (!path.startsWith('/')) {
+      path = '/$path';
     }
-    for (webdav.File f in await listFiles()) {
-      if (f.path == filename) {
+    if (!path.endsWith('/')) {
+      path = '$path/';
+    }
+    for (webdav.File f in await listFiles(path: path)) {
+      if (f.path == '$path$target') {
         return true;
       }
     }
     return false;
   }
 
-  Future<List<webdav.File>> listFiles({String path = '/'}) async {
-    if (!path.startsWith('/')) {
-      path = '/$path';
+  Future<bool> fileExists({
+    String path = '',
+    required String filename,
+  }) async {
+    if (filename.startsWith('/')) {
+      filename = filename.substring(1);
     }
+    if (filename.endsWith('/')) {
+      filename = filename.substring(0, filename.length - 1);
+    }
+    log.fine(
+      'Check if file $filename in path ${path.isEmpty ? "/" : path} exists',
+    );
+    return await _exists(path: path, target: filename);
+  }
+
+  Future<bool> directoryExists({
+    String path = '',
+    required String directory,
+  }) async {
+    if (directory.startsWith('/')) {
+      directory = directory.substring(1);
+    }
+    if (!directory.endsWith('/')) {
+      directory = '$directory/';
+    }
+    log.fine(
+      'Check if directory $directory in path ${path.isEmpty ? "/" : path} exists',
+    );
+    return await _exists(path: path, target: directory);
+  }
+
+  Future<List<webdav.File>> listFiles({
+    String path = '',
+  }) async {
     try {
+      log.fine('List files and directories of ${path.isEmpty ? "/" : path}');
       return await client.readDir(path);
     } on Exception catch (e) {
       log.severe(e);
       throw WebDAVClientException(
-          'Failed to list files in directory $path on remote ${client.uri}');
+        'Failed to list files in directory ${path.isEmpty ? "/" : path} on remote ${client.uri}',
+      );
     }
   }
 
   Future<void> create(String filename) async {
     try {
-      if (!filename.startsWith('/')) {
-        filename = '/$filename';
+      if (filename.startsWith('/')) {
+        filename = filename.substring(1);
       }
-      if (await fileExists(filename) == false) {
+      if (await fileExists(filename: filename) == false) {
         // Create file by writing empty string.
+        log.fine('Create file $filename');
         await client.write(filename, utf8.encode(''));
+      } else {
+        log.fine('Skip file creation. File $filename already exists');
       }
     } on Exception catch (e) {
       log.severe(e);
       throw WebDAVClientException(
-          'Failed to create file $filename on remote ${client.uri}');
+        'Failed to create file $filename on remote ${client.uri}',
+      );
     }
   }
 
-  Future<void> mkdir(String path) async {
-    if (!path.startsWith('/')) {
-      path = '/$path';
+  Future<void> mkdir(
+      {required String directory, bool recursive = false}) async {
+    if (directory.startsWith('/')) {
+      directory = directory.substring(1);
+    }
+    if (directory.endsWith('/')) {
+      directory = directory.substring(0, directory.length - 1);
     }
     try {
-      await client.mkdir(path);
+      log.fine('Create directory $directory');
+      if (recursive) {
+        await client.mkdirAll(directory);
+      } else {
+        await client.mkdir(directory);
+      }
     } on Exception catch (e) {
       log.severe(e);
       throw WebDAVClientException(
-          'Failed to create directory $path on remote ${client.uri}');
+        'Failed to create directory $directory on remote ${client.uri}',
+      );
     }
   }
 
@@ -197,13 +251,14 @@ class WebDAVClient {
     required String filename,
   }) async {
     try {
+      log.fine('Download content of file $filename');
       List<int> content = await client.read(filename);
-
       return utf8.decode(content);
     } on Exception catch (e) {
       log.severe(e);
       throw WebDAVClientException(
-          'Failed to download file $filename from remote ${client.uri}');
+        'Failed to download file $filename from remote ${client.uri}',
+      );
     }
   }
 
@@ -212,11 +267,13 @@ class WebDAVClient {
     required String content,
   }) async {
     try {
+      log.fine('Upload content to file $filename');
       await client.write(filename, utf8.encode(content));
     } on Exception catch (e) {
       log.severe(e);
       throw WebDAVClientException(
-          'Failed to upload file $filename to remote ${client.uri}');
+        'Failed to upload file $filename to remote ${client.uri}',
+      );
     }
   }
 }

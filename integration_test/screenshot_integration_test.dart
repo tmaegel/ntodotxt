@@ -114,7 +114,7 @@ class AppTester extends StatelessWidget {
           BlocProvider<TodoFileCubit>(
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
-              defaultLocalPath: appCacheDir,
+              localPath: appCacheDir,
             )..load(),
           ),
           BlocProvider<DrawerCubit>(

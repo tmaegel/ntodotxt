@@ -107,7 +107,7 @@ class App extends StatelessWidget {
           BlocProvider<TodoFileCubit>(
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
-              defaultLocalPath: appCacheDir,
+              localPath: appCacheDir,
             ),
           ),
           BlocProvider<DrawerCubit>(
@@ -303,17 +303,19 @@ class CoreApp extends StatelessWidget {
   TodoListRepository _createTodoListRepository(
       LoginState loginState, TodoFileState todoFileState) {
     late TodoListApi api;
-    File todoFile = File(
-        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.localFilename}');
-    log.info('Use todo file ${todoFile.path}');
+    File localTodoFile = File(
+        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.todoFilename}');
+    log.info('Use todo file ${localTodoFile.path}');
     switch (loginState) {
       case LoginLocal():
         log.info('Use local backend');
-        api = LocalTodoListApi(todoFile: todoFile);
+        api = LocalTodoListApi(localTodoFile: localTodoFile);
       case LoginWebDAV():
         log.info('Use local+webdav backend');
         api = WebDAVTodoListApi(
-          todoFile: todoFile,
+          localTodoFile: localTodoFile,
+          remoteTodoFile:
+              '${todoFileState.remotePath}${Platform.pathSeparator}${todoFileState.todoFilename}',
           server: loginState.server,
           baseUrl: loginState.baseUrl,
           username: loginState.username,
@@ -321,7 +323,7 @@ class CoreApp extends StatelessWidget {
         );
       default:
         log.info('Fallback to local backend');
-        api = LocalTodoListApi(todoFile: todoFile);
+        api = LocalTodoListApi(localTodoFile: localTodoFile);
     }
 
     return TodoListRepository(api);

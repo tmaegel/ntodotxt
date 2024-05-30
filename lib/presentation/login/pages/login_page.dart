@@ -33,11 +33,11 @@ class _LocalLoginViewState extends State<LocalLoginView> {
             children: [
               ListTile(
                 title: Text(
-                  'Local storage',
+                  'Todo',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
-              const LocalFilenameInput(),
+              const TodoFilenameInput(),
               const LocalPathInput(),
             ],
           ),
@@ -54,8 +54,9 @@ class _LocalLoginViewState extends State<LocalLoginView> {
                     try {
                       setState(() => loading = true);
                       await context.read<LoginCubit>().loginLocal(
-                            todoFile: File(
-                                '${state.localPath}${Platform.pathSeparator}${state.localFilename}'),
+                            localTodoFile: File(
+                              '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
+                            ),
                           );
                     } finally {
                       setState(() => loading = false);
@@ -146,7 +147,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                 children: [
                   ListTile(
                     title: Text(
-                      'Remote storage',
+                      'Server connection',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
@@ -157,7 +158,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: const InputDecoration(
                         labelText: 'Server',
-                        hintText: 'http[s]://<server>[:<port>]',
+                        hintText: 'http[s]://server[:port]',
                       ),
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -188,7 +189,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                       style: Theme.of(context).textTheme.bodyMedium,
                       decoration: const InputDecoration(
                         labelText: 'Base URL',
-                        hintText: 'e.g. /remote.php/dav/files',
+                        hintText: '/remote.php/dav/files/<username>',
                       ),
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
@@ -201,6 +202,17 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                           baseUrl = baseUrlTextFieldController.text;
                         });
                       },
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.help_outline),
+                      onPressed: () => InfoDialog.dialog(
+                        context: context,
+                        title: 'Base URL',
+                        message:
+                            '''The username is not automatically appended to the base URL. In some cases a base URL containing the username is expected, in others this causes an error.
+
+Please check the requirements of your webdav server.''',
+                      ),
                     ),
                   ),
                   ListTile(
@@ -251,12 +263,13 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                   const Divider(),
                   ListTile(
                     title: Text(
-                      'Local storage',
+                      'Todo',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
-                  const LocalFilenameInput(),
+                  const TodoFilenameInput(),
                   const LocalPathInput(),
+                  const RemotePathInput(),
                 ],
               ),
             ),
@@ -274,8 +287,11 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                             try {
                               setState(() => loading = true);
                               await context.read<LoginCubit>().loginWebDAV(
-                                    todoFile: File(
-                                        '${state.localPath}${Platform.pathSeparator}${state.localFilename}'),
+                                    localTodoFile: File(
+                                      '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
+                                    ),
+                                    remoteTodoFile:
+                                        '${state.remotePath}${Platform.pathSeparator}${state.todoFilename}',
                                     server: serverAddr,
                                     baseUrl: baseUrl,
                                     username: username,
@@ -351,14 +367,14 @@ Use this option if it's important to you where your todos are stored on your dev
   }
 }
 
-class LocalFilenameInput extends StatefulWidget {
-  const LocalFilenameInput({super.key});
+class RemotePathInput extends StatefulWidget {
+  const RemotePathInput({super.key});
 
   @override
-  State<LocalFilenameInput> createState() => _LocalFilenameInputState();
+  State<RemotePathInput> createState() => _RemotePathInputState();
 }
 
-class _LocalFilenameInputState extends State<LocalFilenameInput> {
+class _RemotePathInputState extends State<RemotePathInput> {
   late TextEditingController controller;
 
   @override
@@ -377,18 +393,91 @@ class _LocalFilenameInputState extends State<LocalFilenameInput> {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoFileCubit, TodoFileState>(
       builder: (BuildContext context, TodoFileState state) {
-        controller.text = state.localFilename;
+        controller.text = state.remotePath;
+        return ListTile(
+          leading: const Icon(Icons.folder),
+          title: TextFormField(
+            controller: controller,
+            style: Theme.of(context).textTheme.bodyMedium,
+            decoration: const InputDecoration(
+              labelText: 'Remote path',
+              hintText: defaultRemoteTodoPath,
+            ),
+            onChanged: (String value) =>
+                context.read<TodoFileCubit>().updateRemotePath(value),
+          ),
+          trailing: state is! TodoFileLoading
+              ? IconButton(
+                  icon: const Icon(Icons.help_outline),
+                  onPressed: () => InfoDialog.dialog(
+                    context: context,
+                    title: 'Remote path',
+                    message:
+                        'This path is appended to the base url of the server connection. This makes it possible to define a user-defined path for the todo files.',
+                  ),
+                )
+              : IconButton(
+                  icon: const Icon(Icons.save),
+                  onPressed: () async {
+                    if (controller.text.isEmpty) {
+                      SnackBarHandler.info(
+                        context,
+                        'Empty remote path is not allowed. Using default one.',
+                      );
+                      await context
+                          .read<TodoFileCubit>()
+                          .saveRemotePath(defaultRemoteTodoPath);
+                    } else {
+                      await context
+                          .read<TodoFileCubit>()
+                          .saveRemotePath(controller.text);
+                    }
+                  },
+                ),
+        );
+      },
+    );
+  }
+}
+
+class TodoFilenameInput extends StatefulWidget {
+  const TodoFilenameInput({super.key});
+
+  @override
+  State<TodoFilenameInput> createState() => _LocalFilenameInputState();
+}
+
+class _LocalFilenameInputState extends State<TodoFilenameInput> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoFileCubit, TodoFileState>(
+      builder: (BuildContext context, TodoFileState state) {
+        controller.text = state.todoFilename;
         return ListTile(
           leading: const Icon(Icons.description),
           title: TextFormField(
             controller: controller,
             style: Theme.of(context).textTheme.bodyMedium,
             decoration: const InputDecoration(
-              labelText: 'Local filename',
+              labelText: 'Todo filename',
               hintText: defaultTodoFilename,
             ),
             onChanged: (String value) =>
-                context.read<TodoFileCubit>().updateLocalFilename(value),
+                context.read<TodoFileCubit>().updateTodoFilename(value),
           ),
           trailing: state is! TodoFileLoading
               ? null
@@ -398,7 +487,7 @@ class _LocalFilenameInputState extends State<LocalFilenameInput> {
                     if (controller.text.isEmpty) {
                       SnackBarHandler.info(
                         context,
-                        'Empty local filename is not allowed. Using default one.',
+                        'Empty todo filename is not allowed. Using default one.',
                       );
                       await context
                           .read<TodoFileCubit>()
