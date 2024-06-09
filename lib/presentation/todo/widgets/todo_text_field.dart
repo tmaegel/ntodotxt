@@ -39,7 +39,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
           text: state.todo.description,
           selection: TextSelection.fromPosition(
             TextPosition(
-              offset: base > state.todo.description.length
+              offset: base < 0 || base > state.todo.description.length
                   ? state.todo.description.length
                   : base,
             ),

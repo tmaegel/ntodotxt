@@ -68,7 +68,7 @@ sealed class TodoFileState extends Equatable {
 
   @override
   String toString() =>
-      'TodoFileState { localFile $localPath/$todoFilename remoteFile: $remotePath/$todoFilename }';
+      'TodoFileState { localFile $localPath$todoFilename remoteFile: $remotePath$todoFilename }';
 }
 
 final class TodoFileLoading extends TodoFileState {
@@ -95,7 +95,7 @@ final class TodoFileLoading extends TodoFileState {
 
   @override
   String toString() =>
-      'TodoFileLoading { localFile $localPath/$todoFilename remoteFile: $remotePath/$todoFilename }';
+      'TodoFileLoading { localFile $localPath$todoFilename remoteFile: $remotePath$todoFilename }';
 }
 
 final class TodoFileReady extends TodoFileState {
@@ -122,7 +122,7 @@ final class TodoFileReady extends TodoFileState {
 
   @override
   String toString() =>
-      'TodoFileReady { localFile $localPath/$todoFilename remoteFile: $remotePath/$todoFilename }';
+      'TodoFileReady { localFile $localPath$todoFilename remoteFile: $remotePath$todoFilename }';
 }
 
 final class TodoFileError extends TodoFileState {
@@ -163,5 +163,5 @@ final class TodoFileError extends TodoFileState {
 
   @override
   String toString() =>
-      'TodoFileError { message $message localFile $localPath/$todoFilename remoteFile: $remotePath/$todoFilename }';
+      'TodoFileError { message $message localFile $localPath$todoFilename remoteFile: $remotePath/$todoFilename }';
 }

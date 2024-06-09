@@ -95,17 +95,14 @@ class TodoFileCubit extends Cubit<TodoFileState> {
     }
   }
 
-  Future<void> updateLocalPath(String? value) async {
-    if (value != null) {
-      log.fine('Updating \'localPath\'.');
-      emit(state.load(localPath: value));
-    }
-  }
-
   Future<void> saveLocalPath(String? value) async {
     try {
       if (value != null) {
+        emit(state.load());
         log.fine('Saving setting \'localPath\'.');
+        if (!value.endsWith('/')) {
+          value = '$value/';
+        }
         await repository.updateOrInsert(
           Setting(key: 'localPath', value: value),
         );
@@ -121,17 +118,12 @@ class TodoFileCubit extends Cubit<TodoFileState> {
     }
   }
 
-  Future<void> updateTodoFilename(String? value) async {
-    if (value != null) {
-      log.fine('Updating \'todoFilename\'.');
-      emit(state.load(todoFilename: value));
-    }
-  }
-
   Future<void> saveLocalFilename(String? value) async {
     try {
       if (value != null) {
+        emit(state.load());
         log.fine('Saving setting \'todoFilename\'.');
+
         await repository.updateOrInsert(
           Setting(key: 'todoFilename', value: value),
         );
@@ -147,22 +139,37 @@ class TodoFileCubit extends Cubit<TodoFileState> {
     }
   }
 
-  Future<void> updateRemotePath(String? value) async {
-    if (value != null) {
-      log.fine('Updating \'remotePath\'.');
-      emit(state.load(remotePath: value));
-    }
-  }
-
   Future<void> saveRemotePath(String? value) async {
     try {
       if (value != null) {
+        emit(state.load());
         log.fine('Saving setting \'remotePath\'.');
+        if (!value.endsWith('/')) {
+          value = '$value/';
+        }
         await repository.updateOrInsert(
           Setting(key: 'remotePath', value: value),
         );
         emit(state.ready(remotePath: value));
       }
+    } on Exception catch (e) {
+      emit(state.error(message: e.toString()));
+    }
+  }
+
+  Future<void> resetToDefaults() async {
+    try {
+      emit(state.load());
+      log.fine('Resetting to the defaults.');
+      await resetTodoFileSettings();
+      emit(
+        const TodoFileLoading(
+          todoFilename: defaultTodoFilename,
+          doneFilename: defaultDoneFilename,
+          localPath: defaultLocalTodoPath,
+          remotePath: defaultRemoteTodoPath,
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -180,23 +187,6 @@ class TodoFileCubit extends Cubit<TodoFileState> {
         log.fine('Deleting setting \'$k\'.');
         await repository.delete(key: k);
       }
-    } on Exception catch (e) {
-      emit(state.error(message: e.toString()));
-    }
-  }
-
-  Future<void> resetToDefaults() async {
-    try {
-      log.fine('Resetting to the defaults.');
-      await resetTodoFileSettings();
-      emit(
-        const TodoFileLoading(
-          todoFilename: defaultTodoFilename,
-          doneFilename: defaultDoneFilename,
-          localPath: defaultLocalTodoPath,
-          remotePath: defaultRemoteTodoPath,
-        ),
-      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

@@ -24,6 +24,8 @@ class _LocalLoginViewState extends State<LocalLoginView> {
 
   @override
   Widget build(BuildContext context) {
+    bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Stack(
       children: [
         Scaffold(
@@ -41,31 +43,30 @@ class _LocalLoginViewState extends State<LocalLoginView> {
               const LocalPathInput(),
             ],
           ),
-          floatingActionButton: BlocBuilder<TodoFileCubit, TodoFileState>(
-            builder: (BuildContext context, TodoFileState state) {
-              return Visibility(
-                visible: state is! TodoFileLoading,
-                child: FloatingActionButton.extended(
-                  heroTag: 'localUsage',
-                  icon: const Icon(Icons.done),
-                  label: const Text('Apply'),
-                  tooltip: 'Apply',
-                  onPressed: () async {
-                    try {
-                      setState(() => loading = true);
-                      await context.read<LoginCubit>().loginLocal(
-                            localTodoFile: File(
-                              '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
-                            ),
-                          );
-                    } finally {
-                      setState(() => loading = false);
-                    }
+          floatingActionButton: keyboardIsOpen
+              ? null
+              : BlocBuilder<TodoFileCubit, TodoFileState>(
+                  builder: (BuildContext context, TodoFileState state) {
+                    return FloatingActionButton.extended(
+                      heroTag: 'localUsage',
+                      icon: const Icon(Icons.done),
+                      label: const Text('Apply'),
+                      tooltip: 'Apply',
+                      onPressed: () async {
+                        try {
+                          setState(() => loading = true);
+                          await context.read<LoginCubit>().loginLocal(
+                                localTodoFile: File(
+                                  '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
+                                ),
+                              );
+                        } finally {
+                          setState(() => loading = false);
+                        }
+                      },
+                    );
                   },
                 ),
-              );
-            },
-          ),
         ),
         if (loading)
           const Opacity(
@@ -375,68 +376,72 @@ class RemotePathInput extends StatefulWidget {
 }
 
 class _RemotePathInputState extends State<RemotePathInput> {
-  late TextEditingController controller;
+  final TextEditingController controller = TextEditingController();
+  final Debouncer debounce = Debouncer(milliseconds: 1000);
 
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    debounce.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Initial value
+    controller.text = context.read<TodoFileCubit>().state.remotePath;
     return BlocBuilder<TodoFileCubit, TodoFileState>(
       builder: (BuildContext context, TodoFileState state) {
-        controller.text = state.remotePath;
         return ListTile(
-          leading: const Icon(Icons.folder),
-          title: TextFormField(
-            controller: controller,
-            style: Theme.of(context).textTheme.bodyMedium,
-            decoration: const InputDecoration(
-              labelText: 'Remote path',
-              hintText: defaultRemoteTodoPath,
+            leading: const Icon(Icons.folder),
+            title: TextFormField(
+              controller: controller,
+              style: Theme.of(context).textTheme.bodyMedium,
+              decoration: const InputDecoration(
+                labelText: 'Remote path',
+                hintText: defaultRemoteTodoPath,
+              ),
+              onChanged: (String value) async {
+                debounce.run(() async => await _save(context, value));
+              },
             ),
-            onChanged: (String value) =>
-                context.read<TodoFileCubit>().updateRemotePath(value),
-          ),
-          trailing: state is! TodoFileLoading
-              ? IconButton(
-                  icon: const Icon(Icons.help_outline),
-                  onPressed: () => InfoDialog.dialog(
-                    context: context,
-                    title: 'Remote path',
-                    message:
-                        'This path is appended to the base url of the server connection. This makes it possible to define a user-defined path for the todo files.',
-                  ),
-                )
-              : IconButton(
-                  icon: const Icon(Icons.save),
-                  onPressed: () async {
-                    if (controller.text.isEmpty) {
-                      SnackBarHandler.info(
-                        context,
-                        'Empty remote path is not allowed. Using default one.',
-                      );
-                      await context
-                          .read<TodoFileCubit>()
-                          .saveRemotePath(defaultRemoteTodoPath);
-                    } else {
-                      await context
-                          .read<TodoFileCubit>()
-                          .saveRemotePath(controller.text);
-                    }
-                  },
-                ),
-        );
+            trailing: IconButton(
+              icon: const Icon(Icons.help_outline),
+              onPressed: () => InfoDialog.dialog(
+                context: context,
+                title: 'Remote path',
+                message:
+                    'This path is appended to the base url of the server connection. This makes it possible to define a user-defined path for the todo files.',
+              ),
+            ));
       },
     );
+  }
+
+  Future<void> _save(BuildContext context, String value) async {
+    if (value.isEmpty) {
+      SnackBarHandler.info(
+        context,
+        'Empty remote path is not allowed. Using default one.',
+      );
+      await context.read<TodoFileCubit>().saveRemotePath(defaultRemoteTodoPath);
+      controller.value = controller.value.copyWith(
+        text: defaultRemoteTodoPath,
+        selection:
+            const TextSelection.collapsed(offset: defaultRemoteTodoPath.length),
+      );
+    } else {
+      await context.read<TodoFileCubit>().saveRemotePath(value);
+      controller.value = controller.value.copyWith(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
+    }
   }
 }
 
@@ -444,29 +449,31 @@ class TodoFilenameInput extends StatefulWidget {
   const TodoFilenameInput({super.key});
 
   @override
-  State<TodoFilenameInput> createState() => _LocalFilenameInputState();
+  State<TodoFilenameInput> createState() => _TodoFilenameInputState();
 }
 
-class _LocalFilenameInputState extends State<TodoFilenameInput> {
-  late TextEditingController controller;
+class _TodoFilenameInputState extends State<TodoFilenameInput> {
+  final TextEditingController controller = TextEditingController();
+  final Debouncer debounce = Debouncer(milliseconds: 1000);
 
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    debounce.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Initial value
+    controller.text = context.read<TodoFileCubit>().state.todoFilename;
     return BlocBuilder<TodoFileCubit, TodoFileState>(
       builder: (BuildContext context, TodoFileState state) {
-        controller.text = state.todoFilename;
         return ListTile(
           leading: const Icon(Icons.description),
           title: TextFormField(
@@ -476,31 +483,35 @@ class _LocalFilenameInputState extends State<TodoFilenameInput> {
               labelText: 'Todo filename',
               hintText: defaultTodoFilename,
             ),
-            onChanged: (String value) =>
-                context.read<TodoFileCubit>().updateTodoFilename(value),
+            onChanged: (String value) async {
+              debounce.run(() async => await _save(context, value));
+            },
           ),
-          trailing: state is! TodoFileLoading
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.save),
-                  onPressed: () async {
-                    if (controller.text.isEmpty) {
-                      SnackBarHandler.info(
-                        context,
-                        'Empty todo filename is not allowed. Using default one.',
-                      );
-                      await context
-                          .read<TodoFileCubit>()
-                          .saveLocalFilename(defaultTodoFilename);
-                    } else {
-                      await context
-                          .read<TodoFileCubit>()
-                          .saveLocalFilename(controller.text);
-                    }
-                  },
-                ),
         );
       },
     );
+  }
+
+  Future<void> _save(BuildContext context, String value) async {
+    if (value.isEmpty) {
+      SnackBarHandler.info(
+        context,
+        'Empty todo filename is not allowed. Using default one.',
+      );
+      await context
+          .read<TodoFileCubit>()
+          .saveLocalFilename(defaultTodoFilename);
+      controller.value = controller.value.copyWith(
+        text: defaultTodoFilename,
+        selection:
+            const TextSelection.collapsed(offset: defaultTodoFilename.length),
+      );
+    } else {
+      await context.read<TodoFileCubit>().saveLocalFilename(value);
+      controller.value = controller.value.copyWith(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
+    }
   }
 }
