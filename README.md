@@ -27,27 +27,24 @@ This application is under active development and will continue to be modified an
 ## Features
 
 - Manage your todos in [todo.txt](https://github.com/todotxt/todo.txt) format
-- Manage your todos locally only if you want
-- Synchronize your todos via webdav with a server of your choice
+- Manage your todos locally and/or synchronize your todos via webdav with a server of your choice
+- Custom path and filename of todo files (local and remote)
 - Completely customizable filters
   - Ordering
   - Filter by project, context, priorities and completion
-- Custom path and filename of todo file on device
+- Search todos
 
 ## Planned features
 
-- [x] Build and publish to F-Droid (Android)
-- [ ] Build and publish to Google Play (Android)
-- [ ] Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
-- [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
-- [ ] Build and publish to Microsoft Store (Windows)
-- [ ] Add language localization (e.g. english, german)
-- [ ] Custom path of todo file on remote side
-- [ ] Custom todo filename remote side
-- [ ] Import existing todos from file
-- [ ] Export todos to file
-- [ ] Archiving of completed todos (done.txt)
-- [ ] [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
+- Build and publish to Google Play (Android)
+- Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
+- Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
+- Build and publish to Microsoft Store (Windows)
+- Add language localization (e.g. english, german)
+- Import existing todos from file
+- Export todos to file
+- Archiving of completed todos (done.txt)
+- [Recurring](https://c306.net/t/topydo-docs/#Recurrence) tasks
 
 ## Build
 
@@ -70,7 +67,7 @@ See them in [awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/b
 
 ## Troubleshoot
 
-### Prevent the file path of todo.txt from being automatically reset.
+### Prevent the file path of todo.txt from being automatically reset
 
 #### One UI Core (Samsung)
 

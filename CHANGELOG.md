@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2024-06-09
+
+## Added
+
+- Possibility to configure the remote path and local/remote filename #56
+
+## Removed
+
+- BREAKING CHANGE: The username is no longer automatically appended to webdav base url (reinitialize your app if needed)
+
 ## [0.9.1] - 2024-05-23
 
 ### Fixed
@@ -291,7 +301,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.9.1...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/tmaegel/ntodotxt/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/tmaegel/ntodotxt/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/tmaegel/ntodotxt/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/tmaegel/ntodotxt/compare/v0.8.0...v0.8.1
