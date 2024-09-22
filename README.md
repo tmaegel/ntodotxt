@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/v/release/tmaegel/ntodotxt)](https://github.com/tmaegel/ntodotxt/releases)
 [![F-Droid](https://img.shields.io/f-droid/v/de.tnmgl.ntodotxt.svg?logo=F-Droid)](https://f-droid.org/packages/de.tnmgl.ntodotxt)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
-[![Flutter](https://img.shields.io/badge/_Flutter_-3.16.9-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter)
+[![Flutter](https://img.shields.io/badge/_Flutter_-3.19.6-grey.svg?&logo=Flutter&logoColor=white&labelColor=blue)](https://github.com/flutter/flutter)
 
 With `ntodotxt` you can manage your todos in a [todo.txt](https://github.com/todotxt/todo.txt) file (i.e. all information
 is stored in a single file). You can save your todos locally on your device and/or synchronize the todo.txt file via webdav - for
