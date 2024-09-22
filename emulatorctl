@@ -5,8 +5,11 @@ function show_usage() {
     $(basename "$") [options]"
   echo ""
   echo "Options:
-    -r        Run emulator
-    -e        Exit emulator
+    -l        List emulators / avds
+    -c [name] Create emulator / avd
+    -d        Delete emulator / avd
+    -r        Run emulator / avd
+    -e        Exit emulator / avd
     -v [api]  Anroid API
     -h        Display this message"
 }
@@ -18,14 +21,31 @@ fi
 
 ACTION=0
 ANDROID_API=34
+EMULATOR_NAME=""
 
-while getopts ":hrev:" arg; do
+while getopts ":hldrec:v:" arg; do
   case "${arg}" in
+    l)
+      avdmanager list avd
+      exit 0
+      ;;
+    d)
+      avdmanager delete avd --name "$(avdmanager list avd -c | fzf)"
+      exit 0
+      ;;
     r)
-      ACTION="run"
+      echo "Starting emulator ..."
+      flutter emulators --launch "$(avdmanager list avd -c | fzf)"
+      exit 0
       ;;
     e)
-      ACTION="exit"
+      echo "Exiting emulator ..."
+      adb emu kill
+      exit 0
+      ;;
+    c)
+      ACTION="create"
+      EMULATOR_NAME="${OPTARG}"
       ;;
     v)
       ANDROID_API="${OPTARG}"
@@ -37,12 +57,8 @@ while getopts ":hrev:" arg; do
   esac
 done
 
-if [[ ${ACTION} == "run" ]]; then
-  echo "Starting emulator ..."
-  flutter emulators --launch "Android_API_${ANDROID_API}"
-elif [[ ${ACTION} == "exit" ]]; then
-  echo "Stopping emulator ..."
-  adb emu kill
+if [[ ${ACTION} == "create" ]]; then
+  avdmanager create avd --name "${EMULATOR_NAME}-android-${ANDROID_API}" --package "system-images;android-${ANDROID_API};google_apis_playstore;x86_64"
 fi
 
 exit 0
