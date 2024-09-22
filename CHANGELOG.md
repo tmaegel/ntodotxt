@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- Possibility to edit the due date without resetting it first #52
+
 ## [0.10.1] - 2024-09-22
 
 ### Changed

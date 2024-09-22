@@ -1462,7 +1462,7 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoDueDateItem (unset)', (tester) async {
+      testWidgets('TodoDueDateItem (already set)', (tester) async {
         await tester.pumpWidget(
           MaterialAppWrapper(
             initTodo: Todo(description: 'Code something due:2024-02-27'),
@@ -1476,6 +1476,46 @@ void main() {
         );
 
         await tester.tap(find.byType(TodoDueDateItem));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final DateTime initial = DateTime.parse('2024-02-27');
+        final String today =
+            '${initial.year.toString()}-${initial.month.toString().padLeft(2, '0')}-${initial.day.toString().padLeft(2, '0')}';
+        expect(
+          find.descendant(
+            of: find.byType(TodoDueDateItem),
+            matching: find.text(today),
+          ),
+          findsOneWidget,
+        );
+      });
+      testWidgets('TodoDueDateItem (unset)', (tester) async {
+        await tester.pumpWidget(
+          MaterialAppWrapper(
+            initTodo: Todo(description: 'Code something due:2024-02-27'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.dragUntilVisible(
+          find.byType(TodoDueDateItem),
+          find.byType(ListView),
+          const Offset(0, -100),
+        );
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(TodoDueDateItem),
+            matching: find.byType(IconButton),
+          ),
+        );
         await tester.pumpAndSettle();
 
         expect(

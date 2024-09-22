@@ -440,30 +440,38 @@ class TodoDueDateItem extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListTile(
-              key: key,
-              leading: const Icon(Icons.event),
-              title: const Text('Due date'),
-              subtitle: Text(Todo.date2Str(state.todo.dueDate) ?? '-'),
-              onTap: () {
-                if (state.todo.dueDate == null) {
-                  _pickDateDialog(context);
-                } else {
-                  context.read<TodoCubit>().removeKeyValue('due:$dueDate');
-                }
-              }),
+            key: key,
+            leading: const Icon(Icons.event),
+            title: const Text('Due date'),
+            subtitle: Text(dueDate ?? '-'),
+            trailing: state.todo.dueDate == null
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      context.read<TodoCubit>().removeKeyValue('due:$dueDate');
+                    },
+                  ),
+            onTap: () {
+              _pickDateDialog(
+                context: context,
+                initialDate: state.todo.dueDate,
+              );
+            },
+          ),
         );
       },
     );
   }
 
-  void _pickDateDialog(BuildContext context) {
-    final DateTime now = DateTime.now();
+  void _pickDateDialog({required BuildContext context, DateTime? initialDate}) {
+    final DateTime initial = initialDate ?? DateTime.now();
     showDatePicker(
       useRootNavigator: false,
       context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 3650)),
+      firstDate: initial.subtract(const Duration(days: 3650)),
+      initialDate: initial,
+      lastDate: initial.add(const Duration(days: 3650)),
     ).then(
       (date) {
         if (date != null) {
