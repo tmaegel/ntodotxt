@@ -55,6 +55,7 @@ class _TodoStringTextFieldState extends State<TodoStringTextField> {
             FilteringTextInputFormatter.deny(RegExp(r'\n')),
           ],
           style: Theme.of(context).textTheme.titleMedium,
+          textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),

@@ -74,6 +74,7 @@ class _TodoSearchViewState extends State<TodoSearchView> {
         FilteringTextInputFormatter.deny(RegExp(r'\n')),
       ],
       style: Theme.of(context).textTheme.titleLarge,
+      textCapitalization: TextCapitalization.sentences,
       decoration: const InputDecoration(hintText: 'Search ...'),
       onChanged: (String value) => setState(() => query = _controller.text),
     );

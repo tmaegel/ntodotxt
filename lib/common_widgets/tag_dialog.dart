@@ -111,6 +111,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                       child: TextFormField(
                         controller: _controller,
                         style: Theme.of(context).textTheme.bodyMedium,
+                        textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(
                           hintText: 'Enter <${widget.tagName}> tag ...',
                           contentPadding: EdgeInsets.zero,

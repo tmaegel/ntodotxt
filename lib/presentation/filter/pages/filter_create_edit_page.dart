@@ -144,6 +144,7 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
             FilteringTextInputFormatter.deny(RegExp(r'\n')),
           ],
           style: Theme.of(context).textTheme.titleMedium,
+          textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
             hintText: 'Filter name',
             contentPadding: EdgeInsets.symmetric(

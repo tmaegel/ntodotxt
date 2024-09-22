@@ -157,6 +157,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                     title: TextFormField(
                       controller: serverTextFieldController,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      textCapitalization: TextCapitalization.none,
                       decoration: const InputDecoration(
                         labelText: 'Server',
                         hintText: 'http[s]://server[:port]',
@@ -188,6 +189,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                     title: TextFormField(
                       controller: baseUrlTextFieldController,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      textCapitalization: TextCapitalization.none,
                       decoration: const InputDecoration(
                         labelText: 'Base URL',
                         hintText: '/remote.php/dav/files/<username>',
@@ -221,6 +223,7 @@ Please check the requirements of your webdav server.''',
                     title: TextFormField(
                       controller: usernameTextFieldController,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      textCapitalization: TextCapitalization.none,
                       decoration: const InputDecoration(
                         labelText: 'Username',
                         hintText: 'Username',
@@ -243,6 +246,7 @@ Please check the requirements of your webdav server.''',
                     title: TextFormField(
                       controller: passwordTextFieldController,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      textCapitalization: TextCapitalization.none,
                       decoration: const InputDecoration(
                         labelText: 'Password',
                         hintText: 'Password',
@@ -402,6 +406,7 @@ class _RemotePathInputState extends State<RemotePathInput> {
             title: TextFormField(
               controller: controller,
               style: Theme.of(context).textTheme.bodyMedium,
+              textCapitalization: TextCapitalization.none,
               decoration: const InputDecoration(
                 labelText: 'Remote path',
                 hintText: defaultRemoteTodoPath,
@@ -479,6 +484,7 @@ class _TodoFilenameInputState extends State<TodoFilenameInput> {
           title: TextFormField(
             controller: controller,
             style: Theme.of(context).textTheme.bodyMedium,
+            textCapitalization: TextCapitalization.none,
             decoration: const InputDecoration(
               labelText: 'Todo filename',
               hintText: defaultTodoFilename,
