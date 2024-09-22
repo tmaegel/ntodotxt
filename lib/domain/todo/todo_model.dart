@@ -105,9 +105,7 @@ class Todo extends Equatable {
   static final RegExp patternDate = RegExp(r'^\d{4}-\d{2}-\d{2}$');
   static final RegExp patternProject = RegExp(r'^\+\S+$');
   static final RegExp patternContext = RegExp(r'^\@\S+$');
-  // Prevent +, @ at the beginning and additional ':' within.
-  static final RegExp patternKeyValue =
-      RegExp(r'^([^\+\@].*[^:\s]):(.*[^:\s])$'); // @todo: a:b failed
+  static final RegExp patternKeyValue = RegExp(r'^([\w\-\.]+):([^\s:]+)$');
 
   final String id;
 

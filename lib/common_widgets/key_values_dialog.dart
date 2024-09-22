@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ntodotxt/common_widgets/tag_dialog.dart';
+import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 
 class TodoKeyValueTagDialog extends TagDialog {
@@ -15,7 +16,7 @@ class TodoKeyValueTagDialog extends TagDialog {
   });
 
   @override
-  RegExp get regex => RegExp(r'^([^\+\@].*[^:\s]):(.*[^:\s])$');
+  RegExp get regex => Todo.patternKeyValue;
 
   static Future<void> dialog({
     required BuildContext context,

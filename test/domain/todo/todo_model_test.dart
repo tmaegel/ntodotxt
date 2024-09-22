@@ -674,6 +674,10 @@ void main() {
         final todo = Todo.fromString(value: 'Write some tests key:value');
         expect(todo.keyValues, {'key:value'});
       });
+      test('single character key value tag', () {
+        final todo = Todo.fromString(value: 'Write some tests k:v');
+        expect(todo.keyValues, {'k:v'});
+      });
       test('multiple key value tags', () {
         final todo =
             Todo.fromString(value: 'Write some tests key1:value1 key2:value2');
@@ -686,8 +690,8 @@ void main() {
       });
       test('key value tag with a special name', () {
         final todo =
-            Todo.fromString(value: 'Write some tests key-@_123:value_@123');
-        expect(todo.keyValues, {'key-@_123:value_@123'});
+            Todo.fromString(value: 'Write some tests key-123:value_123');
+        expect(todo.keyValues, {'key-123:value_123'});
       });
       test('key value tag with a name in capital letters', () {
         final todo = Todo.fromString(value: 'Write some tests Key:Value');
@@ -698,9 +702,13 @@ void main() {
             Todo.fromString(value: 'Write some tests key:value key:value');
         expect(todo.keyValues, {'key:value'});
       });
-      test('invalid key value tag', () {
+      test('invalid key value tag 1', () {
         final todo =
             Todo.fromString(value: 'Write some tests key1:value1:invalid');
+        expect(todo.keyValues, []);
+      });
+      test('invalid key value tag 2', () {
+        final todo = Todo.fromString(value: 'Write some tests key1::invalid');
         expect(todo.keyValues, []);
       });
       test('incompleted full todo', () {
