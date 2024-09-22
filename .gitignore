@@ -60,6 +60,7 @@ unlinked.ds
 unlinked_spec.ds
 
 # Android related
+.android/
 **/android/**/gradle-wrapper.jar
 .gradle/
 **/android/captures/
@@ -134,3 +135,18 @@ app.*.symbols
 
 docker-compose.yml
 .scannerwork/
+
+# devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+.envrc
+
+# pre-commit
+.pre-commit-config.yaml
+
+# nix
+!flake.lock
+local.properties
