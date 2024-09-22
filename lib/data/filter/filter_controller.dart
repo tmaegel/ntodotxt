@@ -10,7 +10,10 @@ class FilterController extends ModelController<Filter> {
     late final List<Map<String, dynamic>> maps;
     try {
       final Database db = await database;
-      maps = await db.query('filters');
+      maps = await db.query(
+        'filters',
+        orderBy: 'name',
+      );
     } on Exception {
       rethrow;
     } finally {
