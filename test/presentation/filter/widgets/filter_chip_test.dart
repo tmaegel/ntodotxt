@@ -401,7 +401,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('A'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(find.text('priorities'), findsOneWidget);

@@ -280,12 +280,8 @@ void main() {
             matching: find.text('A'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoPriorityTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -554,12 +550,8 @@ void main() {
               matching: find.text('A'),
             ),
           );
-          await tester.tap(
-            find.descendant(
-              of: find.byType(TodoPriorityTagDialog),
-              matching: find.text('Apply'),
-            ),
-          );
+          await tester.drag(find.byType(DraggableScrollableSheet),
+              const Offset(0, 500)); // Dismiss dialog.
           await tester.pumpAndSettle();
 
           expect(
@@ -1078,12 +1070,8 @@ void main() {
             matching: find.text('A'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoPriorityTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(

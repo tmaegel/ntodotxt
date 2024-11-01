@@ -60,8 +60,6 @@ class PriorityTagDialogState<T extends PriorityTagDialog> extends State<T> {
     return t.toSet();
   }
 
-  void onSubmit(BuildContext context, Set<Priority> values) {}
-
   void onUpdate(PriorityTag value, bool selected) {}
 
   @override
@@ -84,16 +82,6 @@ class PriorityTagDialogState<T extends PriorityTagDialog> extends State<T> {
                   title: Text(
                     widget.title,
                     style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  trailing: TextButton(
-                    child: const Text('Apply'),
-                    onPressed: () {
-                      onSubmit(context, {
-                        for (PriorityTag t in tags)
-                          if (t.selected) t.priority
-                      });
-                      Navigator.pop(context);
-                    },
                   ),
                 ),
               ),
@@ -171,13 +159,13 @@ class _FilterPriorityTagDialogState
   }
 
   @override
-  void onSubmit(BuildContext context, Set<Priority> values) =>
-      widget.cubit.updatePriorities(values);
-
-  @override
   void onUpdate(PriorityTag value, bool selected) {
     setState(() {
       value.selected = selected;
+    });
+    widget.cubit.updatePriorities({
+      for (PriorityTag t in tags)
+        if (t.selected) t.priority
     });
   }
 }
@@ -227,18 +215,6 @@ class _TodoPriorityTagDialogState
   }
 
   @override
-  void onSubmit(BuildContext context, Set<Priority> values) {
-    PriorityTag tag = tags.firstWhere(
-      (PriorityTag t) => t.selected,
-      orElse: () => PriorityTag(
-        priority: Priority.none,
-        selected: true,
-      ),
-    );
-    widget.cubit.setPriority(tag.priority);
-  }
-
-  @override
   void onUpdate(PriorityTag value, bool selected) {
     setState(() {
       // Unset priorities first.
@@ -247,5 +223,6 @@ class _TodoPriorityTagDialogState
       }
       value.selected = selected;
     });
+    widget.cubit.setPriority(value.priority);
   }
 }
