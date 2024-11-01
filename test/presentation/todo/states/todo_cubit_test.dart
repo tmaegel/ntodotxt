@@ -225,7 +225,7 @@ void main() {
           ),
         );
       });
-      test('duplication / case sensitive', () async {
+      test('no duplication / case insensitive', () async {
         todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addProject('Project1');
@@ -234,7 +234,7 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              description: 'Write some tests +project1',
+              description: 'Write some tests +project1 +Project1',
             ),
           ),
         );
@@ -298,16 +298,16 @@ void main() {
           ),
         );
       });
-      test('multiple entries / duplication / case sensitive', () async {
+      test('multiple entries / no duplication / case insensitive', () async {
         todo = Todo(description: 'Write some tests +project1');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.updateProjects({'Project1', 'Project2'});
+        bloc.updateProjects({'project1', 'Project1', 'Project2'});
 
         expect(
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              description: 'Write some tests +project1 +project2',
+              description: 'Write some tests +project1 +Project1 +Project2',
             ),
           ),
         );
@@ -419,7 +419,7 @@ void main() {
           ),
         );
       });
-      test('duplication / case sensitive', () async {
+      test('no duplication / case insensitive', () async {
         todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addContext('Context1');
@@ -428,7 +428,7 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              description: 'Write some tests @context1',
+              description: 'Write some tests @context1 @Context1',
             ),
           ),
         );
@@ -492,16 +492,16 @@ void main() {
           ),
         );
       });
-      test('multiple entries / duplication / case sensitive', () async {
+      test('multiple entries / no duplication / case insensitive', () async {
         todo = Todo(description: 'Write some tests @context1');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.updateContexts({'context1', 'Context2'});
+        bloc.updateContexts({'context1', 'Context1', 'Context2'});
 
         expect(
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              description: 'Write some tests @context1 @context2',
+              description: 'Write some tests @context1 @Context1 @Context2',
             ),
           ),
         );
@@ -613,7 +613,7 @@ void main() {
           ),
         );
       });
-      test('duplication / case sensitive', () async {
+      test('no duplication / case insensitive', () async {
         todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
         bloc.addKeyValue('Foo:bar');
@@ -622,7 +622,7 @@ void main() {
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              description: 'Write some tests foo:bar',
+              description: 'Write some tests foo:bar Foo:bar',
             ),
           ),
         );
@@ -700,16 +700,16 @@ void main() {
           ),
         );
       });
-      test('multiple entries / duplication / case sensitive', () async {
+      test('multiple entries / no duplication / case insensitive', () async {
         todo = Todo(description: 'Write some tests foo:bar');
         final TodoCubit bloc = TodoCubit(todo: todo);
-        bloc.updateKeyValues({'Key1:val1', 'Foo:bar'});
+        bloc.updateKeyValues({'foo:bar', 'Key1:val1', 'Foo:bar'});
 
         expect(
           bloc.state,
           TodoSuccess(
             todo: Todo(
-              description: 'Write some tests foo:bar key1:val1',
+              description: 'Write some tests foo:bar Key1:val1 Foo:bar',
             ),
           ),
         );

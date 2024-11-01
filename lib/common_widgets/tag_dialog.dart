@@ -126,10 +126,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                             text = text.substring(1);
                           }
                           setState(() {
-                            tags.add(Tag(
-                              name: text.toLowerCase(),
-                              selected: true,
-                            ));
+                            tags.add(Tag(name: text, selected: true));
                           });
                           _controller.text = '';
                           onUpdate();

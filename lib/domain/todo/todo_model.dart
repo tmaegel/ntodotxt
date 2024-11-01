@@ -182,7 +182,7 @@ class Todo extends Equatable {
     List<String> projects = [];
     for (String item in description.split(' ')) {
       if (matchProject(item)) {
-        projects.add(item.substring(1).toLowerCase());
+        projects.add(item.substring(1));
       }
     }
 
@@ -191,15 +191,13 @@ class Todo extends Equatable {
 
   Set<String> get fmtProjects => {for (var p in projects) '+$p'};
 
-  static fmtProject(String p) =>
-      p.startsWith('+') ? p.toLowerCase() : '+${p.toLowerCase()}';
+  static fmtProject(String p) => p.startsWith('+') ? p : '+$p';
 
   bool containsProject(String project) {
-    String p = project.toLowerCase();
-    if (p.startsWith('+')) {
-      return projects.contains(p.substring(1));
+    if (project.startsWith('+')) {
+      return projects.contains(project.substring(1));
     } else {
-      return projects.contains(p);
+      return projects.contains(project);
     }
   }
 
@@ -211,7 +209,7 @@ class Todo extends Equatable {
     List<String> contexts = [];
     for (String item in description.split(' ')) {
       if (matchContext(item)) {
-        contexts.add(item.substring(1).toLowerCase());
+        contexts.add(item.substring(1));
       }
     }
 
@@ -220,15 +218,13 @@ class Todo extends Equatable {
 
   Set<String> get fmtContexts => {for (var c in contexts) '@$c'};
 
-  static fmtContext(String c) =>
-      c.startsWith('@') ? c.toLowerCase() : '@${c.toLowerCase()}';
+  static fmtContext(String c) => c.startsWith('@') ? c : '@$c';
 
   bool containsContext(String context) {
-    String c = context.toLowerCase();
-    if (c.startsWith('@')) {
-      return contexts.contains(c.substring(1));
+    if (context.startsWith('@')) {
+      return contexts.contains(context.substring(1));
     } else {
-      return contexts.contains(c);
+      return contexts.contains(context);
     }
   }
 
@@ -242,7 +238,7 @@ class Todo extends Equatable {
       if (matchKeyValue(item)) {
         List<String> kvSplitted = item.split(':');
         if (kvSplitted.length > 2) continue;
-        keyValues.add(item.toLowerCase());
+        keyValues.add(item);
       }
     }
 
@@ -251,13 +247,12 @@ class Todo extends Equatable {
 
   Set<String> get fmtKeyValues => keyValues;
 
-  static fmtKeyValue(String keyValue) => keyValue.toLowerCase();
+  static fmtKeyValue(String keyValue) => keyValue;
 
   /// Checks if a key value pair with specific key already exists.
   bool containsKeyValue(String keyValue) {
     for (String kv in keyValues) {
-      if (kv.toLowerCase().split(':')[0] ==
-          keyValue.toLowerCase().split(':')[0]) {
+      if (kv.split(':')[0] == keyValue.split(':')[0]) {
         return true;
       }
     }
@@ -424,7 +419,7 @@ class Todo extends Equatable {
       priority: priority,
       completionDate: completionDate,
       creationDate: creationDate,
-      description: _str2description(fullDescriptionList), // Including tags.
+      description: fullDescriptionList.join(' '), // Including tags.
     );
   }
 
@@ -585,18 +580,5 @@ class Todo extends Equatable {
 
     // Priority is optional.
     return Priority.none;
-  }
-
-  static String _str2description(List<String> strList) {
-    final List<String> descriptionList = [];
-    for (var item in strList) {
-      if (matchProject(item) || matchContext(item) || matchKeyValue(item)) {
-        descriptionList.add(item.toLowerCase());
-      } else {
-        descriptionList.add(item);
-      }
-    }
-
-    return descriptionList.join(' ');
   }
 }

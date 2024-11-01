@@ -551,30 +551,36 @@ void main() {
         expect(todo.projects, []);
       });
       test('single project tag', () {
-        final todo = Todo.fromString(value: 'Write some tests +ntodotxt');
-        expect(todo.projects, ['ntodotxt']);
+        final todo = Todo.fromString(value: 'Write some tests +project');
+        expect(todo.projects, ['project']);
       });
       test('multiple project tags', () {
-        final todo = Todo.fromString(value: 'Write some tests +ntodotxt +code');
-        expect(todo.projects, ['code', 'ntodotxt']);
+        final todo =
+            Todo.fromString(value: 'Write some tests +project1 +project2');
+        expect(todo.projects, ['project1', 'project2']);
       });
       test('multiple project tags (not in sequence)', () {
-        final todo = Todo.fromString(value: 'Write some +tests for +ntodotxt');
-        expect(todo.projects, ['ntodotxt', 'tests']);
+        final todo = Todo.fromString(value: 'Write some +tests for +project');
+        expect(todo.projects, ['project', 'tests']);
       });
       test('project tag with a special name', () {
         final todo =
-            Todo.fromString(value: 'Write some tests +n-todo.txt+_123');
-        expect(todo.projects, ['n-todo.txt+_123']);
+            Todo.fromString(value: 'Write some tests +project_123+a-b-c');
+        expect(todo.projects, ['project_123+a-b-c']);
       });
-      test('project tag with a name in capital letters', () {
-        final todo = Todo.fromString(value: 'Write some tests +NTodoTXT');
-        expect(todo.projects, ['ntodotxt']);
+      test('project tag with uppercase characters', () {
+        final todo = Todo.fromString(value: 'Write some tests +Project');
+        expect(todo.projects, ['Project']);
       });
       test('project tag with project duplication', () {
         final todo =
-            Todo.fromString(value: 'Write some tests +ntodotxt +ntodotxt');
-        expect(todo.projects, ['ntodotxt']);
+            Todo.fromString(value: 'Write some tests +project +project');
+        expect(todo.projects, ['project']);
+      });
+      test('similar project tags with uppercase and lowercase characters', () {
+        final todo = Todo.fromString(
+            value: 'Write some tests +project +project +Project');
+        expect(todo.projects, ['Project', 'project']);
       });
       test('incompleted full todo', () {
         final todo = Todo.fromString(
@@ -611,30 +617,35 @@ void main() {
         expect(todo.contexts, []);
       });
       test('single context tag', () {
-        final todo = Todo.fromString(value: 'Write some @tests');
-        expect(todo.contexts, ['tests']);
+        final todo = Todo.fromString(value: 'Write some @context');
+        expect(todo.contexts, ['context']);
       });
       test('multiple context tags', () {
-        final todo = Todo.fromString(value: 'Write some @tests @dx');
-        expect(todo.contexts, ['dx', 'tests']);
+        final todo = Todo.fromString(value: 'Write some @context1 @context2');
+        expect(todo.contexts, ['context1', 'context2']);
       });
       test('multiple context tags (not in sequence)', () {
-        final todo = Todo.fromString(value: 'Write some @tests for @ntodotxt');
-        expect(todo.contexts, ['ntodotxt', 'tests']);
+        final todo = Todo.fromString(value: 'Write some @tests for @context');
+        expect(todo.contexts, ['context', 'tests']);
       });
       test('context tag with a special name', () {
         final todo =
-            Todo.fromString(value: 'Write some tests for @n-todo.txt+_123');
-        expect(todo.contexts, ['n-todo.txt+_123']);
+            Todo.fromString(value: 'Write some tests for @context_123+a-b-c');
+        expect(todo.contexts, ['context_123+a-b-c']);
       });
-      test('context tag with a name in capital letters', () {
-        final todo = Todo.fromString(value: 'Write some tests @NTodoTXT');
-        expect(todo.contexts, ['ntodotxt']);
+      test('context tag with uppercase characters', () {
+        final todo = Todo.fromString(value: 'Write some tests @Context');
+        expect(todo.contexts, ['Context']);
       });
       test('context tag with context duplication', () {
         final todo =
-            Todo.fromString(value: 'Write some tests @ntodotxt @ntodotxt');
-        expect(todo.contexts, ['ntodotxt']);
+            Todo.fromString(value: 'Write some tests @context @context');
+        expect(todo.contexts, ['context']);
+      });
+      test('similar context tags with uppercase and lowercase characters', () {
+        final todo = Todo.fromString(
+            value: 'Write some tests +project @context @Context');
+        expect(todo.contexts, ['Context', 'context']);
       });
       test('incompleted full todo', () {
         final todo = Todo.fromString(
@@ -693,14 +704,20 @@ void main() {
             Todo.fromString(value: 'Write some tests key-123:value_123');
         expect(todo.keyValues, {'key-123:value_123'});
       });
-      test('key value tag with a name in capital letters', () {
+      test('key value tag with uppercase characters', () {
         final todo = Todo.fromString(value: 'Write some tests Key:Value');
-        expect(todo.keyValues, {'key:value'});
+        expect(todo.keyValues, {'Key:Value'});
       });
       test('key value tag with key value duplication', () {
         final todo =
             Todo.fromString(value: 'Write some tests key:value key:value');
         expect(todo.keyValues, {'key:value'});
+      });
+      test('similar key value tags with uppercase and lowercase characters',
+          () {
+        final todo =
+            Todo.fromString(value: 'Write some tests key:value Key:Value');
+        expect(todo.keyValues, {'Key:Value', 'key:value'});
       });
       test('invalid key value tag 1', () {
         final todo =

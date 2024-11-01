@@ -84,9 +84,8 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void updateProjects(Set<String> projectList) {
+  void updateProjects(Set<String> projects) {
     try {
-      Set<String> projects = {for (String p in projectList) p.toLowerCase()};
       for (String project in projects) {
         if (!Todo.matchProject(Todo.fmtProject(project))) {
           throw TodoInvalidProjectTag(tag: project);
@@ -160,9 +159,8 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void updateContexts(Set<String> contextList) {
+  void updateContexts(Set<String> contexts) {
     try {
-      Set<String> contexts = {for (String c in contextList) c.toLowerCase()};
       for (String context in contexts) {
         if (!Todo.matchContext(Todo.fmtContext(context))) {
           throw TodoInvalidContextTag(tag: context);
@@ -242,28 +240,26 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void updateKeyValues(Set<String> keyValueList) {
+  void updateKeyValues(Set<String> keyValues) {
     try {
-      Set<String> kvs = {for (String kv in keyValueList) kv.toLowerCase()};
-      for (String kv in kvs) {
+      for (String kv in keyValues) {
         if (!Todo.matchKeyValue(Todo.fmtKeyValue(kv))) {
           throw TodoInvalidKeyValueTag(tag: kv);
         }
       }
       String description = state.todo.description;
       Iterable<String> addKeyValues =
-          kvs.where((kv) => !state.todo.containsKeyValue(kv));
+          keyValues.where((kv) => !state.todo.containsKeyValue(kv));
       Iterable<String> removeKeyValues = state.todo.keyValues.where((kv) {
-        for (String keyVal in kvs) {
-          if (kv.toLowerCase().split(':')[0] ==
-              keyVal.toLowerCase().split(':')[0]) {
+        for (String keyVal in keyValues) {
+          if (kv.split(':')[0] == keyVal.split(':')[0]) {
             return false;
           }
         }
         return true;
       });
       Iterable<String> existingKeyValues =
-          kvs.where((kv) => state.todo.containsKeyValue(kv));
+          keyValues.where((kv) => state.todo.containsKeyValue(kv));
       // Remove projects
       for (String kv in removeKeyValues) {
         description = description.replaceAll(Todo.fmtKeyValue(kv), '');
