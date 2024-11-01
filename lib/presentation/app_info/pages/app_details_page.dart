@@ -52,8 +52,8 @@ class AppInfoView extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.email_outlined),
           title: const Text('Contact me'),
-          subtitle: const Text('mail@tonimaegel.de'),
-          onTap: () => _openUrl('mailto:mail@tonimaegel.de'),
+          subtitle: const Text('tnmgl@posteo.de'),
+          onTap: () => _openUrl('mailto:tnmgl@posteo.de'),
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
