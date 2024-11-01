@@ -35,10 +35,6 @@ class FilterContextTagDialog extends TagDialog {
   }
 
   @override
-  void onSubmit(BuildContext context, Set<String> values) =>
-      cubit.updateContexts(values);
-
-  @override
   State<FilterContextTagDialog> createState() => _FilterContextTagDialogState();
 }
 
@@ -55,6 +51,14 @@ class _FilterContextTagDialogState
         ),
       ),
     };
+  }
+
+  @override
+  void onUpdate() {
+    widget.cubit.updateContexts({
+      for (Tag t in tags)
+        if (t.selected) t.name
+    });
   }
 }
 
@@ -89,10 +93,6 @@ class TodoContextTagDialog extends TagDialog {
   }
 
   @override
-  void onSubmit(BuildContext context, Set<String> values) =>
-      cubit.updateContexts(values);
-
-  @override
   State<TodoContextTagDialog> createState() => _TodoContextTagDialogState();
 }
 
@@ -108,5 +108,13 @@ class _TodoContextTagDialogState extends TagDialogState<TodoContextTagDialog> {
         (String t) => Tag(name: t, selected: true),
       ),
     };
+  }
+
+  @override
+  void onUpdate() {
+    widget.cubit.updateContexts({
+      for (Tag t in tags)
+        if (t.selected) t.name
+    });
   }
 }

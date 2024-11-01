@@ -167,7 +167,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await safeTapByFinder(tester, find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -189,7 +190,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await safeTapByFinder(tester, find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -235,7 +237,8 @@ void main() {
         findsOneWidget,
       );
 
-      await safeTapByFinder(tester, find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -279,7 +282,8 @@ void main() {
         findsOneWidget,
       );
 
-      await safeTapByFinder(tester, find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(

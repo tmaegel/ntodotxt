@@ -1006,12 +1006,8 @@ void main() {
             matching: find.text('project1'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(FilterProjectTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1049,12 +1045,8 @@ void main() {
             matching: find.text('context1'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(FilterContextTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(

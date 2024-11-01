@@ -31,8 +31,6 @@ class TagDialog extends StatefulWidget {
 
   RegExp get regex => RegExp(r'^\S+$');
 
-  void onSubmit(BuildContext context, Set<String> values) {}
-
   @override
   State<TagDialog> createState() => TagDialogState();
 }
@@ -66,6 +64,8 @@ class TagDialogState<T extends TagDialog> extends State<T> {
     return t.toSet();
   }
 
+  void onUpdate() {}
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -86,16 +86,6 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                   title: Text(
                     widget.title,
                     style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  trailing: TextButton(
-                    child: const Text('Apply'),
-                    onPressed: () {
-                      widget.onSubmit(context, {
-                        for (Tag t in tags)
-                          if (t.selected) t.name
-                      });
-                      Navigator.pop(context);
-                    },
                   ),
                 ),
               ),
@@ -142,6 +132,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                             ));
                           });
                           _controller.text = '';
+                          onUpdate();
                         }
                       },
                     ),
@@ -177,6 +168,7 @@ class TagDialogState<T extends TagDialog> extends State<T> {
                                   setState(() {
                                     t.selected = selected;
                                   });
+                                  onUpdate();
                                 },
                               ),
                           ],

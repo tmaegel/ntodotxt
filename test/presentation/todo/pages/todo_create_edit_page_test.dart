@@ -1106,12 +1106,8 @@ void main() {
             matching: find.text('project1'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoProjectTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1157,12 +1153,8 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoProjectTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1200,12 +1192,8 @@ void main() {
             matching: find.text('context1'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoContextTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1251,12 +1239,8 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoContextTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1294,12 +1278,8 @@ void main() {
             matching: find.text('key1:val1'),
           ),
         );
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoKeyValueTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1345,12 +1325,8 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoKeyValueTagDialog),
-            matching: find.text('Apply'),
-          ),
-        );
+        await tester.drag(find.byType(DraggableScrollableSheet),
+            const Offset(0, 500)); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(

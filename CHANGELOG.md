@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sort filters alphabetically #50
 - Possibility to show and hide the password in the password field
 
+### Changed
+
+- Auto apply changes in priority, project, context and key-value dialogs #65
+
 ## [0.10.1] - 2024-09-22
 
 ### Changed

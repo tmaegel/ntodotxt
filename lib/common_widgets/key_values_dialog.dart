@@ -34,10 +34,6 @@ class TodoKeyValueTagDialog extends TagDialog {
   }
 
   @override
-  void onSubmit(BuildContext context, Set<String> values) =>
-      cubit.updateKeyValues(values);
-
-  @override
   State<TodoKeyValueTagDialog> createState() => _TodoKeyValueTagDialogState();
 }
 
@@ -54,5 +50,13 @@ class _TodoKeyValueTagDialogState
         (String t) => Tag(name: t, selected: true),
       ),
     };
+  }
+
+  @override
+  void onUpdate() {
+    widget.cubit.updateKeyValues({
+      for (Tag t in tags)
+        if (t.selected) t.name
+    });
   }
 }

@@ -451,7 +451,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('project2'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(find.text('projects'), findsOneWidget);
@@ -500,7 +501,8 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('context2'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Apply'));
+      await tester.drag(find.byType(DraggableScrollableSheet),
+          const Offset(0, 500)); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(find.text('contexts'), findsOneWidget);
