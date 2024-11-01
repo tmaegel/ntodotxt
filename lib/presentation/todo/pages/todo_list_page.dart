@@ -111,7 +111,21 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                     : FloatingActionButton(
                         tooltip: 'Add todo',
                         child: const Icon(Icons.add),
-                        onPressed: () => context.pushNamed('todo-create'),
+                        onPressed: () {
+                          String initDescription = '';
+                          if (filterState.filter.projects.isNotEmpty) {
+                            initDescription =
+                                '+${filterState.filter.projects.join(' +')}';
+                          }
+                          if (filterState.filter.contexts.isNotEmpty) {
+                            initDescription =
+                                '$initDescription @${filterState.filter.contexts.join(' @')}';
+                          }
+                          context.pushNamed(
+                            'todo-create',
+                            extra: Todo.fromString(value: initDescription),
+                          );
+                        },
                       ),
                 body: RefreshIndicator(
                   onRefresh: () async {
@@ -191,7 +205,21 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                     : FloatingActionButton(
                         tooltip: 'Add todo',
                         child: const Icon(Icons.add),
-                        onPressed: () => context.pushNamed('todo-create'),
+                        onPressed: () {
+                          String initDescription = '';
+                          if (filterState.filter.projects.isNotEmpty) {
+                            initDescription =
+                                '+${filterState.filter.projects.join(' +')}';
+                          }
+                          if (filterState.filter.contexts.isNotEmpty) {
+                            initDescription =
+                                '$initDescription @${filterState.filter.contexts.join(' @')}';
+                          }
+                          context.pushNamed(
+                            'todo-create',
+                            extra: Todo.fromString(value: initDescription),
+                          );
+                        },
                       ),
                 body: RefreshIndicator(
                   onRefresh: () async {

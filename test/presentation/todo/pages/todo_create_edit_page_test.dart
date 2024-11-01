@@ -27,7 +27,8 @@ class MaterialAppWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: TodoCreateEditPage(
-        initTodo: initTodo,
+        initTodo: initTodo ?? Todo(),
+        create: initTodo == null ? true : false,
         projects: projects,
         contexts: contexts,
         keyValues: keyValues,

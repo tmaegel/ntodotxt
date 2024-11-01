@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Auto apply changes in priority, project, context and key-value dialogs #65
+- Auto apply projects and contexts tags if a new todo is created within the filter page #44
 
 ## [0.10.1] - 2024-09-22
 

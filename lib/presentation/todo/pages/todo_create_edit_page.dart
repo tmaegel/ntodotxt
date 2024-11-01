@@ -18,20 +18,20 @@ import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
 import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoCreateEditPage extends StatelessWidget {
-  final Todo? initTodo;
+  final Todo initTodo;
   final Set<String> projects;
   final Set<String> contexts;
   final Set<String> keyValues;
+  final bool create;
 
   const TodoCreateEditPage({
-    this.initTodo,
+    required this.initTodo,
     this.projects = const {},
     this.contexts = const {},
     this.keyValues = const {},
+    this.create = true,
     super.key,
   });
-
-  bool get createMode => initTodo == null;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +40,7 @@ class TodoCreateEditPage extends StatelessWidget {
     bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return BlocProvider(
-      create: (BuildContext context) => TodoCubit(
-        todo: initTodo ?? Todo(),
-      ),
+      create: (BuildContext context) => TodoCubit(todo: initTodo),
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -52,10 +50,10 @@ class TodoCreateEditPage extends StatelessWidget {
         },
         child: Scaffold(
           appBar: MainAppBar(
-            title: createMode ? 'Create' : 'Edit',
+            title: create ? 'Create' : 'Edit',
             toolbar: Row(
               children: <Widget>[
-                if (!createMode) const DeleteTodoIconButton(),
+                if (!create) const DeleteTodoIconButton(),
                 if (!narrowView) SaveTodoIconButton(initTodo: initTodo),
               ],
             ),
@@ -85,7 +83,7 @@ class TodoCreateEditPage extends StatelessWidget {
                 ),
               ),
               const TodoCreationDateItem(),
-              if (!createMode) const TodoCompletionDateItem(),
+              if (!create) const TodoCompletionDateItem(),
               const TodoDueDateItem(),
               const Divider(),
               Padding(

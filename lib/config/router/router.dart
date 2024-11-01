@@ -72,6 +72,7 @@ class AppRouter {
                 path: 'todo/create',
                 name: 'todo-create',
                 builder: (BuildContext context, GoRouterState state) {
+                  Todo todo = state.extra as Todo;
                   Set<String> projects =
                       context.read<TodoListBloc>().state.projects;
                   Set<String> contexts =
@@ -79,6 +80,8 @@ class AppRouter {
                   Set<String> keyValues =
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
+                    initTodo: todo,
+                    create: true,
                     projects: projects,
                     contexts: contexts,
                     keyValues: keyValues
@@ -102,6 +105,7 @@ class AppRouter {
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
                     initTodo: todo,
+                    create: false,
                     projects: projects
                         .where(
                           (p) => !todo.projects.contains(p),
