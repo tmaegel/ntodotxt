@@ -24,7 +24,7 @@ icon:
 
 integration_env_start:
 	docker run -d --rm --name=nextcloud_local \
-		--network host \
+		-p 127.0.0.1:8000:80 \
 		-e NEXTCLOUD_TRUSTED_DOMAINS="127.0.0.1" \
 		-v nextcloud:/var/www/html nextcloud:27.1
 
