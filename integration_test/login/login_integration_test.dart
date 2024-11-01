@@ -106,7 +106,7 @@ void main() async {
             of: find.text('Server'),
             matching: find.byType(TextFormField),
           ),
-          'http://10.0.2.2',
+          'http://10.0.2.2:8000',
         );
         await tester.enterText(
           find.ancestor(

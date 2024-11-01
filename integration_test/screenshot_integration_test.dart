@@ -29,7 +29,7 @@ import 'package:integration_test/integration_test.dart';
 // https://developer.android.com/studio/run/emulator-networking#networkaddresses
 // Special alias to your host loopback interface (127.0.0.1 on your development machine)
 const String host = '10.0.2.2';
-const int port = 80;
+const int port = 8000;
 const String baseUrl = '/remote.php/dav/files';
 const String username = 'test';
 const String password = 'test';

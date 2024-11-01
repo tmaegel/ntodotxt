@@ -97,38 +97,29 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
   String password = '';
 
   late GlobalKey<FormState> formKey;
-  late TextEditingController serverTextFieldController;
-  late TextEditingController baseUrlTextFieldController;
-  late TextEditingController usernameTextFieldController;
-  late TextEditingController passwordTextFieldController;
 
   @override
   void initState() {
     super.initState();
     formKey = GlobalKey<FormState>();
-    serverTextFieldController = TextEditingController();
-    baseUrlTextFieldController = TextEditingController();
-    usernameTextFieldController = TextEditingController();
-    passwordTextFieldController = TextEditingController();
   }
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
-    serverTextFieldController.dispose();
-    baseUrlTextFieldController.dispose();
-    usernameTextFieldController.dispose();
-    passwordTextFieldController.dispose();
     super.dispose();
   }
+
+  void setServerAddr(String value) => setState(() => serverAddr = value);
+
+  void setBaseUrl(String value) => setState(() => baseUrl = value);
+
+  void setUsername(String value) => setState(() => username = value);
+
+  void setPassword(String value) => setState(() => password = value);
 
   @override
   Widget build(BuildContext context) {
     bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-    serverTextFieldController.text = serverAddr;
-    baseUrlTextFieldController.text = baseUrl;
-    usernameTextFieldController.text = username;
-    passwordTextFieldController.text = password;
 
     return GestureDetector(
       onTap: () {
@@ -152,118 +143,17 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.dns),
-                    title: TextFormField(
-                      controller: serverTextFieldController,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textCapitalization: TextCapitalization.none,
-                      decoration: const InputDecoration(
-                        labelText: 'Server',
-                        hintText: 'http[s]://server[:port]',
-                      ),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Missing server address';
-                        }
-                        if (!value.startsWith('http://') &&
-                            !value.startsWith('https://')) {
-                          return 'Missing protocol';
-                        }
-                        if (!RegExp(
-                                r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
-                            .hasMatch(value)) {
-                          return 'Invalid format';
-                        }
-                        return null;
-                      },
-                      onChanged: (String value) {
-                        setState(() {
-                          serverAddr = serverTextFieldController.text;
-                        });
-                      },
-                    ),
+                  ServerAddrField(
+                    callback: setServerAddr,
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.http),
-                    title: TextFormField(
-                      controller: baseUrlTextFieldController,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textCapitalization: TextCapitalization.none,
-                      decoration: const InputDecoration(
-                        labelText: 'Base URL',
-                        hintText: '/remote.php/dav/files/<username>',
-                      ),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Missing base URL';
-                        }
-                        return null;
-                      },
-                      onChanged: (String value) {
-                        setState(() {
-                          baseUrl = baseUrlTextFieldController.text;
-                        });
-                      },
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.help_outline),
-                      onPressed: () => InfoDialog.dialog(
-                        context: context,
-                        title: 'Base URL',
-                        message:
-                            '''The username is not automatically appended to the base URL. In some cases a base URL containing the username is expected, in others this causes an error.
-
-Please check the requirements of your webdav server.''',
-                      ),
-                    ),
+                  BaseUrlField(
+                    callback: setBaseUrl,
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: TextFormField(
-                      controller: usernameTextFieldController,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textCapitalization: TextCapitalization.none,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        hintText: 'Username',
-                      ),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Missing username';
-                        }
-                        return null;
-                      },
-                      onChanged: (String value) {
-                        setState(() {
-                          username = usernameTextFieldController.text;
-                        });
-                      },
-                    ),
+                  UsernameField(
+                    callback: setUsername,
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.password),
-                    title: TextFormField(
-                      controller: passwordTextFieldController,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textCapitalization: TextCapitalization.none,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Password',
-                      ),
-                      obscureText: true,
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Missing password';
-                        }
-                        return null;
-                      },
-                      onChanged: (String value) {
-                        setState(() {
-                          password = passwordTextFieldController.text;
-                        });
-                      },
-                    ),
+                  PasswordField(
+                    callback: setPassword,
                   ),
                   const Divider(),
                   ListTile(
@@ -321,6 +211,226 @@ Please check the requirements of your webdav server.''',
               child: CircularProgressIndicator(),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class ServerAddrField extends StatefulWidget {
+  final Function(String serverAddr) callback;
+
+  const ServerAddrField({super.key, required this.callback});
+
+  @override
+  State<ServerAddrField> createState() => _ServerAddrFieldState();
+}
+
+class _ServerAddrFieldState extends State<ServerAddrField> {
+  late TextEditingController textFieldController;
+
+  @override
+  void initState() {
+    super.initState();
+    textFieldController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    textFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.dns),
+      title: TextFormField(
+        controller: textFieldController,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textCapitalization: TextCapitalization.none,
+        decoration: const InputDecoration(
+          labelText: 'Server',
+          hintText: 'http[s]://server[:port]',
+        ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Missing server address';
+          }
+          if (!value.startsWith('http://') && !value.startsWith('https://')) {
+            return 'Missing protocol';
+          }
+          if (!RegExp(
+                  r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
+              .hasMatch(value)) {
+            return 'Invalid format';
+          }
+          return null;
+        },
+        onChanged: (String value) => widget.callback(textFieldController.text),
+      ),
+    );
+  }
+}
+
+class BaseUrlField extends StatefulWidget {
+  final Function(String baseUrl) callback;
+
+  const BaseUrlField({super.key, required this.callback});
+
+  @override
+  State<BaseUrlField> createState() => _BaseUrlFieldState();
+}
+
+class _BaseUrlFieldState extends State<BaseUrlField> {
+  late TextEditingController textFieldController;
+
+  @override
+  void initState() {
+    super.initState();
+    textFieldController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    textFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.http),
+      title: TextFormField(
+        controller: textFieldController,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textCapitalization: TextCapitalization.none,
+        decoration: const InputDecoration(
+          labelText: 'Base URL',
+          hintText: '/remote.php/dav/files/<username>',
+        ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Missing base URL';
+          }
+          return null;
+        },
+        onChanged: (String value) => widget.callback(textFieldController.text),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.help_outline),
+        onPressed: () => InfoDialog.dialog(
+          context: context,
+          title: 'Base URL',
+          message:
+              '''The username is not automatically appended to the base URL. In some cases a base URL containing the username is expected, in others this causes an error.
+
+Please check the requirements of your webdav server.''',
+        ),
+      ),
+    );
+  }
+}
+
+class UsernameField extends StatefulWidget {
+  final Function(String username) callback;
+
+  const UsernameField({super.key, required this.callback});
+
+  @override
+  State<UsernameField> createState() => _UsernameFieldState();
+}
+
+class _UsernameFieldState extends State<UsernameField> {
+  late TextEditingController textFieldController;
+
+  @override
+  void initState() {
+    super.initState();
+    textFieldController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    textFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.person),
+      title: TextFormField(
+        controller: textFieldController,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textCapitalization: TextCapitalization.none,
+        decoration: const InputDecoration(
+          labelText: 'Username',
+          hintText: 'Username',
+        ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Missing username';
+          }
+          return null;
+        },
+        onChanged: (String value) => widget.callback(textFieldController.text),
+      ),
+    );
+  }
+}
+
+class PasswordField extends StatefulWidget {
+  final Function(String password) callback;
+
+  const PasswordField({super.key, required this.callback});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  late TextEditingController textFieldController;
+
+  bool showPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    textFieldController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    textFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.password),
+      title: TextFormField(
+        controller: textFieldController,
+        style: Theme.of(context).textTheme.bodyMedium,
+        textCapitalization: TextCapitalization.none,
+        decoration: const InputDecoration(
+          labelText: 'Password',
+          hintText: 'Password',
+        ),
+        obscureText: !showPassword,
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Missing password';
+          }
+          return null;
+        },
+        onChanged: (String value) => widget.callback(textFieldController.text),
+      ),
+      trailing: IconButton(
+        icon: Icon(
+          showPassword ? Icons.visibility_off : Icons.visibility,
+        ),
+        onPressed: () => setState(() => showPassword = !showPassword),
       ),
     );
   }

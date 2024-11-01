@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Possibility to edit the due date without resetting it first #52
 - Sort filters alphabetically #50
+- Possibility to show and hide the password in the password field
 
 ## [0.10.1] - 2024-09-22
 
