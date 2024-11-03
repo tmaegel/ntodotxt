@@ -3,7 +3,6 @@ fail_fast: true
 default_install_hook_types:
   - pre-commit
   - commit-msg
-  - pre-push
 
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
