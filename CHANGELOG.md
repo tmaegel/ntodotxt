@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removes the save button and adds a save/discard dialog instead when leaving the todo/filter page #61
+
 ## [0.11.0] - 2024-11-01
 
 ## Added
