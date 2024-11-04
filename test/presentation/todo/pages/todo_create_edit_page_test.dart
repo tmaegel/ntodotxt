@@ -7,7 +7,6 @@ import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/presentation/todo/pages/todo_create_edit_page.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class MaterialAppWrapper extends StatelessWidget {
   final Todo? initTodo;
@@ -28,7 +27,7 @@ class MaterialAppWrapper extends StatelessWidget {
     return MaterialApp(
       home: TodoCreateEditPage(
         initTodo: initTodo ?? Todo(),
-        create: initTodo == null ? true : false,
+        newTodo: initTodo == null ? true : false,
         projects: projects,
         contexts: contexts,
         keyValues: keyValues,
@@ -73,66 +72,6 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found no SaveTodoIconButton', (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(400, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(const MaterialAppWrapper());
-          await tester.pumpAndSettle();
-          expect(
-            find.byType(SaveTodoIconButton),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found no SaveTodoFABButton if name is empty',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(400, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(const MaterialAppWrapper());
-          await tester.pumpAndSettle();
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoFABButton),
-              matching: find.byType(FloatingActionButton),
-            ),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveTodoFABButton if name is not empty',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(400, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(const MaterialAppWrapper());
-          await tester.pumpAndSettle();
-
-          await tester.enterText(find.byType(TextFormField), 'Todo name');
-          await tester.pumpAndSettle();
-
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoFABButton),
-              matching: find.byType(FloatingActionButton),
-            ),
-            findsOneWidget,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
       });
       group('edit mode', () {
         testWidgets('found DeleteTodoIconButton', (tester) async {
@@ -177,132 +116,6 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-      });
-      testWidgets('found no SaveTodoIconButton', (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(
-          MaterialAppWrapper(
-            initTodo: Todo(priority: Priority.A, description: 'Code something'),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(
-          find.byType(SaveTodoIconButton),
-          findsNothing,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found no SaveTodoFABButton if name is empty',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(
-          MaterialAppWrapper(
-            initTodo: Todo(priority: Priority.A, description: 'Code something'),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.enterText(find.byType(TextFormField), '');
-        await tester.pumpAndSettle();
-
-        expect(
-          find.descendant(
-            of: find.byType(SaveTodoFABButton),
-            matching: find.byType(FloatingActionButton),
-          ),
-          findsNothing,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found no SaveTodoFABButton if todo has not be changed',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(
-          MaterialAppWrapper(
-            initTodo: Todo(priority: Priority.A, description: 'Code something'),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(
-          find.descendant(
-            of: find.byType(SaveTodoFABButton),
-            matching: find.byType(FloatingActionButton),
-          ),
-          findsNothing,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-      });
-      testWidgets('found SaveTodoFABButton if todo has be changed',
-          (tester) async {
-        // Increase size to ensure all elements in list are visible.
-        tester.view.physicalSize = const Size(400, 800);
-        tester.view.devicePixelRatio = 1.0;
-
-        await tester.pumpWidget(
-          MaterialAppWrapper(
-            initTodo: Todo(description: 'Code something'),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.dragUntilVisible(
-          find.byType(TodoPriorityItem),
-          find.byType(ListView),
-          const Offset(0, -100),
-        );
-
-        await tester.tap(find.byType(TodoPriorityItem));
-        await tester.pumpAndSettle();
-
-        await tester.ensureVisible(find.byType(TodoPriorityTagDialog));
-        await tester.pumpAndSettle();
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoPriorityTagDialog),
-            matching: find.text('A'),
-          ),
-        );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
-        await tester.pumpAndSettle();
-
-        expect(
-          find.descendant(
-            of: find.byType(TodoPriorityItem),
-            matching: find.text('A'),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byType(SaveTodoFABButton),
-            matching: find.byType(FloatingActionButton),
-          ),
-          findsOneWidget,
-        );
-
-        // resets the screen to its original size after the test end
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
       });
     });
 
@@ -340,67 +153,6 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found no SaveTodoFABButton', (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(const MaterialAppWrapper());
-          await tester.pumpAndSettle();
-          expect(
-            find.byType(SaveTodoFABButton),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found no SaveTodoIconButton if name is empty',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(const MaterialAppWrapper());
-          await tester.pumpAndSettle();
-
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveTodoIconButton if name is not empty',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(const MaterialAppWrapper());
-          await tester.pumpAndSettle();
-
-          await tester.enterText(find.byType(TextFormField), 'Filter name');
-          await tester.pumpAndSettle();
-
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsOneWidget,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
       });
       group('edit mode', () {
         testWidgets('found DeleteTodoIconButton', (tester) async {
@@ -438,135 +190,6 @@ void main() {
           await tester.pumpAndSettle();
           expect(
             find.byType(TodoCompletionDateItem),
-            findsOneWidget,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found no SaveTodoFABButton', (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(
-            MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(
-            find.byType(SaveTodoFABButton),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found no SaveTodoIconButton if name is empty',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(
-            MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
-            ),
-          );
-          await tester.pumpAndSettle();
-
-          await tester.enterText(find.byType(TextFormField), '');
-          await tester.pumpAndSettle();
-
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found no SaveTodoIconButton if todo has not be changed',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(
-            MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
-            ),
-          );
-          await tester.pumpAndSettle();
-
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveTodoIconButton if todo has be changed',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-
-          await tester.pumpWidget(
-            MaterialAppWrapper(
-              initTodo: Todo(description: 'Code something'),
-            ),
-          );
-          await tester.pumpAndSettle();
-
-          await tester.dragUntilVisible(
-            find.byType(TodoPriorityItem),
-            find.byType(ListView),
-            const Offset(0, -100),
-          );
-
-          await tester.tap(find.byType(TodoPriorityItem));
-          await tester.pumpAndSettle();
-
-          await tester.ensureVisible(find.byType(TodoPriorityTagDialog));
-          await tester.pumpAndSettle();
-          await tester.tap(
-            find.descendant(
-              of: find.byType(TodoPriorityTagDialog),
-              matching: find.text('A'),
-            ),
-          );
-          await tester.drag(find.byType(DraggableScrollableSheet),
-              const Offset(0, 500)); // Dismiss dialog.
-          await tester.pumpAndSettle();
-
-          expect(
-            find.descendant(
-              of: find.byType(TodoPriorityItem),
-              matching: find.text('A'),
-            ),
-            findsOneWidget,
-          );
-          expect(
-            find.descendant(
-              of: find.byType(SaveTodoIconButton),
-              matching: find.byType(IconButton),
-            ),
             findsOneWidget,
           );
 
@@ -903,18 +526,18 @@ void main() {
     });
 
     group('update values', () {
-      testWidgets('TodoStringTextField (project)', (tester) async {
+      testWidgets('TodoDescriptionTextField (project)', (tester) async {
         await tester.pumpWidget(const MaterialAppWrapper());
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
-          find.byType(TodoStringTextField),
+          find.byType(TodoDescriptionTextField),
           find.byType(ListView),
           const Offset(0, -100),
         );
 
         await tester.enterText(
           find.descendant(
-            of: find.byType(TodoStringTextField),
+            of: find.byType(TodoDescriptionTextField),
             matching: find.byType(TextFormField),
           ),
           'Code something +project1',
@@ -937,18 +560,18 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoStringTextField (context)', (tester) async {
+      testWidgets('TodoDescriptionTextField (context)', (tester) async {
         await tester.pumpWidget(const MaterialAppWrapper());
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
-          find.byType(TodoStringTextField),
+          find.byType(TodoDescriptionTextField),
           find.byType(ListView),
           const Offset(0, -100),
         );
 
         await tester.enterText(
           find.descendant(
-            of: find.byType(TodoStringTextField),
+            of: find.byType(TodoDescriptionTextField),
             matching: find.byType(TextFormField),
           ),
           'Code something @context1',
@@ -971,18 +594,18 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoStringTextField (key value)', (tester) async {
+      testWidgets('TodoDescriptionTextField (key value)', (tester) async {
         await tester.pumpWidget(const MaterialAppWrapper());
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
-          find.byType(TodoStringTextField),
+          find.byType(TodoDescriptionTextField),
           find.byType(ListView),
           const Offset(0, -100),
         );
 
         await tester.enterText(
           find.descendant(
-            of: find.byType(TodoStringTextField),
+            of: find.byType(TodoDescriptionTextField),
             matching: find.byType(TextFormField),
           ),
           'Code something key1:val1',
@@ -1005,18 +628,18 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoStringTextField (due date)', (tester) async {
+      testWidgets('TodoDescriptionTextField (due date)', (tester) async {
         await tester.pumpWidget(const MaterialAppWrapper());
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
-          find.byType(TodoStringTextField),
+          find.byType(TodoDescriptionTextField),
           find.byType(ListView),
           const Offset(0, -100),
         );
 
         await tester.enterText(
           find.descendant(
-            of: find.byType(TodoStringTextField),
+            of: find.byType(TodoDescriptionTextField),
             matching: find.byType(TextFormField),
           ),
           'Code something due:2024-02-27',

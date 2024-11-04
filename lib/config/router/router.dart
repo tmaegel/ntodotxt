@@ -81,7 +81,7 @@ class AppRouter {
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
                     initTodo: todo,
-                    create: true,
+                    newTodo: true,
                     projects: projects,
                     contexts: contexts,
                     keyValues: keyValues
@@ -105,7 +105,7 @@ class AppRouter {
                       context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
                     initTodo: todo,
-                    create: false,
+                    newTodo: false,
                     projects: projects
                         .where(
                           (p) => !todo.projects.contains(p),

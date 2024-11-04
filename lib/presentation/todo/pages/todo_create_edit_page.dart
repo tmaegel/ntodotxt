@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
@@ -8,37 +9,31 @@ import 'package:ntodotxt/common_widgets/contexts_dialog.dart';
 import 'package:ntodotxt/common_widgets/key_values_dialog.dart';
 import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/misc.dart' show SnackBarHandler;
 import 'package:ntodotxt/presentation/todo/states/todo_cubit.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:ntodotxt/presentation/todo/states/todo_state.dart';
-import 'package:ntodotxt/presentation/todo/widgets/todo_text_field.dart';
 
 class TodoCreateEditPage extends StatelessWidget {
   final Todo initTodo;
   final Set<String> projects;
   final Set<String> contexts;
   final Set<String> keyValues;
-  final bool create;
+  final bool newTodo;
 
   const TodoCreateEditPage({
     required this.initTodo,
     this.projects = const {},
     this.contexts = const {},
     this.keyValues = const {},
-    this.create = true,
+    this.newTodo = true,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool narrowView =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-
     return BlocProvider(
       create: (BuildContext context) => TodoCubit(todo: initTodo),
       child: GestureDetector(
@@ -48,64 +43,135 @@ class TodoCreateEditPage extends StatelessWidget {
             currentFocus.unfocus();
           }
         },
-        child: Scaffold(
-          appBar: MainAppBar(
-            title: create ? 'Create' : 'Edit',
-            toolbar: Row(
-              children: <Widget>[
-                if (!create) const DeleteTodoIconButton(),
-                if (!narrowView) SaveTodoIconButton(initTodo: initTodo),
+        child: TodoDialogWrapper(
+          initTodo: initTodo,
+          newTodo: newTodo,
+          child: Scaffold(
+            appBar: MainAppBar(
+              title: newTodo ? 'Create' : 'Edit',
+              toolbar: Row(
+                children: <Widget>[
+                  if (!newTodo) const DeleteTodoIconButton(),
+                ],
+              ),
+            ),
+            body: ListView(
+              children: [
+                const TodoDescriptionTextField(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'General',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const TodoPriorityItem(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Dates',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const TodoCreationDateItem(),
+                if (!newTodo) const TodoCompletionDateItem(),
+                const TodoDueDateItem(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Tags',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                TodoProjectTagsItem(availableTags: projects),
+                TodoContextTagsItem(availableTags: contexts),
+                TodoKeyValueTagsItem(availableTags: keyValues),
+                const SizedBox(height: 16),
               ],
             ),
           ),
-          body: ListView(
-            children: [
-              const TodoStringTextField(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'General',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              const TodoPriorityItem(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'Dates',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              const TodoCreationDateItem(),
-              if (!create) const TodoCompletionDateItem(),
-              const TodoDueDateItem(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'Tags',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              TodoProjectTagsItem(availableTags: projects),
-              TodoContextTagsItem(availableTags: contexts),
-              TodoKeyValueTagsItem(availableTags: keyValues),
-              const SizedBox(height: 16),
-            ],
-          ),
-          floatingActionButton: keyboardIsOpen || !narrowView
-              ? null
-              : SaveTodoFABButton(initTodo: initTodo),
         ),
       ),
+    );
+  }
+}
+
+class TodoDialogWrapper extends StatelessWidget {
+  final Widget child;
+  final Todo? initTodo;
+  final bool newTodo;
+
+  const TodoDialogWrapper({
+    required this.child,
+    required this.initTodo,
+    required this.newTodo,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoCubit, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        return PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) async {
+            if (didPop) {
+              return;
+            }
+            if (state.todo.description.isEmpty) {
+              if (!await ConfirmationDialog.dialog(
+                context: context,
+                title: newTodo ? 'Create todo' : 'Edit todo',
+                message: 'Cannot save a todo with an empty name.',
+                cancelLabel: 'Cancel',
+                actionLabel: 'Continue',
+              )) {
+                if (context.mounted) {
+                  context.pop();
+                }
+              }
+            } else {
+              if (initTodo != state.todo) {
+                final bool confirm = await ConfirmationDialog.dialog(
+                  context: context,
+                  title: 'Save todo',
+                  message:
+                      'Todo contains unsaved changes. These will be irrecoverably lost.',
+                  actionLabel: 'Save',
+                  cancelLabel: 'Discard',
+                );
+                if (context.mounted && confirm) {
+                  context
+                      .read<TodoListBloc>()
+                      .add(TodoListTodoSubmitted(todo: state.todo));
+                  if (newTodo) {
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Todo has been created');
+                    }
+                  } else {
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Todo has been updated');
+                    }
+                  }
+                }
+              }
+              if (context.mounted) {
+                context.pop();
+              }
+            }
+          },
+          child: child,
+        );
+      },
     );
   }
 }
@@ -133,7 +199,7 @@ class DeleteTodoIconButton extends StatelessWidget {
                   .read<TodoListBloc>()
                   .add(TodoListTodoDeleted(todo: state.todo));
               if (context.mounted) {
-                SnackBarHandler.info(context, 'Todo deleted');
+                SnackBarHandler.info(context, 'Todo has been deleted');
                 context.pop();
               }
             }
@@ -144,66 +210,68 @@ class DeleteTodoIconButton extends StatelessWidget {
   }
 }
 
-class SaveTodoIconButton extends StatelessWidget {
-  final Todo? initTodo;
-
-  const SaveTodoIconButton({
-    required this.initTodo,
-    super.key,
-  });
+class TodoDescriptionTextField extends StatefulWidget {
+  const TodoDescriptionTextField({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoCubit, TodoState>(
-      builder: (BuildContext context, TodoState state) {
-        return Visibility(
-          visible: initTodo != state.todo && state.todo.description.isNotEmpty,
-          child: IconButton(
-            tooltip: 'Save',
-            icon: const Icon(Icons.save),
-            onPressed: () async {
-              context
-                  .read<TodoListBloc>()
-                  .add(TodoListTodoSubmitted(todo: state.todo));
-              if (context.mounted) {
-                SnackBarHandler.info(context, 'Todo saved');
-                context.pop();
-              }
-            },
-          ),
-        );
-      },
-    );
-  }
+  State<TodoDescriptionTextField> createState() =>
+      _TodoDescriptionTextFieldState();
 }
 
-class SaveTodoFABButton extends StatelessWidget {
-  final Todo? initTodo;
+class _TodoDescriptionTextFieldState extends State<TodoDescriptionTextField> {
+  late GlobalKey<FormFieldState> _textFormKey;
+  late TextEditingController _controller;
 
-  const SaveTodoFABButton({
-    required this.initTodo,
-    super.key,
-  });
+  @override
+  void initState() {
+    super.initState();
+    _textFormKey = GlobalKey<FormFieldState>();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TodoCubit, TodoState>(
       builder: (BuildContext context, TodoState state) {
-        return Visibility(
-          visible: initTodo != state.todo && state.todo.description.isNotEmpty,
-          child: FloatingActionButton(
-            tooltip: 'Save',
-            child: const Icon(Icons.save),
-            onPressed: () async {
-              context
-                  .read<TodoListBloc>()
-                  .add(TodoListTodoSubmitted(todo: state.todo));
-              if (context.mounted) {
-                SnackBarHandler.info(context, 'Todo saved');
-                context.pop();
-              }
-            },
+        // Setting text and selection together.
+        int base = _controller.selection.base.offset;
+        _controller.value = _controller.value.copyWith(
+          text: state.todo.description,
+          selection: TextSelection.fromPosition(
+            TextPosition(
+              offset: base < 0 || base > state.todo.description.length
+                  ? state.todo.description.length
+                  : base,
+            ),
           ),
+        );
+        return TextFormField(
+          key: _textFormKey,
+          controller: _controller,
+          minLines: 1,
+          maxLines: 3,
+          keyboardType: TextInputType.text,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp(r'\n')),
+          ],
+          style: Theme.of(context).textTheme.titleMedium,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: const InputDecoration(
+            hintText: 'todo +project @context key:val',
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
+          ),
+          onChanged: (String value) =>
+              context.read<TodoCubit>().updateDescription(_controller.text),
         );
       },
     );
