@@ -4,11 +4,13 @@ class ConfirmationDialog extends StatelessWidget {
   final String title;
   final String message;
   final String actionLabel;
+  final String cancelLabel;
 
   const ConfirmationDialog({
     required this.title,
     required this.message,
     required this.actionLabel,
+    required this.cancelLabel,
     super.key,
   });
 
@@ -17,6 +19,7 @@ class ConfirmationDialog extends StatelessWidget {
     required String title,
     required String message,
     required String actionLabel,
+    required String cancelLabel,
   }) async {
     bool? result = await showDialog<bool>(
       useRootNavigator: false,
@@ -26,6 +29,7 @@ class ConfirmationDialog extends StatelessWidget {
         title: title,
         message: message,
         actionLabel: actionLabel,
+        cancelLabel: cancelLabel,
       ),
     );
 
@@ -39,7 +43,7 @@ class ConfirmationDialog extends StatelessWidget {
       content: Text(message),
       actions: <Widget>[
         TextButton(
-          child: const Text('Cancel'),
+          child: Text(cancelLabel),
           onPressed: () => Navigator.pop(context, false),
         ),
         TextButton(

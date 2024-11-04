@@ -11,7 +11,6 @@ import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart';
@@ -32,14 +31,8 @@ class FilterCreateEditPage extends StatelessWidget {
     super.key,
   });
 
-  bool get createMode => initFilter == null;
-
   @override
   Widget build(BuildContext context) {
-    final bool narrowView =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    bool keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
         settingRepository: context.read<SettingRepository>(),
@@ -53,53 +46,152 @@ class FilterCreateEditPage extends StatelessWidget {
             currentFocus.unfocus();
           }
         },
-        child: Scaffold(
-          appBar: MainAppBar(
-            title: createMode ? 'Create' : 'Edit',
-            toolbar: Row(
-              children: <Widget>[
-                if (!createMode) const DeleteFilterIconButton(),
-                if (!narrowView) SaveFilterIconButton(initFilter: initFilter),
+        child: FilterDialogWrapper(
+          newFilter: initFilter == null,
+          child: Scaffold(
+            appBar: MainAppBar(
+              title: initFilter == null ? 'Create' : 'Edit',
+              toolbar: Row(
+                children: <Widget>[
+                  if (initFilter != null) const DeleteFilterIconButton(),
+                ],
+              ),
+            ),
+            body: ListView(
+              children: [
+                const FilterNameTextField(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'General',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const FilterOrderItem(),
+                const FilterFilterItem(),
+                const FilterGroupItem(),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Tags',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                const FilterPrioritiesItem(),
+                FilterProjectTagsItem(availableTags: projects),
+                FilterContextTagsItem(availableTags: contexts),
+                const SizedBox(height: 16),
               ],
             ),
           ),
-          body: ListView(
-            children: [
-              const FilterNameTextField(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'General',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              const FilterOrderItem(),
-              const FilterFilterItem(),
-              const FilterGroupItem(),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: Text(
-                    'Tags',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-              ),
-              const FilterPrioritiesItem(),
-              FilterProjectTagsItem(availableTags: projects),
-              FilterContextTagsItem(availableTags: contexts),
-              const SizedBox(height: 16),
-            ],
-          ),
-          floatingActionButton: keyboardIsOpen || !narrowView
-              ? null
-              : SaveFilterFABButton(initFilter: initFilter),
         ),
       ),
+    );
+  }
+}
+
+class FilterDialogWrapper extends StatelessWidget {
+  final Widget child;
+  final bool newFilter;
+
+  const FilterDialogWrapper({
+    required this.child,
+    required this.newFilter,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) async {
+            if (didPop) {
+              return;
+            }
+            if (state.filter.name.isEmpty) {
+              if (!await ConfirmationDialog.dialog(
+                context: context,
+                title: newFilter ? 'Create filter' : 'Edit filter',
+                message: 'Cannot save a filter with an empty name.',
+                cancelLabel: 'Cancel',
+                actionLabel: 'Continue',
+              )) {
+                if (context.mounted) {
+                  context.pop();
+                }
+              }
+            } else {
+              if (state.changed) {
+                final bool confirm = await ConfirmationDialog.dialog(
+                  context: context,
+                  title: 'Save filter',
+                  message:
+                      'Filter contains unsaved changes. These will be irrecoverably lost.',
+                  actionLabel: 'Save',
+                  cancelLabel: 'Discard',
+                );
+                if (context.mounted && confirm) {
+                  if (newFilter) {
+                    await context.read<FilterCubit>().create(state.filter);
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Filter has been created');
+                    }
+                  } else {
+                    await context.read<FilterCubit>().update(state.filter);
+                    if (context.mounted) {
+                      SnackBarHandler.info(context, 'Filter has been updated');
+                    }
+                  }
+                }
+              }
+              if (context.mounted) {
+                context.pop();
+              }
+            }
+          },
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+class DeleteFilterIconButton extends StatelessWidget {
+  const DeleteFilterIconButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return IconButton(
+          tooltip: 'Delete',
+          icon: const Icon(Icons.delete),
+          onPressed: () async {
+            final bool confirm = await ConfirmationDialog.dialog(
+              context: context,
+              title: 'Delete filter',
+              message: 'Do you want to delete the filter?',
+              actionLabel: 'Delete',
+              cancelLabel: 'Cancel',
+            );
+            if (context.mounted && confirm) {
+              await context.read<FilterCubit>().delete(state.filter);
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Filter has been deleted');
+                context.pop();
+              }
+            }
+          },
+        );
+      },
     );
   }
 }
@@ -132,6 +224,9 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FilterCubit, FilterState>(
+      buildWhen: (FilterState previousState, FilterState state) {
+        return previousState.filter.name != state.filter.name;
+      },
       builder: (BuildContext context, FilterState state) {
         _controller.text = state.filter.name;
         return TextFormField(
@@ -154,107 +249,6 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
           ),
           onChanged: (String value) =>
               context.read<FilterCubit>().updateName(value),
-        );
-      },
-    );
-  }
-}
-
-class DeleteFilterIconButton extends StatelessWidget {
-  const DeleteFilterIconButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
-      builder: (BuildContext context, FilterState state) {
-        return IconButton(
-          tooltip: 'Delete',
-          icon: const Icon(Icons.delete),
-          onPressed: () async {
-            final bool confirm = await ConfirmationDialog.dialog(
-              context: context,
-              title: 'Delete filter',
-              message: 'Do you want to delete the filter?',
-              actionLabel: 'Delete',
-            );
-            if (context.mounted && confirm) {
-              await context.read<FilterCubit>().delete(state.filter);
-              if (context.mounted) {
-                SnackBarHandler.info(context, 'Filter deleted');
-                context.pop();
-              }
-            }
-          },
-        );
-      },
-    );
-  }
-}
-
-class SaveFilterIconButton extends StatelessWidget {
-  final Filter? initFilter;
-
-  const SaveFilterIconButton({
-    required this.initFilter,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
-      builder: (BuildContext context, FilterState state) {
-        return Visibility(
-          visible: state.changed && state.filter.name.isNotEmpty,
-          child: IconButton(
-            tooltip: 'Save',
-            icon: const Icon(Icons.save),
-            onPressed: () async {
-              if (initFilter == null) {
-                await context.read<FilterCubit>().create(state.filter);
-              } else {
-                await context.read<FilterCubit>().update(state.filter);
-              }
-              if (context.mounted) {
-                SnackBarHandler.info(context, 'Filter saved');
-                context.pop();
-              }
-            },
-          ),
-        );
-      },
-    );
-  }
-}
-
-class SaveFilterFABButton extends StatelessWidget {
-  final Filter? initFilter;
-
-  const SaveFilterFABButton({
-    required this.initFilter,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
-      builder: (BuildContext context, FilterState state) {
-        return Visibility(
-          visible: state.changed && state.filter.name.isNotEmpty,
-          child: FloatingActionButton(
-            tooltip: 'Save',
-            child: const Icon(Icons.save),
-            onPressed: () async {
-              if (initFilter == null) {
-                await context.read<FilterCubit>().create(state.filter);
-              } else {
-                await context.read<FilterCubit>().update(state.filter);
-              }
-              if (context.mounted) {
-                SnackBarHandler.info(context, 'Filter saved');
-                context.pop();
-              }
-            },
-          ),
         );
       },
     );

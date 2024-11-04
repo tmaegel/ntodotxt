@@ -448,6 +448,7 @@ class TodoListDeleteFilter extends StatelessWidget {
                     title: 'Delete filter',
                     message: 'Do you want to delete the filter?',
                     actionLabel: 'Delete',
+                    cancelLabel: 'Cancel',
                   );
                   if (context.mounted && confirm) {
                     await context.read<FilterCubit>().delete(state.filter);

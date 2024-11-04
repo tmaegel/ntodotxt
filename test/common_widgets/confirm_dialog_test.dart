@@ -31,6 +31,7 @@ class _MaterialAppConfirmationDialogState
                       title: 'Dialog',
                       message: 'Question?',
                       actionLabel: 'Ok',
+                      cancelLabel: 'Cancel',
                     );
 
                     setState(() {

@@ -126,6 +126,7 @@ class DeleteTodoIconButton extends StatelessWidget {
               title: 'Delete todo',
               message: 'Do you want to delete the todo?',
               actionLabel: 'Delete',
+              cancelLabel: 'Cancel',
             );
             if (context.mounted && confirm) {
               context

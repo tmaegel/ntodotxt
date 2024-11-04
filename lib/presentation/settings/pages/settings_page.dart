@@ -83,6 +83,7 @@ class SettingsView extends StatelessWidget {
                 title: 'Reinitialization',
                 message: 'Do you want to reinitializate the app?',
                 actionLabel: 'Reninitialize',
+                cancelLabel: 'Cancel',
               );
               if (context.mounted && confirm) {
                 context.read<DrawerCubit>().reset();
