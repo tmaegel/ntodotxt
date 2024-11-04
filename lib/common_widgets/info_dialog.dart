@@ -10,12 +10,12 @@ class InfoDialog extends StatelessWidget {
     super.key,
   });
 
-  static Future<String?> dialog({
+  static Future<void> dialog({
     required BuildContext context,
     required String title,
     required String message,
   }) async {
-    return await showDialog<String?>(
+    return await showDialog<void>(
       useRootNavigator: false,
       context: context,
       barrierDismissible: true,
