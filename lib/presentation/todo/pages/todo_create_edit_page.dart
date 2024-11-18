@@ -340,9 +340,7 @@ class TodoProjectTagsItem extends StatelessWidget {
             onTap: () => TodoProjectTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
-              availableTags: availableTags
-                  .where((p) => !state.todo.projects.contains(p))
-                  .toSet(),
+              availableTags: availableTags,
             ),
           ),
         );
@@ -382,9 +380,7 @@ class TodoContextTagsItem extends StatelessWidget {
             onTap: () => TodoContextTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
-              availableTags: availableTags
-                  .where((c) => !state.todo.contexts.contains(c))
-                  .toSet(),
+              availableTags: availableTags,
             ),
           ),
         );
@@ -425,9 +421,7 @@ class TodoKeyValueTagsItem extends StatelessWidget {
             onTap: () => TodoKeyValueTagDialog.dialog(
               context: context,
               cubit: BlocProvider.of<TodoCubit>(context),
-              availableTags: availableTags
-                  .where((kv) => !state.todo.fmtKeyValues.contains(kv))
-                  .toSet(),
+              availableTags: availableTags,
             ),
           ),
         );

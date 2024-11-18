@@ -73,22 +73,12 @@ class AppRouter {
                 name: 'todo-create',
                 builder: (BuildContext context, GoRouterState state) {
                   Todo todo = state.extra as Todo;
-                  Set<String> projects =
-                      context.read<TodoListBloc>().state.projects;
-                  Set<String> contexts =
-                      context.read<TodoListBloc>().state.contexts;
-                  Set<String> keyValues =
-                      context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
                     initTodo: todo,
                     newTodo: true,
-                    projects: projects,
-                    contexts: contexts,
-                    keyValues: keyValues
-                        .where(
-                          (c) => !c.startsWith('due:'),
-                        )
-                        .toSet(),
+                    projects: context.read<TodoListBloc>().state.projects,
+                    contexts: context.read<TodoListBloc>().state.contexts,
+                    keyValues: context.read<TodoListBloc>().state.keyValues,
                   );
                 },
               ),
@@ -97,32 +87,12 @@ class AppRouter {
                 name: 'todo-edit',
                 builder: (BuildContext context, GoRouterState state) {
                   Todo todo = state.extra as Todo;
-                  Set<String> projects =
-                      context.read<TodoListBloc>().state.projects;
-                  Set<String> contexts =
-                      context.read<TodoListBloc>().state.contexts;
-                  Set<String> keyValues =
-                      context.read<TodoListBloc>().state.keyValues;
                   return TodoCreateEditPage(
                     initTodo: todo,
                     newTodo: false,
-                    projects: projects
-                        .where(
-                          (p) => !todo.projects.contains(p),
-                        )
-                        .toSet(),
-                    contexts: contexts
-                        .where(
-                          (c) => !todo.contexts.contains(c),
-                        )
-                        .toSet(),
-                    keyValues: keyValues
-                        .where(
-                          (c) =>
-                              !todo.fmtKeyValues.contains(c) &&
-                              !c.startsWith('due:'),
-                        )
-                        .toSet(),
+                    projects: context.read<TodoListBloc>().state.projects,
+                    contexts: context.read<TodoListBloc>().state.contexts,
+                    keyValues: context.read<TodoListBloc>().state.keyValues,
                   );
                 },
               ),

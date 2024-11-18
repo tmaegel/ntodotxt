@@ -44,8 +44,12 @@ class _TodoKeyValueTagDialogState
     super.initState();
     super.tags = {
       ...widget.availableTags.map(
-        (String t) => Tag(name: t, selected: false),
+        (String t) => Tag(
+          name: t,
+          selected: widget.cubit.state.todo.fmtKeyValues.contains(t),
+        ),
       ),
+      // Overwrites key values of todo with selected=true
       ...widget.cubit.state.todo.fmtKeyValues.map(
         (String t) => Tag(name: t, selected: true),
       ),

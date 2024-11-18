@@ -3,13 +3,20 @@ import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/misc.dart';
 
 class Tag {
-  String name;
+  final String name;
   bool selected;
 
   Tag({
     required this.name,
     required this.selected,
   });
+
+  // Makes overwriting possible if 'selected' is different.
+  @override
+  bool operator ==(Object other) => other is Tag && name == other.name;
+
+  @override
+  int get hashCode => name.hashCode;
 
   @override
   String toString() => '$name ($selected)';

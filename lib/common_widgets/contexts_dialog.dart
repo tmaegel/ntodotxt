@@ -102,8 +102,12 @@ class _TodoContextTagDialogState extends TagDialogState<TodoContextTagDialog> {
     super.initState();
     super.tags = {
       ...widget.availableTags.map(
-        (String t) => Tag(name: t, selected: false),
+        (String t) => Tag(
+          name: t,
+          selected: widget.cubit.state.todo.contexts.contains(t),
+        ),
       ),
+      // Overwrites contexts of todo with selected=true
       ...widget.cubit.state.todo.contexts.map(
         (String t) => Tag(name: t, selected: true),
       ),

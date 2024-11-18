@@ -102,8 +102,12 @@ class _TodoProjectTagDialogState extends TagDialogState<TodoProjectTagDialog> {
     super.initState();
     super.tags = {
       ...widget.availableTags.map(
-        (String t) => Tag(name: t, selected: false),
+        (String t) => Tag(
+          name: t,
+          selected: widget.cubit.state.todo.projects.contains(t),
+        ),
       ),
+      // Overwrites projects of todo with selected=true
       ...widget.cubit.state.todo.projects.map(
         (String t) => Tag(name: t, selected: true),
       ),

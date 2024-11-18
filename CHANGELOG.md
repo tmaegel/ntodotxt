@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removes the save button and adds a save/discard dialog instead when leaving the todo/filter page #61
 
+### Fixed
+
+- Tag dialogs don't show all possible tags
+
 ## [0.11.0] - 2024-11-01
 
 ## Added
