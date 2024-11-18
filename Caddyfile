@@ -1,0 +1,12 @@
+{
+  debug
+}
+
+localhost {
+  reverse_proxy nextcloud:80
+}
+
+10.0.2.2 {
+  tls internal
+  reverse_proxy nextcloud:80
+}

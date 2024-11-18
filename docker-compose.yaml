@@ -1,0 +1,33 @@
+services:
+  nextcloud:
+    image: nextcloud:27
+    container_name: nextcloud
+    expose:
+      - 80
+    environment:
+      NEXTCLOUD_TRUSTED_DOMAINS: "127.0.0.1,10.0.2.2"
+      OVERWRITEHOST: "localhost:8443"
+      OVERWRITEPROTOCOL: "https"
+    volumes:
+      - nextcloud:/var/www/html
+    networks:
+      - caddy
+
+  caddy:
+    image: caddy:latest
+    container_name: reverse_proxy
+    ports:
+      - "127.0.0.1:8080:80"
+      - "127.0.0.1:8443:443"
+      - "127.0.0.1:8443:443/udp"
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - caddy
+
+volumes:
+  nextcloud:
+  caddy:
+
+networks:
+  caddy:

@@ -22,17 +22,8 @@ licenses:
 icon:
 	flutter pub run flutter_launcher_icons
 
-integration_env_start:
-	docker run -d --rm --name=nextcloud_local \
-		-p 127.0.0.1:8000:80 \
-		-e NEXTCLOUD_TRUSTED_DOMAINS="127.0.0.1" \
-		-v nextcloud:/var/www/html nextcloud:27.1
-
 integration_env_configure:
 	docker exec -it -u www-data nextcloud_local php occ config:system:set trusted_domains 2 --value=10.0.2.2
-
-integration_env_stop:
-	docker stop nextcloud_local
 
 screenshots:
 	flutter emulators --launch "Pixel_7_API_34_extension_level_7_x86_64" && sleep 10
