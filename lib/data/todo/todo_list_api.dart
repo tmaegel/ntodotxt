@@ -6,12 +6,30 @@ import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart';
 import 'package:ntodotxt/main.dart' show log;
 import 'package:rxdart/subjects.dart';
+import 'package:webdav_client/webdav_client.dart' as webdav;
+
+class LocalFile {
+  final File file;
+
+  LocalFile(this.file);
+
+  String get path => file.uri.pathSegments.last;
+
+  Future<DateTime> get lastModified async => await file.lastModified();
+}
+
+class WebDAVFile {
+  final String path;
+  final WebDAVClient client;
+
+  WebDAVFile(this.path, this.client);
+
+  Future<webdav.File> get file async => await client.getFile(filename: path);
+
+  Future<DateTime?> get lastModified async => (await file).mTime;
+}
 
 abstract class TodoListApi {
-  final File localTodoFile;
-
-  const TodoListApi({required this.localTodoFile});
-
   /// Provides a [Stream] of all todos read from the source.
   Stream<List<Todo>> getTodoList();
 
@@ -41,18 +59,25 @@ abstract class TodoListApi {
 }
 
 class LocalTodoListApi extends TodoListApi {
-  LocalTodoListApi({
-    required super.localTodoFile,
-  }) {
-    // Use synchronize versions here.
-    if (localTodoFile.existsSync() == false) {
-      log.fine('File ${localTodoFile.path} does not exist. Creating.');
-      localTodoFile.createSync();
+  final LocalFile localFile;
+
+  LocalTodoListApi(this.localFile) {
+    if (localFile.file.existsSync() == false) {
+      log.fine('File ${localFile.path} does not exist. Creating.');
+      localFile.file.createSync();
     } else {
-      log.fine('File ${localTodoFile.path} exists already.');
+      log.fine('File ${localFile.path} exists already.');
     }
     updateList(readSync()); // Read synchrone here.
   }
+
+  LocalTodoListApi.fromString({
+    required String localFilePath,
+  }) : this(LocalFile(File(localFilePath)));
+
+  LocalTodoListApi.fromFile({
+    required File localFile,
+  }) : this(LocalFile(localFile));
 
   /// Provides a [Stream] of all todos.
   // A special Streamcontroller that captures the latest item that has been
@@ -61,8 +86,6 @@ class LocalTodoListApi extends TodoListApi {
       BehaviorSubject<List<Todo>>.seeded(const []);
 
   List<Todo> get _todoList => controller.value;
-
-  String get filename => localTodoFile.uri.pathSegments.last;
 
   void updateList(List<Todo> todoList) {
     // Update only if list does'nt match to prevent weird state changes.
@@ -94,17 +117,17 @@ class LocalTodoListApi extends TodoListApi {
 
   Future<List<Todo>> read() async {
     log.info('Async-read todos from file');
-    return _read(await localTodoFile.readAsLines());
+    return _read(await localFile.file.readAsLines());
   }
 
   List<Todo> readSync() {
     log.info('Sync-read todos from file');
-    return _read(localTodoFile.readAsLinesSync());
+    return _read(localFile.file.readAsLinesSync());
   }
 
   Future<void> write(String content) async {
     log.info('Sync-write todos to file');
-    await localTodoFile.writeAsString(content);
+    await localFile.file.writeAsString(content);
   }
 
   @override
@@ -113,8 +136,8 @@ class LocalTodoListApi extends TodoListApi {
   @override
   Future<void> initSource() async {
     log.info('Initialize todo file');
-    if (await localTodoFile.exists() == false) {
-      await localTodoFile.create();
+    if (await localFile.file.exists() == false) {
+      await localFile.file.create();
     }
   }
 
@@ -186,20 +209,30 @@ class LocalTodoListApi extends TodoListApi {
 }
 
 class WebDAVTodoListApi extends LocalTodoListApi {
+  final WebDAVFile remoteFile;
   final WebDAVClient client;
-  final String remoteTodoFile;
 
-  WebDAVTodoListApi({
-    required super.localTodoFile,
-    required this.remoteTodoFile,
-    required this.client,
-  });
+  WebDAVTodoListApi(
+    super.localFile,
+    this.remoteFile,
+    this.client,
+  );
+
+  WebDAVTodoListApi.fromString({
+    required String localFilePath,
+    required String remoteFilePath,
+    required WebDAVClient client,
+  }) : this(
+          LocalFile(File(localFilePath)),
+          WebDAVFile(remoteFilePath, client),
+          client,
+        );
 
   @override
   Future<void> initSource() async {
     await super.initSource();
     await client.ping();
-    if (await client.fileExists(filename: filename)) {
+    if (await client.fileExists(filename: remoteFile.path)) {
       await readFromSource();
     } else {
       await writeToSource();
@@ -220,13 +253,13 @@ class WebDAVTodoListApi extends LocalTodoListApi {
 
   Future<String> downloadFromSource() async {
     log.info('Download todos from server');
-    return await client.download(filename: remoteTodoFile);
+    return await client.download(filename: remoteFile.path);
   }
 
   Future<void> uploadToSource() async {
     log.info('Upload todos to server');
     await client.upload(
-      filename: remoteTodoFile,
+      filename: remoteFile.path,
       content: _todoList.join(Platform.lineTerminator),
     );
   }

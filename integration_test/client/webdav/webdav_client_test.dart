@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
+import 'package:webdav_client/webdav_client.dart';
 
 const String scheme = 'https';
 const int port = 8443;
@@ -319,6 +320,29 @@ void main() {
         final WebDAVClient client = createWebDAVClient(password: 'wrong');
         expectLater(
           () async => await client.download(filename: 'todo.txt'),
+          throwsA(
+            isA<WebDAVClientException>(),
+          ),
+        );
+      });
+    });
+
+    group('getFile()', () {
+      test('valid', () async {
+        final String filename = '${randomString()}.txt';
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.upload(content: 'abc', filename: filename);
+          File f = await client.getFile(filename: filename);
+          expect(f.mTime is DateTime, true);
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('exception', () async {
+        final WebDAVClient client = createWebDAVClient();
+        expectLater(
+          () async => await client.getFile(filename: 'unknown.txt'),
           throwsA(
             isA<WebDAVClientException>(),
           ),

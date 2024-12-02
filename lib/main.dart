@@ -304,19 +304,20 @@ class CoreApp extends StatelessWidget {
   TodoListRepository _createTodoListRepository(
       LoginState loginState, TodoFileState todoFileState) {
     late TodoListApi api;
-    File localTodoFile = File(
-        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.todoFilename}');
-    log.info('Use todo file ${localTodoFile.path}');
+    String localTodoFilePath =
+        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.todoFilename}';
+    String remoteTodoFilePath =
+        '${todoFileState.remotePath}${Platform.pathSeparator}${todoFileState.todoFilename}';
+    log.info('Use todo file $localTodoFilePath');
     switch (loginState) {
       case LoginLocal():
         log.info('Use local backend');
-        api = LocalTodoListApi(localTodoFile: localTodoFile);
+        api = LocalTodoListApi.fromString(localFilePath: localTodoFilePath);
       case LoginWebDAV():
         log.info('Use local+webdav backend');
-        api = WebDAVTodoListApi(
-            localTodoFile: localTodoFile,
-            remoteTodoFile:
-                '${todoFileState.remotePath}${Platform.pathSeparator}${todoFileState.todoFilename}',
+        api = WebDAVTodoListApi.fromString(
+            localFilePath: localTodoFilePath,
+            remoteFilePath: remoteTodoFilePath,
             client: WebDAVClient(
               server: loginState.server,
               path: loginState.path,
@@ -326,7 +327,7 @@ class CoreApp extends StatelessWidget {
             ));
       default:
         log.info('Fallback to local backend');
-        api = LocalTodoListApi(localTodoFile: localTodoFile);
+        api = LocalTodoListApi.fromString(localFilePath: localTodoFilePath);
     }
 
     return TodoListRepository(api);

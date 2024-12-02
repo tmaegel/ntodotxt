@@ -19,7 +19,7 @@ File mockTodoListFile(List<String> rawTodoList) {
 }
 
 TodoListRepository mockLocalTodoListRepository(File todoFile) {
-  final LocalTodoListApi api = LocalTodoListApi(localTodoFile: todoFile);
+  final LocalTodoListApi api = LocalTodoListApi.fromFile(localFile: todoFile);
   final TodoListRepository repository = TodoListRepository(api);
 
   return repository;

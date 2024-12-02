@@ -56,9 +56,8 @@ class _LocalLoginViewState extends State<LocalLoginView> {
                         try {
                           setState(() => loading = true);
                           await context.read<LoginCubit>().loginLocal(
-                                localTodoFile: File(
-                                  '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
-                                ),
+                                localTodoFilePath:
+                                    '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
                               );
                         } finally {
                           setState(() => loading = false);
@@ -190,10 +189,9 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                             try {
                               setState(() => loading = true);
                               await context.read<LoginCubit>().loginWebDAV(
-                                    localTodoFile: File(
-                                      '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
-                                    ),
-                                    remoteTodoFile:
+                                    localTodoFilePath:
+                                        '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
+                                    remoteTodoFilePath:
                                         '${state.remotePath}${Platform.pathSeparator}${state.todoFilename}',
                                     server: serverAddr,
                                     path: path,

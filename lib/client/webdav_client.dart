@@ -263,6 +263,21 @@ class WebDAVClient {
     return await _exists(path: path, target: directory);
   }
 
+  Future<webdav.File> getFile({
+    required String filename,
+  }) async {
+    webdav.Client client = await connection;
+    try {
+      log.fine('Read file object $filename');
+      return await client.readProps(filename);
+    } on Exception catch (e) {
+      log.severe(e);
+      throw WebDAVClientException(
+        'Failed to read file object $filename from remote ${client.uri}',
+      );
+    }
+  }
+
   Future<List<webdav.File>> listFiles({
     String path = '',
   }) async {

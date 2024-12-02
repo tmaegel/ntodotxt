@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
@@ -79,10 +77,11 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginLocal({
-    required File localTodoFile,
+    required String localTodoFilePath,
   }) async {
     try {
-      LocalTodoListApi(localTodoFile: localTodoFile); // Check before login.
+      LocalTodoListApi.fromString(
+          localFilePath: localTodoFilePath); // Check before login.
       await resetSecureStorage();
       await secureStorage.write(key: 'backend', value: Backend.local.name);
       emit(state.loginLocal());
@@ -92,8 +91,8 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWebDAV({
-    required File localTodoFile,
-    required String remoteTodoFile,
+    required String localTodoFilePath,
+    required String remoteTodoFilePath,
     required String server,
     required String path,
     required String username,
@@ -108,9 +107,9 @@ class LoginCubit extends Cubit<LoginState> {
         password: password,
         acceptUntrustedCert: acceptUntrustedCert,
       );
-      WebDAVTodoListApi api = WebDAVTodoListApi(
-        localTodoFile: localTodoFile,
-        remoteTodoFile: remoteTodoFile,
+      WebDAVTodoListApi api = WebDAVTodoListApi.fromString(
+        localFilePath: localTodoFilePath,
+        remoteFilePath: remoteTodoFilePath,
         client: client,
       );
       await api.client.ping();
