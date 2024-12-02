@@ -28,9 +28,8 @@ import 'package:integration_test/integration_test.dart';
 
 // https://developer.android.com/studio/run/emulator-networking#networkaddresses
 // Special alias to your host loopback interface (127.0.0.1 on your development machine)
-const String host = '10.0.2.2';
-const int port = 8000;
-const String baseUrl = '/remote.php/dav/files';
+const String server = 'https://10.0.2.2:8443';
+const String path = '/remote.php/dav/files';
 const String username = 'test';
 const String password = 'test';
 
@@ -104,10 +103,11 @@ class AppTester extends StatelessWidget {
           BlocProvider<LoginCubit>(
             create: (BuildContext context) => LoginCubit(
               state: const LoginWebDAV(
-                server: 'http://$host:$port',
-                baseUrl: baseUrl,
+                server: server,
+                path: path,
                 username: username,
                 password: password,
+                acceptUntrustedCert: true,
               ),
             ),
           ),
@@ -195,11 +195,11 @@ void main() async {
   setUp(() async {
     // Setup todos.
     WebDAVClient client = WebDAVClient(
-        host: host,
-        port: port,
-        baseUrl: baseUrl,
-        username: username,
-        password: password);
+      server: server,
+      path: path,
+      username: username,
+      password: password,
+    );
     try {
       await client.upload(
           content: todoList.join(Platform.lineTerminator),

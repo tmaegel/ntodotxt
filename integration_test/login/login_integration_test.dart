@@ -106,11 +106,12 @@ void main() async {
             of: find.text('Server'),
             matching: find.byType(TextFormField),
           ),
-          'http://10.0.2.2:8000',
+          'https://10.0.2.2:8443',
         );
+        await tester.tap(find.byType(Checkbox));
         await tester.enterText(
           find.ancestor(
-            of: find.text('Base URL'),
+            of: find.text('Path'),
             matching: find.byType(TextFormField),
           ),
           '/remote.php/dav/files/test',

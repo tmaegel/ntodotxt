@@ -22,15 +22,17 @@ sealed class LoginState extends Equatable {
 
   LoginWebDAV loginWebDAV({
     required String server,
-    required String baseUrl,
+    required String path,
     required String username,
     required String password,
+    required bool acceptUntrustedCert,
   }) =>
       LoginWebDAV(
         server: server,
-        baseUrl: baseUrl,
+        path: path,
         username: username,
         password: password,
+        acceptUntrustedCert: acceptUntrustedCert,
       );
 
   LoginError error({
@@ -102,8 +104,8 @@ final class LoginWebDAV extends LoginState {
   /// Backend server.
   final String server;
 
-  /// Base Url.
-  final String baseUrl;
+  /// Path.
+  final String path;
 
   /// Backend username.
   final String username;
@@ -111,34 +113,42 @@ final class LoginWebDAV extends LoginState {
   /// Backend password.
   final String password;
 
+  /// Accept untrusted certificate.
+  final bool acceptUntrustedCert;
+
   const LoginWebDAV({
     super.backend = Backend.webdav,
     required this.server,
-    required this.baseUrl,
+    required this.path,
     required this.username,
     required this.password,
+    required this.acceptUntrustedCert,
   });
 
   @override
   LoginWebDAV copyWith({
     String? server,
-    String? baseUrl,
+    String? path,
     String? username,
     String? password,
+    bool? acceptUntrustedCert,
   }) =>
       super.loginWebDAV(
         server: server ?? this.server,
-        baseUrl: baseUrl ?? this.baseUrl,
+        path: path ?? this.path,
         username: username ?? this.username,
         password: password ?? this.password,
+        acceptUntrustedCert: acceptUntrustedCert ?? this.acceptUntrustedCert,
       );
 
   @override
   List<Object> get props => [
         backend,
         server,
+        path,
         username,
         password,
+        acceptUntrustedCert,
       ];
 
   @override

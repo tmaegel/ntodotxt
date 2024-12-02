@@ -122,11 +122,11 @@ void main() {
     });
 
     group('failed', () {
-      testWidgets('Missing base url', (tester) async {
+      testWidgets('Missing path', (tester) async {
         await tester.pumpWidget(const MaterialAppWebDAVLoginView());
         await tester.tap(find.text('Apply'));
         await tester.pumpAndSettle();
-        expect(find.text('Missing base URL'), findsOneWidget);
+        expect(find.text('Missing path'), findsOneWidget);
       });
       testWidgets('Missing username', (tester) async {
         await tester.pumpWidget(const MaterialAppWebDAVLoginView());

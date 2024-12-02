@@ -92,9 +92,10 @@ class WebDAVLoginView extends StatefulWidget {
 class _WebDAVLoginViewState extends State<WebDAVLoginView> {
   bool loading = false;
   String serverAddr = '';
-  String baseUrl = '';
+  String path = '';
   String username = '';
   String password = '';
+  bool acceptUntrustedCert = false;
 
   late GlobalKey<FormState> formKey;
 
@@ -111,7 +112,10 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
 
   void setServerAddr(String value) => setState(() => serverAddr = value);
 
-  void setBaseUrl(String value) => setState(() => baseUrl = value);
+  void setAcceptUntrustedCert(bool value) =>
+      setState(() => acceptUntrustedCert = value);
+
+  void setBaseUrl(String value) => setState(() => path = value);
 
   void setUsername(String value) => setState(() => username = value);
 
@@ -146,6 +150,9 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                   ServerAddrField(
                     callback: setServerAddr,
                   ),
+                  AcceptUntrustedCertField(
+                    callback: setAcceptUntrustedCert,
+                  ),
                   BaseUrlField(
                     callback: setBaseUrl,
                   ),
@@ -165,6 +172,7 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                   const TodoFilenameInput(),
                   const LocalPathInput(),
                   const RemotePathInput(),
+                  const SizedBox(height: 72),
                 ],
               ),
             ),
@@ -188,9 +196,10 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                                     remoteTodoFile:
                                         '${state.remotePath}${Platform.pathSeparator}${state.todoFilename}',
                                     server: serverAddr,
-                                    baseUrl: baseUrl,
+                                    path: path,
                                     username: username,
                                     password: password,
+                                    acceptUntrustedCert: acceptUntrustedCert,
                                   );
                             } finally {
                               setState(() => loading = false);
@@ -219,7 +228,10 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
 class ServerAddrField extends StatefulWidget {
   final Function(String serverAddr) callback;
 
-  const ServerAddrField({super.key, required this.callback});
+  const ServerAddrField({
+    required this.callback,
+    super.key,
+  });
 
   @override
   State<ServerAddrField> createState() => _ServerAddrFieldState();
@@ -272,10 +284,46 @@ class _ServerAddrFieldState extends State<ServerAddrField> {
   }
 }
 
-class BaseUrlField extends StatefulWidget {
-  final Function(String baseUrl) callback;
+class AcceptUntrustedCertField extends StatefulWidget {
+  final Function(bool allowSelfSignedCert) callback;
 
-  const BaseUrlField({super.key, required this.callback});
+  const AcceptUntrustedCertField({
+    required this.callback,
+    super.key,
+  });
+
+  @override
+  State<AcceptUntrustedCertField> createState() =>
+      _AcceptUntrustedCertFieldState();
+}
+
+class _AcceptUntrustedCertFieldState extends State<AcceptUntrustedCertField> {
+  bool checked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(!checked ? Icons.lock_outline : Icons.lock_open),
+      title: const Text('Allow untrusted certificate'),
+      subtitle: const Text('Auto-accept untrusted certificate'),
+      trailing: Checkbox(
+        value: checked,
+        onChanged: (bool? value) {
+          setState(() => checked = value ?? true);
+          widget.callback(value ?? true);
+        },
+      ),
+    );
+  }
+}
+
+class BaseUrlField extends StatefulWidget {
+  final Function(String path) callback;
+
+  const BaseUrlField({
+    required this.callback,
+    super.key,
+  });
 
   @override
   State<BaseUrlField> createState() => _BaseUrlFieldState();
@@ -305,12 +353,12 @@ class _BaseUrlFieldState extends State<BaseUrlField> {
         style: Theme.of(context).textTheme.bodyMedium,
         textCapitalization: TextCapitalization.none,
         decoration: const InputDecoration(
-          labelText: 'Base URL',
+          labelText: 'Path',
           hintText: '/remote.php/dav/files/<username>',
         ),
         validator: (String? value) {
           if (value == null || value.isEmpty) {
-            return 'Missing base URL';
+            return 'Missing path';
           }
           return null;
         },
@@ -320,9 +368,9 @@ class _BaseUrlFieldState extends State<BaseUrlField> {
         icon: const Icon(Icons.help_outline),
         onPressed: () => InfoDialog.dialog(
           context: context,
-          title: 'Base URL',
+          title: 'Path',
           message:
-              '''The username is not automatically appended to the base URL. In some cases a base URL containing the username is expected, in others this causes an error.
+              '''The username is not automatically appended to the path. In some cases path containing the username is expected, in others this causes an error.
 
 Please check the requirements of your webdav server.''',
         ),
@@ -334,7 +382,10 @@ Please check the requirements of your webdav server.''',
 class UsernameField extends StatefulWidget {
   final Function(String username) callback;
 
-  const UsernameField({super.key, required this.callback});
+  const UsernameField({
+    required this.callback,
+    super.key,
+  });
 
   @override
   State<UsernameField> createState() => _UsernameFieldState();
@@ -382,7 +433,10 @@ class _UsernameFieldState extends State<UsernameField> {
 class PasswordField extends StatefulWidget {
   final Function(String password) callback;
 
-  const PasswordField({super.key, required this.callback});
+  const PasswordField({
+    required this.callback,
+    super.key,
+  });
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -531,7 +585,7 @@ class _RemotePathInputState extends State<RemotePathInput> {
                 context: context,
                 title: 'Remote path',
                 message:
-                    'This path is appended to the base url of the server connection. This makes it possible to define a user-defined path for the todo files.',
+                    'This remote path is appended to the base path of the server connection. This makes it possible to define a user-defined path for the todo files.',
               ),
             ));
       },

@@ -5,19 +5,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
 
+const String scheme = 'https';
+const int port = 8443;
+final String host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+
 WebDAVClient createWebDAVClient({
-  String? host,
-  int? port,
-  String? baseUrl,
+  String? server,
+  String? path,
   String? username,
   String? password,
 }) {
   return WebDAVClient(
-    host: host ?? (Platform.isAndroid ? '10.0.2.2' : 'localhost'),
-    port: port ?? 80,
-    baseUrl: baseUrl ?? '/remote.php/dav/files/test',
+    server: server ?? '$scheme://$host:$port',
+    path: path ?? '/remote.php/dav/files/test',
     username: username ?? 'test',
     password: password ?? 'test',
+    acceptUntrustedCert: true,
   );
 }
 
@@ -42,7 +45,8 @@ void main() {
         }
       });
       test('wrong host', () async {
-        final WebDAVClient client = createWebDAVClient(host: 'webdav');
+        final WebDAVClient client =
+            createWebDAVClient(server: '$scheme://webdav:$port');
         expectLater(
           () async => await client.ping(),
           throwsA(
@@ -51,7 +55,8 @@ void main() {
         );
       });
       test('wrong port', () async {
-        final WebDAVClient client = createWebDAVClient(port: 9999);
+        final WebDAVClient client =
+            createWebDAVClient(server: '$scheme://$host:9999');
         expectLater(
           () async => await client.ping(),
           throwsA(

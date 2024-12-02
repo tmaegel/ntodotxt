@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
 import 'package:ntodotxt/bloc_observer.dart' show GenericBlocObserver;
+import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
 import 'package:ntodotxt/data/filter/filter_controller.dart'
@@ -313,14 +314,16 @@ class CoreApp extends StatelessWidget {
       case LoginWebDAV():
         log.info('Use local+webdav backend');
         api = WebDAVTodoListApi(
-          localTodoFile: localTodoFile,
-          remoteTodoFile:
-              '${todoFileState.remotePath}${Platform.pathSeparator}${todoFileState.todoFilename}',
-          server: loginState.server,
-          baseUrl: loginState.baseUrl,
-          username: loginState.username,
-          password: loginState.password,
-        );
+            localTodoFile: localTodoFile,
+            remoteTodoFile:
+                '${todoFileState.remotePath}${Platform.pathSeparator}${todoFileState.todoFilename}',
+            client: WebDAVClient(
+              server: loginState.server,
+              path: loginState.path,
+              username: loginState.username,
+              password: loginState.password,
+              acceptUntrustedCert: loginState.acceptUntrustedCert,
+            ));
       default:
         log.info('Fallback to local backend');
         api = LocalTodoListApi(localTodoFile: localTodoFile);

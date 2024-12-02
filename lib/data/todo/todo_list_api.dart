@@ -189,48 +189,11 @@ class WebDAVTodoListApi extends LocalTodoListApi {
   final WebDAVClient client;
   final String remoteTodoFile;
 
-  WebDAVTodoListApi._({
+  WebDAVTodoListApi({
     required super.localTodoFile,
     required this.remoteTodoFile,
     required this.client,
   });
-
-  factory WebDAVTodoListApi({
-    required File localTodoFile,
-    required String remoteTodoFile,
-    required String server,
-    required String baseUrl,
-    required String username,
-    required String password,
-  }) {
-    late WebDAVClient client;
-    final RegExp exp = RegExp(
-        r'(?<schema>^(http|https)):\/\/(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$');
-    final RegExpMatch? match = exp.firstMatch(server);
-    if (match != null) {
-      String schema = match.namedGroup('schema')!;
-      String host = match.namedGroup('host')!;
-      int? port = match.namedGroup('port') != null
-          ? int.parse(match.namedGroup('port')!)
-          : null;
-      client = WebDAVClient(
-        schema: schema,
-        host: host,
-        port: port,
-        baseUrl: baseUrl,
-        username: username,
-        password: password,
-      );
-    } else {
-      throw const FormatException('Invalid server format');
-    }
-
-    return WebDAVTodoListApi._(
-      localTodoFile: localTodoFile,
-      remoteTodoFile: remoteTodoFile,
-      client: client,
-    );
-  }
 
   @override
   Future<void> initSource() async {

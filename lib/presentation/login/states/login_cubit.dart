@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/data/todo/todo_list_api.dart';
 import 'package:ntodotxt/main.dart' show secureStorage;
 import 'package:ntodotxt/presentation/login/states/login_state.dart';
@@ -39,19 +40,26 @@ class LoginCubit extends Cubit<LoginState> {
       }
       if (backend == Backend.webdav) {
         String? server = await secureStorage.read(key: 'server');
-        String? baseUrl = await secureStorage.read(key: 'baseUrl');
+        // @todo: Remove baseUrl later.
+        String? path = await secureStorage.read(key: 'path') ??
+            await secureStorage.read(key: 'baseUrl');
         String? username = await secureStorage.read(key: 'username');
         String? password = await secureStorage.read(key: 'password');
+        bool acceptUntrustedCert =
+            (await secureStorage.read(key: 'acceptUntrustedCert')) == '1'
+                ? true
+                : false;
         if (server != null &&
-            baseUrl != null &&
+            path != null &&
             username != null &&
             password != null) {
           emit(
             state.loginWebDAV(
               server: server,
-              baseUrl: baseUrl,
+              path: path,
               username: username,
               password: password,
+              acceptUntrustedCert: acceptUntrustedCert,
             ),
           );
         }
@@ -87,34 +95,41 @@ class LoginCubit extends Cubit<LoginState> {
     required File localTodoFile,
     required String remoteTodoFile,
     required String server,
-    required String baseUrl,
+    required String path,
     required String username,
     required String password,
+    required bool acceptUntrustedCert,
   }) async {
     try {
-      // Check before login.
+      WebDAVClient client = WebDAVClient(
+        server: server,
+        path: path,
+        username: username,
+        password: password,
+        acceptUntrustedCert: acceptUntrustedCert,
+      );
       WebDAVTodoListApi api = WebDAVTodoListApi(
         localTodoFile: localTodoFile,
         remoteTodoFile: remoteTodoFile,
-        server: server,
-        baseUrl: baseUrl,
-        username: username,
-        password: password,
+        client: client,
       );
       await api.client.ping();
       await api.client.listFiles();
       await resetSecureStorage();
       await secureStorage.write(key: 'backend', value: Backend.webdav.name);
       await secureStorage.write(key: 'server', value: server);
-      await secureStorage.write(key: 'baseUrl', value: baseUrl);
+      await secureStorage.write(key: 'path', value: path);
       await secureStorage.write(key: 'username', value: username);
       await secureStorage.write(key: 'password', value: password);
+      await secureStorage.write(
+          key: 'acceptUntrustedCert', value: acceptUntrustedCert ? '1' : '0');
       emit(
         state.loginWebDAV(
           server: server,
-          baseUrl: baseUrl,
+          path: path,
           username: username,
           password: password,
+          acceptUntrustedCert: acceptUntrustedCert,
         ),
       );
     } on Exception catch (e) {
@@ -127,9 +142,10 @@ class LoginCubit extends Cubit<LoginState> {
       final List<String> attrs = [
         'backend',
         'server',
-        'baseUrl',
+        'path',
         'username',
         'password',
+        'acceptUntrustedCert',
       ];
       for (var attr in attrs) {
         final String? value = await secureStorage.read(key: attr);
