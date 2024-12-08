@@ -21,7 +21,6 @@ in
   '';
 
   packages = [
-    pkgs-unstable.bashInteractive
     pkgs-unstable.clang
     pkgs-unstable.gtk3
     pkgs-unstable.jdk17

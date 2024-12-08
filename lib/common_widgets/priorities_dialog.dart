@@ -223,6 +223,10 @@ class _TodoPriorityTagDialogState
       }
       value.selected = selected;
     });
-    widget.cubit.setPriority(value.priority);
+    if (selected) {
+      widget.cubit.setPriority(value.priority);
+    } else {
+      widget.cubit.unsetPriority();
+    }
   }
 }

@@ -58,7 +58,7 @@ while getopts ":hldrec:v:" arg; do
 done
 
 if [[ ${ACTION} == "create" ]]; then
-  avdmanager create avd --name "${EMULATOR_NAME}-android-${ANDROID_API}" --package "system-images;android-${ANDROID_API};google_apis_playstore;x86_64"
+  avdmanager create avd --name "${EMULATOR_NAME}-android-${ANDROID_API}" --package "system-images;android-${ANDROID_API}-ext12;google_apis_playstore;x86_64"
 fi
 
 exit 0
