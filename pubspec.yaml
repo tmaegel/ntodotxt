@@ -2,7 +2,7 @@ name: ntodotxt
 
 description: App for managing your todos within a todo.txt file locally or via webdav (e.g. Nextcloud)
 publish_to: 'none'  # Remove this line if you wish to publish to pub.dev
-version: 0.12.1+27
+version: 0.12.2+28
 
 environment:
   sdk: '>=3.0.5 <4.0.0'
