@@ -11,7 +11,10 @@ import 'package:webdav_client/webdav_client.dart' as webdav;
 class LocalFile {
   final File file;
 
-  LocalFile(this.file);
+  LocalFile(String path)
+      : file = File(path.replaceAllMapped(RegExp(r'\/{2,}'), (match) => '/'));
+
+  LocalFile.fromFile(this.file);
 
   String get path => file.uri.pathSegments.last;
 
@@ -22,7 +25,8 @@ class WebDAVFile {
   final String path;
   final WebDAVClient client;
 
-  WebDAVFile(this.path, this.client);
+  WebDAVFile(String path, this.client)
+      : path = path.replaceAllMapped(RegExp(r'\/{2,}'), (match) => '/');
 
   Future<webdav.File> get file async => await client.getFile(filename: path);
 
@@ -73,11 +77,11 @@ class LocalTodoListApi extends TodoListApi {
 
   LocalTodoListApi.fromString({
     required String localFilePath,
-  }) : this(LocalFile(File(localFilePath)));
+  }) : this(LocalFile(localFilePath));
 
   LocalTodoListApi.fromFile({
     required File localFile,
-  }) : this(LocalFile(localFile));
+  }) : this(LocalFile.fromFile(localFile));
 
   /// Provides a [Stream] of all todos.
   // A special Streamcontroller that captures the latest item that has been
@@ -223,7 +227,7 @@ class WebDAVTodoListApi extends LocalTodoListApi {
     required String remoteFilePath,
     required WebDAVClient client,
   }) : this(
-          LocalFile(File(localFilePath)),
+          LocalFile(localFilePath),
           WebDAVFile(remoteFilePath, client),
           client,
         );
