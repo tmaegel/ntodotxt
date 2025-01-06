@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add filter/todo save button to app bar
+
 ## [0.12.1] - 2024-12-11
 
 ### Fixed

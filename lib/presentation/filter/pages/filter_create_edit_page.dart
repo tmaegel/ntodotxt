@@ -54,6 +54,7 @@ class FilterCreateEditPage extends StatelessWidget {
               toolbar: Row(
                 children: <Widget>[
                   if (initFilter != null) const DeleteFilterIconButton(),
+                  SaveFilterIconButton(initFilter: initFilter),
                 ],
               ),
             ),
@@ -158,6 +159,40 @@ class FilterDialogWrapper extends StatelessWidget {
             }
           },
           child: child,
+        );
+      },
+    );
+  }
+}
+
+class SaveFilterIconButton extends StatelessWidget {
+  final Filter? initFilter;
+  const SaveFilterIconButton({
+    required this.initFilter,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FilterCubit, FilterState>(
+      builder: (BuildContext context, FilterState state) {
+        return Visibility(
+          visible: state.changed && state.filter.name.isNotEmpty,
+          child: IconButton(
+            tooltip: 'Save',
+            icon: const Icon(Icons.save),
+            onPressed: () async {
+              if (initFilter == null) {
+                await context.read<FilterCubit>().create(state.filter);
+              } else {
+                await context.read<FilterCubit>().update(state.filter);
+              }
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Filter saved');
+                context.pop();
+              }
+            },
+          ),
         );
       },
     );

@@ -40,6 +40,38 @@ void main() {
   group('TodoCreateEditPage', () {
     group('narrow view', () {
       group('create mode', () {
+        testWidgets('found no SaveTodoIconButton if name is empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(const MaterialAppWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
+        });
+        testWidgets('found SaveTodoIconButton if name is not empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(const MaterialAppWrapper());
+          await tester.pumpAndSettle();
+          await tester.enterText(find.byType(TextFormField), 'Filter name');
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsOneWidget,
+          );
+        });
         testWidgets('found no DeleteTodoIconButton', (tester) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
@@ -74,6 +106,76 @@ void main() {
         });
       });
       group('edit mode', () {
+        testWidgets('found no SaveTodoIconButton if todo has not be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(
+            MaterialAppWrapper(
+              initTodo:
+                  Todo(priority: Priority.A, description: 'Code something'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found SaveTodoIconButton if todo has be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(
+            MaterialAppWrapper(
+              initTodo: Todo(description: 'Code something'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          await tester.dragUntilVisible(
+            find.byType(TodoPriorityItem),
+            find.byType(ListView),
+            const Offset(0, -100),
+          );
+          await tester.tap(find.byType(TodoPriorityItem));
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(find.byType(TodoPriorityTagDialog));
+          await tester.pumpAndSettle();
+          await tester.tap(
+            find.descendant(
+              of: find.byType(TodoPriorityTagDialog),
+              matching: find.text('A'),
+            ),
+          );
+          await tester.drag(find.byType(DraggableScrollableSheet),
+              const Offset(0, 500)); // Dismiss dialog.
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(TodoPriorityItem),
+              matching: find.text('A'),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsOneWidget,
+          );
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
         testWidgets('found DeleteTodoIconButton', (tester) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
@@ -121,6 +223,38 @@ void main() {
 
     group('wide view', () {
       group('create mode', () {
+        testWidgets('found no SaveTodoIconButton if name is empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(const MaterialAppWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
+        });
+        testWidgets('found SaveTodoIconButton if name is not empty',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(const MaterialAppWrapper());
+          await tester.pumpAndSettle();
+          await tester.enterText(find.byType(TextFormField), 'Filter name');
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsOneWidget,
+          );
+        });
         testWidgets('found no DeleteTodoIconButton', (tester) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
@@ -155,6 +289,76 @@ void main() {
         });
       });
       group('edit mode', () {
+        testWidgets('found no SaveTodoIconButton if todo has not be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(
+            MaterialAppWrapper(
+              initTodo:
+                  Todo(priority: Priority.A, description: 'Code something'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsNothing,
+          );
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found SaveTodoIconButton if todo has be changed',
+            (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+          await tester.pumpWidget(
+            MaterialAppWrapper(
+              initTodo: Todo(description: 'Code something'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          await tester.dragUntilVisible(
+            find.byType(TodoPriorityItem),
+            find.byType(ListView),
+            const Offset(0, -100),
+          );
+          await tester.tap(find.byType(TodoPriorityItem));
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(find.byType(TodoPriorityTagDialog));
+          await tester.pumpAndSettle();
+          await tester.tap(
+            find.descendant(
+              of: find.byType(TodoPriorityTagDialog),
+              matching: find.text('A'),
+            ),
+          );
+          await tester.drag(find.byType(DraggableScrollableSheet),
+              const Offset(0, 500)); // Dismiss dialog.
+          await tester.pumpAndSettle();
+          expect(
+            find.descendant(
+              of: find.byType(TodoPriorityItem),
+              matching: find.text('A'),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: find.byType(SaveTodoIconButton),
+              matching: find.byType(IconButton),
+            ),
+            findsOneWidget,
+          );
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
         testWidgets('found DeleteTodoIconButton', (tester) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);

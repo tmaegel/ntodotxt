@@ -52,6 +52,7 @@ class TodoCreateEditPage extends StatelessWidget {
               toolbar: Row(
                 children: <Widget>[
                   if (!newTodo) const DeleteTodoIconButton(),
+                  SaveTodoIconButton(initTodo: initTodo),
                 ],
               ),
             ),
@@ -170,6 +171,38 @@ class TodoDialogWrapper extends StatelessWidget {
             }
           },
           child: child,
+        );
+      },
+    );
+  }
+}
+
+class SaveTodoIconButton extends StatelessWidget {
+  final Todo? initTodo;
+  const SaveTodoIconButton({
+    required this.initTodo,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoCubit, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        return Visibility(
+          visible: initTodo != state.todo && state.todo.description.isNotEmpty,
+          child: IconButton(
+            tooltip: 'Save',
+            icon: const Icon(Icons.save),
+            onPressed: () async {
+              context
+                  .read<TodoListBloc>()
+                  .add(TodoListTodoSubmitted(todo: state.todo));
+              if (context.mounted) {
+                SnackBarHandler.info(context, 'Todo saved');
+                context.pop();
+              }
+            },
+          ),
         );
       },
     );
