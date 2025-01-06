@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install sqlite
-        run: apt-get sqlite3 libsqlite3-dev
+        run: apt update && apt -y install sqlite3 libsqlite3-dev
 
       - name: Setup java
         uses: actions/setup-java@v4
