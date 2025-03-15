@@ -14,13 +14,13 @@ void main() async {
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   );
 
-  final String appCacheDir = (await getApplicationCacheDirectory()).path;
+  final String appDataDir = (await getApplicationDocumentsDirectory()).path;
 
   group('login', () {
     group('initial', () {
       testWidgets('screen is visible', (tester) async {
         await tester.pumpWidget(
-          App(appCacheDir: appCacheDir),
+          App(appDataDir: appDataDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
         expect(find.byType(IntroPage), findsOneWidget);
@@ -30,7 +30,7 @@ void main() async {
     group('local', () {
       testWidgets('default local path', (tester) async {
         await tester.pumpWidget(
-          App(appCacheDir: appCacheDir),
+          App(appDataDir: appDataDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
         expect(find.byType(IntroPage), findsOneWidget);
@@ -46,7 +46,7 @@ void main() async {
                 widget.title is Text &&
                 (widget.title as Text).data == 'Local path' &&
                 widget.subtitle != null &&
-                (widget.subtitle as Text).data == appCacheDir,
+                (widget.subtitle as Text).data == appDataDir,
           ),
           findsOneWidget,
         );
@@ -78,7 +78,7 @@ void main() async {
     group('webdav', () {
       testWidgets('default local path', (tester) async {
         await tester.pumpWidget(
-          App(appCacheDir: appCacheDir),
+          App(appDataDir: appDataDir),
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
         expect(find.byType(IntroPage), findsOneWidget);
@@ -96,7 +96,7 @@ void main() async {
                 widget.title is Text &&
                 (widget.title as Text).data == 'Local path' &&
                 widget.subtitle != null &&
-                (widget.subtitle as Text).data == appCacheDir,
+                (widget.subtitle as Text).data == appDataDir,
           ),
           findsOneWidget,
         );
