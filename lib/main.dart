@@ -69,23 +69,43 @@ void main() async {
   log.info('Setup bloc oberserver');
   Bloc.observer = GenericBlocObserver();
 
+  Directory legacyAppDataDir = await getApplicationCacheDirectory();
+  Directory appDataDir = await getApplicationDocumentsDirectory();
+  // @todo: Remove later!
+  if (File(path.join(legacyAppDataDir.path, 'data.db')).existsSync()) {
+    log.info(
+        'Legacy application data found in cache directory. Migrate data to new path.');
+    for (FileSystemEntity f in legacyAppDataDir.listSync()) {
+      String filename = f.uri.pathSegments.last;
+      String newFullFilename = path.join(appDataDir.path, filename);
+      if (!await File(newFullFilename).exists()) {
+        log.info('Moving file $f to $newFullFilename');
+        await (f as File).copy(newFullFilename);
+        await f.delete();
+      }
+    }
+  } else {
+    log.info(
+        'No application data found in cache directory. Using documents directory.');
+  }
+
   log.info('Run app');
   runApp(
-    App(appCacheDir: (await getApplicationCacheDirectory()).path),
+    App(appDataDir: appDataDir.path),
   );
 }
 
 class App extends StatelessWidget {
-  final String appCacheDir;
+  final String appDataDir;
 
   const App({
-    required this.appCacheDir,
+    required this.appDataDir,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String databasePath = path.join(appCacheDir, 'data.db');
+    final String databasePath = path.join(appDataDir, 'data.db');
 
     return MultiRepositoryProvider(
       providers: [
@@ -108,7 +128,7 @@ class App extends StatelessWidget {
           BlocProvider<TodoFileCubit>(
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
-              localPath: appCacheDir,
+              localPath: appDataDir,
             ),
           ),
           BlocProvider<DrawerCubit>(
