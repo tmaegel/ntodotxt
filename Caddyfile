@@ -3,10 +3,12 @@
 }
 
 localhost {
+  uri strip_prefix /nc
   reverse_proxy nextcloud:80
 }
 
 10.0.2.2 {
   tls internal
+  uri strip_prefix /nc
   reverse_proxy nextcloud:80
 }

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4] - 2025-03-29
+
+### Fixed
+
+- Recognize whether a file already exists on the server side
+
+### Changed
+
+- Improvement of path handling
+
 ## [0.12.3] - 2025-03-15
 
 ### Fixed
@@ -362,7 +372,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.12.3...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.12.4...HEAD
+[0.12.4]: https://github.com/tmaegel/ntodotxt/compare/v0.12.3...v0.12.4
 [0.12.3]: https://github.com/tmaegel/ntodotxt/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/tmaegel/ntodotxt/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/tmaegel/ntodotxt/compare/v0.12.0...v0.12.1
