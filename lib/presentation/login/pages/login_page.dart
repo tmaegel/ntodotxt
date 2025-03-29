@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,8 +54,7 @@ class _LocalLoginViewState extends State<LocalLoginView> {
                         try {
                           setState(() => loading = true);
                           await context.read<LoginCubit>().loginLocal(
-                                localTodoFilePath:
-                                    '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
+                                localTodoFilePath: state.localTodoFilePath,
                               );
                         } finally {
                           setState(() => loading = false);
@@ -189,10 +186,9 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                             try {
                               setState(() => loading = true);
                               await context.read<LoginCubit>().loginWebDAV(
-                                    localTodoFilePath:
-                                        '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
+                                    localTodoFilePath: state.localTodoFilePath,
                                     remoteTodoFilePath:
-                                        '${state.remotePath}${Platform.pathSeparator}${state.todoFilename}',
+                                        state.remoteTodoFilePath,
                                     server: serverAddr,
                                     path: path,
                                     username: username,

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:ntodotxt/main.dart' show log;
+import 'package:path/path.dart' as p;
 import 'package:webdav_client/webdav_client.dart' as webdav;
 
 class WebDAVClientException implements Exception {
@@ -232,7 +233,6 @@ class WebDAVClient {
   }
 
   Future<bool> fileExists({
-    String path = '',
     required String filename,
   }) async {
     if (filename.startsWith('/')) {
@@ -241,26 +241,11 @@ class WebDAVClient {
     if (filename.endsWith('/')) {
       filename = filename.substring(0, filename.length - 1);
     }
-    log.fine(
-      'Check if file $filename in path ${path.isEmpty ? "/" : path} exists',
+    log.fine('Check if file $filename exists');
+    return await _exists(
+      path: p.dirname(filename),
+      target: p.basename(filename),
     );
-    return await _exists(path: path, target: filename);
-  }
-
-  Future<bool> directoryExists({
-    String path = '',
-    required String directory,
-  }) async {
-    if (directory.startsWith('/')) {
-      directory = directory.substring(1);
-    }
-    if (!directory.endsWith('/')) {
-      directory = '$directory/';
-    }
-    log.fine(
-      'Check if directory $directory in path ${path.isEmpty ? "/" : path} exists',
-    );
-    return await _exists(path: path, target: directory);
   }
 
   Future<webdav.File> getFile({

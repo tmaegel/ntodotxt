@@ -71,9 +71,7 @@ class TodoFileCubit extends Cubit<TodoFileState> {
       if (localPath != null) {
         emit(state.load(localPath: localPath.value));
       }
-      await checkLocalPermission(
-        '${state.localPath}${Platform.pathSeparator}${state.todoFilename}',
-      );
+      await checkLocalPermission(state.localTodoFilePath);
 
       log.info('Retrieving setting \'remotePath\'.');
       final Setting? remotePath = await repository.get(key: 'remotePath');
@@ -100,9 +98,6 @@ class TodoFileCubit extends Cubit<TodoFileState> {
       if (value != null) {
         emit(state.load());
         log.fine('Saving setting \'localPath\'.');
-        if (!value.endsWith('/')) {
-          value = '$value/';
-        }
         await repository.updateOrInsert(
           Setting(key: 'localPath', value: value),
         );
@@ -123,7 +118,6 @@ class TodoFileCubit extends Cubit<TodoFileState> {
       if (value != null) {
         emit(state.load());
         log.fine('Saving setting \'todoFilename\'.');
-
         await repository.updateOrInsert(
           Setting(key: 'todoFilename', value: value),
         );
@@ -144,9 +138,6 @@ class TodoFileCubit extends Cubit<TodoFileState> {
       if (value != null) {
         emit(state.load());
         log.fine('Saving setting \'remotePath\'.');
-        if (!value.endsWith('/')) {
-          value = '$value/';
-        }
         await repository.updateOrInsert(
           Setting(key: 'remotePath', value: value),
         );
@@ -163,7 +154,7 @@ class TodoFileCubit extends Cubit<TodoFileState> {
       log.fine('Resetting to the defaults.');
       await resetTodoFileSettings();
       emit(
-        const TodoFileLoading(
+        TodoFileLoading(
           todoFilename: defaultTodoFilename,
           doneFilename: defaultDoneFilename,
           localPath: defaultLocalTodoPath,

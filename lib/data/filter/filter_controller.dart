@@ -1,8 +1,12 @@
-import 'package:ntodotxt/data/database.dart' show ModelController;
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class FilterController extends ModelController<Filter> {
+abstract class FilterControllerInterface
+    implements ModelControllerInterface<Filter> {}
+
+class FilterController extends DatabaseController
+    implements FilterControllerInterface {
   FilterController(super.path);
 
   @override

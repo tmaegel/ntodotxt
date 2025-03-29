@@ -1,8 +1,17 @@
-import 'package:ntodotxt/data/database.dart' show ModelController;
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class SettingController extends ModelController<Setting> {
+abstract class SettingControllerInterface
+    implements ModelControllerInterface<Setting> {
+  Future<Setting> getOrInsert(
+      {required dynamic identifier, required String defaultValue});
+
+  Future<int> updateOrInsert(Setting model);
+}
+
+class SettingController extends DatabaseController
+    implements SettingControllerInterface {
   SettingController(super.path);
 
   @override
@@ -46,18 +55,6 @@ class SettingController extends ModelController<Setting> {
     return model;
   }
 
-  Future<Setting> getOrInsert(
-      {required dynamic identifier, required String defaultValue}) async {
-    Setting? result = await get(identifier: identifier);
-    if (result == null) {
-      Setting fallback = Setting(key: identifier, value: defaultValue);
-      await insert(fallback);
-      return fallback;
-    } else {
-      return result;
-    }
-  }
-
   @override
   Future<int> insert(Setting model) async {
     late final int id;
@@ -75,6 +72,19 @@ class SettingController extends ModelController<Setting> {
     }
 
     return id;
+  }
+
+  @override
+  Future<Setting> getOrInsert(
+      {required dynamic identifier, required String defaultValue}) async {
+    Setting? result = await get(identifier: identifier);
+    if (result == null) {
+      Setting fallback = Setting(key: identifier, value: defaultValue);
+      await insert(fallback);
+      return fallback;
+    } else {
+      return result;
+    }
   }
 
   @override
@@ -100,6 +110,15 @@ class SettingController extends ModelController<Setting> {
   }
 
   @override
+  Future<int> updateOrInsert(Setting model) async {
+    int id = await update(model);
+    if (id == 0) {
+      id = await insert(model);
+    }
+    return id;
+  }
+
+  @override
   Future<int> delete({required dynamic identifier}) async {
     late final int id;
     try {
@@ -118,14 +137,6 @@ class SettingController extends ModelController<Setting> {
       await close();
     }
 
-    return id;
-  }
-
-  Future<int> updateOrInsert(Setting model) async {
-    int id = await update(model);
-    if (id == 0) {
-      id = await insert(model);
-    }
     return id;
   }
 }

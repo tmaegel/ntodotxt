@@ -324,30 +324,33 @@ class CoreApp extends StatelessWidget {
   TodoListRepository _createTodoListRepository(
       LoginState loginState, TodoFileState todoFileState) {
     late TodoListApi api;
-    String localTodoFilePath =
-        '${todoFileState.localPath}${Platform.pathSeparator}${todoFileState.todoFilename}';
-    String remoteTodoFilePath =
-        '${todoFileState.remotePath}${Platform.pathSeparator}${todoFileState.todoFilename}';
-    log.info('Use todo file $localTodoFilePath');
     switch (loginState) {
       case LoginLocal():
         log.info('Use local backend');
-        api = LocalTodoListApi.fromString(localFilePath: localTodoFilePath);
+        log.info('Using local todo file ${todoFileState.localTodoFilePath}');
+        api = LocalTodoListApi.fromString(
+          localFilePath: todoFileState.localTodoFilePath,
+        );
       case LoginWebDAV():
         log.info('Use local+webdav backend');
+        log.info('Using remote todo file ${todoFileState.localTodoFilePath}');
         api = WebDAVTodoListApi.fromString(
-            localFilePath: localTodoFilePath,
-            remoteFilePath: remoteTodoFilePath,
-            client: WebDAVClient(
-              server: loginState.server,
-              path: loginState.path,
-              username: loginState.username,
-              password: loginState.password,
-              acceptUntrustedCert: loginState.acceptUntrustedCert,
-            ));
+          localFilePath: todoFileState.localTodoFilePath,
+          remoteFilePath: todoFileState.remoteTodoFilePath,
+          client: WebDAVClient(
+            server: loginState.server,
+            path: loginState.path,
+            username: loginState.username,
+            password: loginState.password,
+            acceptUntrustedCert: loginState.acceptUntrustedCert,
+          ),
+        );
       default:
         log.info('Fallback to local backend');
-        api = LocalTodoListApi.fromString(localFilePath: localTodoFilePath);
+        log.info('Using local todo file ${todoFileState.localTodoFilePath}');
+        api = LocalTodoListApi.fromString(
+          localFilePath: todoFileState.localTodoFilePath,
+        );
     }
 
     return TodoListRepository(api);

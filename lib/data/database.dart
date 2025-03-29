@@ -3,18 +3,28 @@ import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
 import 'package:ntodotxt/main.dart' show log;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+abstract class ModelControllerInterface<T> {
+  Future<List<T>> list();
+
+  Future<T?> get({required dynamic identifier});
+
+  Future<int> insert(T model);
+
+  Future<int> update(T model);
+
+  Future<int> delete({required dynamic identifier});
+}
+
 class DatabaseController {
   static Database? _database; // Singleton pattern
   final String path;
 
   DatabaseController(this.path);
 
-  Future<Database> get instance async {
+  Future<Database> get database async {
     if (_database != null) {
       return _database!;
     } else {
-      // Set the version. This executes the onCreate function and provides a
-      // path to perform database upgrades and downgrades.
       _database = await _open();
       return _database!;
     }
@@ -33,6 +43,8 @@ class DatabaseController {
     databaseFactoryOrNull = databaseFactoryFfi;
     return openDatabase(
       path,
+      // Set the version. This executes the onCreate function and provides a
+      // path to perform database upgrades and downgrades.
       version: 1,
       onCreate: (Database db, int version) {
         log.info('Create database $path');
@@ -48,29 +60,4 @@ class DatabaseController {
       singleInstance: true,
     );
   }
-}
-
-abstract class ModelController<T> extends DatabaseController {
-  ModelController(super.path);
-
-  Future<Database> get database async {
-    log.fine('Access database by $T');
-    return await instance;
-  }
-
-  @override
-  Future<void> close() async {
-    log.fine('Close database by $T');
-    await super.close();
-  }
-
-  Future<List<T>> list();
-
-  Future<T?> get({required dynamic identifier});
-
-  Future<int> insert(T model);
-
-  Future<int> update(T model);
-
-  Future<int> delete({required dynamic identifier});
 }

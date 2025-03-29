@@ -79,164 +79,72 @@ void main() {
     });
 
     group('file create() & fileExists()', () {
-      group('root', () {
-        test('file does exist (1)', () async {
-          final String filename = '${randomString()}.txt';
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.create(filename); // Create file
-            expectLater(await client.fileExists(filename: filename), true);
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('file does exist (2)', () async {
-          final String filename = '${randomString()}.txt';
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.create(filename); // Create file
-            expectLater(
-                await client.fileExists(path: '/', filename: filename), true);
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('file doesn\'t exist (1)', () async {
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            expectLater(await client.fileExists(filename: 'abc.xyz'), false);
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('file doesn\'t exist (2)', () async {
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            expectLater(
-              await client.fileExists(path: '/', filename: 'abc.xyz'),
-              false,
-            );
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-      });
-      group('nested', () {
-        test('directory/file does exist (1)', () async {
-          final String filename = '${randomString()}.txt';
-          final String directory = randomString();
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.create('$directory/$filename');
-            expectLater(
-              await client.fileExists(path: directory, filename: filename),
-              true,
-            );
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('directory/file does exist (2)', () async {
-          final String filename = '${randomString()}.txt';
-          final String directory = randomString();
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.create('$directory/$filename');
-            expectLater(
-              await client.fileExists(path: '/$directory/', filename: filename),
-              true,
-            );
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('directory/file doesn\'t exist (1)', () async {
-          final String directory = randomString();
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.mkdir(directory: directory);
-            expectLater(
-              await client.fileExists(path: directory, filename: 'abc.xyz'),
-              false,
-            );
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('directory/file doesn\'t exist (2)', () async {
-          final String directory = randomString();
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.mkdir(directory: directory);
-            expectLater(
-              await client.fileExists(
-                  path: '/$directory/', filename: 'abc.xyz'),
-              false,
-            );
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-        test('directory/file doesn\'t exist in this path', () async {
-          final String filename = '${randomString()}.txt';
-          final String directory = randomString();
-          final WebDAVClient client = createWebDAVClient();
-          try {
-            await client.create(filename);
-            await client.mkdir(directory: directory);
-            expectLater(
-              await client.fileExists(path: directory, filename: filename),
-              false,
-            );
-          } catch (e) {
-            fail('An exception was thrown: $e');
-          }
-        });
-      });
-    });
-
-    group('directory mkdir() & directoryExists()', () {
-      test('directory exists', () async {
-        final String directory = randomString();
+      test('file does exist (1)', () async {
+        final String filename = '${randomString()}.txt';
         final WebDAVClient client = createWebDAVClient();
         try {
-          await client.mkdir(directory: directory);
-          expectLater(await client.directoryExists(directory: directory), true);
-        } catch (e) {
-          fail('An exception was thrown: $e');
-        }
-      });
-      test('nested directory exists', () async {
-        final String path = randomString();
-        final String directory = randomString();
-        final WebDAVClient client = createWebDAVClient();
-        try {
-          await client.mkdir(directory: '$path/$directory', recursive: true);
+          await client.create(filename);
           expectLater(
-            await client.directoryExists(path: path, directory: directory),
+            await client.fileExists(filename: filename),
             true,
           );
         } catch (e) {
           fail('An exception was thrown: $e');
         }
       });
-      test('directory doesn\' exists', () async {
+      test('file does exist (2)', () async {
+        final String directory = randomString();
+        final String filename = '${randomString()}.txt';
         final WebDAVClient client = createWebDAVClient();
         try {
-          expectLater(await client.directoryExists(directory: 'dir123'), false);
+          await client.mkdir(directory: directory);
+          await client.create('$directory/$filename');
+          expectLater(
+            await client.fileExists(filename: '$directory/$filename'),
+            true,
+          );
         } catch (e) {
           fail('An exception was thrown: $e');
         }
       });
-      test('nested directory doesn\'t exists', () async {
+      test('file doesn\'t exist (1)', () async {
         final WebDAVClient client = createWebDAVClient();
-        expectLater(
-          () async =>
-              await client.directoryExists(path: 'abc', directory: '123'),
-          throwsA(
-            isA<WebDAVClientException>(),
-          ),
-        );
+        try {
+          expectLater(
+            await client.fileExists(filename: 'abc.xyz'),
+            false,
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('file doesn\'t exist (2)', () async {
+        final String directory = randomString();
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.mkdir(directory: directory);
+          expectLater(
+            await client.fileExists(filename: '/$directory/abc.xyz'),
+            false,
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
+      });
+      test('directory/file doesn\'t exist in this path', () async {
+        final String directory = randomString();
+        final String filename = '${randomString()}.txt';
+        final WebDAVClient client = createWebDAVClient();
+        try {
+          await client.mkdir(directory: directory);
+          await client.create(filename);
+          expectLater(
+            await client.fileExists(filename: '$directory/$filename'),
+            false,
+          );
+        } catch (e) {
+          fail('An exception was thrown: $e');
+        }
       });
     });
 
@@ -252,14 +160,14 @@ void main() {
         }
       });
       test('file upload within already existing directory', () async {
-        final String filename = '${randomString()}.txt';
         final String directory = randomString();
+        final String filename = '${randomString()}.txt';
         final WebDAVClient client = createWebDAVClient();
         try {
           await client.mkdir(directory: directory);
           await client.upload(content: 'abc', filename: '$directory/$filename');
           expectLater(
-            await client.fileExists(path: directory, filename: filename),
+            await client.fileExists(filename: '$directory/$filename'),
             true,
           );
         } catch (e) {
@@ -267,13 +175,13 @@ void main() {
         }
       });
       test('file upload within non existing directory', () async {
-        final String filename = '${randomString()}.txt';
         final String directory = randomString();
+        final String filename = '${randomString()}.txt';
         final WebDAVClient client = createWebDAVClient();
         try {
           await client.upload(content: 'abc', filename: '$directory/$filename');
           expectLater(
-            await client.fileExists(path: directory, filename: filename),
+            await client.fileExists(filename: '$directory/$filename'),
             true,
           );
         } catch (e) {
@@ -303,8 +211,8 @@ void main() {
         }
       });
       test('file download within directory', () async {
-        final String filename = '${randomString()}.txt';
         final String directory = randomString();
+        final String filename = '${randomString()}.txt';
         final WebDAVClient client = createWebDAVClient();
         try {
           await client.upload(content: 'abc', filename: '$directory/$filename');

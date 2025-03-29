@@ -1,9 +1,9 @@
 import 'package:ntodotxt/data/settings/setting_controller.dart'
-    show SettingController;
+    show SettingControllerInterface;
 import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
 
 class SettingRepository {
-  final SettingController controller;
+  final SettingControllerInterface controller;
 
   SettingRepository(this.controller);
 
