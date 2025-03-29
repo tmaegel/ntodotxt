@@ -21,7 +21,7 @@ services:
       - "127.0.0.1:8443:443"
       - "127.0.0.1:8443:443/udp"
     volumes:
-      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:z
     networks:
       - caddy
 
