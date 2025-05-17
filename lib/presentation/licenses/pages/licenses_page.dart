@@ -21,9 +21,9 @@ class LicenseListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      itemCount: ossLicenses.length,
+      itemCount: allDependencies.length,
       itemBuilder: (BuildContext context, int index) {
-        Package package = ossLicenses[index];
+        Package package = allDependencies[index];
         return ListTile(
           title: Text(package.name),
           subtitle: Text(package.repository ?? (package.homepage ?? '')),

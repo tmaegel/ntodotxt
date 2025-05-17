@@ -20,7 +20,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 ACTION=0
-ANDROID_API=34
+ANDROID_API=35
 EMULATOR_NAME=""
 
 while getopts ":hldrec:v:" arg; do
