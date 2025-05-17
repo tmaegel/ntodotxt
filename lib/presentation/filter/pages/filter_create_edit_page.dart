@@ -113,7 +113,7 @@ class FilterDialogWrapper extends StatelessWidget {
       builder: (BuildContext context, FilterState state) {
         return PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) async {
+          onPopInvokedWithResult: <T>(bool didPop, T? result) async {
             if (didPop) {
               return;
             }

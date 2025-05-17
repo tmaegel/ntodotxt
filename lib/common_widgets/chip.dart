@@ -18,7 +18,7 @@ class BasicIconChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
       decoration: BoxDecoration(
         color: mono
-            ? Theme.of(context).colorScheme.surfaceVariant
+            ? Theme.of(context).colorScheme.surfaceContainerHigh
             : Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(4),
       ),
@@ -57,7 +57,7 @@ class BasicChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
       decoration: BoxDecoration(
         color: mono
-            ? Theme.of(context).colorScheme.surfaceVariant
+            ? Theme.of(context).colorScheme.surfaceContainerHigh
             : Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(4),
       ),

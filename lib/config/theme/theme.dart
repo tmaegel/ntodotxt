@@ -39,7 +39,7 @@ final ThemeData lightTheme = light.copyWith(
     ),
   ),
   scrollbarTheme: light.scrollbarTheme.copyWith(
-    thickness: MaterialStateProperty.all(5.0),
+    thickness: WidgetStateProperty.all(5.0),
   ),
   bottomAppBarTheme: light.bottomAppBarTheme.copyWith(),
   floatingActionButtonTheme: light.floatingActionButtonTheme.copyWith(
@@ -93,7 +93,7 @@ final ThemeData darkTheme = dark.copyWith(
     ),
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
-    thickness: MaterialStateProperty.all(5.0),
+    thickness: WidgetStateProperty.all(5.0),
   ),
   bottomAppBarTheme: dark.bottomAppBarTheme.copyWith(),
   floatingActionButtonTheme: dark.floatingActionButtonTheme.copyWith(
@@ -131,7 +131,6 @@ class CustomTheme {
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 10,
         blendOnColors: false,
-        useTextTheme: true,
         useM2StyleDividerInM3: true,
         alignedDropdown: true,
         useInputDecoratorThemeInDialogs: true,
@@ -150,7 +149,6 @@ class CustomTheme {
       blendLevel: 13,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 20,
-        useTextTheme: true,
         useM2StyleDividerInM3: true,
         alignedDropdown: true,
         useInputDecoratorThemeInDialogs: true,

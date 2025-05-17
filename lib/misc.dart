@@ -101,7 +101,7 @@ class PopScopeDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (bool didPop) {
+      onPopInvokedWithResult: <T>(bool didPop, T? result) {
         if (didPop) {
           return;
         }

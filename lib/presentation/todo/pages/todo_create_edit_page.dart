@@ -124,7 +124,7 @@ class TodoDialogWrapper extends StatelessWidget {
       builder: (BuildContext context, TodoState state) {
         return PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) async {
+          onPopInvokedWithResult: <T>(bool didPop, T? result) async {
             if (didPop) {
               return;
             }
@@ -571,9 +571,11 @@ class TodoDueDateItem extends StatelessWidget {
         if (date != null) {
           final String? formattedDate = Todo.date2Str(date);
           if (formattedDate != null) {
-            context.read<TodoCubit>().addKeyValue(
-                  'due:$formattedDate',
-                );
+            if (context.mounted) {
+              context.read<TodoCubit>().addKeyValue(
+                    'due:$formattedDate',
+                  );
+            }
           }
         }
       },
