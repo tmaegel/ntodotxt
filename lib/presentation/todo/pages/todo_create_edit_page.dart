@@ -566,6 +566,7 @@ class TodoDueDateItem extends StatelessWidget {
       firstDate: initial.subtract(const Duration(days: 3650)),
       initialDate: initial,
       lastDate: initial.add(const Duration(days: 3650)),
+      locale: const Locale('en', 'GB'),
     ).then(
       (date) {
         if (date != null) {

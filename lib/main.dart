@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
 import 'package:ntodotxt/bloc_observer.dart' show GenericBlocObserver;
@@ -199,6 +200,15 @@ class InitialApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en'),
+        Locale('de'),
+      ],
       home: MultiBlocListener(
         listeners: [
           BlocListener<LoginCubit, LoginState>(
@@ -311,6 +321,15 @@ class CoreApp extends StatelessWidget {
                   theme: lightTheme,
                   darkTheme: darkTheme,
                   themeMode: themeMode,
+                  localizationsDelegates: [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: [
+                    Locale('en'),
+                    Locale('de'),
+                  ],
                   routerConfig: AppRouter().config,
                 );
               },
