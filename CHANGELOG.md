@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump flutter version to 3.24.5
 - Bump version of a bunch of dependencies
+- Sets default localization to 'en' for date picker #90
 
 ## [0.12.4] - 2025-03-29
 
