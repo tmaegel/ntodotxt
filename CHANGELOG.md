@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2025-05-22
+
 ### Changed
 
 - Bump flutter version to 3.24.5
@@ -378,7 +380,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.12.4...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/tmaegel/ntodotxt/compare/v0.12.4...v0.13.0
 [0.12.4]: https://github.com/tmaegel/ntodotxt/compare/v0.12.3...v0.12.4
 [0.12.3]: https://github.com/tmaegel/ntodotxt/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/tmaegel/ntodotxt/compare/v0.12.1...v0.12.2
