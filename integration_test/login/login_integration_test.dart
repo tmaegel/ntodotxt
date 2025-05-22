@@ -14,7 +14,8 @@ void main() async {
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   );
 
-  final String appDataDir = (await getApplicationDocumentsDirectory()).path;
+  final String appDataDir =
+      '${(await getApplicationDocumentsDirectory()).path}/';
 
   group('login', () {
     group('initial', () {
