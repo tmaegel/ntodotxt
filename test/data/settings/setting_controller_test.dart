@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart'
     show SettingController;
 import 'package:ntodotxt/domain/settings/setting_model.dart' show Setting;
@@ -12,13 +13,13 @@ void main() {
   // Init ffi loader if needed.
   sqfliteFfiInit();
 
-  late SettingController controller;
+  late DatabaseController controller;
   late SettingRepository repository;
 
   setUp(() async {
-    controller = SettingController(inMemoryDatabasePath);
-    repository = SettingRepository(controller);
-    await (await controller.database).delete('filters'); // Clear
+    controller = DatabaseController(inMemoryDatabasePath);
+    repository = SettingRepository(SettingController(controller));
+    await (await controller.database).delete('settings'); // Clear
   });
 
   group('list()', () {

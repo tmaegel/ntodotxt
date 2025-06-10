@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart'
     show FilterController;
 import 'package:ntodotxt/domain/filter/filter_model.dart';
@@ -13,12 +14,12 @@ void main() {
   // Init ffi loader if needed.
   sqfliteFfiInit();
 
-  late FilterController controller;
+  late DatabaseController controller;
   late FilterRepository repository;
 
   setUp(() async {
-    controller = FilterController(inMemoryDatabasePath);
-    repository = FilterRepository(controller);
+    controller = DatabaseController(inMemoryDatabasePath);
+    repository = FilterRepository(FilterController(controller));
     await (await controller.database).delete('filters'); // Clear
   });
 

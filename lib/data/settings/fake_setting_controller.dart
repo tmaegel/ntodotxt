@@ -13,7 +13,7 @@ class FakeSettingController implements SettingControllerInterface {
   Future<List<Setting>> list() async => settings;
 
   @override
-  Future<Setting?> get({required dynamic identifier}) async {
+  Future<Setting?> get(dynamic identifier) async {
     for (Setting s in settings) {
       if (s.key == identifier) {
         return s;
@@ -31,7 +31,7 @@ class FakeSettingController implements SettingControllerInterface {
   @override
   Future<Setting> getOrInsert(
       {required dynamic identifier, required String defaultValue}) async {
-    Setting? result = await get(identifier: identifier);
+    Setting? result = await get(identifier);
     if (result == null) {
       Setting fallback = Setting(key: identifier, value: defaultValue);
       await insert(fallback);
@@ -62,7 +62,7 @@ class FakeSettingController implements SettingControllerInterface {
   }
 
   @override
-  Future<int> delete({required dynamic identifier}) async {
+  Future<int> delete(dynamic identifier) async {
     int index = settings.indexWhere((Setting s) => s.key == identifier);
     if (index != -1) {
       settings.removeAt(index);

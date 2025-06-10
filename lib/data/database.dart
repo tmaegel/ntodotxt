@@ -6,20 +6,20 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 abstract class ModelControllerInterface<T> {
   Future<List<T>> list();
 
-  Future<T?> get({required dynamic identifier});
+  Future<T?> get(dynamic identifier);
 
   Future<int> insert(T model);
 
   Future<int> update(T model);
 
-  Future<int> delete({required dynamic identifier});
+  Future<int> delete(dynamic identifier);
 }
 
 class DatabaseController {
   static Database? _database; // Singleton pattern
   final String path;
 
-  DatabaseController(this.path);
+  const DatabaseController(this.path);
 
   Future<Database> get database async {
     if (_database != null) {

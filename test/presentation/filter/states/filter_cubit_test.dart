@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart'
@@ -13,17 +14,17 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late String databasePath;
+  late DatabaseController controller;
   late SettingRepository settingRepository;
   late FilterRepository filterRepository;
 
   setUp(() {
-    databasePath = inMemoryDatabasePath;
+    controller = DatabaseController(inMemoryDatabasePath);
     settingRepository = SettingRepository(
-      SettingController(databasePath),
+      SettingController(controller),
     );
     filterRepository = FilterRepository(
-      FilterController(databasePath),
+      FilterController(controller),
     );
   });
 

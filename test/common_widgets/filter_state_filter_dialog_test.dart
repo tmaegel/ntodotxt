@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/common_widgets/filter_dialog.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
@@ -12,10 +13,10 @@ import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MaterialAppFilterStateFilterDialog extends StatelessWidget {
-  final String databasePath;
+  final DatabaseController dbController;
 
   const MaterialAppFilterStateFilterDialog({
-    this.databasePath = inMemoryDatabasePath,
+    this.dbController = const DatabaseController(inMemoryDatabasePath),
     super.key,
   });
 
@@ -25,12 +26,12 @@ class MaterialAppFilterStateFilterDialog extends StatelessWidget {
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
-            SettingController(databasePath),
+            SettingController(dbController),
           ),
         ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
-            FilterController(databasePath),
+            FilterController(dbController),
           ),
         ),
       ],

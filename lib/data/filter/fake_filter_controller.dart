@@ -13,7 +13,7 @@ class FakeFilterController implements FilterControllerInterface {
   Future<List<Filter>> list() async => filters;
 
   @override
-  Future<Filter?> get({required dynamic identifier}) async {
+  Future<Filter?> get(dynamic identifier) async {
     for (Filter s in filters) {
       if (s.id == identifier) {
         return s;
@@ -40,7 +40,7 @@ class FakeFilterController implements FilterControllerInterface {
   }
 
   @override
-  Future<int> delete({required dynamic identifier}) async {
+  Future<int> delete(dynamic identifier) async {
     int index = filters.indexWhere((Filter s) => s.id == identifier);
     if (index != -1) {
       filters.removeAt(index);

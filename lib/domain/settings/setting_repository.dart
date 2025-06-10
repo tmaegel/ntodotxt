@@ -10,7 +10,7 @@ class SettingRepository {
   Future<List<Setting>> list() async => await controller.list();
 
   Future<Setting?> get({required String key}) async =>
-      await controller.get(identifier: key);
+      await controller.get(key);
 
   Future<Setting> getOrInsert(
           {required String key, required String defaultValue}) async =>
@@ -21,7 +21,7 @@ class SettingRepository {
   Future<int> update(Setting model) async => await controller.update(model);
 
   Future<int> delete({required String key}) async =>
-      await controller.delete(identifier: key);
+      await controller.delete(key);
 
   Future<int> updateOrInsert(Setting model) async =>
       await controller.updateOrInsert(model);

@@ -8,6 +8,7 @@ import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
@@ -22,7 +23,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 class BlocAppWrapper extends StatelessWidget {
   final Widget child;
   final Filter filter;
-  final String databasePath = inMemoryDatabasePath;
+  final DatabaseController dbController =
+      const DatabaseController(inMemoryDatabasePath);
 
   const BlocAppWrapper({
     required this.child,
@@ -36,12 +38,12 @@ class BlocAppWrapper extends StatelessWidget {
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
-            SettingController(databasePath),
+            SettingController(dbController),
           ),
         ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
-            FilterController(databasePath),
+            FilterController(dbController),
           ),
         ),
       ],

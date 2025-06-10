@@ -10,6 +10,7 @@ import 'package:ntodotxt/bloc_observer.dart' show GenericBlocObserver;
 import 'package:ntodotxt/client/webdav_client.dart';
 import 'package:ntodotxt/config/router/router.dart';
 import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart'
     show FilterController;
 import 'package:ntodotxt/data/settings/setting_controller.dart';
@@ -96,7 +97,7 @@ void main() async {
   );
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   final String appDataDir;
 
   const App({
@@ -105,19 +106,40 @@ class App extends StatelessWidget {
   });
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final DatabaseController dbController;
+
+  @override
+  void initState() {
+    super.initState();
+    dbController = DatabaseController(path.join(widget.appDataDir, 'data.db'));
+  }
+
+  @override
+  void dispose() {
+    dbController.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String databasePath = path.join(appDataDir, 'data.db');
+    final DatabaseController dbController = DatabaseController(
+      path.join(widget.appDataDir, 'data.db'),
+    );
 
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
-            SettingController(databasePath),
+            SettingController(dbController),
           ),
         ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
-            FilterController(databasePath),
+            FilterController(dbController),
           ),
         ),
       ],
@@ -129,7 +151,7 @@ class App extends StatelessWidget {
           BlocProvider<TodoFileCubit>(
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
-              localPath: appDataDir,
+              localPath: widget.appDataDir,
             ),
           ),
           BlocProvider<DrawerCubit>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart';
 import 'package:ntodotxt/presentation/login/pages/login_page.dart';
@@ -9,10 +10,10 @@ import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MaterialAppWebDAVLoginView extends StatelessWidget {
-  final String databasePath;
+  final DatabaseController dbController;
 
   const MaterialAppWebDAVLoginView({
-    this.databasePath = inMemoryDatabasePath,
+    this.dbController = const DatabaseController(inMemoryDatabasePath),
     super.key,
   });
 
@@ -22,7 +23,7 @@ class MaterialAppWebDAVLoginView extends StatelessWidget {
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
-            SettingController(databasePath),
+            SettingController(dbController),
           ),
         ),
       ],

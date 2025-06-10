@@ -8,6 +8,7 @@ import 'package:ntodotxt/common_widgets/group_by_dialog.dart';
 import 'package:ntodotxt/common_widgets/order_dialog.dart';
 import 'package:ntodotxt/common_widgets/priorities_dialog.dart';
 import 'package:ntodotxt/common_widgets/projects_dialog.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
@@ -31,17 +32,19 @@ class BlocRepositoryWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String databasePath = inMemoryDatabasePath;
+    final DatabaseController dbController =
+        DatabaseController(inMemoryDatabasePath);
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
-            SettingController(databasePath),
+            SettingController(dbController),
           ),
         ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
-            FilterController(databasePath),
+            FilterController(dbController),
           ),
         ),
       ],

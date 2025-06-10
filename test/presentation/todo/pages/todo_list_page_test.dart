@@ -4,6 +4,7 @@ import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart';
 import 'package:ntodotxt/data/settings/setting_controller.dart'
     show SettingController;
@@ -23,6 +24,8 @@ import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class TodoListPageMaterialApp extends StatelessWidget {
+  final DatabaseController dbController =
+      const DatabaseController(inMemoryDatabasePath);
   final File localFile;
   final Filter? filter;
 
@@ -38,7 +41,7 @@ class TodoListPageMaterialApp extends StatelessWidget {
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) =>
-              SettingRepository(SettingController(inMemoryDatabasePath)),
+              SettingRepository(SettingController(dbController)),
         ),
         RepositoryProvider<TodoListRepository>(
           create: (BuildContext context) {
@@ -48,7 +51,7 @@ class TodoListPageMaterialApp extends StatelessWidget {
         ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
-            FilterController(inMemoryDatabasePath),
+            FilterController(dbController),
           ),
         ),
       ],

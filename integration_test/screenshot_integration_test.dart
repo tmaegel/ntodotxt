@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/client/webdav_client.dart';
+import 'package:ntodotxt/data/database.dart';
 import 'package:ntodotxt/data/filter/filter_controller.dart'
     show FilterController;
 import 'package:ntodotxt/data/settings/setting_controller.dart';
@@ -74,6 +75,8 @@ class FakeController extends Fake implements FilterController {
 }
 
 class AppTester extends StatelessWidget {
+  final DatabaseController dbController =
+      const DatabaseController(inMemoryDatabasePath);
   final ThemeMode? themeMode;
   final String appCacheDir;
 
@@ -89,7 +92,7 @@ class AppTester extends StatelessWidget {
       providers: [
         RepositoryProvider<SettingRepository>(
           create: (BuildContext context) => SettingRepository(
-            SettingController(inMemoryDatabasePath),
+            SettingController(dbController),
           ),
         ),
         RepositoryProvider<FilterRepository>(
