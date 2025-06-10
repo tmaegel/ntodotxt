@@ -30,17 +30,12 @@ class LoginCubit extends Cubit<LoginState> {
         return emit(state.logout());
       }
 
-      // @todo: Keep 'offline' for backward compatibility.
-      if (backend == Backend.local || backend == Backend.offline) {
-        // @todo: Remove with the next releases.
-        await secureStorage.write(key: 'backend', value: Backend.local.name);
+      if (backend == Backend.local) {
         return emit(state.loginLocal());
       }
       if (backend == Backend.webdav) {
         String? server = await secureStorage.read(key: 'server');
-        // @todo: Remove baseUrl later.
-        String? path = await secureStorage.read(key: 'path') ??
-            await secureStorage.read(key: 'baseUrl');
+        String? path = await secureStorage.read(key: 'path');
         String? username = await secureStorage.read(key: 'username');
         String? password = await secureStorage.read(key: 'password');
         bool acceptUntrustedCert =

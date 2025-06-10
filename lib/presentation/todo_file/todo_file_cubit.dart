@@ -38,31 +38,9 @@ class TodoFileCubit extends Cubit<TodoFileState> {
 
   Future<void> load() async {
     try {
-      Setting? todoFilename;
       log.info('Retrieving setting \'todoFilename\'.');
-      todoFilename = await repository.get(key: 'todoFilename');
-      if (todoFilename == null) {
-        // @todo: Keep 'localFilename' for backward compatibility.
-        // Revert in a later realease.
-        log.info(
-          'Setting todoFilename doesn\'t exist. Retrieving setting \'localFilename\' as fallback.',
-        );
-        todoFilename = await repository.get(key: 'localFilename');
-        log.info('Saving new setting new \'todoFilename\'.');
-        await repository.updateOrInsert(
-          Setting(
-              key: 'todoFilename',
-              value: todoFilename == null
-                  ? defaultTodoFilename
-                  : todoFilename.value),
-        );
-        log.info('Deleting old setting \'localFilename\'.');
-        await repository.delete(key: 'localFilename');
-        emit(state.load(
-            todoFilename: todoFilename == null
-                ? defaultTodoFilename
-                : todoFilename.value));
-      } else {
+      Setting? todoFilename = await repository.get(key: 'todoFilename');
+      if (todoFilename != null) {
         emit(state.load(todoFilename: todoFilename.value));
       }
 
@@ -171,7 +149,6 @@ class TodoFileCubit extends Cubit<TodoFileState> {
       log.fine('Resetting todofile settings.');
       for (var k in [
         'todoFilename',
-        'localFilename', // @todo: Keep for backwards compatibility.
         'localPath',
         'remotePath',
       ]) {

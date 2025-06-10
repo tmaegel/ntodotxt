@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 
-// @todo: Keep 'offline' for backward compatibility.
-enum Backend { none, local, offline, webdav }
+enum Backend { none, local, webdav }
 
 sealed class LoginState extends Equatable {
   final Backend backend; // Backend to use to store todos.
