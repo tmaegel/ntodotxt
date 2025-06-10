@@ -1,10 +1,5 @@
 exclude: (^android/|^build/|^coverage/|^ios/|^linux/|^macos/|^web/|^windows/)
 fail_fast: true
-default_install_hook_types:
-  - pre-commit
-  - commit-msg
-default_stages:
-  - pre-commit
 
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
@@ -25,11 +20,6 @@ repos:
       - id: detect-private-key
       - id: trailing-whitespace
       - id: double-quote-string-fixer
-
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.30.0
-    hooks:
-      - id: commitizen
 
   - repo: local
     hooks:
