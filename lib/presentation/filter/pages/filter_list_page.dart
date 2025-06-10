@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/scroll_to_top.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority;
 import 'package:ntodotxt/misc.dart' show PopScopeDrawer;
@@ -16,11 +15,13 @@ class FilterListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isNarrowLayout =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    return isNarrowLayout
-        ? const FilterListViewNarrow()
-        : const FilterListViewWide();
+    // @todo: Activate WideLayout later!
+    return const FilterListViewNarrow();
+    // final bool isNarrowLayout =
+    //     MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    // return isNarrowLayout
+    //     ? const FilterListViewNarrow()
+    //     : const FilterListViewWide();
   }
 }
 

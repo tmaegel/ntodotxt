@@ -5,7 +5,6 @@ import 'package:ntodotxt/common_widgets/app_bar.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
 import 'package:ntodotxt/common_widgets/confirm_dialog.dart';
 import 'package:ntodotxt/common_widgets/scroll_to_top.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart' show Filter;
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart';
@@ -31,11 +30,13 @@ class TodoListPage extends StatelessWidget {
       filter == null ? _build(context) : _buildWithFilter(context);
 
   Widget _build(BuildContext context) {
-    final bool isNarrowLayout =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    return isNarrowLayout
-        ? const TodoListViewNarrow()
-        : const TodoListViewWide();
+    // @todo: Activate WideLayout later!
+    return const TodoListViewNarrow();
+    // final bool isNarrowLayout =
+    //     MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    // return isNarrowLayout
+    //     ? const TodoListViewNarrow()
+    //     : const TodoListViewWide();
   }
 
   Widget _buildWithFilter(BuildContext context) {

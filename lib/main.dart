@@ -50,10 +50,6 @@ void main() async {
   // Importing 'package:flutter/widgets.dart' is required.
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  // Disable landscape mode.
-  await SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
-  );
 
   if (Platform.isWindows || Platform.isLinux) {
     // Initialize FFI

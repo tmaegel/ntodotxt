@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/misc.dart' show CustomScrollBehavior;
 import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/widgets/filter_chip.dart';
@@ -21,12 +20,15 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool narrowView =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    // @todo: Activate WideLayout later!
+    // final bool narrowView =
+    //     MediaQuery.of(context).size.width < maxScreenWidthCompact;
     return AppBar(
-      titleSpacing: narrowView ? 0.0 : null,
+      // titleSpacing: narrowView ? 0.0 : null,
+      titleSpacing: 0.0,
       title: Text(title),
-      leading: narrowView && Scaffold.of(context).hasDrawer
+      // leading: narrowView && Scaffold.of(context).hasDrawer
+      leading: Scaffold.of(context).hasDrawer
           ? Builder(
               builder: (BuildContext context) {
                 return IconButton(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/misc.dart';
 import 'package:ntodotxt/presentation/drawer/widgets/drawer.dart';
 import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
@@ -24,15 +23,16 @@ class AdaptiveLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).size.width < maxScreenWidthCompact) {
-      return NotificationWrapper(
-        child: NarrowLayout(child: child),
-      );
-    } else {
-      return NotificationWrapper(
-        child: WideLayout(child: child),
-      );
-    }
+    // if (MediaQuery.of(context).size.width < maxScreenWidthCompact) {
+    // @todo: Activate WideLayout later!
+    return NotificationWrapper(
+      child: NarrowLayout(child: child),
+    );
+    // } else {
+    //   return NotificationWrapper(
+    //     child: WideLayout(child: child),
+    //   );
+    // }
   }
 }
 

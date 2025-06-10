@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common_widgets/chip.dart';
-import 'package:ntodotxt/constants/app.dart';
 import 'package:ntodotxt/domain/filter/filter_model.dart';
 import 'package:ntodotxt/domain/filter/filter_repository.dart';
 import 'package:ntodotxt/domain/settings/setting_repository.dart';
@@ -97,8 +96,9 @@ class _TodoSearchViewState extends State<TodoSearchView> {
 
   @override
   Widget build(BuildContext context) {
-    final bool narrowView =
-        MediaQuery.of(context).size.width < maxScreenWidthCompact;
+    // @todo: Activate WideLayout later!
+    // final bool narrowView =
+    //     MediaQuery.of(context).size.width < maxScreenWidthCompact;
 
     return GestureDetector(
       onTap: () {
@@ -109,7 +109,8 @@ class _TodoSearchViewState extends State<TodoSearchView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          titleSpacing: narrowView ? 0.0 : null,
+          // titleSpacing: narrowView ? 0.0 : null,
+          titleSpacing: 0.0,
           title: _buildSearchField(context),
           actions: _buildActions(context),
         ),
