@@ -1,5 +1,6 @@
 exclude: (^android/|^build/|^coverage/|^ios/|^linux/|^macos/|^web/|^windows/)
 fail_fast: true
+default_install_hook_types: [pre-commit]
 
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
