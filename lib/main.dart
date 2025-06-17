@@ -6,34 +6,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
-import 'package:ntodotxt/bloc_observer.dart' show GenericBlocObserver;
-import 'package:ntodotxt/client/webdav_client.dart';
-import 'package:ntodotxt/config/router/router.dart';
-import 'package:ntodotxt/config/theme/theme.dart' show lightTheme, darkTheme;
-import 'package:ntodotxt/data/database.dart';
-import 'package:ntodotxt/data/filter/filter_controller.dart'
+import 'package:ntodotxt/common/bloc_observer.dart' show GenericBlocObserver;
+import 'package:ntodotxt/common/misc.dart' show SnackBarHandler;
+import 'package:ntodotxt/common/router/router.dart';
+import 'package:ntodotxt/common/theme/theme.dart' show lightTheme, darkTheme;
+import 'package:ntodotxt/database/controller/database.dart';
+import 'package:ntodotxt/drawer/state/drawer_cubit.dart';
+import 'package:ntodotxt/filter/controller/filter_controller.dart'
     show FilterController;
-import 'package:ntodotxt/data/settings/setting_controller.dart';
-import 'package:ntodotxt/data/todo/todo_list_api.dart';
-import 'package:ntodotxt/domain/filter/filter_repository.dart'
+import 'package:ntodotxt/filter/repository/filter_repository.dart'
     show FilterRepository;
-import 'package:ntodotxt/domain/settings/setting_repository.dart'
+import 'package:ntodotxt/filter/state/filter_cubit.dart';
+import 'package:ntodotxt/filter/state/filter_list_bloc.dart';
+import 'package:ntodotxt/filter/state/filter_list_event.dart';
+import 'package:ntodotxt/filter/state/filter_list_state.dart';
+import 'package:ntodotxt/filter/state/filter_state.dart';
+import 'package:ntodotxt/intro/page/intro_page.dart';
+import 'package:ntodotxt/login/state/login_cubit.dart';
+import 'package:ntodotxt/login/state/login_state.dart';
+import 'package:ntodotxt/setting/controller/setting_controller.dart';
+import 'package:ntodotxt/setting/repository/setting_repository.dart'
     show SettingRepository;
-import 'package:ntodotxt/domain/todo/todo_list_repository.dart';
-import 'package:ntodotxt/misc.dart' show SnackBarHandler;
-import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_state.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_state.dart';
-import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
-import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
-import 'package:ntodotxt/presentation/login/states/login_state.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_bloc.dart';
-import 'package:ntodotxt/presentation/todo/states/todo_list_event.dart';
-import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
-import 'package:ntodotxt/presentation/todo_file/todo_file_state.dart';
+import 'package:ntodotxt/todo/api/todo_list_api.dart';
+import 'package:ntodotxt/todo/repository/todo_list_repository.dart';
+import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
+import 'package:ntodotxt/todo/state/todo_list_event.dart';
+import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
+import 'package:ntodotxt/todo_file/state/todo_file_state.dart';
+import 'package:ntodotxt/webdav/client/webdav_client.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';

@@ -4,28 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ntodotxt/client/webdav_client.dart';
-import 'package:ntodotxt/data/database.dart';
-import 'package:ntodotxt/data/filter/filter_controller.dart'
+import 'package:integration_test/integration_test.dart';
+import 'package:ntodotxt/database/controller/database.dart';
+import 'package:ntodotxt/drawer/state/drawer_cubit.dart';
+import 'package:ntodotxt/filter/controller/filter_controller.dart'
     show FilterController;
-import 'package:ntodotxt/data/settings/setting_controller.dart';
-import 'package:ntodotxt/domain/filter/filter_model.dart'
+import 'package:ntodotxt/filter/model/filter_model.dart'
     show Filter, ListFilter, ListGroup, ListOrder;
-import 'package:ntodotxt/domain/filter/filter_repository.dart';
-import 'package:ntodotxt/domain/settings/setting_repository.dart';
-import 'package:ntodotxt/domain/todo/todo_model.dart' show Priority, Todo;
-import 'package:ntodotxt/main.dart';
-import 'package:ntodotxt/presentation/drawer/states/drawer_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_cubit.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_bloc.dart';
-import 'package:ntodotxt/presentation/filter/states/filter_list_event.dart';
-import 'package:ntodotxt/presentation/login/states/login_cubit.dart';
-import 'package:ntodotxt/presentation/login/states/login_state.dart'
+import 'package:ntodotxt/filter/repository/filter_repository.dart';
+import 'package:ntodotxt/filter/state/filter_cubit.dart';
+import 'package:ntodotxt/filter/state/filter_list_bloc.dart';
+import 'package:ntodotxt/filter/state/filter_list_event.dart';
+import 'package:ntodotxt/login/state/login_cubit.dart';
+import 'package:ntodotxt/login/state/login_state.dart'
     show LoginLocal, LoginState, LoginWebDAV;
-import 'package:ntodotxt/presentation/todo_file/todo_file_cubit.dart';
+import 'package:ntodotxt/main.dart';
+import 'package:ntodotxt/setting/controller/setting_controller.dart';
+import 'package:ntodotxt/setting/repository/setting_repository.dart';
+import 'package:ntodotxt/todo/model/todo_model.dart' show Priority, Todo;
+import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
+import 'package:ntodotxt/webdav/client/webdav_client.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:integration_test/integration_test.dart';
 
 // https://developer.android.com/studio/run/emulator-networking#networkaddresses
 // Special alias to your host loopback interface (127.0.0.1 on your development machine)

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:ntodotxt/intro/page/intro_page.dart';
+import 'package:ntodotxt/login/page/login_page.dart';
 import 'package:ntodotxt/main.dart';
-import 'package:ntodotxt/presentation/intro/page/intro_page.dart';
-import 'package:ntodotxt/presentation/login/pages/login_page.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {

@@ -1,0 +1,17 @@
+session: ntodotxt
+
+root: ~/Projekte/dart/flutter/ntodotxt/
+
+windows:
+  - name: git
+    commands:
+      - distrobox enter flutter-3.24
+  - name: neovim
+    commands:
+      - distrobox enter flutter-3.24
+  - name: flutter run
+    commands:
+      - distrobox enter flutter-3.24
+  - name: flutter test
+    commands:
+      - distrobox enter flutter-3.24
