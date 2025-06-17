@@ -56,6 +56,13 @@ class AppInfoView extends StatelessWidget {
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+          leading: const Icon(Icons.volunteer_activism),
+          title: const Text('Donation'),
+          subtitle: const Text('Support this app'),
+          onTap: () => _openUrl('https://ko-fi.com/tnmgl'),
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
           leading: const Icon(Icons.shield_outlined),
           title: const Text('Licence'),
           subtitle: const Text('MIT License'),
