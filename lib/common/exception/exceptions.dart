@@ -1,3 +1,5 @@
+// coverage:ignore-file
+
 sealed class TodoException implements Exception {
   final String message;
 
@@ -44,10 +46,6 @@ class TodoInvalidKeyValueTag extends TodoException {
   const TodoInvalidKeyValueTag({
     required this.tag,
   }) : super('Invalid key value tag: $tag');
-}
-
-class TodoMissingDescription extends TodoException {
-  const TodoMissingDescription() : super('Description is mandatory');
 }
 
 class TodoForbiddenCompletionDate extends TodoException {

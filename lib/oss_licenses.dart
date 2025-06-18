@@ -1,3 +1,5 @@
+// coverage:ignore-file
+
 // cSpell:disable
 // ignore_for_file: always_put_required_named_parameters_first
 // ignore_for_file: constant_identifier_names
