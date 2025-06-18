@@ -14,11 +14,11 @@ This application is under active development and will continue to be modified an
 
 ## Screenshots
 
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/1.png"><img src="screenshots/preview/1.png" width="20%"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/2.png"><img src="screenshots/preview/2.png" width="20%"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/3.png"><img src="screenshots/preview/3.png" width="20%"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/4.png"><img src="screenshots/preview/4.png" width="20%"/></a>
-<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/5.png"><img src="screenshots/preview/5.png" width="20%"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/1.png"><img src="screenshots/preview/1.png" width="19.2%"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/2.png"><img src="screenshots/preview/2.png" width="19.2%"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/3.png"><img src="screenshots/preview/3.png" width="19.2%"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/4.png"><img src="screenshots/preview/4.png" width="19.2%"/></a>
+<a href="https://raw.githubusercontent.com/tmaegel/ntodotxt/HEAD/screenshots/preview/5.png"><img src="screenshots/preview/5.png" width="19.2%"/></a>
 
 ## Downloads
 
@@ -47,16 +47,6 @@ This application is under active development and will continue to be modified an
 - [ ] Build and publish as `flatpak` to [flathub](https://flathub.org/) (Linux)
 - [ ] Build and publish as `snap` to [snapcraft](https://snapcraft.io/) (Linux)
 - [ ] Build and publish to Microsoft Store (Windows)
-
-## Supported platforms
-
-| Platform | Build | Publish          |
-| -------- | ----- | ---------------- |
-| Android  |      | GitHub / F-Droid |
-| iOS      |      |                  |
-| MacOS    |      |                  |
-| Windows  |      |                  |
-| Linux    |      |                  |
 
 ## Build
 
@@ -103,4 +93,4 @@ Thanks for all the love and support.
 
 ## Alternatives
 
-There are a bunch of other note taking apps with the WebDAV support. See them in [awesome WebDAV list](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps).
+There are a bunch of other note taking apps with the WebDAV support. See them in [awesome WebDAV](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps) repository.
