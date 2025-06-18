@@ -85,7 +85,7 @@ If an error occurs during the build process, please follow these [steps](https:/
 
 ## Sponsorship
 
-`ntodotxt` is a free open source software that benefits from the open source community and every user can enjoy it's full functionality for free, so if you appreciate my current work, you can buy me a cup of coffee.
+`ntodotxt` is a free open source software that benefits from the open source community and every user can enjoy it's full functionality for free, so if you appreciate my current work, you can buy me a offee.
 
 <a href='https://ko-fi.com/N4N41GAU03' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
