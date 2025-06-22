@@ -93,4 +93,4 @@ Thanks for all the love and support.
 
 ## Alternatives
 
-There are a bunch of other note taking apps with the WebDAV support. See them in [awesome WebDAV](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps) repository.
+There are a bunch of other note taking apps with the WebDAV support. See them in [awesome-webdav](https://github.com/WebDAVDevs/awesome-webdav/blob/main/readme.md#android-other-apps) repository.
