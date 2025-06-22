@@ -33,6 +33,7 @@ This application is under active development and will continue to be modified an
 - [x] Custom path and filename of todo files (local and remote)
 - [x] Search todos
 - [x] Create custom views of todos via filters
+- [ ] Sort (ascending/descending) todos by criteria such as priority, creation date or due date
 - [ ] Android widget
 - [ ] Import/Export existing todos from/to file
 - [ ] Import/Export filters and other settings
