@@ -60,9 +60,13 @@ class _TodoSearchViewState extends State<TodoSearchView> {
   }
 
   Iterable<Todo> _getResults(Iterable<Todo> todoList) {
-    return todoList.where(
-      (Todo t) => t.toString().toLowerCase().contains(query.toLowerCase()),
-    );
+    if (query.trim().isEmpty) {
+      return Iterable.empty();
+    } else {
+      return todoList.where(
+        (Todo t) => t.toString().toLowerCase().contains(query.toLowerCase()),
+      );
+    }
   }
 
   Widget _buildSearchField(BuildContext context) {

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Displays initially an empty search result list if no search term has been entered
 - Don't allow due dates in the past and completion dates in the future
 
 ## [0.13.1] - 2025-06-10
