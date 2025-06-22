@@ -14,7 +14,10 @@ void main() {
     test('initial state', () {
       todo = Todo(description: 'Write some tests');
       final TodoCubit todoBloc = TodoCubit(todo: todo);
-      expect(todoBloc.state, TodoSuccess(todo: todo));
+      expect(
+        todoBloc.state,
+        TodoSuccess(todo: todo),
+      );
     });
   });
 
@@ -32,6 +35,73 @@ void main() {
         TodoSuccess(
           todo: Todo(
             completion: true,
+            completionDate: DateTime.now(),
+            description: todo.description,
+          ),
+        ),
+      );
+    });
+    test('set with completionDate', () async {
+      todo = Todo(
+        completion: false,
+        description: 'Write some tests',
+      );
+      final TodoCubit bloc = TodoCubit(todo: todo);
+      bloc.toggleCompletion(
+        completion: true,
+        completionDate: DateTime(2025, 1, 1),
+      );
+
+      expect(
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            completion: true,
+            completionDate: DateTime(2025, 1, 1),
+            description: todo.description,
+          ),
+        ),
+      );
+    });
+    test('set with completionDate and incorrectly set completion attribute',
+        () async {
+      todo = Todo(
+        completion: false,
+        description: 'Write some tests',
+      );
+      final TodoCubit bloc = TodoCubit(todo: todo);
+      bloc.toggleCompletion(
+        completion: false,
+        completionDate: DateTime(2025, 1, 1),
+      );
+
+      expect(
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            completion: true,
+            completionDate: DateTime(2025, 1, 1),
+            description: todo.description,
+          ),
+        ),
+      );
+    });
+    test(
+        'set with completionDate and without explicitly set completion attribute',
+        () async {
+      todo = Todo(
+        completion: false,
+        description: 'Write some tests',
+      );
+      final TodoCubit bloc = TodoCubit(todo: todo);
+      bloc.toggleCompletion(completionDate: DateTime(2025, 1, 1));
+
+      expect(
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            completion: true,
+            completionDate: DateTime(2025, 1, 1),
             description: todo.description,
           ),
         ),
@@ -49,12 +119,14 @@ void main() {
         bloc.state,
         TodoSuccess(
           todo: Todo(
+            completion: false,
+            completionDate: null,
             description: todo.description,
           ),
         ),
       );
     });
-    test('toggle', () async {
+    test('toggle true', () async {
       todo = Todo(
         completion: false,
         description: 'Write some tests',
@@ -67,6 +139,26 @@ void main() {
         TodoSuccess(
           todo: Todo(
             completion: true,
+            completionDate: DateTime.now(),
+            description: todo.description,
+          ),
+        ),
+      );
+    });
+    test('toggle false', () async {
+      todo = Todo(
+        completion: true,
+        description: 'Write some tests',
+      );
+      final TodoCubit bloc = TodoCubit(todo: todo);
+      bloc.toggleCompletion();
+
+      expect(
+        bloc.state,
+        TodoSuccess(
+          todo: Todo(
+            completion: false,
+            completionDate: null,
             description: todo.description,
           ),
         ),

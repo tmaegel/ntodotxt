@@ -18,11 +18,12 @@ class TodoCubit extends Cubit<TodoState> {
     }
   }
 
-  void toggleCompletion({bool? completion}) {
+  void toggleCompletion({bool? completion, DateTime? completionDate}) {
     try {
       emit(state.success(
         todo: state.todo.copyWith(
-          completion: completion ?? !state.todo.completion,
+          completion: completionDate != null ? true : !state.todo.completion,
+          completionDate: completionDate,
         ),
       ));
     } on Exception catch (e) {

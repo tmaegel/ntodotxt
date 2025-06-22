@@ -7,6 +7,7 @@ import 'package:ntodotxt/common/widget/app_bar.dart';
 import 'package:ntodotxt/common/widget/chip.dart';
 import 'package:ntodotxt/common/widget/confirm_dialog.dart';
 import 'package:ntodotxt/common/widget/contexts_dialog.dart';
+import 'package:ntodotxt/common/widget/date_picker.dart';
 import 'package:ntodotxt/common/widget/key_values_dialog.dart';
 import 'package:ntodotxt/common/widget/priorities_dialog.dart';
 import 'package:ntodotxt/common/widget/projects_dialog.dart';
@@ -463,35 +464,6 @@ class TodoKeyValueTagsItem extends StatelessWidget {
   }
 }
 
-class TodoCompletionDateItem extends StatelessWidget {
-  const TodoCompletionDateItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoCubit, TodoState>(
-      buildWhen: (TodoState previousState, TodoState state) {
-        return previousState.todo.completionDate != state.todo.completionDate;
-      },
-      builder: (BuildContext context, TodoState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            key: key,
-            leading: const Icon(Icons.event_available),
-            title: const Text('Completion date'),
-            subtitle: Text(
-              state.todo.completionDate != null
-                  ? state.todo.fmtCompletionDate
-                  : '-',
-            ),
-            onTap: () => context.read<TodoCubit>().toggleCompletion(),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class TodoCreationDateItem extends StatelessWidget {
   const TodoCreationDateItem({super.key});
 
@@ -520,6 +492,68 @@ class TodoCreationDateItem extends StatelessWidget {
   }
 }
 
+class TodoCompletionDateItem extends StatelessWidget {
+  const TodoCompletionDateItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoCubit, TodoState>(
+      buildWhen: (TodoState previousState, TodoState state) {
+        return previousState.todo.completionDate != state.todo.completionDate;
+      },
+      builder: (BuildContext context, TodoState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            key: key,
+            leading: const Icon(Icons.event_available),
+            title: const Text('Completion date'),
+            subtitle: Text(
+              state.todo.completionDate != null
+                  ? state.todo.fmtCompletionDate
+                  : '-',
+            ),
+            trailing: state.todo.completion
+                ? IconButton(
+                    icon: const Icon(Icons.remove_done),
+                    onPressed: () => unsetCompletionDate(context),
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.done_all),
+                    onPressed: () async =>
+                        await setCompletionDate(context, state),
+                  ),
+            onTap: () async => await setCompletionDate(context, state),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> setCompletionDate(BuildContext context, TodoState state) async {
+    final DateTime? date = await TodoDatePicker.pickDate(
+      context: context,
+      initialDate: state.todo.completionDate,
+      endDateDaysOffset: 0, // You can not complete a todo in the future.
+    );
+    if (date != null) {
+      final String? formattedDate = Todo.date2Str(date);
+      if (formattedDate != null) {
+        if (context.mounted) {
+          context.read<TodoCubit>().toggleCompletion(
+                completion: true,
+                completionDate: date,
+              );
+        }
+      }
+    }
+  }
+
+  void unsetCompletionDate(BuildContext context) {
+    context.read<TodoCubit>().toggleCompletion(completion: false);
+  }
+}
+
 class TodoDueDateItem extends StatelessWidget {
   const TodoDueDateItem({super.key});
 
@@ -542,44 +576,32 @@ class TodoDueDateItem extends StatelessWidget {
                 ? null
                 : IconButton(
                     icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      context.read<TodoCubit>().removeKeyValue('due:$dueDate');
-                    },
+                    onPressed: () => unsetDueDate(context, dueDate!),
                   ),
-            onTap: () {
-              _pickDateDialog(
-                context: context,
-                initialDate: state.todo.dueDate,
-              );
-            },
+            onTap: () async => await setDueDate(context, state),
           ),
         );
       },
     );
   }
 
-  void _pickDateDialog({required BuildContext context, DateTime? initialDate}) {
-    final DateTime initial = initialDate ?? DateTime.now();
-    showDatePicker(
-      useRootNavigator: false,
+  Future<void> setDueDate(BuildContext context, TodoState state) async {
+    final DateTime? date = await TodoDatePicker.pickDate(
       context: context,
-      firstDate: initial.subtract(const Duration(days: 3650)),
-      initialDate: initial,
-      lastDate: initial.add(const Duration(days: 3650)),
-      locale: const Locale('en', 'GB'),
-    ).then(
-      (date) {
-        if (date != null) {
-          final String? formattedDate = Todo.date2Str(date);
-          if (formattedDate != null) {
-            if (context.mounted) {
-              context.read<TodoCubit>().addKeyValue(
-                    'due:$formattedDate',
-                  );
-            }
-          }
-        }
-      },
+      initialDate: state.todo.dueDate,
+      startDateDaysOffset: 0, // You can not set due date in the past.
     );
+    if (date != null) {
+      final String? formattedDate = Todo.date2Str(date);
+      if (formattedDate != null) {
+        if (context.mounted) {
+          context.read<TodoCubit>().addKeyValue('due:$formattedDate');
+        }
+      }
+    }
+  }
+
+  void unsetDueDate(BuildContext context, String dueDate) {
+    context.read<TodoCubit>().removeKeyValue('due:$dueDate');
   }
 }

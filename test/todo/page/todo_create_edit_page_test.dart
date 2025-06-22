@@ -1184,6 +1184,49 @@ void main() {
         await tester.tap(find.byType(TodoCompletionDateItem));
         await tester.pumpAndSettle();
 
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final DateTime now = DateTime.now();
+        final String today =
+            '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+        expect(
+          find.descendant(
+            of: find.byType(TodoCompletionDateItem),
+            matching: find.text(today),
+          ),
+          findsOneWidget,
+        );
+      });
+      testWidgets('TodoCompletionDateItem (already set)', (tester) async {
+        await tester.pumpWidget(
+          MaterialAppWrapper(
+            initTodo: Todo(description: 'x 2024-01-01 Code something'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.dragUntilVisible(
+          find.byType(TodoCompletionDateItem),
+          find.byType(ListView),
+          const Offset(0, -100),
+        );
+
+        await tester.tap(find.byType(TodoCompletionDateItem));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
         final DateTime now = DateTime.now();
         final String today =
             '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
@@ -1208,7 +1251,12 @@ void main() {
           const Offset(0, -100),
         );
 
-        await tester.tap(find.byType(TodoCompletionDateItem));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(TodoCompletionDateItem),
+            matching: find.byType(IconButton),
+          ),
+        );
         await tester.pumpAndSettle();
 
         expect(
