@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntodotxt/common/misc.dart';
 import 'package:ntodotxt/drawer/state/drawer_cubit.dart';
+import 'package:ntodotxt/drawer/state/drawer_state.dart';
 import 'package:ntodotxt/filter/model/filter_model.dart' show Filter;
 import 'package:ntodotxt/filter/state/filter_list_bloc.dart';
 import 'package:ntodotxt/filter/state/filter_list_state.dart';
@@ -35,14 +36,13 @@ class NavigationRailDrawer extends StatelessWidget {
                 label: 'Todos',
                 icon: const Icon(Icons.checklist_outlined),
                 selectedIcon: const Icon(Icons.checklist),
-                onTap: (BuildContext context) => context.pushNamed('todo-list'),
+                onTap: (BuildContext context) => context.goNamed('todo-list'),
               ),
               DrawerDestination(
                 label: 'Filters',
                 icon: const Icon(Icons.filter_list_outlined),
                 selectedIcon: const Icon(Icons.filter_list),
-                onTap: (BuildContext context) =>
-                    context.pushNamed('filter-list'),
+                onTap: (BuildContext context) => context.goNamed('filter-list'),
               ),
               for (Filter filter in filterListState.filterList)
                 DrawerDestination(
@@ -50,13 +50,13 @@ class NavigationRailDrawer extends StatelessWidget {
                   icon: const Icon(Icons.star_outline),
                   selectedIcon: const Icon(Icons.star),
                   onTap: (BuildContext context) =>
-                      context.pushNamed('todo-list', extra: filter),
+                      context.goNamed('todo-list', extra: filter),
                 ),
               DrawerDestination(
                 label: 'Settings',
                 icon: const Icon(Icons.settings_outlined),
                 selectedIcon: const Icon(Icons.settings),
-                onTap: (BuildContext context) => context.pushNamed('settings'),
+                onTap: (BuildContext context) => context.goNamed('settings'),
               ),
             ];
 
@@ -114,14 +114,14 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                     icon: const Icon(Icons.checklist_outlined),
                     selectedIcon: const Icon(Icons.checklist),
                     onTap: (BuildContext context) =>
-                        context.pushNamed('todo-list'),
+                        context.goNamed('todo-list'),
                   ),
                   DrawerDestination(
                     label: 'Filters',
                     icon: const Icon(Icons.filter_list_outlined),
                     selectedIcon: const Icon(Icons.filter_list),
                     onTap: (BuildContext context) =>
-                        context.pushNamed('filter-list'),
+                        context.goNamed('filter-list'),
                   ),
                   for (Filter filter in filterListState.filterList)
                     DrawerDestination(
@@ -129,7 +129,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                       icon: const Icon(Icons.star_outline),
                       selectedIcon: const Icon(Icons.star),
                       onTap: (BuildContext context) =>
-                          context.pushNamed('todo-list', extra: filter),
+                          context.goNamed('todo-list', extra: filter),
                     ),
                   DrawerDestination(
                     label: 'Settings',
