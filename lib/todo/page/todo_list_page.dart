@@ -86,14 +86,14 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                       : 'Filter: ${filterState.filter.name}',
                   toolbar: Row(
                     children: [
+                      const TodoListDeleteFilter(),
+                      const TodoListSaveFilter(),
                       IconButton(
                         tooltip: 'Search',
                         icon: const Icon(Icons.search),
                         onPressed: () => context.pushNamed('todo-search',
                             extra: filterState.filter),
                       ),
-                      const TodoListSaveFilter(),
-                      const TodoListDeleteFilter(),
                     ],
                   ),
                   bottom: const AppBarFilterList(),
@@ -181,14 +181,14 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                       : 'Filter: ${filterState.filter.name}',
                   toolbar: Row(
                     children: [
+                      const TodoListDeleteFilter(),
+                      const TodoListSaveFilter(),
                       IconButton(
                         tooltip: 'Search',
                         icon: const Icon(Icons.search),
                         onPressed: () => context.pushNamed('todo-search',
                             extra: filterState.filter),
                       ),
-                      const TodoListSaveFilter(),
-                      const TodoListDeleteFilter(),
                     ],
                   ),
                   bottom: const AppBarFilterList(),
