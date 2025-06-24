@@ -263,7 +263,18 @@ class _FilterNameTextFieldState extends State<FilterNameTextField> {
         return previousState.filter.name != state.filter.name;
       },
       builder: (BuildContext context, FilterState state) {
-        _controller.text = state.filter.name;
+        // Setting text and selection together.
+        int base = _controller.selection.base.offset;
+        _controller.value = _controller.value.copyWith(
+          text: state.filter.name,
+          selection: TextSelection.fromPosition(
+            TextPosition(
+              offset: base < 0 || base > state.filter.name.length
+                  ? state.filter.name.length
+                  : base,
+            ),
+          ),
+        );
         return TextFormField(
           key: _textFormKey,
           controller: _controller,
