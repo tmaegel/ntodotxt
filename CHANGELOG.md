@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2025-07-07
+
 ### Fixed
 
 - Editing the filter name
 - No longer push main routes to the navigator stack
+
+### Added
+
+- Add FloatingActionButton for easy marking of todos as done/undone #95
 
 ## [0.14.0] - 2025-06-22
 
@@ -411,7 +417,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.14.0...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.14.1...HEAD
+[0.14.1]: https://github.com/tmaegel/ntodotxt/compare/v0.14.0...v0.14.1
 [0.14.0]: https://github.com/tmaegel/ntodotxt/compare/v0.13.1...v0.14.0
 [0.13.1]: https://github.com/tmaegel/ntodotxt/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/tmaegel/ntodotxt/compare/v0.12.4...v0.13.0
