@@ -104,6 +104,22 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
+        testWidgets('found no DoneUndonePrimaryButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const MaterialAppWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(DoneUndonePrimaryButton),
+            findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
       });
       group('edit mode', () {
         testWidgets('found no SaveTodoIconButton if todo has not be changed',
@@ -211,6 +227,27 @@ void main() {
           await tester.pumpAndSettle();
           expect(
             find.byType(TodoCompletionDateItem),
+            findsOneWidget,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found DoneUndonePrimaryButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(400, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(
+            MaterialAppWrapper(
+              initTodo:
+                  Todo(priority: Priority.A, description: 'Code something'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(DoneUndonePrimaryButton),
             findsOneWidget,
           );
 
@@ -287,6 +324,22 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
+        testWidgets('found no DoneUndonePrimaryButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(const MaterialAppWrapper());
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(DoneUndonePrimaryButton),
+            findsNothing,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
       });
       group('edit mode', () {
         testWidgets('found no SaveTodoIconButton if todo has not be changed',
@@ -394,6 +447,27 @@ void main() {
           await tester.pumpAndSettle();
           expect(
             find.byType(TodoCompletionDateItem),
+            findsOneWidget,
+          );
+
+          // resets the screen to its original size after the test end
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+        });
+        testWidgets('found DoneUndonePrimaryButton', (tester) async {
+          // Increase size to ensure all elements in list are visible.
+          tester.view.physicalSize = const Size(800, 800);
+          tester.view.devicePixelRatio = 1.0;
+
+          await tester.pumpWidget(
+            MaterialAppWrapper(
+              initTodo:
+                  Todo(priority: Priority.A, description: 'Code something'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.byType(DoneUndonePrimaryButton),
             findsOneWidget,
           );
 
@@ -1171,7 +1245,10 @@ void main() {
       testWidgets('TodoCompletionDateItem (set)', (tester) async {
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(completion: false, description: 'Code something'),
+            initTodo: Todo(
+              completion: false,
+              description: 'Code something',
+            ),
           ),
         );
         await tester.pumpAndSettle();
@@ -1181,15 +1258,7 @@ void main() {
           const Offset(0, -100),
         );
 
-        await tester.tap(find.byType(TodoCompletionDateItem));
-        await tester.pumpAndSettle();
-
-        await tester.tap(
-          find.descendant(
-            of: find.byType(DatePickerDialog),
-            matching: find.text('OK'),
-          ),
-        );
+        await tester.tap(find.byType(DoneUndonePrimaryButton));
         await tester.pumpAndSettle();
 
         final DateTime now = DateTime.now();
@@ -1251,12 +1320,7 @@ void main() {
           const Offset(0, -100),
         );
 
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoCompletionDateItem),
-            matching: find.byType(IconButton),
-          ),
-        );
+        await tester.tap(find.byType(DoneUndonePrimaryButton));
         await tester.pumpAndSettle();
 
         expect(

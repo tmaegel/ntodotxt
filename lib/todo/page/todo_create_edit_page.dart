@@ -100,6 +100,7 @@ class TodoCreateEditPage extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
             ),
+            floatingActionButton: !newTodo ? DoneUndonePrimaryButton() : null,
           ),
         ),
       ),
@@ -175,6 +176,44 @@ class TodoDialogWrapper extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class DoneUndonePrimaryButton extends StatelessWidget {
+  const DoneUndonePrimaryButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TodoCubit, TodoState>(
+      builder: (BuildContext context, TodoState state) {
+        return FloatingActionButton(
+          tooltip: state.todo.completion ? 'Done' : 'Undone',
+          child: state.todo.completion
+              ? Icon(Icons.remove_done)
+              : Icon(Icons.done_all),
+          onPressed: () async {
+            if (state.todo.completion) {
+              unsetCompletionDate(context);
+            } else {
+              setCompletionDate(context, state);
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void setCompletionDate(BuildContext context, TodoState state) {
+    context.read<TodoCubit>().toggleCompletion(
+          completion: true,
+          completionDate: DateTime.now(),
+        );
+  }
+
+  void unsetCompletionDate(BuildContext context) {
+    context.read<TodoCubit>().toggleCompletion(
+          completion: false,
+        );
   }
 }
 
@@ -513,16 +552,6 @@ class TodoCompletionDateItem extends StatelessWidget {
                   ? state.todo.fmtCompletionDate
                   : '-',
             ),
-            trailing: state.todo.completion
-                ? IconButton(
-                    icon: const Icon(Icons.remove_done),
-                    onPressed: () => unsetCompletionDate(context),
-                  )
-                : IconButton(
-                    icon: const Icon(Icons.done_all),
-                    onPressed: () async =>
-                        await setCompletionDate(context, state),
-                  ),
             onTap: () async => await setCompletionDate(context, state),
           ),
         );
@@ -547,10 +576,6 @@ class TodoCompletionDateItem extends StatelessWidget {
         }
       }
     }
-  }
-
-  void unsetCompletionDate(BuildContext context) {
-    context.read<TodoCubit>().toggleCompletion(completion: false);
   }
 }
 
