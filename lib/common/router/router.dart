@@ -65,7 +65,10 @@ class AppRouter {
             name: 'todo-list',
             builder: (BuildContext context, GoRouterState state) {
               Filter? filter = state.extra as Filter?;
-              return TodoListPage(filter: filter);
+              return TodoListPage(
+                filter: filter,
+                key: ValueKey(filter?.id ?? 'default'),
+              );
             },
             routes: <RouteBase>[
               GoRoute(
