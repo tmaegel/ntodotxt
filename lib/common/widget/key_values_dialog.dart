@@ -23,7 +23,7 @@ class TodoKeyValueTagDialog extends TagDialog {
     required TodoCubit cubit,
     required Set<String> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => TodoKeyValueTagDialog(

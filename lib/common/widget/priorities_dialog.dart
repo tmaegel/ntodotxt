@@ -74,34 +74,29 @@ class PriorityTagDialogState<T extends PriorityTagDialog> extends State<T> {
           child: ListView(
             controller: scrollController,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  title: Text(
-                    widget.title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+              ListTile(
+                contentPadding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 4.0),
+                title: Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
               if (tags.isNotEmpty) const Divider(),
               if (tags.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    title: GenericChipGroup(
-                      children: [
-                        for (var t in sortedTags)
-                          GenericChoiceChip(
-                            label: Text(t.priority.name),
-                            selected: t.selected,
-                            onSelected: (bool selected) =>
-                                onUpdate(t, selected),
-                          ),
-                      ],
-                    ),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 8.0,
+                  ),
+                  title: GenericChipGroup(
+                    children: [
+                      for (var t in sortedTags)
+                        GenericChoiceChip(
+                          label: Text(t.priority.name),
+                          selected: t.selected,
+                          onSelected: (bool selected) => onUpdate(t, selected),
+                        ),
+                    ],
                   ),
                 ),
             ],
@@ -127,7 +122,7 @@ class FilterPriorityTagDialog extends PriorityTagDialog {
     required FilterCubit cubit,
     required Set<Priority> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => FilterPriorityTagDialog(
@@ -184,7 +179,7 @@ class TodoPriorityTagDialog extends PriorityTagDialog {
     required TodoCubit cubit,
     required Set<Priority> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => TodoPriorityTagDialog(
