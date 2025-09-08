@@ -86,97 +86,86 @@ class TagDialogState<T extends TagDialog> extends State<T> {
           child: ListView(
             controller: scrollController,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  title: Text(
-                    widget.title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+              ListTile(
+                contentPadding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 4.0),
+                title: Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
               const Divider(),
               if (widget.addTags)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    title: Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        controller: _controller,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
-                          hintText: 'Enter <${widget.tagName}> tag ...',
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Missing tag name';
-                          }
-                          if (!widget.regex.hasMatch(value.trim())) {
-                            return 'Invalid tag format';
-                          }
-                          return null;
-                        },
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 8.0,
+                  ),
+                  title: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _controller,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        hintText: 'Enter <${widget.tagName}> tag ...',
+                        contentPadding: EdgeInsets.zero,
                       ),
-                    ),
-                    trailing: TextButton(
-                      child: const Text('Add'),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          String text = _controller.text.trim();
-                          if (text.startsWith('+') || text.startsWith('@')) {
-                            text = text.substring(1);
-                          }
-                          setState(() {
-                            tags.add(Tag(name: text, selected: true));
-                          });
-                          _controller.text = '';
-                          onUpdate();
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Missing tag name';
                         }
+                        if (!widget.regex.hasMatch(value.trim())) {
+                          return 'Invalid tag format';
+                        }
+                        return null;
                       },
                     ),
+                  ),
+                  trailing: TextButton(
+                    child: const Text('Add'),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        String text = _controller.text.trim();
+                        if (text.startsWith('+') || text.startsWith('@')) {
+                          text = text.substring(1);
+                        }
+                        setState(() {
+                          tags.add(Tag(name: text, selected: true));
+                        });
+                        _controller.text = '';
+                        onUpdate();
+                      }
+                    },
                   ),
                 ),
               if (widget.addTags) const Divider(),
               tags.isEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
+                  ? ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
                         vertical: 8.0,
                       ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                        ),
-                        title: Text('No ${widget.tagName} tags available.'),
-                      ),
+                      title: Text('No ${widget.tagName} tags available.'),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: ListTile(
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 8.0),
-                        title: GenericChipGroup(
-                          children: [
-                            for (var t in sortedTags)
-                              GenericChoiceChip(
-                                label: Text(t.name),
-                                selected: t.selected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    t.selected = selected;
-                                  });
-                                  onUpdate();
-                                },
-                              ),
-                          ],
-                        ),
+                  : ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 8.0,
+                      ),
+                      title: GenericChipGroup(
+                        children: [
+                          for (var t in sortedTags)
+                            GenericChoiceChip(
+                              label: Text(t.name),
+                              selected: t.selected,
+                              onSelected: (bool selected) {
+                                setState(() {
+                                  t.selected = selected;
+                                });
+                                onUpdate();
+                              },
+                            ),
+                        ],
                       ),
                     ),
             ],
