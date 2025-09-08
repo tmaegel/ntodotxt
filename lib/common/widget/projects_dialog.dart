@@ -23,7 +23,7 @@ class FilterProjectTagDialog extends TagDialog {
     required FilterCubit cubit,
     required Set<String> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => FilterProjectTagDialog(
@@ -81,7 +81,7 @@ class TodoProjectTagDialog extends TagDialog {
     required TodoCubit cubit,
     required Set<String> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => TodoProjectTagDialog(

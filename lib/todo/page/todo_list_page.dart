@@ -11,6 +11,7 @@ import 'package:ntodotxt/filter/model/filter_model.dart' show Filter;
 import 'package:ntodotxt/filter/repository/filter_repository.dart';
 import 'package:ntodotxt/filter/state/filter_cubit.dart';
 import 'package:ntodotxt/filter/state/filter_state.dart';
+import 'package:ntodotxt/filter/widget/filter_dialog.dart';
 import 'package:ntodotxt/setting/repository/setting_repository.dart';
 import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
 import 'package:ntodotxt/setting/state/interaction_settings_state.dart';
@@ -90,6 +91,15 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                     children: [
                       const TodoListDeleteFilter(),
                       const TodoListSaveFilter(),
+                      IconButton(
+                        tooltip: 'Filter',
+                        icon: const Icon(Icons.filter_alt_outlined),
+                        onPressed: () async => await FilterDialog.dialog(
+                          context: context,
+                          projects: context.read<TodoListBloc>().state.projects,
+                          contexts: context.read<TodoListBloc>().state.contexts,
+                        ),
+                      ),
                       IconButton(
                         tooltip: 'Search',
                         icon: const Icon(Icons.search),
@@ -185,6 +195,15 @@ class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
                     children: [
                       const TodoListDeleteFilter(),
                       const TodoListSaveFilter(),
+                      IconButton(
+                        tooltip: 'Filter',
+                        icon: const Icon(Icons.filter_alt_outlined),
+                        onPressed: () async => await FilterDialog.dialog(
+                          context: context,
+                          projects: context.read<TodoListBloc>().state.projects,
+                          contexts: context.read<TodoListBloc>().state.contexts,
+                        ),
+                      ),
                       IconButton(
                         tooltip: 'Search',
                         icon: const Icon(Icons.search),
