@@ -354,14 +354,53 @@ class TodoListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      key: key,
-      title: _buildTitle(context),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 2.0),
-        child: _buildSubtitle(),
+    return Dismissible(
+      key: Key(todo.id),
+      background: Container(
+        color: Theme.of(context).colorScheme.error, // red
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Icon(Icons.delete),
       ),
-      onTap: () => context.pushNamed('todo-edit', extra: todo),
+      secondaryBackground: Container(
+        color: Theme.of(context).colorScheme.primaryContainer, // blue
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Icon(todo.completion ? Icons.remove_done : Icons.done_all),
+      ),
+      onDismissed: (DismissDirection direction) {
+        // Done / Undone
+        if (todo.completion) {
+          SnackBarHandler.info(context, 'Todo has marked as not completed');
+        } else {
+          SnackBarHandler.info(context, 'Todo has marked as completed');
+        }
+        if (direction == DismissDirection.endToStart) {
+          context.read<TodoListBloc>().add(
+                TodoListTodoCompletionToggled(
+                  todo: todo,
+                  completion: !todo.completion,
+                ),
+              );
+        } else if (direction == DismissDirection.startToEnd) {
+          // Delete
+          context.read<TodoListBloc>().add(
+                TodoListTodoDeleted(
+                  todo: todo,
+                ),
+              );
+          SnackBarHandler.info(context, 'Todo has been deleted');
+        }
+      },
+      child: ListTile(
+        key: key,
+        title: _buildTitle(context),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 2.0),
+          child: _buildSubtitle(),
+        ),
+        onTap: () => context.pushNamed('todo-edit', extra: todo),
+      ),
     );
   }
 
