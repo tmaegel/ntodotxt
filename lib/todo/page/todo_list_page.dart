@@ -368,7 +368,20 @@ class TodoListTile extends StatelessWidget {
         padding: const EdgeInsets.only(right: 16.0),
         child: Icon(todo.completion ? Icons.remove_done : Icons.done_all),
       ),
-      onDismissed: (DismissDirection direction) {
+      confirmDismiss: (DismissDirection direction) async {
+        // Delete
+        if (direction == DismissDirection.startToEnd) {
+          return await ConfirmationDialog.dialog(
+            context: context,
+            title: 'Delete todo',
+            message: 'Do you want to delete the todo?',
+            actionLabel: 'Delete',
+            cancelLabel: 'Cancel',
+          );
+        }
+        return true;
+      },
+      onDismissed: (DismissDirection direction) async {
         // Done / Undone
         if (todo.completion) {
           SnackBarHandler.info(context, 'Todo has marked as not completed');

@@ -1,11 +1,11 @@
 name: ntodotxt
 
 description: App for managing your todos within a todo.txt file locally or via webdav (e.g. Nextcloud)
-publish_to: 'none'  # Remove this line if you wish to publish to pub.dev
-version: 0.15.0+36
+publish_to: "none"  # Remove this line if you wish to publish to pub.dev
+version: 0.16.0+37
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: ">=3.0.5 <4.0.0"
 
 dependencies:
   flutter:
