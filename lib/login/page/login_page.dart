@@ -298,8 +298,8 @@ class _AcceptUntrustedCertFieldState extends State<AcceptUntrustedCertField> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(!checked ? Icons.lock_outline : Icons.lock_open),
-      title: const Text('Allow untrusted certificate'),
-      subtitle: const Text('Auto-accept untrusted certificate'),
+      title: const Text('Allow certificate'),
+      subtitle: const Text('Auto-accept certificate'),
       trailing: Checkbox(
         value: checked,
         onChanged: (bool? value) {

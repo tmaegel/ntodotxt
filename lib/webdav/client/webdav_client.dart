@@ -205,6 +205,12 @@ class WebDAVClient {
       webdav.Client client = await connection;
       await client.ping();
     } on DioException catch (e) {
+      // Handle 204 No Content as success
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 204) {
+        log.fine('204 No Content (treated as success)');
+        return;
+      }
       log.severe(e);
       final (String, String) error = _handleDioError(e);
       throw WebDAVClientException('${error.$1}: ${error.$2}');
