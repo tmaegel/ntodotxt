@@ -22,7 +22,7 @@ This application is under active development and will continue to be modified an
 
 ## Downloads
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/me.ash.reader/)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/de.tnmgl.ntodotxt/)
 
 ## Features
 
