@@ -1,0 +1,79 @@
+{
+  "name": "Flutter",
+  "dockerFile": "Dockerfile",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "runArgs": ["--device=/dev/dri", "--device=/dev/kvm", "--group-add=video"],
+
+  "features": {
+    "ghcr.io/devcontainers-extra/features/shellcheck:1": {},
+    "ghcr.io/devcontainers-extra/features/shfmt:1": {},
+    "ghcr.io/prulloac/devcontainer-features/pre-commit:1": {}
+  },
+
+  "postCreateCommand": "flutter clean && flutter pub get",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter",
+        "esbenp.prettier-vscode",
+        "mkhl.shfmt",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "[dart]": {
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          },
+          "editor.selectionHighlight": false,
+          "editor.tabCompletion": "onlySnippets",
+          "editor.wordBasedSuggestions": "off"
+        },
+        "[shellscript]": {
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll.shellcheck": "explicit"
+          }
+        },
+        "shfmt.executableArgs": ["-i", "2", "-s", "-bn", "-ci", "-sr"],
+        "shellcheck.customArgs": ["-o", "all"],
+        "shellcheck.enable": true,
+        "shellcheck.enableQuickFix": true,
+        "shellcheck.exclude": [],
+        "[markdown]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[yaml]": {
+          "editor.defaultFormatter": "redhat.vscode-yaml",
+          "editor.formatOnSave": true
+        }
+      }
+    }
+  },
+
+  "containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "XDG_RUNTIME_DIR": "/tmp/vscode-wayland",
+    "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+    "GDK_BACKEND": "wayland",
+    "QT_QPA_PLATFORM": "xcb",
+    "QT_X11_NO_MITSHM": "1"
+  },
+
+  "mounts": [
+    "source=${localEnv:XDG_RUNTIME_DIR},target=/tmp/vscode-wayland,type=bind,consistency=cached",
+    "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
+  ]
+}

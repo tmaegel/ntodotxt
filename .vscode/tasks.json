@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "flutter: run (Linux)",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["run", "-d", "linux"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: pub get",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["pub", "get"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: clean",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["clean"],
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}
