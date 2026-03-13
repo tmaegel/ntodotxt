@@ -27,6 +27,7 @@ import 'package:ntodotxt/login/state/login_state.dart';
 import 'package:ntodotxt/setting/controller/setting_controller.dart';
 import 'package:ntodotxt/setting/repository/setting_repository.dart'
     show SettingRepository;
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
 import 'package:ntodotxt/todo/api/todo_list_api.dart';
 import 'package:ntodotxt/todo/repository/todo_list_repository.dart';
 import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
@@ -146,6 +147,11 @@ class _AppState extends State<App> {
               repository: context.read<FilterRepository>(),
             ),
           ),
+          BlocProvider<InteractionSettingsCubit>(
+            create: (BuildContext context) => InteractionSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
+          ),
         ],
         child: Builder(
           builder: (BuildContext context) {
@@ -174,6 +180,9 @@ class InitialApp extends StatelessWidget {
   });
 
   Future<bool> _initialize(BuildContext context) async {
+    if (context.mounted) {
+      await context.read<InteractionSettingsCubit>().load();
+    }
     if (context.mounted) {
       await context.read<FilterCubit>().load();
     }

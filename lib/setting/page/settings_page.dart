@@ -13,6 +13,8 @@ import 'package:ntodotxt/filter/state/filter_cubit.dart';
 import 'package:ntodotxt/filter/state/filter_state.dart';
 import 'package:ntodotxt/login/state/login_cubit.dart';
 import 'package:ntodotxt/login/state/login_state.dart';
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
+import 'package:ntodotxt/setting/state/interaction_settings_state.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_state.dart';
 
@@ -48,7 +50,19 @@ class SettingsView extends StatelessWidget {
         ),
         const DefaultListOrderSettingsItem(),
         const DefaultListFilterSettingsItem(),
-        const DefaultListGroupSettiungsItem(),
+        const DefaultListGroupSettingsItem(),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListTile(
+            title: Text(
+              'Interaction',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+        ),
+        const SwipeLeftActionEnabledSettingsItem(),
+        const SwipeRightActionEnabledSettingsItem(),
         const Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -171,8 +185,8 @@ class DefaultListFilterSettingsItem extends StatelessWidget {
   }
 }
 
-class DefaultListGroupSettiungsItem extends StatelessWidget {
-  const DefaultListGroupSettiungsItem({super.key});
+class DefaultListGroupSettingsItem extends StatelessWidget {
+  const DefaultListGroupSettingsItem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +204,67 @@ class DefaultListGroupSettiungsItem extends StatelessWidget {
                 context: context,
                 cubit: BlocProvider.of<FilterCubit>(context),
               );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SwipeLeftActionEnabledSettingsItem extends StatelessWidget {
+  const SwipeLeftActionEnabledSettingsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
+      buildWhen: (InteractionSettingsState previousState,
+              InteractionSettingsState state) =>
+          previousState.swipeLeftActionEnabled != state.swipeLeftActionEnabled,
+      builder: (BuildContext context, InteractionSettingsState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: CheckboxListTile(
+            title: const Text('Enable swipe left action'),
+            value: state.swipeLeftActionEnabled,
+            subtitle: const Text(
+              'If enabled, you can swipe left on a item to perform an action.',
+            ),
+            isThreeLine: true,
+            onChanged: (bool? value) {
+              BlocProvider.of<InteractionSettingsCubit>(context)
+                  .setSwipeLeftActionEnabled(value ?? false);
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SwipeRightActionEnabledSettingsItem extends StatelessWidget {
+  const SwipeRightActionEnabledSettingsItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
+      buildWhen: (InteractionSettingsState previousState,
+              InteractionSettingsState state) =>
+          previousState.swipeRightActionEnabled !=
+          state.swipeRightActionEnabled,
+      builder: (BuildContext context, InteractionSettingsState state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: CheckboxListTile(
+            title: const Text('Enable swipe right action'),
+            value: state.swipeRightActionEnabled,
+            subtitle: const Text(
+              'If enabled, you can swipe right on a item to perform an action.',
+            ),
+            isThreeLine: true,
+            onChanged: (bool? value) {
+              BlocProvider.of<InteractionSettingsCubit>(context)
+                  .setSwipeRightActionEnabled(value ?? false);
             },
           ),
         );

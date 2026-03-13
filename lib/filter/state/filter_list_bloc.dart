@@ -12,6 +12,7 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
         super(const FilterListLoading()) {
     on<FilterListSubscriped>(_onFilterListSubscriped);
     on<FilterListSynchronizationRequested>(_onFilterSynchronizationRequested);
+    on<FilterListFilterDeleted>(_onFilterDeleted);
   }
 
   Future<void> _onFilterListSubscriped(
@@ -37,6 +38,27 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
       emit(state.success());
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
+    }
+  }
+
+  Future<void> _onFilterDeleted(
+    FilterListFilterDeleted event,
+    Emitter<FilterListState> emit,
+  ) async {
+    final List<Filter> previousList = state.filterList;
+    final List<Filter> updatedList = previousList
+        .where((Filter item) => item.id != event.filter.id)
+        .toList(growable: false);
+
+    // Important: Remove item instantily for Dismissible.
+    // Otherwise we get an error:
+    // A dismissed Dismissible widget is still part of the tree.
+    emit(state.success(filterList: updatedList));
+    try {
+      await _repository.delete(id: event.filter.id!);
+    } on Exception catch (e) {
+      // If error rollback to previous list.
+      emit(state.error(message: e.toString(), filterList: previousList));
     }
   }
 }

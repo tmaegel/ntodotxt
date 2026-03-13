@@ -16,6 +16,7 @@ import 'package:ntodotxt/setting/controller/setting_controller.dart'
     show SettingController;
 import 'package:ntodotxt/setting/repository/setting_repository.dart'
     show SettingRepository;
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
 import 'package:ntodotxt/todo/api/todo_list_api.dart';
 import 'package:ntodotxt/todo/page/todo_list_page.dart';
 import 'package:ntodotxt/todo/repository/todo_list_repository.dart';
@@ -52,6 +53,11 @@ class TodoListPageMaterialApp extends StatelessWidget {
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
             FilterController(dbController),
+          ),
+        ),
+        BlocProvider<InteractionSettingsCubit>(
+          create: (BuildContext context) => InteractionSettingsCubit(
+            repository: context.read<SettingRepository>(),
           ),
         ),
       ],

@@ -12,6 +12,8 @@ import 'package:ntodotxt/filter/repository/filter_repository.dart';
 import 'package:ntodotxt/filter/state/filter_cubit.dart';
 import 'package:ntodotxt/filter/state/filter_state.dart';
 import 'package:ntodotxt/setting/repository/setting_repository.dart';
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
+import 'package:ntodotxt/setting/state/interaction_settings_state.dart';
 import 'package:ntodotxt/todo/model/todo_model.dart' show Priority, Todo;
 import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
 import 'package:ntodotxt/todo/state/todo_list_event.dart';
@@ -354,66 +356,88 @@ class TodoListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: Key(todo.id),
-      background: Container(
-        color: Theme.of(context).colorScheme.error, // red
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 16.0),
-        child: Icon(Icons.delete),
-      ),
-      secondaryBackground: Container(
-        color: Theme.of(context).colorScheme.primaryContainer, // blue
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16.0),
-        child: Icon(todo.completion ? Icons.remove_done : Icons.done_all),
-      ),
-      confirmDismiss: (DismissDirection direction) async {
-        // Delete
-        if (direction == DismissDirection.startToEnd) {
-          return await ConfirmationDialog.dialog(
-            context: context,
-            title: 'Delete todo',
-            message: 'Do you want to delete the todo?',
-            actionLabel: 'Delete',
-            cancelLabel: 'Cancel',
-          );
-        }
-        return true;
-      },
-      onDismissed: (DismissDirection direction) async {
-        // Done / Undone
-        if (todo.completion) {
-          SnackBarHandler.info(context, 'Todo has marked as not completed');
-        } else {
-          SnackBarHandler.info(context, 'Todo has marked as completed');
-        }
-        if (direction == DismissDirection.endToStart) {
-          context.read<TodoListBloc>().add(
-                TodoListTodoCompletionToggled(
-                  todo: todo,
-                  completion: !todo.completion,
-                ),
+    return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
+      buildWhen: (InteractionSettingsState previousState,
+              InteractionSettingsState state) =>
+          previousState.swipeLeftActionEnabled !=
+              state.swipeLeftActionEnabled ||
+          previousState.swipeRightActionEnabled !=
+              state.swipeRightActionEnabled,
+      builder: (BuildContext context, InteractionSettingsState state) {
+        return Dismissible(
+          key: Key(todo.id),
+          direction:
+              state.swipeLeftActionEnabled && state.swipeRightActionEnabled
+                  ? DismissDirection.horizontal
+                  : state.swipeLeftActionEnabled
+                      ? DismissDirection.endToStart
+                      : state.swipeRightActionEnabled
+                          ? DismissDirection.startToEnd
+                          : DismissDirection.none,
+          dismissThresholds: const {
+            DismissDirection.startToEnd: 0.5,
+            DismissDirection.endToStart: 0.5,
+          },
+          background: Container(
+            color: Theme.of(context).colorScheme.error, // red
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Icon(Icons.delete),
+          ),
+          secondaryBackground: Container(
+            color: Theme.of(context).colorScheme.primaryContainer, // blue
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Icon(todo.completion ? Icons.remove_done : Icons.done_all),
+          ),
+          confirmDismiss: (DismissDirection direction) async {
+            // Delete
+            if (direction == DismissDirection.startToEnd) {
+              return await ConfirmationDialog.dialog(
+                context: context,
+                title: 'Delete todo',
+                message: 'Do you want to delete the todo?',
+                actionLabel: 'Delete',
+                cancelLabel: 'Cancel',
               );
-        } else if (direction == DismissDirection.startToEnd) {
-          // Delete
-          context.read<TodoListBloc>().add(
-                TodoListTodoDeleted(
-                  todo: todo,
-                ),
-              );
-          SnackBarHandler.info(context, 'Todo has been deleted');
-        }
+            }
+            return true;
+          },
+          onDismissed: (DismissDirection direction) async {
+            // Done / Undone
+            if (todo.completion) {
+              SnackBarHandler.info(context, 'Todo has marked as not completed');
+            } else {
+              SnackBarHandler.info(context, 'Todo has marked as completed');
+            }
+            if (direction == DismissDirection.endToStart) {
+              context.read<TodoListBloc>().add(
+                    TodoListTodoCompletionToggled(
+                      todo: todo,
+                      completion: !todo.completion,
+                    ),
+                  );
+            } else if (direction == DismissDirection.startToEnd) {
+              // Delete
+              context.read<TodoListBloc>().add(
+                    TodoListTodoDeleted(
+                      todo: todo,
+                    ),
+                  );
+              SnackBarHandler.info(context, 'Todo has been deleted');
+            }
+          },
+          child: ListTile(
+            key: key,
+            title: _buildTitle(context),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 2.0),
+              child: _buildSubtitle(),
+            ),
+            onTap: () => context.pushNamed('todo-edit', extra: todo),
+          ),
+        );
       },
-      child: ListTile(
-        key: key,
-        title: _buildTitle(context),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 2.0),
-          child: _buildSubtitle(),
-        ),
-        onTap: () => context.pushNamed('todo-edit', extra: todo),
-      ),
     );
   }
 
