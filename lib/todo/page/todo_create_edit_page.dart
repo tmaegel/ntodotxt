@@ -59,7 +59,7 @@ class TodoCreateEditPage extends StatelessWidget {
             ),
             body: ListView(
               children: [
-                const TodoDescriptionTextField(),
+                TodoDescriptionTextField(autofocus: newTodo),
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -284,7 +284,12 @@ class DeleteTodoIconButton extends StatelessWidget {
 }
 
 class TodoDescriptionTextField extends StatefulWidget {
-  const TodoDescriptionTextField({super.key});
+  final bool autofocus;
+
+  const TodoDescriptionTextField({
+    this.autofocus = false,
+    super.key,
+  });
 
   @override
   State<TodoDescriptionTextField> createState() =>
@@ -330,6 +335,7 @@ class _TodoDescriptionTextFieldState extends State<TodoDescriptionTextField> {
           controller: _controller,
           minLines: 1,
           maxLines: 3,
+          autofocus: widget.autofocus,
           keyboardType: TextInputType.text,
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r'\n')),
