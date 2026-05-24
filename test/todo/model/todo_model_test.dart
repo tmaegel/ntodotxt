@@ -51,11 +51,10 @@ void main() {
 
     group('creationDate', () {
       test('no initial creationDate', () {
-        final DateTime now = DateTime.now();
         final Todo todo = Todo(
           description: 'Write some tests',
         );
-        expect(todo.creationDate, DateTime(now.year, now.month, now.day));
+        expect(todo.creationDate, null);
       });
       test('with initial creationDate', () {
         final DateTime now = DateTime.now();
@@ -251,6 +250,7 @@ void main() {
       final DateTime now = DateTime.now();
       final Todo todo = Todo(
         priority: Priority.A,
+        creationDate: now,
         description: 'Write some tests',
       );
       final Todo todo2 = todo.copyDiff(completion: true);
@@ -468,6 +468,12 @@ void main() {
                 'x 2022-11-16 (A) 2022-11-01 Write some tests +project @context due:2022-12-31',
           );
           expect(todo.creationDate, DateTime.parse('2022-11-01'));
+        });
+      });
+      group('without creation date', () {
+        test('incompleted simple todo', () {
+          final todo = Todo.fromString(value: 'Write some tests');
+          expect(todo.creationDate, null);
         });
       });
     });
