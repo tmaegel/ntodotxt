@@ -278,6 +278,22 @@ class Todo extends Equatable {
     return dueDateStr != null ? 'due:$dueDateStr' : '';
   }
 
+  DateTime? get thresholdDate {
+    for (String kv in keyValues) {
+      List<String> kvSplitted = kv.split(':');
+      if (kvSplitted[0] == 't') {
+        return str2date(kvSplitted[1]);
+      }
+    }
+
+    return null;
+  }
+
+  String get fmtThresholdDate {
+    final String? thresholdDateStr = date2Str(thresholdDate);
+    return thresholdDateStr != null ? 't:$thresholdDateStr' : '';
+  }
+
   // Core todo constructor with validation logic.
   Todo._({
     required this.id,

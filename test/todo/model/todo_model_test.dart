@@ -888,6 +888,27 @@ void main() {
     });
   });
 
+  group('todo thresholdDate', () {
+    test('unset', () {
+      final todo = Todo.fromString(
+        value: '2022-11-01 Write some tests',
+      );
+      expect(todo.thresholdDate, null);
+    });
+    test('set', () {
+      final todo = Todo.fromString(
+        value: '2022-11-01 Write some tests t:2023-12-31',
+      );
+      expect(todo.thresholdDate, DateTime(2023, 12, 31));
+    });
+    test('set but invalid', () {
+      final todo = Todo.fromString(
+        value: '2022-11-01 Write some tests t:yyyy-mm-dd',
+      );
+      expect(todo.thresholdDate, null);
+    });
+  });
+
   group('todo toString()', () {
     test('full todo', () {
       const String value =
