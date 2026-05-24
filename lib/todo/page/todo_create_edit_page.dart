@@ -522,11 +522,45 @@ class TodoCreationDateItem extends StatelessWidget {
             subtitle: Text(
               state.todo.creationDate != null
                   ? state.todo.fmtCreationDate
-                  : Todo.date2Str(DateTime.now())!,
+                  : '-',
             ),
+            trailing: state.todo.creationDate == null
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => unsetCreationDate(context),
+                  ),
+            onTap: () async => await setCreationDate(context, state),
           ),
         );
       },
+    );
+  }
+
+  Future<void> setCreationDate(BuildContext context, TodoState state) async {
+    final DateTime? date = await TodoDatePicker.pickDate(
+      context: context,
+      initialDate: state.todo.creationDate,
+    );
+    if (date != null && context.mounted) {
+      final TodoCubit cubit = context.read<TodoCubit>();
+      cubit.updateTodo(
+        cubit.state.todo.copyWith(creationDate: date),
+      );
+    }
+  }
+
+  void unsetCreationDate(BuildContext context) {
+    final TodoCubit cubit = context.read<TodoCubit>();
+    final Todo todo = cubit.state.todo;
+    cubit.updateTodo(
+      Todo(
+        id: todo.id,
+        completion: todo.completion,
+        priority: todo.priority,
+        completionDate: todo.completionDate,
+        description: todo.description,
+      ),
     );
   }
 }

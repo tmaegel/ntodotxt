@@ -327,10 +327,7 @@ class Todo extends Equatable {
       completionDate = null;
     }
 
-    if (creationDate == null) {
-      // Initialize creationDate to be sure there is always one set.
-      creationDate = DateTime(now.year, now.month, now.day);
-    } else {
+    if (creationDate != null) {
       creationDate =
           DateTime(creationDate.year, creationDate.month, creationDate.day);
     }

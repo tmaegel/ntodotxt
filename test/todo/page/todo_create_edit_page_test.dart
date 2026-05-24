@@ -551,13 +551,10 @@ void main() {
           find.byType(ListView),
           const Offset(0, -100),
         );
-        final DateTime now = DateTime.now();
-        final String today =
-            '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
             of: find.byType(TodoCreationDateItem),
-            matching: find.text(today),
+            matching: find.text('-'),
           ),
           findsOneWidget,
         );
@@ -744,9 +741,10 @@ void main() {
         );
       });
       testWidgets('TodoCreationDateItem', (tester) async {
+        final DateTime now = DateTime.now();
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(description: 'Code something'),
+            initTodo: Todo(creationDate: now, description: 'Code something'),
           ),
         );
         await tester.pumpAndSettle();
@@ -755,7 +753,6 @@ void main() {
           find.byType(ListView),
           const Offset(0, -100),
         );
-        final DateTime now = DateTime.now();
         final String today =
             '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
         expect(
