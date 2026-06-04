@@ -32,6 +32,7 @@ import 'package:ntodotxt/todo/api/todo_list_api.dart';
 import 'package:ntodotxt/todo/repository/todo_list_repository.dart';
 import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
 import 'package:ntodotxt/todo/state/todo_list_event.dart';
+import 'package:ntodotxt/todo/state/todo_list_state.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_state.dart';
 import 'package:ntodotxt/webdav/client/webdav_client.dart';
@@ -296,6 +297,51 @@ class InitialApp extends StatelessWidget {
   }
 }
 
+class TodoListRefreshOnResume extends StatefulWidget {
+  final Widget child;
+
+  const TodoListRefreshOnResume({
+    required this.child,
+    super.key,
+  });
+
+  @override
+  State<TodoListRefreshOnResume> createState() =>
+      _TodoListRefreshOnResumeState();
+}
+
+class _TodoListRefreshOnResumeState extends State<TodoListRefreshOnResume>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refresh();
+    }
+  }
+
+  void _refresh() {
+    final TodoListBloc todoListBloc = context.read<TodoListBloc>();
+    if (todoListBloc.state is! TodoListLoading) {
+      todoListBloc.add(const TodoListSynchronizationRequested());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
 class CoreApp extends StatelessWidget {
   final LoginState loginState;
   final ThemeMode? themeMode;
@@ -321,26 +367,24 @@ class CoreApp extends StatelessWidget {
           create: (BuildContext context) => todoListRepository,
           child: BlocProvider.value(
             value: todoListBloc,
-            child: Builder(
-              builder: (BuildContext context) {
-                return MaterialApp.router(
-                  title: 'ntodotxt',
-                  debugShowCheckedModeBanner: false,
-                  theme: lightTheme,
-                  darkTheme: darkTheme,
-                  themeMode: themeMode,
-                  localizationsDelegates: [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  supportedLocales: [
-                    Locale('en'),
-                    Locale('de'),
-                  ],
-                  routerConfig: AppRouter().config,
-                );
-              },
+            child: TodoListRefreshOnResume(
+              child: MaterialApp.router(
+                title: 'ntodotxt',
+                debugShowCheckedModeBanner: false,
+                theme: lightTheme,
+                darkTheme: darkTheme,
+                themeMode: themeMode,
+                localizationsDelegates: [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  Locale('en'),
+                  Locale('de'),
+                ],
+                routerConfig: AppRouter().config,
+              ),
             ),
           ),
         );
