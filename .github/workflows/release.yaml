@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 env:
   PROPERTIES_PATH: "./android/key.properties"
@@ -16,16 +16,16 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install sqlite
         run: sudo apt-get update && sudo apt-get -y install sqlite3 libsqlite3-dev
 
       - name: Setup java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Setup signing environment
         run: |
@@ -38,8 +38,8 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5'
-          channel: 'stable'
+          flutter-version: "3.41.9"
+          channel: "stable"
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
@@ -66,10 +66,10 @@ jobs:
         run: flutter test --coverage
 
       - name: Check test coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v2
+        uses: VeryGoodOpenSource/very_good_coverage@v3
         with:
-          path: '${{ github.workspace }}/coverage/lcov.info'
-          exclude: '**/*_observer.dart'
+          path: "${{ github.workspace }}/coverage/lcov.info"
+          exclude: "**/*_observer.dart"
           min_coverage: 60
 
       - name: Build appbundle
@@ -85,7 +85,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           owner: ${{ github.repository_owner }}
-          body: 'See [CHANGELOG](https://github.com/tmaegel/ntodotxt/blob/main/CHANGELOG.md)'
+          body: "See [CHANGELOG](https://github.com/tmaegel/ntodotxt/blob/main/CHANGELOG.md)"
           artifacts: >
             build/app/outputs/bundle/release/app-release.aab,
             build/app/outputs/flutter-apk/app-release.apk,

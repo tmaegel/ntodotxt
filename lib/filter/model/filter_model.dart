@@ -48,9 +48,6 @@ extension Order on ListOrder {
       // return a.toString().compareTo(b.toString());
       case ListOrder.descending:
         return descending(a, b);
-      default:
-        // Default is ascending.
-        return ascending(a, b);
     }
   }
 
@@ -110,9 +107,6 @@ extension Filters on ListFilter {
         return todo.completion;
       case ListFilter.incompletedOnly:
         return !todo.completion;
-      default:
-        // Default is all.
-        return true;
     }
   }
 
@@ -368,9 +362,6 @@ class Filter extends Equatable {
           todoList: todoList,
           sections: order.sort(contexts).toSet(),
         );
-      default:
-        // Default is none.
-        return group.groupByNone(todoList: todoList);
     }
   }
 

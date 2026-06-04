@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 ENV FLUTTER_CHANNEL="stable"
-ENV FLUTTER_VERSION="3.24.5"
+ENV FLUTTER_VERSION="3.41.9"
 ENV FLUTTER_HOME="/home/vscode/flutter"
 ENV ANDROID_HOME="/home/vscode/.android-sdk"
 ENV ANDROID_USER_HOME="/home/vscode/.android"
@@ -19,6 +19,7 @@ RUN apt-get update && \
 	dconf-gsettings-backend \
 	dconf-service \
 	gsettings-desktop-schemas \
+	ldd \
 	libcanberra-gtk-module \
 	libgl1-mesa-dri \
 	libglu1-mesa \
@@ -33,8 +34,10 @@ RUN apt-get update && \
 	libxcb-xinerama0 \
 	libxkbcommon-x11-0 \
 	libxkbfile-dev \
+	llvm \
+	mesa-utils \
 	ninja-build \
-	openjdk-17-jdk-headless \
+	openjdk-21-jdk-headless \
 	pkg-config \
 	unzip \
 	vim \

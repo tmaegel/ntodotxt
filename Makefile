@@ -4,7 +4,7 @@ APP_ID = "de.tnmgl.ntodotxt"
 FDROID_REPO = "${HOME}/Downloads/nosync/fdroiddata"
 
 licenses:
-	flutter pub run flutter_oss_licenses:generate.dart
+	dart run dart_pubspec_licenses:generate
 
 icon:
 	flutter pub run flutter_launcher_icons
