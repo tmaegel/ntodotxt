@@ -101,7 +101,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
     return DraggableScrollableSheet(
       initialChildSize: 0.35,
       minChildSize: 0.15,
-      maxChildSize: 0.6,
+      maxChildSize: 0.75,
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
         return BlocBuilder<DrawerCubit, DrawerState>(

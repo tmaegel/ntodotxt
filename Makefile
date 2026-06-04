@@ -3,19 +3,6 @@
 APP_ID = "de.tnmgl.ntodotxt"
 FDROID_REPO = "${HOME}/Downloads/nosync/fdroiddata"
 
-sonarqube:
-	docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 127.0.0.1:9000:9000 sonarqube:10.4-community
-
-scan:
-	docker run \
-    --rm --name sonar-scanner-cli \
-    -e SONAR_HOST_URL="http://sonarqube:9000" \
-    -e SONAR_SCANNER_OPTS="-Dsonar.projectKey=ntodotxt" \
-    -e SONAR_TOKEN="token" \
-    -v "$(shell pwd):/usr/src" \
-		--link sonarqube \
-    sonarsource/sonar-scanner-cli
-
 licenses:
 	flutter pub run flutter_oss_licenses:generate.dart
 

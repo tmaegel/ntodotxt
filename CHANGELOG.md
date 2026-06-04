@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Filter dialog based on DraggableScrollableSheet
+
+### Changed
+
+- Migrated AppBar to SliverAppBar
+
+### Removed
+
+- Filter bar in AppBar
+
 ## [0.17.0] - 2026-03-13
 
 ### Added

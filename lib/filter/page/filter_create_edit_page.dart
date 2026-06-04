@@ -49,45 +49,45 @@ class FilterCreateEditPage extends StatelessWidget {
         child: FilterDialogWrapper(
           newFilter: initFilter == null,
           child: Scaffold(
-            appBar: MainAppBar(
-              title: initFilter == null ? 'Create' : 'Edit',
-              toolbar: Row(
-                children: <Widget>[
-                  if (initFilter != null) const DeleteFilterIconButton(),
-                  SaveFilterIconButton(initFilter: initFilter),
-                ],
-              ),
-            ),
-            body: ListView(
-              children: [
-                const FilterNameTextField(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'General',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+            body: CustomScrollView(
+              slivers: [
+                MainSliverAppBar(
+                  title: initFilter == null ? 'Create' : 'Edit',
+                  toolbar: Row(
+                    children: <Widget>[
+                      if (initFilter != null) const DeleteFilterIconButton(),
+                      SaveFilterIconButton(initFilter: initFilter),
+                    ],
                   ),
                 ),
-                const FilterOrderItem(),
-                const FilterFilterItem(),
-                const FilterGroupItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Tags',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      const FilterNameTextField(),
+                      const Divider(),
+                      ListTile(
+                        title: Text(
+                          'General',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const FilterOrderItem(),
+                      const FilterFilterItem(),
+                      const FilterGroupItem(),
+                      const Divider(),
+                      ListTile(
+                        title: Text(
+                          'Tags',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const FilterPrioritiesItem(),
+                      FilterProjectTagsItem(availableTags: projects),
+                      FilterContextTagsItem(availableTags: contexts),
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
-                const FilterPrioritiesItem(),
-                FilterProjectTagsItem(availableTags: projects),
-                FilterContextTagsItem(availableTags: contexts),
-                const SizedBox(height: 16),
               ],
             ),
           ),
@@ -311,23 +311,20 @@ class FilterOrderItem extends StatelessWidget {
         return previousState.filter.order != state.filter.order;
       },
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            leading: const Icon(Icons.sort),
-            title: const Text('Order'),
-            subtitle: GenericChipGroup(
-              children: [
-                BasicChip(label: state.filter.order.name),
-              ],
-            ),
-            onTap: () async {
-              await FilterStateOrderDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
+        return ListTile(
+          leading: const Icon(Icons.sort),
+          title: const Text('Order'),
+          subtitle: GenericChipGroup(
+            children: [
+              BasicChip(label: state.filter.order.name),
+            ],
           ),
+          onTap: () async {
+            await FilterStateOrderDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -344,23 +341,20 @@ class FilterFilterItem extends StatelessWidget {
         return previousState.filter.filter != state.filter.filter;
       },
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            leading: const Icon(Icons.filter_list),
-            title: const Text('Filter'),
-            subtitle: GenericChipGroup(
-              children: [
-                BasicChip(label: state.filter.filter.name),
-              ],
-            ),
-            onTap: () async {
-              await FilterStateFilterDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
+        return ListTile(
+          leading: const Icon(Icons.filter_list),
+          title: const Text('Filter'),
+          subtitle: GenericChipGroup(
+            children: [
+              BasicChip(label: state.filter.filter.name),
+            ],
           ),
+          onTap: () async {
+            await FilterStateFilterDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -377,25 +371,22 @@ class FilterGroupItem extends StatelessWidget {
         return previousState.filter.group != state.filter.group;
       },
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            leading: const Icon(Icons.workspaces_outlined),
-            title: const Text('Group by'),
-            subtitle: GenericChipGroup(
-              children: [
-                BasicChip(
-                  label: state.filter.group.name,
-                ),
-              ],
-            ),
-            onTap: () async {
-              await FilterStateGroupDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
+        return ListTile(
+          leading: const Icon(Icons.workspaces_outlined),
+          title: const Text('Group by'),
+          subtitle: GenericChipGroup(
+            children: [
+              BasicChip(
+                label: state.filter.group.name,
+              ),
+            ],
           ),
+          onTap: () async {
+            await FilterStateGroupDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -412,27 +403,24 @@ class FilterPrioritiesItem extends StatelessWidget {
         return previousState.filter.priorities != state.filter.priorities;
       },
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            leading: const Icon(Icons.flag_outlined),
-            title: const Text('Priorities'),
-            subtitle: state.filter.priorities.isEmpty
-                ? const Text('-')
-                : GenericChipGroup(
-                    children: [
-                      for (var t in state.filter.priorities)
-                        BasicChip(label: t.name),
-                    ],
-                  ),
-            onTap: () async {
-              await FilterPriorityTagDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-                availableTags: Priority.values.toSet(),
-              );
-            },
-          ),
+        return ListTile(
+          leading: const Icon(Icons.flag_outlined),
+          title: const Text('Priorities'),
+          subtitle: state.filter.priorities.isEmpty
+              ? const Text('-')
+              : GenericChipGroup(
+                  children: [
+                    for (var t in state.filter.priorities)
+                      BasicChip(label: t.name),
+                  ],
+                ),
+          onTap: () async {
+            await FilterPriorityTagDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+              availableTags: Priority.values.toSet(),
+            );
+          },
         );
       },
     );
@@ -454,26 +442,23 @@ class FilterProjectTagsItem extends StatelessWidget {
         return previousState.filter.projects != state.filter.projects;
       },
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            leading: const Icon(Icons.rocket_launch_outlined),
-            title: const Text('Projects'),
-            subtitle: state.filter.projects.isEmpty
-                ? const Text('-')
-                : GenericChipGroup(
-                    children: [
-                      for (var t in state.filter.projects) BasicChip(label: t),
-                    ],
-                  ),
-            onTap: () async {
-              await FilterProjectTagDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-                availableTags: availableTags,
-              );
-            },
-          ),
+        return ListTile(
+          leading: const Icon(Icons.rocket_launch_outlined),
+          title: const Text('Projects'),
+          subtitle: state.filter.projects.isEmpty
+              ? const Text('-')
+              : GenericChipGroup(
+                  children: [
+                    for (var t in state.filter.projects) BasicChip(label: t),
+                  ],
+                ),
+          onTap: () async {
+            await FilterProjectTagDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+              availableTags: availableTags,
+            );
+          },
         );
       },
     );
@@ -495,26 +480,23 @@ class FilterContextTagsItem extends StatelessWidget {
         return previousState.filter.contexts != state.filter.contexts;
       },
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            leading: const Icon(Icons.join_inner),
-            title: const Text('Contexts'),
-            subtitle: state.filter.contexts.isEmpty
-                ? const Text('-')
-                : GenericChipGroup(
-                    children: [
-                      for (var t in state.filter.contexts) BasicChip(label: t),
-                    ],
-                  ),
-            onTap: () async {
-              await FilterContextTagDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-                availableTags: availableTags,
-              );
-            },
-          ),
+        return ListTile(
+          leading: const Icon(Icons.join_inner),
+          title: const Text('Contexts'),
+          subtitle: state.filter.contexts.isEmpty
+              ? const Text('-')
+              : GenericChipGroup(
+                  children: [
+                    for (var t in state.filter.contexts) BasicChip(label: t),
+                  ],
+                ),
+          onTap: () async {
+            await FilterContextTagDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+              availableTags: availableTags,
+            );
+          },
         );
       },
     );

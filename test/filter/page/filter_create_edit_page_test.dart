@@ -156,7 +156,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.dragUntilVisible(
             find.byType(FilterOrderItem),
-            find.byType(ListView),
+            find.byType(CustomScrollView),
             const Offset(0, -100),
           );
           await tester.tap(find.byType(FilterOrderItem));
@@ -309,7 +309,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.dragUntilVisible(
             find.byType(FilterOrderItem),
-            find.byType(ListView),
+            find.byType(CustomScrollView),
             const Offset(0, -100),
           );
           await tester.tap(find.byType(FilterOrderItem));
@@ -374,7 +374,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterOrderItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -394,7 +394,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterFilterItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -413,7 +413,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterGroupItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -432,7 +432,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterPrioritiesItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -457,7 +457,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -482,7 +482,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -514,7 +514,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterNameTextField),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -534,7 +534,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterOrderItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -559,7 +559,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterFilterItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -583,7 +583,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterGroupItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -608,7 +608,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterPrioritiesItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -643,7 +643,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -678,7 +678,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -710,7 +710,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterOrderItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -744,7 +744,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterFilterItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -778,7 +778,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterGroupItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -810,20 +810,25 @@ void main() {
       testWidgets('FilterPrioritiesItem', (tester) async {
         await tester.pumpWidget(const BlocRepositoryWrapper());
         await tester.pumpAndSettle();
+        final Finder prioritiesItem = find.byType(FilterPrioritiesItem);
         await tester.dragUntilVisible(
-          find.byType(FilterPrioritiesItem),
-          find.byType(ListView),
+          prioritiesItem,
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
-
-        await tester.tap(find.byType(FilterPrioritiesItem));
+        await tester.ensureVisible(prioritiesItem);
         await tester.pumpAndSettle();
 
-        await tester.ensureVisible(find.byType(FilterPriorityTagDialog));
+        await tester.tap(prioritiesItem);
+        await tester.pumpAndSettle();
+
+        final Finder priorityDialog = find.byType(FilterPriorityTagDialog);
+        expect(priorityDialog, findsOneWidget);
+        await tester.ensureVisible(priorityDialog);
         await tester.pumpAndSettle();
         await tester.tap(
           find.descendant(
-            of: find.byType(FilterPriorityTagDialog),
+            of: priorityDialog,
             matching: find.text('A'),
           ),
         );
@@ -833,7 +838,7 @@ void main() {
 
         expect(
           find.descendant(
-            of: find.byType(FilterPrioritiesItem),
+            of: prioritiesItem,
             matching: find.byWidgetPredicate(
               (Widget widget) => widget is BasicChip && widget.label == 'A',
             ),
@@ -850,7 +855,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -889,7 +894,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
