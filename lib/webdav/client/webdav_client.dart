@@ -186,11 +186,6 @@ class WebDAVClient {
           'UNKNOWN ERROR',
           'Possible cause may be a connection problem or an invalid SSL certificate',
         );
-      default:
-        return (
-          'UNKNOWN ERROR',
-          'Possible cause may be a connection problem or an invalid SSL certificate',
-        );
     }
 
     return (

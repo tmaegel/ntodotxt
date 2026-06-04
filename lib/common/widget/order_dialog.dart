@@ -28,27 +28,29 @@ class FilterStateOrderDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          String key = items.keys.elementAt(index);
-          ListOrder value = items[key]!;
-          return RadioListTile<ListOrder>(
-            key: Key('${value.name}DialogRadioButton'),
-            contentPadding: EdgeInsets.zero,
-            title: Text(key),
-            value: value,
-            groupValue: cubit.state.filter.order,
-            onChanged: (ListOrder? value) {
-              if (value != null) {
-                cubit.updateOrder(value);
-              }
-              Navigator.pop(context);
-            },
-          );
+      child: RadioGroup<ListOrder>(
+        groupValue: cubit.state.filter.order,
+        onChanged: (ListOrder? value) {
+          if (value != null) {
+            cubit.updateOrder(value);
+          }
+          Navigator.pop(context);
         },
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String key = items.keys.elementAt(index);
+            ListOrder value = items[key]!;
+            return RadioListTile<ListOrder>(
+              key: Key('${value.name}DialogRadioButton'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(key),
+              value: value,
+            );
+          },
+        ),
       ),
     );
   }
@@ -81,27 +83,29 @@ class DefaultFilterStateOrderDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          String key = items.keys.elementAt(index);
-          ListOrder value = items[key]!;
-          return RadioListTile<ListOrder>(
-            key: Key('${value.name}DialogRadioButton'),
-            contentPadding: EdgeInsets.zero,
-            value: value,
-            title: Text(key),
-            groupValue: cubit.state.filter.order,
-            onChanged: (ListOrder? value) {
-              if (value != null) {
-                cubit.updateDefaultOrder(value);
-              }
-              Navigator.pop(context);
-            },
-          );
+      child: RadioGroup<ListOrder>(
+        groupValue: cubit.state.filter.order,
+        onChanged: (ListOrder? value) {
+          if (value != null) {
+            cubit.updateDefaultOrder(value);
+          }
+          Navigator.pop(context);
         },
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String key = items.keys.elementAt(index);
+            ListOrder value = items[key]!;
+            return RadioListTile<ListOrder>(
+              key: Key('${value.name}DialogRadioButton'),
+              contentPadding: EdgeInsets.zero,
+              value: value,
+              title: Text(key),
+            );
+          },
+        ),
       ),
     );
   }

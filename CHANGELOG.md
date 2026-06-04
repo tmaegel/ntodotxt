@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Bump `flutter` to 3.41.9
+- Bump `collection` to 1.19.1
+- Bump `crypto` to 3.0.7
+- Bump `cupertino_icons` to 1.0.9
+- Bump `dio` to 5.9.2
+- Bump `equatable` to 2.0.8
+- Bump `file_picker` to 10.3.10
+- Bump `flex_color_scheme` to 8.4.0
+- Bump `go_router` to 15.1.3
+- Bump `permission_handler` to 12.0.3
+- Bump `sqflite_common_ffi` to 2.4.0+3
+- Bump `url_launcher` to 6.3.2
+
+### Removed
+
+- Package `sqlite3_flutter_libs`
+
 ## [0.18.0] - 2026-06-04
 
 ### Added

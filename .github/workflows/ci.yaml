@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install sqlite
         run: sudo apt-get update && sudo apt-get -y install sqlite3 libsqlite3-dev
@@ -22,8 +22,8 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5'
-          channel: 'stable'
+          flutter-version: "3.41.9"
+          channel: "stable"
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
@@ -50,7 +50,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Check test coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v2
+        uses: VeryGoodOpenSource/very_good_coverage@v3
         with:
-          path: '${{ github.workspace }}/coverage/lcov.info'
+          path: "${{ github.workspace }}/coverage/lcov.info"
           min_coverage: 60
