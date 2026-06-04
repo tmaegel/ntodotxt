@@ -158,7 +158,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.dragUntilVisible(
             find.byType(TodoPriorityItem),
-            find.byType(ListView),
+            find.byType(CustomScrollView),
             const Offset(0, -100),
           );
           await tester.tap(find.byType(TodoPriorityItem));
@@ -378,7 +378,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.dragUntilVisible(
             find.byType(TodoPriorityItem),
-            find.byType(ListView),
+            find.byType(CustomScrollView),
             const Offset(0, -100),
           );
           await tester.tap(find.byType(TodoPriorityItem));
@@ -484,7 +484,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoPriorityItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -500,7 +500,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -516,7 +516,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -532,7 +532,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -548,7 +548,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCreationDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         final DateTime now = DateTime.now();
@@ -567,7 +567,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoDueDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -590,7 +590,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoPriorityItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -610,7 +610,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -643,7 +643,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -676,7 +676,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -709,7 +709,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCompletionDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -729,7 +729,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCompletionDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         final DateTime now = DateTime.now();
@@ -752,7 +752,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCreationDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         final DateTime now = DateTime.now();
@@ -775,7 +775,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoDueDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -787,7 +787,7 @@ void main() {
         );
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -809,7 +809,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoDescriptionTextField),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -824,7 +824,7 @@ void main() {
 
         await tester.dragUntilVisible(
           find.byType(TodoProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -843,7 +843,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoDescriptionTextField),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -858,7 +858,7 @@ void main() {
 
         await tester.dragUntilVisible(
           find.byType(TodoContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -877,7 +877,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoDescriptionTextField),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -892,7 +892,7 @@ void main() {
 
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -911,7 +911,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoDescriptionTextField),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -926,7 +926,7 @@ void main() {
 
         await tester.dragUntilVisible(
           find.byType(TodoDueDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -938,7 +938,7 @@ void main() {
         );
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -957,7 +957,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoPriorityItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -993,7 +993,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1032,7 +1032,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1079,7 +1079,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1118,7 +1118,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1165,7 +1165,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -200),
         );
 
@@ -1204,7 +1204,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoKeyValueTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -200),
         );
 
@@ -1254,7 +1254,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCompletionDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1281,7 +1281,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCompletionDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1316,7 +1316,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(TodoCompletionDateItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -1338,13 +1338,16 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        final Finder dueDateItem = find.byType(TodoDueDateItem);
         await tester.dragUntilVisible(
-          find.byType(TodoDueDateItem),
-          find.byType(ListView),
+          dueDateItem,
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
+        await tester.ensureVisible(dueDateItem);
+        await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(TodoDueDateItem));
+        await tester.tap(dueDateItem);
         await tester.pumpAndSettle();
 
         await tester.tap(
@@ -1360,7 +1363,7 @@ void main() {
             '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
-            of: find.byType(TodoDueDateItem),
+            of: dueDateItem,
             matching: find.text(today),
           ),
           findsOneWidget,
@@ -1373,13 +1376,16 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        final Finder dueDateItem = find.byType(TodoDueDateItem);
         await tester.dragUntilVisible(
-          find.byType(TodoDueDateItem),
-          find.byType(ListView),
+          dueDateItem,
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
+        await tester.ensureVisible(dueDateItem);
+        await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(TodoDueDateItem));
+        await tester.tap(dueDateItem);
         await tester.pumpAndSettle();
 
         await tester.tap(
@@ -1395,7 +1401,7 @@ void main() {
             '${initial.year.toString()}-${initial.month.toString().padLeft(2, '0')}-${initial.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
-            of: find.byType(TodoDueDateItem),
+            of: dueDateItem,
             matching: find.text(today),
           ),
           findsOneWidget,
@@ -1408,23 +1414,28 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        final Finder dueDateItem = find.byType(TodoDueDateItem);
         await tester.dragUntilVisible(
-          find.byType(TodoDueDateItem),
-          find.byType(ListView),
+          dueDateItem,
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
+        await tester.ensureVisible(dueDateItem);
+        await tester.pumpAndSettle();
 
-        await tester.tap(
-          find.descendant(
-            of: find.byType(TodoDueDateItem),
-            matching: find.byType(IconButton),
-          ),
+        final Finder clearDueDateButton = find.descendant(
+          of: dueDateItem,
+          matching: find.byIcon(Icons.clear),
         );
+        await tester.ensureVisible(clearDueDateButton);
+        await tester.pumpAndSettle();
+
+        await tester.tap(clearDueDateButton);
         await tester.pumpAndSettle();
 
         expect(
           find.descendant(
-            of: find.byType(TodoDueDateItem),
+            of: dueDateItem,
             matching: find.text('-'),
           ),
           findsOneWidget,

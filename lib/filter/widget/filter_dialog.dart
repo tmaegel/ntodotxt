@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntodotxt/common/misc.dart';
 import 'package:ntodotxt/common/widget/context_selector.dart';
 import 'package:ntodotxt/common/widget/filter_selector.dart';
@@ -6,6 +7,7 @@ import 'package:ntodotxt/common/widget/group_by_selector.dart';
 import 'package:ntodotxt/common/widget/order_selector.dart';
 import 'package:ntodotxt/common/widget/priority_selector.dart';
 import 'package:ntodotxt/common/widget/project_selector.dart';
+import 'package:ntodotxt/filter/state/filter_cubit.dart';
 
 class FilterDialog extends StatelessWidget {
   final Set<String> projects;
@@ -22,12 +24,16 @@ class FilterDialog extends StatelessWidget {
     required Set<String> projects,
     required Set<String> contexts,
   }) async {
+    final FilterCubit filterCubit = context.read<FilterCubit>();
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (BuildContext context) => FilterDialog(
-        projects: projects,
-        contexts: contexts,
+      builder: (BuildContext context) => BlocProvider<FilterCubit>.value(
+        value: filterCubit,
+        child: FilterDialog(
+          projects: projects,
+          contexts: contexts,
+        ),
       ),
     );
   }
@@ -35,9 +41,9 @@ class FilterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.75,
+      initialChildSize: 0.95,
       minChildSize: 0.15,
-      maxChildSize: 0.9,
+      maxChildSize: 0.95,
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
         return ScrollConfiguration(
@@ -105,32 +111,40 @@ class FilterDialog extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
                 child: PrioritySelector(),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                child: Text(
-                  'Projects',
-                  style: Theme.of(context).textTheme.titleSmall,
+              if (projects.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 8.0),
+                  child: Text(
+                    'Projects',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                 ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                child: ProjectSelector(items: projects),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                child: Text(
-                  'Contexts',
-                  style: Theme.of(context).textTheme.titleSmall,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 8.0),
+                  child: ProjectSelector(items: projects),
                 ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                child: ContextSelector(items: contexts),
-              ),
+              ],
+              if (contexts.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 8.0,
+                  ),
+                  child: Text(
+                    'Contexts',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 8.0,
+                  ),
+                  child: ContextSelector(items: contexts),
+                ),
+              ],
             ],
           ),
         );

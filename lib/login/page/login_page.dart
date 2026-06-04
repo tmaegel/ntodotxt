@@ -27,18 +27,23 @@ class _LocalLoginViewState extends State<LocalLoginView> {
     return Stack(
       children: [
         Scaffold(
-          appBar: const MainAppBar(title: 'Local'),
-          body: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            children: [
-              ListTile(
-                title: Text(
-                  'Todo',
-                  style: Theme.of(context).textTheme.titleSmall,
+          body: CustomScrollView(
+            slivers: [
+              MainSliverAppBar(title: 'Local'),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    ListTile(
+                      title: Text(
+                        'Todo',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ),
+                    const TodoFilenameInput(),
+                    const LocalPathInput(),
+                  ],
                 ),
               ),
-              const TodoFilenameInput(),
-              const LocalPathInput(),
             ],
           ),
           floatingActionButton: keyboardIsOpen
@@ -131,44 +136,49 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
       child: Stack(
         children: [
           Scaffold(
-            appBar: const MainAppBar(title: 'WebDAV'),
             body: Form(
               key: formKey,
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                children: [
-                  ListTile(
-                    title: Text(
-                      'Server connection',
-                      style: Theme.of(context).textTheme.titleSmall,
+              child: CustomScrollView(
+                slivers: [
+                  MainSliverAppBar(title: 'WebDAV'),
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        ListTile(
+                          title: Text(
+                            'Server connection',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                        ServerAddrField(
+                          callback: setServerAddr,
+                        ),
+                        AcceptUntrustedCertField(
+                          callback: setAcceptUntrustedCert,
+                        ),
+                        BaseUrlField(
+                          callback: setBaseUrl,
+                        ),
+                        UsernameField(
+                          callback: setUsername,
+                        ),
+                        PasswordField(
+                          callback: setPassword,
+                        ),
+                        const Divider(),
+                        ListTile(
+                          title: Text(
+                            'Todo',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                        const TodoFilenameInput(),
+                        const LocalPathInput(),
+                        const RemotePathInput(),
+                        const SizedBox(height: 72),
+                      ],
                     ),
                   ),
-                  ServerAddrField(
-                    callback: setServerAddr,
-                  ),
-                  AcceptUntrustedCertField(
-                    callback: setAcceptUntrustedCert,
-                  ),
-                  BaseUrlField(
-                    callback: setBaseUrl,
-                  ),
-                  UsernameField(
-                    callback: setUsername,
-                  ),
-                  PasswordField(
-                    callback: setPassword,
-                  ),
-                  const Divider(),
-                  ListTile(
-                    title: Text(
-                      'Todo',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                  const TodoFilenameInput(),
-                  const LocalPathInput(),
-                  const RemotePathInput(),
-                  const SizedBox(height: 72),
                 ],
               ),
             ),

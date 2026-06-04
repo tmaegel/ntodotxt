@@ -76,9 +76,9 @@ class TagDialogState<T extends TagDialog> extends State<T> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: widget.addTags == true ? 0.9 : 0.5,
+      initialChildSize: widget.addTags == true ? 0.95 : 0.5,
       minChildSize: 0.15,
-      maxChildSize: 0.9,
+      maxChildSize: 0.95,
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
         return ScrollConfiguration(

@@ -66,7 +66,7 @@ class PriorityTagDialogState<T extends PriorityTagDialog> extends State<T> {
     return DraggableScrollableSheet(
       initialChildSize: 0.5,
       minChildSize: 0.15,
-      maxChildSize: 0.9,
+      maxChildSize: 0.95,
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
         return ScrollConfiguration(

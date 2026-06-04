@@ -48,56 +48,62 @@ class TodoCreateEditPage extends StatelessWidget {
           initTodo: initTodo,
           newTodo: newTodo,
           child: Scaffold(
-            appBar: MainAppBar(
-              title: newTodo ? 'Create' : 'Edit',
-              toolbar: Row(
-                children: <Widget>[
-                  if (!newTodo) const DeleteTodoIconButton(),
-                  SaveTodoIconButton(initTodo: initTodo),
-                ],
-              ),
-            ),
-            body: ListView(
-              children: [
-                const TodoDescriptionTextField(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'General',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+            body: CustomScrollView(
+              slivers: [
+                MainSliverAppBar(
+                  title: newTodo ? 'Create' : 'Edit',
+                  toolbar: Row(
+                    children: <Widget>[
+                      if (!newTodo) const DeleteTodoIconButton(),
+                      SaveTodoIconButton(initTodo: initTodo),
+                    ],
                   ),
                 ),
-                const TodoPriorityItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Dates',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      const TodoDescriptionTextField(),
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ListTile(
+                          title: Text(
+                            'General',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                      ),
+                      const TodoPriorityItem(),
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ListTile(
+                          title: Text(
+                            'Dates',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                      ),
+                      const TodoCreationDateItem(),
+                      if (!newTodo) const TodoCompletionDateItem(),
+                      const TodoDueDateItem(),
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ListTile(
+                          title: Text(
+                            'Tags',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                      ),
+                      TodoProjectTagsItem(availableTags: projects),
+                      TodoContextTagsItem(availableTags: contexts),
+                      TodoKeyValueTagsItem(availableTags: keyValues),
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
-                const TodoCreationDateItem(),
-                if (!newTodo) const TodoCompletionDateItem(),
-                const TodoDueDateItem(),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Tags',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ),
-                ),
-                TodoProjectTagsItem(availableTags: projects),
-                TodoContextTagsItem(availableTags: contexts),
-                TodoKeyValueTagsItem(availableTags: keyValues),
-                const SizedBox(height: 16),
               ],
             ),
             floatingActionButton: !newTodo ? DoneUndonePrimaryButton() : null,

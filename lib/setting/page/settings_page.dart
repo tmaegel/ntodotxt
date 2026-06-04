@@ -23,10 +23,14 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PopScopeDrawer(
+    return PopScopeDrawer(
       child: Scaffold(
-        appBar: MainAppBar(title: 'Settings'),
-        body: SettingsView(),
+        body: CustomScrollView(
+          slivers: [
+            MainSliverAppBar(title: 'Settings'),
+            SettingsView(),
+          ],
+        ),
       ),
     );
   }
@@ -37,58 +41,45 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          ListTile(
             title: Text(
               'Filter',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        const DefaultListOrderSettingsItem(),
-        const DefaultListFilterSettingsItem(),
-        const DefaultListGroupSettingsItem(),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const DefaultListOrderSettingsItem(),
+          const DefaultListFilterSettingsItem(),
+          const DefaultListGroupSettingsItem(),
+          const Divider(),
+          ListTile(
             title: Text(
               'Interaction',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        const SwipeLeftActionEnabledSettingsItem(),
-        const SwipeRightActionEnabledSettingsItem(),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const SwipeLeftActionEnabledSettingsItem(),
+          const SwipeRightActionEnabledSettingsItem(),
+          const Divider(),
+          ListTile(
             title: Text(
               'Storage',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        const TodoFilenameSettingsItem(),
-        const LocalPathSettingsItem(),
-        const RemotePathSettingsItem(),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const TodoFilenameSettingsItem(),
+          const LocalPathSettingsItem(),
+          const RemotePathSettingsItem(),
+          const Divider(),
+          ListTile(
             title: Text(
               'App',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          ListTile(
             title: const Text('Reinitialization'),
             subtitle: const Text('Reinitialization of the app.'),
             onTap: () async {
@@ -108,25 +99,19 @@ class SettingsView extends StatelessWidget {
               }
             },
           ),
-        ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const Divider(),
+          ListTile(
             title: Text(
               'Others',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          ListTile(
             title: const Text('About'),
             onTap: () => context.pushNamed('app-info'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -140,18 +125,15 @@ class DefaultListOrderSettingsItem extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.order != state.filter.order,
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Default order'),
-            subtitle: Text(state.filter.order.name),
-            onTap: () async {
-              await DefaultFilterStateOrderDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
-          ),
+        return ListTile(
+          title: const Text('Default order'),
+          subtitle: Text(state.filter.order.name),
+          onTap: () async {
+            await DefaultFilterStateOrderDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -167,18 +149,15 @@ class DefaultListFilterSettingsItem extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.filter != state.filter.filter,
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Default filter'),
-            subtitle: Text(state.filter.filter.name),
-            onTap: () async {
-              await DefaultFilterStateFilterDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
-          ),
+        return ListTile(
+          title: const Text('Default filter'),
+          subtitle: Text(state.filter.filter.name),
+          onTap: () async {
+            await DefaultFilterStateFilterDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -194,18 +173,15 @@ class DefaultListGroupSettingsItem extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.group != state.filter.group,
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Default grouping'),
-            subtitle: Text(state.filter.group.name),
-            onTap: () async {
-              await DefaultFilterStateGroupDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
-          ),
+        return ListTile(
+          title: const Text('Default grouping'),
+          subtitle: Text(state.filter.group.name),
+          onTap: () async {
+            await DefaultFilterStateGroupDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -222,20 +198,17 @@ class SwipeLeftActionEnabledSettingsItem extends StatelessWidget {
               InteractionSettingsState state) =>
           previousState.swipeLeftActionEnabled != state.swipeLeftActionEnabled,
       builder: (BuildContext context, InteractionSettingsState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: CheckboxListTile(
-            title: const Text('Enable swipe left action'),
-            value: state.swipeLeftActionEnabled,
-            subtitle: const Text(
-              'If enabled, you can swipe left on a item to perform an action.',
-            ),
-            isThreeLine: true,
-            onChanged: (bool? value) {
-              BlocProvider.of<InteractionSettingsCubit>(context)
-                  .setSwipeLeftActionEnabled(value ?? false);
-            },
+        return SwitchListTile(
+          title: const Text('Enable swipe left action'),
+          value: state.swipeLeftActionEnabled,
+          subtitle: const Text(
+            'If enabled, you can swipe left on a item to perform an action.',
           ),
+          isThreeLine: true,
+          onChanged: (bool? value) {
+            BlocProvider.of<InteractionSettingsCubit>(context)
+                .setSwipeLeftActionEnabled(value ?? false);
+          },
         );
       },
     );
@@ -253,20 +226,17 @@ class SwipeRightActionEnabledSettingsItem extends StatelessWidget {
           previousState.swipeRightActionEnabled !=
           state.swipeRightActionEnabled,
       builder: (BuildContext context, InteractionSettingsState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: CheckboxListTile(
-            title: const Text('Enable swipe right action'),
-            value: state.swipeRightActionEnabled,
-            subtitle: const Text(
-              'If enabled, you can swipe right on a item to perform an action.',
-            ),
-            isThreeLine: true,
-            onChanged: (bool? value) {
-              BlocProvider.of<InteractionSettingsCubit>(context)
-                  .setSwipeRightActionEnabled(value ?? false);
-            },
+        return SwitchListTile(
+          title: const Text('Enable swipe right action'),
+          value: state.swipeRightActionEnabled,
+          subtitle: const Text(
+            'If enabled, you can swipe right on a item to perform an action.',
           ),
+          isThreeLine: true,
+          onChanged: (bool? value) {
+            BlocProvider.of<InteractionSettingsCubit>(context)
+                .setSwipeRightActionEnabled(value ?? false);
+          },
         );
       },
     );
@@ -282,17 +252,14 @@ class LocalPathSettingsItem extends StatelessWidget {
       buildWhen: (TodoFileState previousState, TodoFileState state) =>
           previousState.localPath != state.localPath,
       builder: (BuildContext context, TodoFileState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Local path'),
-            subtitle: Text(state.localPath),
-            onTap: () => InfoDialog.dialog(
-              context: context,
-              title: 'Local path',
-              message:
-                  'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
-            ),
+        return ListTile(
+          title: const Text('Local path'),
+          subtitle: Text(state.localPath),
+          onTap: () => InfoDialog.dialog(
+            context: context,
+            title: 'Local path',
+            message:
+                'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
           ),
         );
       },
@@ -314,17 +281,14 @@ class RemotePathSettingsItem extends StatelessWidget {
                     TodoFileState todoFileState) =>
                 previousTodoFileState.remotePath != todoFileState.remotePath,
             builder: (BuildContext context, TodoFileState todoFileState) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text('Remote path'),
-                  subtitle: Text(todoFileState.remotePath),
-                  onTap: () => InfoDialog.dialog(
-                    context: context,
-                    title: 'Remote path',
-                    message:
-                        'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
-                  ),
+              return ListTile(
+                title: const Text('Remote path'),
+                subtitle: Text(todoFileState.remotePath),
+                onTap: () => InfoDialog.dialog(
+                  context: context,
+                  title: 'Remote path',
+                  message:
+                      'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
                 ),
               );
             },
@@ -344,17 +308,14 @@ class TodoFilenameSettingsItem extends StatelessWidget {
       buildWhen: (TodoFileState previousState, TodoFileState state) =>
           previousState.todoFilename != state.todoFilename,
       builder: (BuildContext context, TodoFileState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Todo filename'),
-            subtitle: Text(state.todoFilename),
-            onTap: () => InfoDialog.dialog(
-              context: context,
-              title: 'Todo filename',
-              message:
-                  'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
-            ),
+        return ListTile(
+          title: const Text('Todo filename'),
+          subtitle: Text(state.todoFilename),
+          onTap: () => InfoDialog.dialog(
+            context: context,
+            title: 'Todo filename',
+            message:
+                'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
           ),
         );
       },

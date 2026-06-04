@@ -20,56 +20,34 @@ import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
 import 'package:ntodotxt/todo/state/todo_list_event.dart';
 import 'package:ntodotxt/todo/state/todo_list_state.dart';
 
-class TodoListPage extends StatelessWidget {
+class TodoListPage extends ScollToTopView {
   final Filter? filter;
 
-  const TodoListPage({
-    this.filter,
-    super.key,
-  });
+  const TodoListPage({this.filter, super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      filter == null ? _build(context) : _buildWithFilter(context);
+  State<TodoListPage> createState() => _TodoListPageState();
+}
 
-  Widget _build(BuildContext context) {
-    // @todo: Activate WideLayout later!
-    return const TodoListViewNarrow();
-    // final bool isNarrowLayout =
-    //     MediaQuery.of(context).size.width < maxScreenWidthCompact;
-    // return isNarrowLayout
-    //     ? const TodoListViewNarrow()
-    //     : const TodoListViewWide();
-  }
+class _TodoListPageState extends ScollToTopViewState<TodoListPage> {
+  @override
+  Widget build(BuildContext context) =>
+      widget.filter == null ? _build(context) : _buildWithFilter(context);
 
   Widget _buildWithFilter(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => FilterCubit(
         settingRepository: context.read<SettingRepository>(),
         filterRepository: context.read<FilterRepository>(),
-        filter: filter,
+        filter: widget.filter,
       )..load(),
       child: Builder(
         builder: (BuildContext context) => _build(context),
       ),
     );
   }
-}
 
-///
-/// Narrow layout
-///
-
-class TodoListViewNarrow extends ScollToTopView {
-  const TodoListViewNarrow({super.key});
-
-  @override
-  State<TodoListViewNarrow> createState() => _TodoListViewNarrowState();
-}
-
-class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
-  @override
-  Widget build(BuildContext context) {
+  Widget _build(BuildContext context) {
     return BlocBuilder<TodoListBloc, TodoListState>(
       buildWhen: (TodoListState previousState, TodoListState todoListState) =>
           (previousState is! TodoListLoading &&
@@ -83,32 +61,55 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
           builder: (BuildContext context, FilterState filterState) {
             return PopScopeDrawer(
               child: Scaffold(
-                appBar: MainAppBar(
-                  title: filterState.filter.name.isEmpty
-                      ? 'Todos'
-                      : 'Filter: ${filterState.filter.name}',
-                  toolbar: Row(
-                    children: [
-                      const TodoListDeleteFilter(),
-                      const TodoListSaveFilter(),
-                      IconButton(
-                        tooltip: 'Filter',
-                        icon: const Icon(Icons.filter_alt_outlined),
-                        onPressed: () async => await FilterDialog.dialog(
-                          context: context,
-                          projects: context.read<TodoListBloc>().state.projects,
-                          contexts: context.read<TodoListBloc>().state.contexts,
+                body: RefreshIndicator(
+                  onRefresh: () async {
+                    context
+                        .read<TodoListBloc>()
+                        .add(const TodoListSynchronizationRequested());
+                  },
+                  child: LoadingIndicatorWrapper(
+                    loading: todoListState is TodoListLoading,
+                    child: CustomScrollView(
+                      slivers: [
+                        MainSliverAppBar(
+                          title: 'Todos',
+                          subtitle: filterState.filter.name.isEmpty
+                              ? 'No filter'
+                              : filterState.filter.name,
+                          toolbar: Row(
+                            children: [
+                              const TodoListDeleteFilter(),
+                              const TodoListSaveFilter(),
+                              IconButton(
+                                tooltip: 'Filter',
+                                icon: const Icon(Icons.filter_alt_outlined),
+                                onPressed: () async =>
+                                    await FilterDialog.dialog(
+                                  context: context,
+                                  projects: context
+                                      .read<TodoListBloc>()
+                                      .state
+                                      .projects,
+                                  contexts: context
+                                      .read<TodoListBloc>()
+                                      .state
+                                      .contexts,
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: 'Search',
+                                icon: const Icon(Icons.search),
+                                onPressed: () => context.pushNamed(
+                                    'todo-search',
+                                    extra: filterState.filter),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        tooltip: 'Search',
-                        icon: const Icon(Icons.search),
-                        onPressed: () => context.pushNamed('todo-search',
-                            extra: filterState.filter),
-                      ),
-                    ],
+                        TodoList(),
+                      ],
+                    ),
                   ),
-                  bottom: const AppBarFilterList(),
                 ),
                 drawer: Container(),
                 floatingActionButton: scrolledDown
@@ -140,120 +141,6 @@ class _TodoListViewNarrowState extends ScollToTopViewState<TodoListViewNarrow> {
                           );
                         },
                       ),
-                body: RefreshIndicator(
-                  onRefresh: () async {
-                    context
-                        .read<TodoListBloc>()
-                        .add(const TodoListSynchronizationRequested());
-                  },
-                  child: LoadingIndicatorWrapper(
-                    loading: todoListState is TodoListLoading,
-                    child: TodoList(scrollController: scrollController),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-///
-/// Wide layout
-///
-
-class TodoListViewWide extends ScollToTopView {
-  const TodoListViewWide({super.key});
-
-  @override
-  State<TodoListViewWide> createState() => _TodoListViewWideState();
-}
-
-class _TodoListViewWideState extends ScollToTopViewState<TodoListViewWide> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<TodoListBloc, TodoListState>(
-      buildWhen: (TodoListState previousState, TodoListState todoListState) =>
-          (previousState is! TodoListLoading &&
-              todoListState is TodoListLoading) ||
-          (previousState is TodoListLoading &&
-              todoListState is! TodoListLoading),
-      builder: (BuildContext context, TodoListState todoListState) {
-        return BlocBuilder<FilterCubit, FilterState>(
-          buildWhen: (FilterState previousState, FilterState filterState) =>
-              previousState.filter.name != filterState.filter.name,
-          builder: (BuildContext context, FilterState filterState) {
-            return PopScopeDrawer(
-              child: Scaffold(
-                appBar: MainAppBar(
-                  title: filterState.filter.name.isEmpty
-                      ? 'Todos'
-                      : 'Filter: ${filterState.filter.name}',
-                  toolbar: Row(
-                    children: [
-                      const TodoListDeleteFilter(),
-                      const TodoListSaveFilter(),
-                      IconButton(
-                        tooltip: 'Filter',
-                        icon: const Icon(Icons.filter_alt_outlined),
-                        onPressed: () async => await FilterDialog.dialog(
-                          context: context,
-                          projects: context.read<TodoListBloc>().state.projects,
-                          contexts: context.read<TodoListBloc>().state.contexts,
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Search',
-                        icon: const Icon(Icons.search),
-                        onPressed: () => context.pushNamed('todo-search',
-                            extra: filterState.filter),
-                      ),
-                    ],
-                  ),
-                  bottom: const AppBarFilterList(),
-                ),
-                floatingActionButton: scrolledDown
-                    ? FloatingActionButton.small(
-                        tooltip: 'Go to top',
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                        child: const Icon(Icons.keyboard_arrow_up),
-                        onPressed: () => scrollToTop(),
-                      )
-                    : FloatingActionButton(
-                        tooltip: 'Add todo',
-                        child: const Icon(Icons.add),
-                        onPressed: () {
-                          String initDescription = '';
-                          if (filterState.filter.projects.isNotEmpty) {
-                            initDescription =
-                                '+${filterState.filter.projects.join(' +')}';
-                          }
-                          if (filterState.filter.contexts.isNotEmpty) {
-                            initDescription =
-                                '$initDescription @${filterState.filter.contexts.join(' @')}';
-                          }
-                          context.pushNamed(
-                            'todo-create',
-                            extra: Todo.fromString(value: initDescription),
-                          );
-                        },
-                      ),
-                body: RefreshIndicator(
-                  onRefresh: () async {
-                    context
-                        .read<TodoListBloc>()
-                        .add(const TodoListSynchronizationRequested());
-                  },
-                  child: LoadingIndicatorWrapper(
-                    loading: todoListState is TodoListLoading,
-                    child: TodoList(scrollController: scrollController),
-                  ),
-                ),
               ),
             );
           },
@@ -311,12 +198,7 @@ class LoadingIndicatorWrapper extends StatelessWidget {
 }
 
 class TodoList extends StatelessWidget {
-  final ScrollController scrollController;
-
-  const TodoList({
-    required this.scrollController,
-    super.key,
-  });
+  const TodoList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -328,10 +210,8 @@ class TodoList extends StatelessWidget {
                 todoListState.groupedTodoList(
               filterState.filter,
             );
-            return ListView.builder(
+            return SliverList.builder(
               key: const PageStorageKey('TodoList'),
-              controller: scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: sectionList.length,
               itemBuilder: (BuildContext context, int index) {
                 String section = sectionList.keys.elementAt(index);
