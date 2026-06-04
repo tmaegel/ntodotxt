@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Make creation date optional #49 [@max-baz](https://github.com/max-baz)
 - Bump `flutter` to 3.41.9
 - Bump `collection` to 1.19.1
 - Bump `crypto` to 3.0.7
