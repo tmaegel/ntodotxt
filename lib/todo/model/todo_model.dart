@@ -191,7 +191,7 @@ class Todo extends Equatable {
 
   Set<String> get fmtProjects => {for (var p in projects) '+$p'};
 
-  static fmtProject(String p) => p.startsWith('+') ? p : '+$p';
+  static String fmtProject(String p) => p.startsWith('+') ? p : '+$p';
 
   bool containsProject(String project) {
     if (project.startsWith('+')) {
@@ -218,7 +218,7 @@ class Todo extends Equatable {
 
   Set<String> get fmtContexts => {for (var c in contexts) '@$c'};
 
-  static fmtContext(String c) => c.startsWith('@') ? c : '@$c';
+  static String fmtContext(String c) => c.startsWith('@') ? c : '@$c';
 
   bool containsContext(String context) {
     if (context.startsWith('@')) {
@@ -247,7 +247,7 @@ class Todo extends Equatable {
 
   Set<String> get fmtKeyValues => keyValues;
 
-  static fmtKeyValue(String keyValue) => keyValue;
+  static String fmtKeyValue(String keyValue) => keyValue;
 
   /// Checks if a key value pair with specific key already exists.
   bool containsKeyValue(String keyValue) {
@@ -464,7 +464,7 @@ class Todo extends Equatable {
 
   /// Copy only the explicitly set attributes into the new object.
   /// Use the existing values for the rest.
-  /// If the values of _<variables> are not null, they have been
+  /// If the values of a variable with an underscore prefix are not null, they have been
   /// explicitly edited.
   Todo copyMerge(Todo todo) {
     return Todo(
