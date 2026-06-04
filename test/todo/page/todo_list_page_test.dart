@@ -200,6 +200,47 @@ void main() {
     });
   });
 
+  group('Threshold date', () {
+    setUp(() async {
+      file = fs.file('todoThresholdDate.txt');
+      await file.create();
+      await file.writeAsString(
+        'TodoA t:2024-05-01',
+        flush: true,
+      );
+    });
+    testWidgets('renders threshold date', (tester) async {
+      await tester.pumpWidget(TodoListPageMaterialApp(
+        localFile: file,
+      ));
+      await tester.pumpAndSettle();
+
+      final TodoListTile todoTile =
+          tester.widget<TodoListTile>(find.byType(TodoListTile));
+      expect(
+        find.descendant(
+          of: find.byWidget(todoTile),
+          matching: find.text('TodoA', findRichText: true),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byWidget(todoTile),
+          matching: find.byIcon(Icons.schedule),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byWidget(todoTile),
+          matching: find.text('2024-05-01'),
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+
   group('Filter', () {
     setUp(() async {
       file = fs.file('todoFilter.txt');

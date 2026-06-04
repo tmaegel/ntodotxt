@@ -343,7 +343,7 @@ class TodoListTile extends StatelessWidget {
   Widget _buildTitle(BuildContext context) {
     final List<String> items = todo.description.split(' ')
       ..removeWhere(
-        (String item) => item.startsWith('due:'),
+        (String item) => item.startsWith('due:') || item.startsWith('t:'),
       );
 
     return RichText(
@@ -400,6 +400,12 @@ class TodoListTile extends StatelessWidget {
             mono: true,
             iconData: Icons.event,
             label: Todo.date2Str(todo.dueDate!)!,
+          ),
+        if (todo.thresholdDate != null)
+          BasicIconChip(
+            mono: true,
+            iconData: Icons.schedule,
+            label: Todo.date2Str(todo.thresholdDate!)!,
           )
       ],
     );
