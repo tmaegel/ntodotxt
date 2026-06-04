@@ -438,42 +438,6 @@ class Todo extends Equatable {
     );
   }
 
-  /// Creates a todo object that only sets the values
-  /// that have been explicitly edited.
-  /// The other values remain to null.
-  Todo copyDiff({
-    bool? completion,
-    Priority? priority,
-    DateTime? completionDate,
-    DateTime? creationDate,
-    String? description,
-  }) {
-    return Todo(
-      id: id,
-      completion: completion,
-      priority: priority,
-      completionDate: completionDate,
-      // Once the creationDate is set, keep it.
-      creationDate: creationDate ?? this.creationDate,
-      description: description,
-    );
-  }
-
-  /// Copy only the explicitly set attributes into the new object.
-  /// Use the existing values for the rest.
-  /// If the values of a variable with an underscore prefix are not null, they have been
-  /// explicitly edited.
-  Todo copyMerge(Todo todo) {
-    return Todo(
-      id: id,
-      completion: _completion ?? todo.completion,
-      priority: _priority ?? todo.priority,
-      completionDate: _completionDate ?? todo.completionDate,
-      creationDate: _creationDate ?? todo.creationDate,
-      description: _description ?? todo.description,
-    );
-  }
-
   @override
   List<Object?> get props => [
         completion,

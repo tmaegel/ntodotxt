@@ -166,7 +166,14 @@ class LocalTodoListApi extends TodoListApi {
     } else {
       // If exist update todo and merge changes only.
       log.info('Update existing todo');
-      todoList[index] = todo.copyMerge(todoList[index]);
+      todoList[index] = Todo(
+        id: todoList[index].id, // Using existing id to prevent changes.
+        completion: todo.completion,
+        priority: todo.priority,
+        completionDate: todo.completionDate,
+        creationDate: todo.creationDate,
+        description: todo.description,
+      );
     }
 
     return todoList;

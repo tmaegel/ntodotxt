@@ -90,15 +90,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   ) async {
     emit(state.loading());
     try {
-      if (_repository.existsTodo(event.todo)) {
-        _repository.saveTodo(
-          event.todo.copyDiff(completion: event.completion),
-        );
-      } else {
-        _repository.saveTodo(
-          event.todo.copyWith(completion: event.completion),
-        );
-      }
+      _repository.saveTodo(
+        event.todo.copyWith(completion: event.completion),
+      );
       await _repository
           .writeToSource()
           .whenComplete(() => emit(state.success()));

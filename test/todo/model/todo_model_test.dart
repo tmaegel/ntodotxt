@@ -245,49 +245,6 @@ void main() {
     });
   });
 
-  group('todo copyDiff()', () {
-    test('copy explizit set attributes but keep creationDate if set', () {
-      final DateTime now = DateTime.now();
-      final Todo todo = Todo(
-        priority: Priority.A,
-        creationDate: now,
-        description: 'Write some tests',
-      );
-      final Todo todo2 = todo.copyDiff(completion: true);
-      expect(todo2.completion, true);
-      expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
-      expect(todo2.creationDate, DateTime(now.year, now.month, now.day));
-      expect(todo2.priority, Priority.none);
-      expect(todo2.description, '');
-    });
-  });
-
-  group('todo copyMerge()', () {
-    test('do not overwrite attrs if not set in the diff', () {
-      final DateTime now = DateTime.now();
-      Todo todo = Todo(
-        completion: false,
-        priority: Priority.A,
-        creationDate: now,
-        description: 'Write some tests +project1 @context1 key:value',
-      );
-      final Todo diff = todo.copyDiff(completion: true);
-      todo = todo.copyWith(
-        priority: Priority.B,
-        description: 'Write more tests +project1 @context1 key:value',
-      );
-      final Todo todo2 = diff.copyMerge(todo);
-      expect(todo2.priority, Priority.B);
-      expect(
-          todo2.description, 'Write more tests +project1 @context1 key:value');
-      expect(todo2.projects, {'project1'});
-      expect(todo2.contexts, {'context1'});
-      expect(todo2.keyValues, {'key:value'});
-      expect(todo2.completion, true);
-      expect(todo2.completionDate, DateTime(now.year, now.month, now.day));
-    });
-  });
-
   group('todo fromString()', () {
     group('todo completion', () {
       group('completed', () {
