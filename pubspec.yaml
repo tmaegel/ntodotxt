@@ -39,10 +39,10 @@ dev_dependencies:
     sdk: flutter
   flutter_driver:
     sdk: flutter
+  dart_pubspec_licenses: ^3.2.0
   file: ^7.0.0
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^6.0.0
-  flutter_oss_licenses: ^3.0.4
   test_cov_console: ^0.2.2
 
 flutter_launcher_icons:
