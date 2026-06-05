@@ -13,8 +13,7 @@ import 'package:ntodotxt/filter/state/filter_cubit.dart';
 import 'package:ntodotxt/filter/state/filter_state.dart';
 import 'package:ntodotxt/login/state/login_cubit.dart';
 import 'package:ntodotxt/login/state/login_state.dart';
-import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
-import 'package:ntodotxt/setting/state/interaction_settings_state.dart';
+import 'package:ntodotxt/setting/widget/settings_item.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_state.dart';
 
@@ -53,6 +52,14 @@ class SettingsView extends StatelessWidget {
           const DefaultListOrderSettingsItem(),
           const DefaultListFilterSettingsItem(),
           const DefaultListGroupSettingsItem(),
+          const Divider(),
+          ListTile(
+            title: Text(
+              'Todo',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          const AutoCreationDateEnabledSettingsItem(),
           const Divider(),
           ListTile(
             title: Text(
@@ -188,61 +195,6 @@ class DefaultListGroupSettingsItem extends StatelessWidget {
   }
 }
 
-class SwipeLeftActionEnabledSettingsItem extends StatelessWidget {
-  const SwipeLeftActionEnabledSettingsItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
-      buildWhen: (InteractionSettingsState previousState,
-              InteractionSettingsState state) =>
-          previousState.swipeLeftActionEnabled != state.swipeLeftActionEnabled,
-      builder: (BuildContext context, InteractionSettingsState state) {
-        return SwitchListTile(
-          title: const Text('Enable swipe left action'),
-          value: state.swipeLeftActionEnabled,
-          subtitle: const Text(
-            'If enabled, you can swipe left on a item to perform an action.',
-          ),
-          isThreeLine: true,
-          onChanged: (bool? value) {
-            BlocProvider.of<InteractionSettingsCubit>(context)
-                .setSwipeLeftActionEnabled(value ?? false);
-          },
-        );
-      },
-    );
-  }
-}
-
-class SwipeRightActionEnabledSettingsItem extends StatelessWidget {
-  const SwipeRightActionEnabledSettingsItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
-      buildWhen: (InteractionSettingsState previousState,
-              InteractionSettingsState state) =>
-          previousState.swipeRightActionEnabled !=
-          state.swipeRightActionEnabled,
-      builder: (BuildContext context, InteractionSettingsState state) {
-        return SwitchListTile(
-          title: const Text('Enable swipe right action'),
-          value: state.swipeRightActionEnabled,
-          subtitle: const Text(
-            'If enabled, you can swipe right on a item to perform an action.',
-          ),
-          isThreeLine: true,
-          onChanged: (bool? value) {
-            BlocProvider.of<InteractionSettingsCubit>(context)
-                .setSwipeRightActionEnabled(value ?? false);
-          },
-        );
-      },
-    );
-  }
-}
-
 class LocalPathSettingsItem extends StatelessWidget {
   const LocalPathSettingsItem({super.key});
 
@@ -277,9 +229,13 @@ class RemotePathSettingsItem extends StatelessWidget {
         return Visibility(
           visible: loginState is LoginWebDAV,
           child: BlocBuilder<TodoFileCubit, TodoFileState>(
-            buildWhen: (TodoFileState previousTodoFileState,
-                    TodoFileState todoFileState) =>
-                previousTodoFileState.remotePath != todoFileState.remotePath,
+            buildWhen:
+                (
+                  TodoFileState previousTodoFileState,
+                  TodoFileState todoFileState,
+                ) =>
+                    previousTodoFileState.remotePath !=
+                    todoFileState.remotePath,
             builder: (BuildContext context, TodoFileState todoFileState) {
               return ListTile(
                 title: const Text('Remote path'),
