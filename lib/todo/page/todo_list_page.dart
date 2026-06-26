@@ -70,6 +70,7 @@ class _TodoListPageState extends ScollToTopViewState<TodoListPage> {
                   child: LoadingIndicatorWrapper(
                     loading: todoListState is TodoListLoading,
                     child: CustomScrollView(
+                      controller: scrollController,
                       slivers: [
                         MainSliverAppBar(
                           title: 'Todos',
@@ -166,10 +167,10 @@ class LoadingIndicatorWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return Stack(
-        children: <Widget>[
-          child,
+    return Stack(
+      children: <Widget>[
+        child,
+        if (loading)
           // Custom progress indicator.
           Align(
             alignment: Alignment.topCenter,
@@ -189,11 +190,8 @@ class LoadingIndicatorWrapper extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      );
-    } else {
-      return child;
-    }
+      ],
+    );
   }
 }
 
@@ -264,7 +262,7 @@ class TodoListTile extends StatelessWidget {
               state.swipeRightActionEnabled,
       builder: (BuildContext context, InteractionSettingsState state) {
         return Dismissible(
-          key: Key(todo.id),
+          key: Key('${todo.id}_${todo.completion}'),
           direction:
               state.swipeLeftActionEnabled && state.swipeRightActionEnabled
                   ? DismissDirection.horizontal
