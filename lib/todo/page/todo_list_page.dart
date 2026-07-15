@@ -218,21 +218,14 @@ class TodoList extends StatelessWidget {
                 Iterable<Todo> todoList = sectionList[section]!;
                 return Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: ListTile(
-                        key: PageStorageKey<String>(section),
-                        title: Text(
-                          section,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
+                    ListTile(
+                      key: PageStorageKey<String>(section),
+                      title: Text(
+                        section,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ),
-                    for (var todo in todoList)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: TodoListTile(todo: todo),
-                      ),
+                    for (var todo in todoList) TodoListTile(todo: todo),
                     if (index < sectionList.length - 1) const Divider(),
                   ],
                 );
