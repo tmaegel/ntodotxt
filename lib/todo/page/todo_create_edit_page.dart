@@ -38,7 +38,20 @@ class TodoCreateEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => TodoCubit(todo: initTodo),
+      create: (BuildContext context) {
+        final TodoSettingsState todoSettingsState = context
+            .read<TodoSettingsCubit>()
+            .state;
+
+        final Todo todo =
+            newTodo &&
+                todoSettingsState.autoCreationDateEnabled &&
+                initTodo.creationDate == null
+            ? initTodo.copyWith(creationDate: DateTime.now())
+            : initTodo;
+
+        return TodoCubit(todo: todo);
+      },
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -577,6 +590,7 @@ class TodoCreationDateItem extends StatelessWidget {
     final DateTime? date = await TodoDatePicker.pickDate(
       context: context,
       initialDate: state.todo.creationDate,
+      endDateDaysOffset: 0, // You can not set creation date in the future.
     );
     if (date != null && context.mounted) {
       final TodoCubit cubit = context.read<TodoCubit>();
