@@ -11,16 +11,24 @@ class TodoDatePicker {
     int? startDateDaysOffset,
     int? endDateDaysOffset,
   }) async {
-    final DateTime initial = initialDate ?? DateTime.now();
+    final DateTime now = DateTime.now();
+
+    DateTime initial = now;
+    if (initialDate != null) {
+      // initialDate is in the past
+      if (now.compareTo(initialDate) == 1) {
+        initial = initialDate;
+      }
+    }
 
     return await showDatePicker(
       useRootNavigator: false,
       context: context,
-      firstDate: initial.subtract(
+      firstDate: now.subtract(
         Duration(days: startDateDaysOffset ?? defaultDaysOffset),
       ),
       initialDate: initial,
-      lastDate: initial.add(
+      lastDate: now.add(
         Duration(days: endDateDaysOffset ?? defaultDaysOffset),
       ),
       locale: const Locale('en', 'GB'),
