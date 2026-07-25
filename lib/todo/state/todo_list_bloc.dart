@@ -73,7 +73,12 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListTodoDeleted event,
     Emitter<TodoListState> emit,
   ) async {
-    emit(state.loading());
+    emit(
+      state.loading(
+        todoList:
+            state.todoList.where((Todo t) => t.id != event.todo.id).toList(),
+      ),
+    );
     try {
       _repository.deleteTodo(event.todo.copyWith());
       await _repository
@@ -88,11 +93,16 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     TodoListTodoCompletionToggled event,
     Emitter<TodoListState> emit,
   ) async {
-    emit(state.loading());
+    final Todo updatedTodo = event.todo.copyWith(completion: event.completion);
+    emit(
+      state.loading(
+        todoList: state.todoList
+            .map((Todo t) => t.id == event.todo.id ? updatedTodo : t)
+            .toList(),
+      ),
+    );
     try {
-      _repository.saveTodo(
-        event.todo.copyWith(completion: event.completion),
-      );
+      _repository.saveTodo(updatedTodo);
       await _repository
           .writeToSource()
           .whenComplete(() => emit(state.success()));
