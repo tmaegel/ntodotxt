@@ -10,8 +10,8 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
   TodoListBloc({
     required TodoListRepository repository,
-  })  : _repository = repository,
-        super(const TodoListLoading()) {
+  }) : _repository = repository,
+       super(const TodoListLoading()) {
     on<TodoListSubscriptionRequested>(_onTodoListSubscriptionRequested);
     on<TodoListSynchronizationRequested>(_onTodoListSynchronizationRequested);
     on<TodoListTodoSubmitted>(_onTodoSubmitted);
@@ -40,14 +40,14 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     try {
       // Initialize only if this is the first time.
       if (state is TodoListLoading) {
-        await _repository
-            .initSource()
-            .whenComplete(() => emit(state.success()));
+        await _repository.initSource().whenComplete(
+          () => emit(state.success()),
+        );
       } else {
         emit(state.loading());
-        await _repository
-            .readFromSource()
-            .whenComplete(() => emit(state.success()));
+        await _repository.readFromSource().whenComplete(
+          () => emit(state.success()),
+        );
       }
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
@@ -61,9 +61,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     emit(state.loading());
     try {
       _repository.saveTodo(event.todo.copyWith());
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
+      await _repository.writeToSource().whenComplete(
+        () => emit(state.success()),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -76,9 +76,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     emit(state.loading());
     try {
       _repository.deleteTodo(event.todo.copyWith());
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
+      await _repository.writeToSource().whenComplete(
+        () => emit(state.success()),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -93,9 +93,9 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       _repository.saveTodo(
         event.todo.copyWith(completion: event.completion),
       );
-      await _repository
-          .writeToSource()
-          .whenComplete(() => emit(state.success()));
+      await _repository.writeToSource().whenComplete(
+        () => emit(state.success()),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

@@ -12,7 +12,7 @@ class LocalFile {
   final File file;
 
   LocalFile(String path)
-      : file = File(path.replaceAllMapped(RegExp(r'\/{2,}'), (match) => '/'));
+    : file = File(path.replaceAllMapped(RegExp(r'\/{2,}'), (match) => '/'));
 
   LocalFile.fromFile(this.file);
 
@@ -26,7 +26,7 @@ class WebDAVFile {
   final WebDAVClient client;
 
   WebDAVFile(String path, this.client)
-      : path = path.replaceAllMapped(RegExp(r'\/{2,}'), (match) => '/');
+    : path = path.replaceAllMapped(RegExp(r'\/{2,}'), (match) => '/');
 
   Future<webdav.File> get file async => await client.getFile(filename: path);
 
@@ -115,7 +115,7 @@ class LocalTodoListApi extends TodoListApi {
   List<Todo> _read(List<String> rawTodoList) {
     return [
       for (var t in rawTodoList)
-        if (t.isNotEmpty) Todo.fromString(value: t)
+        if (t.isNotEmpty) Todo.fromString(value: t),
     ];
   }
 
@@ -150,8 +150,8 @@ class LocalTodoListApi extends TodoListApi {
 
   @override
   Future<void> writeToSource() async => write(
-        _todoList.join(Platform.lineTerminator),
-      );
+    _todoList.join(Platform.lineTerminator),
+  );
 
   @override
   bool existsTodo(Todo todo) =>
@@ -234,10 +234,10 @@ class WebDAVTodoListApi extends LocalTodoListApi {
     required String remoteFilePath,
     required WebDAVClient client,
   }) : this(
-          LocalFile(localFilePath),
-          WebDAVFile(remoteFilePath, client),
-          client,
-        );
+         LocalFile(localFilePath),
+         WebDAVFile(remoteFilePath, client),
+         client,
+       );
 
   @override
   Future<void> initSource() async {

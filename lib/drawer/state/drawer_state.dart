@@ -11,9 +11,9 @@ final class DrawerState extends Equatable {
 
   @override
   List<Object?> get props => [
-        index,
-        prevIndex,
-      ];
+    index,
+    prevIndex,
+  ];
 
   @override
   String toString() => 'DrawerState { index: $index prevIndex: $prevIndex }';

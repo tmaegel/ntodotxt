@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ntodotxt/common/widget/chip.dart';
 import 'package:ntodotxt/common/widget/contexts_dialog.dart';
 import 'package:ntodotxt/common/widget/key_values_dialog.dart';
 import 'package:ntodotxt/common/widget/priorities_dialog.dart';
 import 'package:ntodotxt/common/widget/projects_dialog.dart';
+import 'package:ntodotxt/setting/controller/fake_setting_controller.dart';
+import 'package:ntodotxt/setting/repository/setting_repository.dart';
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
+import 'package:ntodotxt/setting/state/todo_settings_cubit.dart';
 import 'package:ntodotxt/todo/model/todo_model.dart';
 import 'package:ntodotxt/todo/page/todo_create_edit_page.dart';
 
@@ -24,24 +29,56 @@ class MaterialAppWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TodoCreateEditPage(
-        initTodo: initTodo ?? Todo(),
-        newTodo: initTodo == null ? true : false,
-        projects: projects,
-        contexts: contexts,
-        keyValues: keyValues,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) => SettingRepository(
+            InMemorySettingController(),
+          ),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<TodoSettingsCubit>(
+            create: (BuildContext context) => TodoSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
+          ),
+          BlocProvider<InteractionSettingsCubit>(
+            create: (BuildContext context) => InteractionSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
+          ),
+        ],
+        child: Builder(
+          builder: (BuildContext context) {
+            return MaterialApp(
+              home: TodoCreateEditPage(
+                initTodo: initTodo ?? Todo(),
+                newTodo: initTodo == null ? true : false,
+                projects: projects,
+                contexts: contexts,
+                keyValues: keyValues,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
 
 void main() {
+  setUp(() {
+    InMemorySettingController.settings.clear();
+  });
+
   group('TodoCreateEditPage', () {
     group('narrow view', () {
       group('create mode', () {
-        testWidgets('found no SaveTodoIconButton if name is empty',
-            (tester) async {
+        testWidgets('found no SaveTodoIconButton if name is empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -55,8 +92,9 @@ void main() {
             findsNothing,
           );
         });
-        testWidgets('found SaveTodoIconButton if name is not empty',
-            (tester) async {
+        testWidgets('found SaveTodoIconButton if name is not empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -122,15 +160,18 @@ void main() {
         });
       });
       group('edit mode', () {
-        testWidgets('found no SaveTodoIconButton if todo has not be changed',
-            (tester) async {
+        testWidgets('found no SaveTodoIconButton if todo has not be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -145,8 +186,9 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found SaveTodoIconButton if todo has be changed',
-            (tester) async {
+        testWidgets('found SaveTodoIconButton if todo has be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -171,8 +213,10 @@ void main() {
               matching: find.text('A'),
             ),
           );
-          await tester.drag(find.byType(DraggableScrollableSheet),
-              const Offset(0, 500)); // Dismiss dialog.
+          await tester.drag(
+            find.byType(DraggableScrollableSheet),
+            const Offset(0, 500),
+          ); // Dismiss dialog.
           await tester.pumpAndSettle();
           expect(
             find.descendant(
@@ -199,8 +243,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -220,8 +266,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -241,8 +289,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -260,8 +310,9 @@ void main() {
 
     group('wide view', () {
       group('create mode', () {
-        testWidgets('found no SaveTodoIconButton if name is empty',
-            (tester) async {
+        testWidgets('found no SaveTodoIconButton if name is empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -275,8 +326,9 @@ void main() {
             findsNothing,
           );
         });
-        testWidgets('found SaveTodoIconButton if name is not empty',
-            (tester) async {
+        testWidgets('found SaveTodoIconButton if name is not empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -342,15 +394,18 @@ void main() {
         });
       });
       group('edit mode', () {
-        testWidgets('found no SaveTodoIconButton if todo has not be changed',
-            (tester) async {
+        testWidgets('found no SaveTodoIconButton if todo has not be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -365,8 +420,9 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found SaveTodoIconButton if todo has be changed',
-            (tester) async {
+        testWidgets('found SaveTodoIconButton if todo has be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -391,8 +447,10 @@ void main() {
               matching: find.text('A'),
             ),
           );
-          await tester.drag(find.byType(DraggableScrollableSheet),
-              const Offset(0, 500)); // Dismiss dialog.
+          await tester.drag(
+            find.byType(DraggableScrollableSheet),
+            const Offset(0, 500),
+          ); // Dismiss dialog.
           await tester.pumpAndSettle();
           expect(
             find.descendant(
@@ -419,8 +477,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -440,8 +500,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -461,8 +523,10 @@ void main() {
 
           await tester.pumpWidget(
             MaterialAppWrapper(
-              initTodo:
-                  Todo(priority: Priority.A, description: 'Code something'),
+              initTodo: Todo(
+                priority: Priority.A,
+                description: 'Code something',
+              ),
             ),
           );
           await tester.pumpAndSettle();
@@ -969,8 +1033,10 @@ void main() {
             matching: find.text('A'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1005,8 +1071,10 @@ void main() {
             matching: find.text('project1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1052,8 +1120,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1091,8 +1161,10 @@ void main() {
             matching: find.text('context1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1138,8 +1210,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1177,8 +1251,10 @@ void main() {
             matching: find.text('key1:val1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1224,8 +1300,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -1269,10 +1347,20 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoCompletionDateItem (already set)', (tester) async {
+      testWidgets('TodoCompletionDateItem (already set - past)', (
+        tester,
+      ) async {
+        final DateTime past = DateTime.now().subtract(const Duration(days: 10));
+        final String pastStr =
+            '${past.year.toString()}-${past.month.toString().padLeft(2, '0')}-${past.day.toString().padLeft(2, '0')}';
+
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(description: 'x 2024-01-01 Code something'),
+            initTodo: Todo(
+              completion: true,
+              completionDate: past,
+              description: 'Code something',
+            ),
           ),
         );
         await tester.pumpAndSettle();
@@ -1293,13 +1381,53 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final DateTime now = DateTime.now();
-        final String today =
-            '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
             of: find.byType(TodoCompletionDateItem),
-            matching: find.text(today),
+            matching: find.text(pastStr),
+          ),
+          findsOneWidget,
+        );
+      });
+      testWidgets('TodoCompletionDateItem (already set - future)', (
+        tester,
+      ) async {
+        final DateTime future = DateTime.now().add(const Duration(days: 10));
+
+        await tester.pumpWidget(
+          MaterialAppWrapper(
+            initTodo: Todo(
+              completion: true,
+              completionDate: future,
+              description: 'Code something',
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.dragUntilVisible(
+          find.byType(TodoCompletionDateItem),
+          find.byType(CustomScrollView),
+          const Offset(0, -100),
+        );
+
+        await tester.tap(find.byType(TodoCompletionDateItem));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final DateTime today = DateTime.now();
+        final String todayStr =
+            '${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+        expect(
+          find.descendant(
+            of: find.byType(TodoCompletionDateItem),
+            matching: find.text(todayStr),
           ),
           findsOneWidget,
         );
@@ -1307,7 +1435,10 @@ void main() {
       testWidgets('TodoCompletionDateItem (unset)', (tester) async {
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(completion: true, description: 'Code something'),
+            initTodo: Todo(
+              completion: true,
+              description: 'Code something',
+            ),
           ),
         );
         await tester.pumpAndSettle();
@@ -1366,10 +1497,14 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoDueDateItem (already set)', (tester) async {
+      testWidgets('TodoDueDateItem (already set - past)', (tester) async {
+        final DateTime past = DateTime.now().subtract(const Duration(days: 10));
+        final String pastStr =
+            '${past.year.toString()}-${past.month.toString().padLeft(2, '0')}-${past.day.toString().padLeft(2, '0')}';
+
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(description: 'Code something due:2024-02-27'),
+            initTodo: Todo(description: 'Code something due:$pastStr'),
           ),
         );
         await tester.pumpAndSettle();
@@ -1393,13 +1528,52 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final DateTime initial = DateTime.parse('2024-02-27');
-        final String today =
-            '${initial.year.toString()}-${initial.month.toString().padLeft(2, '0')}-${initial.day.toString().padLeft(2, '0')}';
+        final DateTime today = DateTime.now();
+        final String todayStr =
+            '${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
             of: dueDateItem,
-            matching: find.text(today),
+            matching: find.text(todayStr),
+          ),
+          findsOneWidget,
+        );
+      });
+      testWidgets('TodoDueDateItem (already set - future)', (tester) async {
+        final DateTime future = DateTime.now().add(const Duration(days: 10));
+        final String futureStr =
+            '${future.year.toString()}-${future.month.toString().padLeft(2, '0')}-${future.day.toString().padLeft(2, '0')}';
+
+        await tester.pumpWidget(
+          MaterialAppWrapper(
+            initTodo: Todo(description: 'Code something due:$futureStr'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final Finder dueDateItem = find.byType(TodoDueDateItem);
+        await tester.dragUntilVisible(
+          dueDateItem,
+          find.byType(CustomScrollView),
+          const Offset(0, -100),
+        );
+        await tester.ensureVisible(dueDateItem);
+        await tester.pumpAndSettle();
+
+        await tester.tap(dueDateItem);
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: dueDateItem,
+            matching: find.text(futureStr),
           ),
           findsOneWidget,
         );

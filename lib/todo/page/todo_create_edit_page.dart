@@ -11,6 +11,8 @@ import 'package:ntodotxt/common/widget/date_picker.dart';
 import 'package:ntodotxt/common/widget/key_values_dialog.dart';
 import 'package:ntodotxt/common/widget/priorities_dialog.dart';
 import 'package:ntodotxt/common/widget/projects_dialog.dart';
+import 'package:ntodotxt/setting/state/todo_settings_cubit.dart';
+import 'package:ntodotxt/setting/state/todo_settings_state.dart';
 import 'package:ntodotxt/todo/model/todo_model.dart';
 import 'package:ntodotxt/todo/state/todo_cubit.dart';
 import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
@@ -36,7 +38,20 @@ class TodoCreateEditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => TodoCubit(todo: initTodo),
+      create: (BuildContext context) {
+        final TodoSettingsState todoSettingsState = context
+            .read<TodoSettingsCubit>()
+            .state;
+
+        final Todo todo =
+            newTodo &&
+                todoSettingsState.autoCreationDateEnabled &&
+                initTodo.creationDate == null
+            ? initTodo.copyWith(creationDate: DateTime.now())
+            : initTodo;
+
+        return TodoCubit(todo: todo);
+      },
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
@@ -84,7 +99,7 @@ class TodoCreateEditPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const TodoCreationDateItem(),
+                      TodoCreationDateItem(newTodo: newTodo),
                       if (!newTodo) const TodoCompletionDateItem(),
                       const TodoDueDateItem(),
                       const Divider(),
@@ -159,9 +174,9 @@ class TodoDialogWrapper extends StatelessWidget {
                   cancelLabel: 'Discard',
                 );
                 if (context.mounted && confirm) {
-                  context
-                      .read<TodoListBloc>()
-                      .add(TodoListTodoSubmitted(todo: state.todo));
+                  context.read<TodoListBloc>().add(
+                    TodoListTodoSubmitted(todo: state.todo),
+                  );
                   if (newTodo) {
                     if (context.mounted) {
                       SnackBarHandler.info(context, 'Todo has been created');
@@ -211,15 +226,15 @@ class DoneUndonePrimaryButton extends StatelessWidget {
 
   void setCompletionDate(BuildContext context, TodoState state) {
     context.read<TodoCubit>().toggleCompletion(
-          completion: true,
-          completionDate: DateTime.now(),
-        );
+      completion: true,
+      completionDate: DateTime.now(),
+    );
   }
 
   void unsetCompletionDate(BuildContext context) {
     context.read<TodoCubit>().toggleCompletion(
-          completion: false,
-        );
+      completion: false,
+    );
   }
 }
 
@@ -240,9 +255,9 @@ class SaveTodoIconButton extends StatelessWidget {
             tooltip: 'Save',
             icon: const Icon(Icons.save),
             onPressed: () async {
-              context
-                  .read<TodoListBloc>()
-                  .add(TodoListTodoSubmitted(todo: state.todo));
+              context.read<TodoListBloc>().add(
+                TodoListTodoSubmitted(todo: state.todo),
+              );
               if (context.mounted) {
                 SnackBarHandler.info(context, 'Todo saved');
                 context.pop();
@@ -274,9 +289,9 @@ class DeleteTodoIconButton extends StatelessWidget {
               cancelLabel: 'Cancel',
             );
             if (context.mounted && confirm) {
-              context
-                  .read<TodoListBloc>()
-                  .add(TodoListTodoDeleted(todo: state.todo));
+              context.read<TodoListBloc>().add(
+                TodoListTodoDeleted(todo: state.todo),
+              );
               if (context.mounted) {
                 SnackBarHandler.info(context, 'Todo has been deleted');
                 context.pop();
@@ -510,34 +525,62 @@ class TodoKeyValueTagsItem extends StatelessWidget {
 }
 
 class TodoCreationDateItem extends StatelessWidget {
-  const TodoCreationDateItem({super.key});
+  final bool newTodo;
+
+  const TodoCreationDateItem({
+    this.newTodo = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoCubit, TodoState>(
-      buildWhen: (TodoState previousState, TodoState state) {
-        return previousState.todo.creationDate != state.todo.creationDate;
-      },
-      builder: (BuildContext context, TodoState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            key: key,
-            leading: const Icon(Icons.edit_calendar),
-            title: const Text('Creation date'),
-            subtitle: Text(
-              state.todo.creationDate != null
-                  ? state.todo.fmtCreationDate
-                  : '-',
-            ),
-            trailing: state.todo.creationDate == null
-                ? null
-                : IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => unsetCreationDate(context),
-                  ),
-            onTap: () async => await setCreationDate(context, state),
-          ),
+    return BlocBuilder<TodoSettingsCubit, TodoSettingsState>(
+      buildWhen:
+          (
+            TodoSettingsState previousTodoSettingsState,
+            TodoSettingsState todoSettingsState,
+          ) {
+            return previousTodoSettingsState.autoCreationDateEnabled !=
+                todoSettingsState.autoCreationDateEnabled;
+          },
+      builder: (BuildContext context, TodoSettingsState todoSettingsState) {
+        return BlocBuilder<TodoCubit, TodoState>(
+          buildWhen: (TodoState previousTodoState, TodoState todoState) {
+            return previousTodoState.todo.creationDate !=
+                todoState.todo.creationDate;
+          },
+          builder: (BuildContext context, TodoState todoState) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                key: key,
+                leading: const Icon(Icons.edit_calendar),
+                title: const Text('Creation date'),
+                subtitle: newTodo
+                    ? Text(
+                        todoSettingsState.autoCreationDateEnabled
+                            ? Todo.date2Str(DateTime.now())!
+                            : '-',
+                      )
+                    : Text(
+                        todoState.todo.creationDate != null
+                            ? todoState.todo.fmtCreationDate
+                            : '-',
+                      ),
+                trailing: !newTodo
+                    ? todoState.todo.creationDate != null
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () => unsetCreationDate(context),
+                            )
+                          : null
+                    : null,
+                onTap: !newTodo
+                    ? () async => await setCreationDate(context, todoState)
+                    : null,
+              ),
+            );
+          },
         );
       },
     );
@@ -547,6 +590,7 @@ class TodoCreationDateItem extends StatelessWidget {
     final DateTime? date = await TodoDatePicker.pickDate(
       context: context,
       initialDate: state.todo.creationDate,
+      endDateDaysOffset: 0, // You can not set creation date in the future.
     );
     if (date != null && context.mounted) {
       final TodoCubit cubit = context.read<TodoCubit>();
@@ -610,9 +654,9 @@ class TodoCompletionDateItem extends StatelessWidget {
       if (formattedDate != null) {
         if (context.mounted) {
           context.read<TodoCubit>().toggleCompletion(
-                completion: true,
-                completionDate: date,
-              );
+            completion: true,
+            completionDate: date,
+          );
         }
       }
     }

@@ -12,8 +12,9 @@ import 'package:ntodotxt/setting/repository/setting_repository.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MaterialAppFilterSelector extends StatelessWidget {
-  final DatabaseController dbController =
-      const DatabaseController(inMemoryDatabasePath);
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final Widget selector;
 
   const MaterialAppFilterSelector({
@@ -61,9 +62,11 @@ void main() {
 
   group('default tags', () {
     testWidgets('uses default priority tags', (tester) async {
-      await tester.pumpWidget(MaterialAppFilterSelector(
-        selector: FilterSelector(),
-      ));
+      await tester.pumpWidget(
+        MaterialAppFilterSelector(
+          selector: FilterSelector(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(ChoiceChip), findsAny);
@@ -72,9 +75,11 @@ void main() {
 
   group('default behaviour', () {
     testWidgets('default tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppFilterSelector(
-        selector: FilterSelector(),
-      ));
+      await tester.pumpWidget(
+        MaterialAppFilterSelector(
+          selector: FilterSelector(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -88,9 +93,11 @@ void main() {
       );
     });
     testWidgets('non default tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppFilterSelector(
-        selector: FilterSelector(),
-      ));
+      await tester.pumpWidget(
+        MaterialAppFilterSelector(
+          selector: FilterSelector(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('completedOnly'));
@@ -107,9 +114,11 @@ void main() {
       );
     });
     testWidgets('tag cannot deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppFilterSelector(
-        selector: FilterSelector(),
-      ));
+      await tester.pumpWidget(
+        MaterialAppFilterSelector(
+          selector: FilterSelector(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('completedOnly'));
@@ -125,9 +134,11 @@ void main() {
       );
     });
     testWidgets('multiple tags cannot selected', (tester) async {
-      await tester.pumpWidget(MaterialAppFilterSelector(
-        selector: FilterSelector(),
-      ));
+      await tester.pumpWidget(
+        MaterialAppFilterSelector(
+          selector: FilterSelector(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('completedOnly'));

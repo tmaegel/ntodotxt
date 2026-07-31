@@ -17,8 +17,8 @@ class PrioritySelector extends StatelessWidget {
   }) : items = (items ?? Priority.values.toSet()) {
     if (items != null) {
       items.toList().sort(
-            (Priority a, Priority b) => a.toString().compareTo(b.toString()),
-          );
+        (Priority a, Priority b) => a.toString().compareTo(b.toString()),
+      );
     }
   }
 

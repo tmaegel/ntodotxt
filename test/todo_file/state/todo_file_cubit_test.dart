@@ -10,7 +10,7 @@ void main() {
   group('TodoFileCubit', () {
     test('Default values', () {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       expect(cubit.state, isA<TodoFileLoading>());
       expect(cubit.state.todoFilename, 'todo.txt');
@@ -22,21 +22,21 @@ void main() {
   group('saveLocalPath', () {
     test('Null value', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveLocalPath(null);
       expect(cubit.state.localPath, '/');
     });
     test('Without trailing /', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveLocalPath('/local');
       expect(cubit.state.localPath, '/local/');
     });
     test('With trailing /', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveLocalPath('/local/');
       expect(cubit.state.localPath, '/local/');
@@ -45,21 +45,21 @@ void main() {
   group('saveRemotePath', () {
     test('Null value', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveRemotePath(null);
       expect(cubit.state.remotePath, '/');
     });
     test('Without trailing /', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveRemotePath('/remote');
       expect(cubit.state.remotePath, '/remote/');
     });
     test('With trailing /', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveRemotePath('/remote/');
       expect(cubit.state.remotePath, '/remote/');
@@ -68,14 +68,14 @@ void main() {
   group('saveLocalFilename', () {
     test('Null value', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveLocalFilename(null);
       expect(cubit.state.todoFilename, 'todo.txt');
     });
     test('With value', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
       );
       await cubit.saveLocalFilename('todo2.txt');
       expect(cubit.state.todoFilename, 'todo2.txt');
@@ -84,7 +84,7 @@ void main() {
   group('resetToDefaults', () {
     test('Reset to defaults', () async {
       final TodoFileCubit cubit = TodoFileCubit(
-        repository: SettingRepository(FakeSettingController()),
+        repository: SettingRepository(InMemorySettingController()),
         todoFilename: 'todo2.txt',
         doneFilename: 'done2.txt',
         localPath: '/local',

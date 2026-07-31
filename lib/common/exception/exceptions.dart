@@ -50,10 +50,10 @@ class TodoInvalidKeyValueTag extends TodoException {
 
 class TodoForbiddenCompletionDate extends TodoException {
   const TodoForbiddenCompletionDate()
-      : super('Completion date is forbidden if todo is incompleted');
+    : super('Completion date is forbidden if todo is incompleted');
 }
 
 class TodoMissingCompletionDate extends TodoException {
   const TodoMissingCompletionDate()
-      : super('Completed todo requires a completion date');
+    : super('Completed todo requires a completion date');
 }

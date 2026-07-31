@@ -32,8 +32,9 @@ class BlocRepositoryWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseController dbController =
-        DatabaseController(inMemoryDatabasePath);
+    final DatabaseController dbController = DatabaseController(
+      inMemoryDatabasePath,
+    );
 
     return MultiRepositoryProvider(
       providers: [
@@ -63,8 +64,9 @@ void main() {
   group('FilterCreateEditPage', () {
     group('narrow view', () {
       group('create mode', () {
-        testWidgets('found no SaveFilterIconButton if name is empty',
-            (tester) async {
+        testWidgets('found no SaveFilterIconButton if name is empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -81,8 +83,9 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found SaveFilterIconButton if name is not empty',
-            (tester) async {
+        testWidgets('found SaveFilterIconButton if name is not empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -121,30 +124,32 @@ void main() {
 
       group('edit mode', () {
         testWidgets(
-            'found no SaveFilterIconButton if filter has not be changed',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(400, 800);
-          tester.view.devicePixelRatio = 1.0;
-          await tester.pumpWidget(
-            BlocRepositoryWrapper(
-              initFilter: const Filter().copyWith(name: 'filter'),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(
-            find.descendant(
-              of: find.byType(SaveFilterIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveFilterIconButton if filter has be changed',
-            (tester) async {
+          'found no SaveFilterIconButton if filter has not be changed',
+          (tester) async {
+            // Increase size to ensure all elements in list are visible.
+            tester.view.physicalSize = const Size(400, 800);
+            tester.view.devicePixelRatio = 1.0;
+            await tester.pumpWidget(
+              BlocRepositoryWrapper(
+                initFilter: const Filter().copyWith(name: 'filter'),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(
+              find.descendant(
+                of: find.byType(SaveFilterIconButton),
+                matching: find.byType(IconButton),
+              ),
+              findsNothing,
+            );
+            // resets the screen to its original size after the test end
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+          },
+        );
+        testWidgets('found SaveFilterIconButton if filter has be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -217,8 +222,9 @@ void main() {
 
     group('wide view', () {
       group('create mode', () {
-        testWidgets('found no SaveFilterIconButton if name is empty',
-            (tester) async {
+        testWidgets('found no SaveFilterIconButton if name is empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -235,8 +241,9 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found SaveFilterIconButton if name is not empty',
-            (tester) async {
+        testWidgets('found SaveFilterIconButton if name is not empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -274,30 +281,32 @@ void main() {
       });
       group('edit mode', () {
         testWidgets(
-            'found no SaveFilterIconButton if filter has not be changed',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-          await tester.pumpWidget(
-            BlocRepositoryWrapper(
-              initFilter: const Filter().copyWith(name: 'filter'),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(
-            find.descendant(
-              of: find.byType(SaveFilterIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveFilterIconButton if filter has be changed',
-            (tester) async {
+          'found no SaveFilterIconButton if filter has not be changed',
+          (tester) async {
+            // Increase size to ensure all elements in list are visible.
+            tester.view.physicalSize = const Size(800, 800);
+            tester.view.devicePixelRatio = 1.0;
+            await tester.pumpWidget(
+              BlocRepositoryWrapper(
+                initFilter: const Filter().copyWith(name: 'filter'),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(
+              find.descendant(
+                of: find.byType(SaveFilterIconButton),
+                matching: find.byType(IconButton),
+              ),
+              findsNothing,
+            );
+            // resets the screen to its original size after the test end
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+          },
+        );
+        testWidgets('found SaveFilterIconButton if filter has be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -552,8 +561,9 @@ void main() {
       testWidgets('FilterFilterItem', (tester) async {
         await tester.pumpWidget(
           BlocRepositoryWrapper(
-            initFilter:
-                const Filter().copyWith(filter: ListFilter.completedOnly),
+            initFilter: const Filter().copyWith(
+              filter: ListFilter.completedOnly,
+            ),
           ),
         );
         await tester.pumpAndSettle();
@@ -832,8 +842,10 @@ void main() {
             matching: find.text('A'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -870,8 +882,10 @@ void main() {
             matching: find.text('project1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -909,8 +923,10 @@ void main() {
             matching: find.text('context1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(

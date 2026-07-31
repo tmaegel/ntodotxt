@@ -35,8 +35,11 @@ class ScollToTopViewState<T extends ScollToTopView> extends State<T> {
   }
 
   void scrollToTop() {
-    scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 250), curve: Curves.linear);
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.linear,
+    );
   }
 
   @override

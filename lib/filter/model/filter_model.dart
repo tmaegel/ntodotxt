@@ -23,8 +23,8 @@ enum ListGroup {
 
 extension Order on ListOrder {
   static Set<ListOrder> get types => {
-        for (var t in ListOrder.values) t,
-      };
+    for (var t in ListOrder.values) t,
+  };
 
   static ListOrder byName(String? name) {
     if (name != null) {
@@ -84,8 +84,8 @@ extension Order on ListOrder {
 
 extension Filters on ListFilter {
   static Set<ListFilter> get types => {
-        for (var f in ListFilter.values) f,
-      };
+    for (var f in ListFilter.values) f,
+  };
 
   static ListFilter byName(String? name) {
     if (name != null) {
@@ -115,8 +115,8 @@ extension Filters on ListFilter {
 
 extension Groups on ListGroup {
   static Set<ListGroup> get types => {
-        for (var g in ListGroup.values) g,
-      };
+    for (var g in ListGroup.values) g,
+  };
 
   static ListGroup byName(String? name) {
     if (name != null) {
@@ -260,7 +260,7 @@ class Filter extends Equatable {
       name: map['name'] as String,
       priorities: {
         for (var p in map['priorities'].split(',')..sort())
-          if (p != null && p.isNotEmpty) Priorities.byName(p)
+          if (p != null && p.isNotEmpty) Priorities.byName(p),
       },
       projects: {
         for (var p in map['projects'].split(',')..sort())
@@ -339,25 +339,27 @@ class Filter extends Equatable {
           sections: order.sort(Priority.values).toSet(),
         );
       case ListGroup.project:
-        final Set<String> projects =
-            todoList.map((Todo todo) => todo.projects).fold<Set<String>>(
-          {},
-          (Set<String> previousValue, Set<String> value) {
-            return previousValue..addAll(value);
-          },
-        );
+        final Set<String> projects = todoList
+            .map((Todo todo) => todo.projects)
+            .fold<Set<String>>(
+              {},
+              (Set<String> previousValue, Set<String> value) {
+                return previousValue..addAll(value);
+              },
+            );
         return group.groupByProject(
           todoList: todoList,
           sections: order.sort(projects).toSet(),
         );
       case ListGroup.context:
-        Set<String> contexts =
-            todoList.map((Todo todo) => todo.contexts).fold<Set<String>>(
-          {},
-          (Set<String> previousValue, Set<String> value) {
-            return previousValue..addAll(value);
-          },
-        );
+        Set<String> contexts = todoList
+            .map((Todo todo) => todo.contexts)
+            .fold<Set<String>>(
+              {},
+              (Set<String> previousValue, Set<String> value) {
+                return previousValue..addAll(value);
+              },
+            );
         return group.groupByContext(
           todoList: todoList,
           sections: order.sort(contexts).toSet(),
@@ -427,22 +429,18 @@ class Filter extends Equatable {
 
   @override
   String toString() {
-    return 'Filter { id: $id, name: $name order: ${order.name} filter: ${filter.name} group: ${group.name} priorities: ${[
-      for (var p in priorities) p.name
-    ]} projects: ${[for (var p in projects) p]} contexts: ${[
-      for (var c in contexts) c
-    ]} }';
+    return 'Filter { id: $id, name: $name order: ${order.name} filter: ${filter.name} group: ${group.name} priorities: ${[for (var p in priorities) p.name]} projects: ${[for (var p in projects) p]} contexts: ${[for (var c in contexts) c]} }';
   }
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        priorities,
-        projects,
-        contexts,
-        order,
-        filter,
-        group,
-      ];
+    id,
+    name,
+    priorities,
+    projects,
+    contexts,
+    order,
+    filter,
+    group,
+  ];
 }

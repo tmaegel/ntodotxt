@@ -10,12 +10,12 @@ class FilterStateGroupDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'None': ListGroup.none,
-          'Upcoming': ListGroup.upcoming,
-          'Priority': ListGroup.priority,
-          'Project': ListGroup.project,
-          'Context': ListGroup.context,
-        };
+         'None': ListGroup.none,
+         'Upcoming': ListGroup.upcoming,
+         'Priority': ListGroup.priority,
+         'Project': ListGroup.project,
+         'Context': ListGroup.context,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -67,12 +67,12 @@ class DefaultFilterStateGroupDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'None': ListGroup.none,
-          'Upcoming': ListGroup.upcoming,
-          'Priority': ListGroup.priority,
-          'Project': ListGroup.project,
-          'Context': ListGroup.context,
-        };
+         'None': ListGroup.none,
+         'Upcoming': ListGroup.upcoming,
+         'Priority': ListGroup.priority,
+         'Project': ListGroup.project,
+         'Context': ListGroup.context,
+       };
 
   static Future<void> dialog({
     required BuildContext context,

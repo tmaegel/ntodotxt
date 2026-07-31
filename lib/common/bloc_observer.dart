@@ -9,7 +9,8 @@ class GenericBlocObserver extends BlocObserver {
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
     log.fine(
-        'STATE CHANGE: ${change.currentState.runtimeType} > ${change.nextState.runtimeType}');
+      'STATE CHANGE: ${change.currentState.runtimeType} > ${change.nextState.runtimeType}',
+    );
     log.finer('${bloc.runtimeType} $change');
   }
 

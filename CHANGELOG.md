@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump `equatable` to 2.0.8
 - Bump `file_picker` to 10.3.10
 - Bump `flex_color_scheme` to 8.4.0
+- Bump `flutter_secure_storage` to 10.3.1
 - Bump `go_router` to 15.1.3
 - Bump `permission_handler` to 12.0.3
 - Bump `sqflite_common_ffi` to 2.4.0+3

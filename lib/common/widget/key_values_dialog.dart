@@ -60,7 +60,7 @@ class _TodoKeyValueTagDialogState
   void onUpdate() {
     widget.cubit.updateKeyValues({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }

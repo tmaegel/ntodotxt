@@ -56,7 +56,7 @@ class _FilterContextTagDialogState
   void onUpdate() {
     widget.cubit.updateContexts({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }
@@ -117,7 +117,7 @@ class _TodoContextTagDialogState extends TagDialogState<TodoContextTagDialog> {
   void onUpdate() {
     widget.cubit.updateContexts({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }

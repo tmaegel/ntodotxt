@@ -8,8 +8,8 @@ class FilterListBloc extends Bloc<FilterListEvent, FilterListState> {
   final FilterRepository _repository;
 
   FilterListBloc({required FilterRepository repository})
-      : _repository = repository,
-        super(const FilterListLoading()) {
+    : _repository = repository,
+      super(const FilterListLoading()) {
     on<FilterListSubscriped>(_onFilterListSubscriped);
     on<FilterListSynchronizationRequested>(_onFilterSynchronizationRequested);
     on<FilterListFilterDeleted>(_onFilterDeleted);

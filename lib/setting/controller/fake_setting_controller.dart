@@ -4,10 +4,8 @@ import 'package:ntodotxt/setting/controller/setting_controller.dart'
     show SettingControllerInterface;
 import 'package:ntodotxt/setting/model/setting_model.dart' show Setting;
 
-class FakeSettingController implements SettingControllerInterface {
+class InMemorySettingController implements SettingControllerInterface {
   static final List<Setting> settings = [];
-
-  FakeSettingController();
 
   @override
   Future<List<Setting>> list() async => settings;
@@ -29,8 +27,10 @@ class FakeSettingController implements SettingControllerInterface {
   }
 
   @override
-  Future<Setting> getOrInsert(
-      {required dynamic identifier, required String defaultValue}) async {
+  Future<Setting> getOrInsert({
+    required dynamic identifier,
+    required String defaultValue,
+  }) async {
     Setting? result = await get(identifier);
     if (result == null) {
       Setting fallback = Setting(key: identifier, value: defaultValue);

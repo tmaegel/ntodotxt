@@ -79,10 +79,13 @@ class FilterListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
-      buildWhen: (InteractionSettingsState previousState,
-              InteractionSettingsState state) =>
-          previousState.swipeRightActionEnabled !=
-          state.swipeRightActionEnabled,
+      buildWhen:
+          (
+            InteractionSettingsState previousState,
+            InteractionSettingsState state,
+          ) =>
+              previousState.swipeRightActionEnabled !=
+              state.swipeRightActionEnabled,
       builder: (BuildContext context, InteractionSettingsState state) {
         return Dismissible(
           key: ValueKey<int>(filter.id!),
@@ -116,8 +119,8 @@ class FilterListTile extends StatelessWidget {
             if (direction == DismissDirection.startToEnd) {
               // Delete
               context.read<FilterListBloc>().add(
-                    FilterListFilterDeleted(filter: filter),
-                  );
+                FilterListFilterDeleted(filter: filter),
+              );
               SnackBarHandler.info(context, 'Filter has been deleted');
             }
           },

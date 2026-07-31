@@ -12,31 +12,37 @@ sealed class TodoListState extends Equatable {
   /// Returns a list with all projects of all todos.
   Set<String> get projects {
     // @todo: Sort
-    return todoList.map((Todo todo) => todo.projects).fold<Set<String>>(
-      {},
-      (Set<String> previousValue, Set<String> value) =>
-          previousValue..addAll(value),
-    );
+    return todoList
+        .map((Todo todo) => todo.projects)
+        .fold<Set<String>>(
+          {},
+          (Set<String> previousValue, Set<String> value) =>
+              previousValue..addAll(value),
+        );
   }
 
   /// Returns a list with all contexts of all todos.
   Set<String> get contexts {
     // @todo: Sort
-    return todoList.map((Todo todo) => todo.contexts).fold<Set<String>>(
-      {},
-      (Set<String> previousValue, Set<String> value) =>
-          previousValue..addAll(value),
-    );
+    return todoList
+        .map((Todo todo) => todo.contexts)
+        .fold<Set<String>>(
+          {},
+          (Set<String> previousValue, Set<String> value) =>
+              previousValue..addAll(value),
+        );
   }
 
   /// Returns a list with all key values of all todos.
   Set<String> get keyValues {
     // @todo: Sort
-    return todoList.map((Todo todo) => todo.fmtKeyValues).fold<Set<String>>(
-      {},
-      (Set<String> previousValue, Set<String> value) =>
-          previousValue..addAll(value),
-    );
+    return todoList
+        .map((Todo todo) => todo.fmtKeyValues)
+        .fold<Set<String>>(
+          {},
+          (Set<String> previousValue, Set<String> value) =>
+              previousValue..addAll(value),
+        );
   }
 
   Iterable<Todo> filteredTodoList(Filter filter) => filter.apply(todoList);
@@ -76,8 +82,8 @@ sealed class TodoListState extends Equatable {
 
   @override
   List<Object?> get props => [
-        todoList,
-      ];
+    todoList,
+  ];
 
   @override
   String toString() => 'TodoListState { }';
@@ -142,9 +148,9 @@ final class TodoListError extends TodoListState {
 
   @override
   List<Object?> get props => [
-        message,
-        todoList,
-      ];
+    message,
+    todoList,
+  ];
 
   @override
   String toString() => 'TodoListError { message: $message }';

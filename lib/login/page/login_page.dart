@@ -59,8 +59,8 @@ class _LocalLoginViewState extends State<LocalLoginView> {
                         try {
                           setState(() => loading = true);
                           await context.read<LoginCubit>().loginLocal(
-                                localTodoFilePath: state.localTodoFilePath,
-                              );
+                            localTodoFilePath: state.localTodoFilePath,
+                          );
                         } finally {
                           setState(() => loading = false);
                         }
@@ -196,15 +196,14 @@ class _WebDAVLoginViewState extends State<WebDAVLoginView> {
                             try {
                               setState(() => loading = true);
                               await context.read<LoginCubit>().loginWebDAV(
-                                    localTodoFilePath: state.localTodoFilePath,
-                                    remoteTodoFilePath:
-                                        state.remoteTodoFilePath,
-                                    server: serverAddr,
-                                    path: path,
-                                    username: username,
-                                    password: password,
-                                    acceptUntrustedCert: acceptUntrustedCert,
-                                  );
+                                localTodoFilePath: state.localTodoFilePath,
+                                remoteTodoFilePath: state.remoteTodoFilePath,
+                                server: serverAddr,
+                                path: path,
+                                username: username,
+                                password: password,
+                                acceptUntrustedCert: acceptUntrustedCert,
+                              );
                             } finally {
                               setState(() => loading = false);
                             }
@@ -276,8 +275,8 @@ class _ServerAddrFieldState extends State<ServerAddrField> {
             return 'Missing protocol';
           }
           if (!RegExp(
-                  r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$')
-              .hasMatch(value)) {
+            r'(?<proto>^(http|https):\/\/)(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$',
+          ).hasMatch(value)) {
             return 'Invalid format';
           }
           return null;
@@ -524,13 +523,13 @@ Use this option if it's important to you where your todos are stored on your dev
             if (!PlatformInfo.isAppOS ||
                 await Permission.manageExternalStorage.request().isGranted ||
                 await Permission.storage.request().isGranted) {
-              String? selectedDirectory =
-                  await FilePicker.platform.getDirectoryPath();
+              String? selectedDirectory = await FilePicker.platform
+                  .getDirectoryPath();
               if (context.mounted) {
                 // If user canceled the directory picker use app cache directory as fallback.
-                await context
-                    .read<TodoFileCubit>()
-                    .saveLocalPath(selectedDirectory ?? state.localPath);
+                await context.read<TodoFileCubit>().saveLocalPath(
+                  selectedDirectory ?? state.localPath,
+                );
               }
             }
           },
@@ -570,28 +569,29 @@ class _RemotePathInputState extends State<RemotePathInput> {
     return BlocBuilder<TodoFileCubit, TodoFileState>(
       builder: (BuildContext context, TodoFileState state) {
         return ListTile(
-            leading: const Icon(Icons.folder),
-            title: TextFormField(
-              controller: controller,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textCapitalization: TextCapitalization.none,
-              decoration: const InputDecoration(
-                labelText: 'Remote path',
-                hintText: defaultRemoteTodoPath,
-              ),
-              onChanged: (String value) async {
-                debounce.run(() async => await _save(context, value));
-              },
+          leading: const Icon(Icons.folder),
+          title: TextFormField(
+            controller: controller,
+            style: Theme.of(context).textTheme.bodyMedium,
+            textCapitalization: TextCapitalization.none,
+            decoration: const InputDecoration(
+              labelText: 'Remote path',
+              hintText: defaultRemoteTodoPath,
             ),
-            trailing: IconButton(
-              icon: const Icon(Icons.help_outline),
-              onPressed: () => InfoDialog.dialog(
-                context: context,
-                title: 'Remote path',
-                message:
-                    'This remote path is appended to the base path of the server connection. This makes it possible to define a user-defined path for the todo files.',
-              ),
-            ));
+            onChanged: (String value) async {
+              debounce.run(() async => await _save(context, value));
+            },
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => InfoDialog.dialog(
+              context: context,
+              title: 'Remote path',
+              message:
+                  'This remote path is appended to the base path of the server connection. This makes it possible to define a user-defined path for the todo files.',
+            ),
+          ),
+        );
       },
     );
   }
@@ -605,8 +605,9 @@ class _RemotePathInputState extends State<RemotePathInput> {
       await context.read<TodoFileCubit>().saveRemotePath(defaultRemoteTodoPath);
       controller.value = controller.value.copyWith(
         text: defaultRemoteTodoPath,
-        selection:
-            const TextSelection.collapsed(offset: defaultRemoteTodoPath.length),
+        selection: const TextSelection.collapsed(
+          offset: defaultRemoteTodoPath.length,
+        ),
       );
     } else {
       await context.read<TodoFileCubit>().saveRemotePath(value);
@@ -672,13 +673,14 @@ class _TodoFilenameInputState extends State<TodoFilenameInput> {
         context,
         'Empty todo filename is not allowed. Using default one.',
       );
-      await context
-          .read<TodoFileCubit>()
-          .saveLocalFilename(defaultTodoFilename);
+      await context.read<TodoFileCubit>().saveLocalFilename(
+        defaultTodoFilename,
+      );
       controller.value = controller.value.copyWith(
         text: defaultTodoFilename,
-        selection:
-            const TextSelection.collapsed(offset: defaultTodoFilename.length),
+        selection: const TextSelection.collapsed(
+          offset: defaultTodoFilename.length,
+        ),
       );
     } else {
       await context.read<TodoFileCubit>().saveLocalFilename(value);

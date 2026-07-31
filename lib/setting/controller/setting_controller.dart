@@ -4,8 +4,10 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 abstract class SettingControllerInterface
     implements ModelControllerInterface<Setting> {
-  Future<Setting> getOrInsert(
-      {required dynamic identifier, required String defaultValue});
+  Future<Setting> getOrInsert({
+    required dynamic identifier,
+    required String defaultValue,
+  });
 
   Future<int> updateOrInsert(Setting model);
 }
@@ -56,8 +58,10 @@ class SettingController implements SettingControllerInterface {
   }
 
   @override
-  Future<Setting> getOrInsert(
-      {required dynamic identifier, required String defaultValue}) async {
+  Future<Setting> getOrInsert({
+    required dynamic identifier,
+    required String defaultValue,
+  }) async {
     Setting? result = await get(identifier);
     if (result == null) {
       Setting fallback = Setting(key: identifier, value: defaultValue);

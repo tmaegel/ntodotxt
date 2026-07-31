@@ -25,24 +25,22 @@ sealed class LoginState extends Equatable {
     required String username,
     required String password,
     required bool acceptUntrustedCert,
-  }) =>
-      LoginWebDAV(
-        server: server,
-        path: path,
-        username: username,
-        password: password,
-        acceptUntrustedCert: acceptUntrustedCert,
-      );
+  }) => LoginWebDAV(
+    server: server,
+    path: path,
+    username: username,
+    password: password,
+    acceptUntrustedCert: acceptUntrustedCert,
+  );
 
   LoginError error({
     required String message,
-  }) =>
-      LoginError(message: message);
+  }) => LoginError(message: message);
 
   @override
   List<Object> get props => [
-        backend,
-      ];
+    backend,
+  ];
 
   @override
   String toString() => 'LoginState { }';
@@ -58,8 +56,8 @@ final class LoginLoading extends LoginState {
 
   @override
   List<Object> get props => [
-        backend,
-      ];
+    backend,
+  ];
 
   @override
   String toString() => 'LoginLoading { }';
@@ -75,8 +73,8 @@ final class Logout extends LoginState {
 
   @override
   List<Object> get props => [
-        backend,
-      ];
+    backend,
+  ];
 
   @override
   String toString() => 'Logout { }';
@@ -92,8 +90,8 @@ final class LoginLocal extends LoginState {
 
   @override
   List<Object> get props => [
-        backend,
-      ];
+    backend,
+  ];
 
   @override
   String toString() => 'LoginLocal { }';
@@ -131,24 +129,23 @@ final class LoginWebDAV extends LoginState {
     String? username,
     String? password,
     bool? acceptUntrustedCert,
-  }) =>
-      super.loginWebDAV(
-        server: server ?? this.server,
-        path: path ?? this.path,
-        username: username ?? this.username,
-        password: password ?? this.password,
-        acceptUntrustedCert: acceptUntrustedCert ?? this.acceptUntrustedCert,
-      );
+  }) => super.loginWebDAV(
+    server: server ?? this.server,
+    path: path ?? this.path,
+    username: username ?? this.username,
+    password: password ?? this.password,
+    acceptUntrustedCert: acceptUntrustedCert ?? this.acceptUntrustedCert,
+  );
 
   @override
   List<Object> get props => [
-        backend,
-        server,
-        path,
-        username,
-        password,
-        acceptUntrustedCert,
-      ];
+    backend,
+    server,
+    path,
+    username,
+    password,
+    acceptUntrustedCert,
+  ];
 
   @override
   String toString() => 'LoginWebDAV { }';
@@ -170,15 +167,14 @@ final class LoginError extends LoginState {
   @override
   LoginError copyWith({
     String? message,
-  }) =>
-      super.error(message: message ?? this.message);
+  }) => super.error(message: message ?? this.message);
 
   @override
   List<Object> get props => [
-        id,
-        backend,
-        message,
-      ];
+    id,
+    backend,
+    message,
+  ];
 
   @override
   String toString() => 'LoginError { message: $message }';

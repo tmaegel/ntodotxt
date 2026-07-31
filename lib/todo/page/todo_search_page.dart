@@ -176,20 +176,22 @@ class TodoSearchTile extends StatelessWidget {
       text: TextSpan(
         style: todo.completion
             ? Theme.of(context).textTheme.titleMedium?.copyWith(
-                  decoration: TextDecoration.lineThrough,
-                  decorationThickness: 4.0,
-                )
+                decoration: TextDecoration.lineThrough,
+                decorationThickness: 4.0,
+              )
             : Theme.of(context).textTheme.titleMedium,
         text: '',
         children: <TextSpan>[
           for (int i = 0; i < items.length; i++)
             TextSpan(
-                text: i == items.length - 1 ? items[i] : '${items[i]} ',
-                style: Todo.matchProject(items[i]) ||
-                        Todo.matchContext(items[i]) ||
-                        Todo.matchKeyValue(items[i])
-                    ? const TextStyle(fontWeight: FontWeight.bold)
-                    : null),
+              text: i == items.length - 1 ? items[i] : '${items[i]} ',
+              style:
+                  Todo.matchProject(items[i]) ||
+                      Todo.matchContext(items[i]) ||
+                      Todo.matchKeyValue(items[i])
+                  ? const TextStyle(fontWeight: FontWeight.bold)
+                  : null,
+            ),
         ],
       ),
       maxLines: 2,
@@ -226,7 +228,7 @@ class TodoSearchTile extends StatelessWidget {
             mono: true,
             iconData: Icons.event,
             label: Todo.date2Str(todo.dueDate!)!,
-          )
+          ),
       ],
     );
   }

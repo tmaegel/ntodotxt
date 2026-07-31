@@ -58,7 +58,9 @@ void main() async {
         await tester.tap(find.byTooltip('Open drawer'));
         await tester.pumpAndSettle();
         await tester.drag(
-            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, -500),
+        );
         await tester.pumpAndSettle();
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();
@@ -141,7 +143,9 @@ void main() async {
         await tester.tap(find.byTooltip('Open drawer'));
         await tester.pumpAndSettle();
         await tester.drag(
-            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, -500),
+        );
         await tester.pumpAndSettle();
         await tester.tap(find.text('Settings'));
         await tester.pumpAndSettle();

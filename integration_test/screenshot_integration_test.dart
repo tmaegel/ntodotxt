@@ -75,8 +75,9 @@ class FakeController extends Fake implements FilterController {
 }
 
 class AppTester extends StatelessWidget {
-  final DatabaseController dbController =
-      const DatabaseController(inMemoryDatabasePath);
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final ThemeMode? themeMode;
   final String appCacheDir;
 
@@ -131,11 +132,12 @@ class AppTester extends StatelessWidget {
             )..load(),
           ),
           BlocProvider<FilterListBloc>(
-            create: (BuildContext context) => FilterListBloc(
-              repository: context.read<FilterRepository>(),
-            )
-              ..add(const FilterListSubscriped())
-              ..add(const FilterListSynchronizationRequested()),
+            create: (BuildContext context) =>
+                FilterListBloc(
+                    repository: context.read<FilterRepository>(),
+                  )
+                  ..add(const FilterListSubscriped())
+                  ..add(const FilterListSynchronizationRequested()),
           ),
         ],
         child: Builder(
@@ -192,7 +194,7 @@ void main() async {
       priority: Priority.C,
       description:
           'Setup a good project management tool @development @productivity',
-    )
+    ),
   ];
 
   setUp(() async {
@@ -205,8 +207,9 @@ void main() async {
     );
     try {
       await client.upload(
-          content: todoList.join(Platform.lineTerminator),
-          filename: 'todo.txt');
+        content: todoList.join(Platform.lineTerminator),
+        filename: 'todo.txt',
+      );
     } catch (e) {
       fail('An exception was thrown: $e');
     }
@@ -240,7 +243,9 @@ void main() async {
         await tester.pumpAndSettle();
 
         await tester.drag(
-            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, -500),
+        );
         await tester.pumpAndSettle();
 
         await binding.convertFlutterSurfaceToImage();
@@ -256,10 +261,12 @@ void main() async {
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 5000));
 
-        await tester.tap(find.text(
-          'Publish this +app +learnflutter @development',
-          findRichText: true,
-        ));
+        await tester.tap(
+          find.text(
+            'Publish this +app +learnflutter @development',
+            findRichText: true,
+          ),
+        );
         await tester.pumpAndSettle();
 
         await binding.convertFlutterSurfaceToImage();
@@ -279,7 +286,9 @@ void main() async {
         await tester.pumpAndSettle();
 
         await tester.drag(
-            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, -500),
+        );
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Filters'));
@@ -302,7 +311,9 @@ void main() async {
         await tester.pumpAndSettle();
 
         await tester.drag(
-            find.byType(DraggableScrollableSheet), const Offset(0, -500));
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, -500),
+        );
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Filters'));

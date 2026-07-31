@@ -12,8 +12,9 @@ import 'package:ntodotxt/setting/repository/setting_repository.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MaterialAppContextSelector extends StatelessWidget {
-  final DatabaseController dbController =
-      const DatabaseController(inMemoryDatabasePath);
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final Widget selector;
 
   const MaterialAppContextSelector({
@@ -61,9 +62,11 @@ void main() {
 
   group('empty tags', () {
     testWidgets('no tags available', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(items: {}),
-      ));
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(items: {}),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('No context tags available'), findsOneWidget);
@@ -72,13 +75,15 @@ void main() {
 
   group('multiSelectionEnabled and emptySelectionAllowed enabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -89,13 +94,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -109,13 +116,15 @@ void main() {
       );
     });
     testWidgets('tag is deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -131,13 +140,15 @@ void main() {
       );
     });
     testWidgets('multiple tags selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -155,13 +166,15 @@ void main() {
 
   group('multiSelectionEnabled disabled and emptySelectionAllowed enabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -172,13 +185,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -192,13 +207,15 @@ void main() {
       );
     });
     testWidgets('tag is deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -214,13 +231,15 @@ void main() {
       );
     });
     testWidgets('no multiple selected tags', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -238,13 +257,15 @@ void main() {
 
   group('multiSelectionEnabled enabled and emptySelectionAllowed disabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -255,13 +276,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -275,13 +298,15 @@ void main() {
       );
     });
     testWidgets('tag cannot be deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -297,13 +322,15 @@ void main() {
       );
     });
     testWidgets('multiple tags selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -321,13 +348,15 @@ void main() {
 
   group('multiSelectionEnabled and emptySelectionAllowed disabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -338,13 +367,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -358,13 +389,15 @@ void main() {
       );
     });
     testWidgets('tag cannot be deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));
@@ -380,13 +413,15 @@ void main() {
       );
     });
     testWidgets('no multiple selected tags', (tester) async {
-      await tester.pumpWidget(MaterialAppContextSelector(
-        selector: ContextSelector(
-          items: {'context1', 'context2', 'context3'},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppContextSelector(
+          selector: ContextSelector(
+            items: {'context1', 'context2', 'context3'},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('context1'));

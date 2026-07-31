@@ -9,11 +9,11 @@ class InteractionSettingsCubit extends Cubit<InteractionSettingsState> {
   InteractionSettingsCubit({
     required this.repository,
   }) : super(
-          InteractionSettingsLoading(
-            swipeLeftActionEnabled: false,
-            swipeRightActionEnabled: false,
-          ),
-        );
+         InteractionSettingsLoading(
+           swipeLeftActionEnabled: false,
+           swipeRightActionEnabled: false,
+         ),
+       );
 
   bool parseBoolOrFalse(String? value) {
     return value?.trim().toLowerCase() == 'true';
@@ -25,9 +25,11 @@ class InteractionSettingsCubit extends Cubit<InteractionSettingsState> {
         emit(
           state.save(
             swipeLeftActionEnabled: parseBoolOrFalse(
-                (await repository.get(key: 'swipeLeftActionEnabled'))?.value),
+              (await repository.get(key: 'swipeLeftActionEnabled'))?.value,
+            ),
             swipeRightActionEnabled: parseBoolOrFalse(
-                (await repository.get(key: 'swipeRightActionEnabled'))?.value),
+              (await repository.get(key: 'swipeRightActionEnabled'))?.value,
+            ),
           ),
         );
       }

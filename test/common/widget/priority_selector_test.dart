@@ -13,8 +13,9 @@ import 'package:ntodotxt/todo/model/todo_model.dart' show Priority;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class MaterialAppPrioritySelector extends StatelessWidget {
-  final DatabaseController dbController =
-      const DatabaseController(inMemoryDatabasePath);
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final Widget selector;
 
   const MaterialAppPrioritySelector({
@@ -62,9 +63,11 @@ void main() {
 
   group('default tags', () {
     testWidgets('uses default priority tags', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(),
-      ));
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('No priorities available'), findsNothing);
@@ -74,9 +77,11 @@ void main() {
 
   group('empty tags', () {
     testWidgets('no tags available', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(items: {}),
-      ));
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(items: {}),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('No priorities available'), findsOneWidget);
@@ -85,13 +90,15 @@ void main() {
 
   group('multiSelectionEnabled and emptySelectionAllowed enabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -102,13 +109,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -122,13 +131,15 @@ void main() {
       );
     });
     testWidgets('tag is deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -144,13 +155,15 @@ void main() {
       );
     });
     testWidgets('multiple tags selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -168,13 +181,15 @@ void main() {
 
   group('multiSelectionEnabled disabled and emptySelectionAllowed enabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -185,13 +200,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -205,13 +222,15 @@ void main() {
       );
     });
     testWidgets('tag is deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -227,13 +246,15 @@ void main() {
       );
     });
     testWidgets('no multiple selected tags', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: true,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: true,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -251,13 +272,15 @@ void main() {
 
   group('multiSelectionEnabled enabled and emptySelectionAllowed disabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -268,13 +291,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -288,13 +313,15 @@ void main() {
       );
     });
     testWidgets('tag cannot be deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -310,13 +337,15 @@ void main() {
       );
     });
     testWidgets('multiple tags selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: true,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: true,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -334,13 +363,15 @@ void main() {
 
   group('multiSelectionEnabled and emptySelectionAllowed disabled', () {
     testWidgets('no tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -351,13 +382,15 @@ void main() {
       );
     });
     testWidgets('single tag selected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -371,13 +404,15 @@ void main() {
       );
     });
     testWidgets('tag cannot be deselected', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -393,13 +428,15 @@ void main() {
       );
     });
     testWidgets('no multiple selected tags', (tester) async {
-      await tester.pumpWidget(MaterialAppPrioritySelector(
-        selector: PrioritySelector(
-          items: {Priority.A, Priority.B, Priority.C},
-          multiSelectionEnabled: false,
-          emptySelectionAllowed: false,
+      await tester.pumpWidget(
+        MaterialAppPrioritySelector(
+          selector: PrioritySelector(
+            items: {Priority.A, Priority.B, Priority.C},
+            multiSelectionEnabled: false,
+            emptySelectionAllowed: false,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
