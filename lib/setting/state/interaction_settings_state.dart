@@ -49,9 +49,9 @@ sealed class InteractionSettingsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        swipeLeftActionEnabled,
-        swipeRightActionEnabled,
-      ];
+    swipeLeftActionEnabled,
+    swipeRightActionEnabled,
+  ];
 
   @override
   String toString() =>
@@ -67,13 +67,12 @@ final class InteractionSettingsLoading extends InteractionSettingsState {
   InteractionSettingsLoading copyWith({
     bool? swipeLeftActionEnabled,
     bool? swipeRightActionEnabled,
-  }) =>
-      super.loading(
-        swipeLeftActionEnabled:
-            swipeLeftActionEnabled ?? this.swipeLeftActionEnabled,
-        swipeRightActionEnabled:
-            swipeRightActionEnabled ?? this.swipeRightActionEnabled,
-      );
+  }) => super.loading(
+    swipeLeftActionEnabled:
+        swipeLeftActionEnabled ?? this.swipeLeftActionEnabled,
+    swipeRightActionEnabled:
+        swipeRightActionEnabled ?? this.swipeRightActionEnabled,
+  );
 
   @override
   String toString() =>
@@ -89,13 +88,12 @@ final class InteractionSettingsSaved extends InteractionSettingsState {
   InteractionSettingsSaved copyWith({
     bool? swipeLeftActionEnabled,
     bool? swipeRightActionEnabled,
-  }) =>
-      super.save(
-        swipeLeftActionEnabled:
-            swipeLeftActionEnabled ?? this.swipeLeftActionEnabled,
-        swipeRightActionEnabled:
-            swipeRightActionEnabled ?? this.swipeRightActionEnabled,
-      );
+  }) => super.save(
+    swipeLeftActionEnabled:
+        swipeLeftActionEnabled ?? this.swipeLeftActionEnabled,
+    swipeRightActionEnabled:
+        swipeRightActionEnabled ?? this.swipeRightActionEnabled,
+  );
 
   @override
   String toString() =>
@@ -115,20 +113,20 @@ final class InteractionSettingsError extends InteractionSettingsState {
     String? message,
     bool? swipeLeftActionEnabled,
     bool? swipeRightActionEnabled,
-  }) =>
-      super.error(
-          message: message ?? this.message,
-          swipeLeftActionEnabled:
-              swipeLeftActionEnabled ?? this.swipeLeftActionEnabled,
-          swipeRightActionEnabled:
-              swipeRightActionEnabled ?? this.swipeRightActionEnabled);
+  }) => super.error(
+    message: message ?? this.message,
+    swipeLeftActionEnabled:
+        swipeLeftActionEnabled ?? this.swipeLeftActionEnabled,
+    swipeRightActionEnabled:
+        swipeRightActionEnabled ?? this.swipeRightActionEnabled,
+  );
 
   @override
   List<Object?> get props => [
-        message,
-        swipeLeftActionEnabled,
-        swipeRightActionEnabled,
-      ];
+    message,
+    swipeLeftActionEnabled,
+    swipeRightActionEnabled,
+  ];
 
   @override
   String toString() =>

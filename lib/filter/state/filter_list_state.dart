@@ -40,8 +40,8 @@ sealed class FilterListState extends Equatable {
 
   @override
   List<Object> get props => [
-        filterList,
-      ];
+    filterList,
+  ];
 
   @override
   String toString() => 'FilterListState { filters: $filterList }';
@@ -85,17 +85,16 @@ final class FilterListError extends FilterListState {
   FilterListError copyWith({
     String? message,
     List<Filter>? filterList,
-  }) =>
-      super.error(
-        message: message ?? this.message,
-        filterList: filterList ?? this.filterList,
-      );
+  }) => super.error(
+    message: message ?? this.message,
+    filterList: filterList ?? this.filterList,
+  );
 
   @override
   List<Object> get props => [
-        message,
-        filterList,
-      ];
+    message,
+    filterList,
+  ];
 
   @override
   String toString() =>

@@ -66,7 +66,7 @@ class MaterialAppFilterPriorityTagDialog extends StatelessWidget {
                                   availableTags: {
                                     Priority.A,
                                     Priority.B,
-                                    Priority.C
+                                    Priority.C,
                                   },
                                 );
                               },
@@ -135,7 +135,7 @@ class MaterialAppTodoPriorityTagDialog extends StatelessWidget {
                                   availableTags: {
                                     Priority.A,
                                     Priority.B,
-                                    Priority.C
+                                    Priority.C,
                                   },
                                 );
                               },
@@ -187,8 +187,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -210,8 +212,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -247,8 +251,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -270,8 +276,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(

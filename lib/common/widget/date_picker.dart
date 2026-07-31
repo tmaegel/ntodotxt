@@ -12,11 +12,20 @@ class TodoDatePicker {
     int? endDateDaysOffset,
   }) async {
     final DateTime now = DateTime.now();
+    final DateTime firstDate = now.subtract(
+      Duration(days: startDateDaysOffset ?? defaultDaysOffset),
+    );
+    final DateTime lastDate = now.add(
+      Duration(days: endDateDaysOffset ?? defaultDaysOffset),
+    );
 
     DateTime initial = now;
     if (initialDate != null) {
-      // initialDate is in the past
-      if (now.compareTo(initialDate) == 1) {
+      // initialDate has to be between firstDate and lastDate, otherwise initial will be set to now
+      if ((initialDate.compareTo(firstDate) == 0 ||
+              initialDate.compareTo(firstDate) == 1) &&
+          (initialDate.compareTo(lastDate) == 0 ||
+              initialDate.compareTo(lastDate) == -1)) {
         initial = initialDate;
       }
     }
@@ -24,13 +33,9 @@ class TodoDatePicker {
     return await showDatePicker(
       useRootNavigator: false,
       context: context,
-      firstDate: now.subtract(
-        Duration(days: startDateDaysOffset ?? defaultDaysOffset),
-      ),
+      firstDate: firstDate,
       initialDate: initial,
-      lastDate: now.add(
-        Duration(days: endDateDaysOffset ?? defaultDaysOffset),
-      ),
+      lastDate: lastDate,
       locale: const Locale('en', 'GB'),
     );
   }

@@ -10,10 +10,10 @@ class FilterStateFilterDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'All': ListFilter.all,
-          'Completed only': ListFilter.completedOnly,
-          'Incompleted only': ListFilter.incompletedOnly,
-        };
+         'All': ListFilter.all,
+         'Completed only': ListFilter.completedOnly,
+         'Incompleted only': ListFilter.incompletedOnly,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -65,10 +65,10 @@ class DefaultFilterStateFilterDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'All': ListFilter.all,
-          'Completed only': ListFilter.completedOnly,
-          'Incompleted only': ListFilter.incompletedOnly,
-        };
+         'All': ListFilter.all,
+         'Completed only': ListFilter.completedOnly,
+         'Incompleted only': ListFilter.incompletedOnly,
+       };
 
   static Future<void> dialog({
     required BuildContext context,

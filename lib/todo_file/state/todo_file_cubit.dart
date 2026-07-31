@@ -19,14 +19,14 @@ class TodoFileCubit extends Cubit<TodoFileState> {
     String remotePath = defaultRemoteTodoPath,
     TodoFileState? state,
   }) : super(
-          state ??
-              TodoFileLoading(
-                todoFilename: todoFilename,
-                doneFilename: doneFilename,
-                localPath: localPath,
-                remotePath: remotePath,
-              ),
-        );
+         state ??
+             TodoFileLoading(
+               todoFilename: todoFilename,
+               doneFilename: doneFilename,
+               localPath: localPath,
+               remotePath: remotePath,
+             ),
+       );
 
   Future<void> checkLocalPermission(String filename) async {
     try {

@@ -10,9 +10,9 @@ class FilterStateOrderDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'Ascending': ListOrder.ascending,
-          'Descending': ListOrder.descending,
-        };
+         'Ascending': ListOrder.ascending,
+         'Descending': ListOrder.descending,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -64,9 +64,9 @@ class DefaultFilterStateOrderDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'Ascending': ListOrder.ascending,
-          'Descending': ListOrder.descending,
-        };
+         'Ascending': ListOrder.ascending,
+         'Descending': ListOrder.descending,
+       };
 
   static Future<void> dialog({
     required BuildContext context,

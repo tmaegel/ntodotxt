@@ -152,7 +152,9 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                           if (index == 0) const SizedBox(height: 14.0),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 2.0),
+                              horizontal: 16.0,
+                              vertical: 2.0,
+                            ),
                             child: ListTile(
                               selected: drawerState.index == index,
                               leading: drawerState.index == index

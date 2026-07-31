@@ -81,8 +81,9 @@ void main() {
 
   group('DefaultFilterStateOrderDialog', () {
     testWidgets('change', (tester) async {
-      await tester
-          .pumpWidget(const MaterialAppDefaultFilterStateFilterDialog());
+      await tester.pumpWidget(
+        const MaterialAppDefaultFilterStateFilterDialog(),
+      );
       await tester.pump();
 
       await tester.tap(find.text('Open dialog'));

@@ -63,9 +63,9 @@ class _TodoListPageState extends ScollToTopViewState<TodoListPage> {
               child: Scaffold(
                 body: RefreshIndicator(
                   onRefresh: () async {
-                    context
-                        .read<TodoListBloc>()
-                        .add(const TodoListSynchronizationRequested());
+                    context.read<TodoListBloc>().add(
+                      const TodoListSynchronizationRequested(),
+                    );
                   },
                   child: LoadingIndicatorWrapper(
                     loading: todoListState is TodoListLoading,
@@ -85,23 +85,24 @@ class _TodoListPageState extends ScollToTopViewState<TodoListPage> {
                                 icon: const Icon(Icons.filter_alt_outlined),
                                 onPressed: () async =>
                                     await FilterDialog.dialog(
-                                  context: context,
-                                  projects: context
-                                      .read<TodoListBloc>()
-                                      .state
-                                      .projects,
-                                  contexts: context
-                                      .read<TodoListBloc>()
-                                      .state
-                                      .contexts,
-                                ),
+                                      context: context,
+                                      projects: context
+                                          .read<TodoListBloc>()
+                                          .state
+                                          .projects,
+                                      contexts: context
+                                          .read<TodoListBloc>()
+                                          .state
+                                          .contexts,
+                                    ),
                               ),
                               IconButton(
                                 tooltip: 'Search',
                                 icon: const Icon(Icons.search),
                                 onPressed: () => context.pushNamed(
-                                    'todo-search',
-                                    extra: filterState.filter),
+                                  'todo-search',
+                                  extra: filterState.filter,
+                                ),
                               ),
                             ],
                           ),
@@ -115,10 +116,12 @@ class _TodoListPageState extends ScollToTopViewState<TodoListPage> {
                 floatingActionButton: scrolledDown
                     ? FloatingActionButton.small(
                         tooltip: 'Go to top',
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onSecondaryContainer,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer,
                         child: const Icon(Icons.keyboard_arrow_up),
                         onPressed: () => scrollToTop(),
                       )
@@ -206,10 +209,10 @@ class TodoList extends StatelessWidget {
       builder: (BuildContext context, TodoListState todoListState) {
         return BlocBuilder<FilterCubit, FilterState>(
           builder: (BuildContext context, FilterState filterState) {
-            final Map<String, Iterable<Todo>?> sectionList =
-                todoListState.groupedTodoList(
-              filterState.filter,
-            );
+            final Map<String, Iterable<Todo>?> sectionList = todoListState
+                .groupedTodoList(
+                  filterState.filter,
+                );
             return SliverList.builder(
               key: const PageStorageKey('TodoList'),
               itemCount: sectionList.length,
@@ -249,23 +252,26 @@ class TodoListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<InteractionSettingsCubit, InteractionSettingsState>(
-      buildWhen: (InteractionSettingsState previousState,
-              InteractionSettingsState state) =>
-          previousState.swipeLeftActionEnabled !=
-              state.swipeLeftActionEnabled ||
-          previousState.swipeRightActionEnabled !=
-              state.swipeRightActionEnabled,
+      buildWhen:
+          (
+            InteractionSettingsState previousState,
+            InteractionSettingsState state,
+          ) =>
+              previousState.swipeLeftActionEnabled !=
+                  state.swipeLeftActionEnabled ||
+              previousState.swipeRightActionEnabled !=
+                  state.swipeRightActionEnabled,
       builder: (BuildContext context, InteractionSettingsState state) {
         return Dismissible(
           key: Key(todo.id),
           direction:
               state.swipeLeftActionEnabled && state.swipeRightActionEnabled
-                  ? DismissDirection.horizontal
-                  : state.swipeLeftActionEnabled
-                      ? DismissDirection.endToStart
-                      : state.swipeRightActionEnabled
-                          ? DismissDirection.startToEnd
-                          : DismissDirection.none,
+              ? DismissDirection.horizontal
+              : state.swipeLeftActionEnabled
+              ? DismissDirection.endToStart
+              : state.swipeRightActionEnabled
+              ? DismissDirection.startToEnd
+              : DismissDirection.none,
           dismissThresholds: const {
             DismissDirection.startToEnd: 0.5,
             DismissDirection.endToStart: 0.5,
@@ -304,18 +310,18 @@ class TodoListTile extends StatelessWidget {
             }
             if (direction == DismissDirection.endToStart) {
               context.read<TodoListBloc>().add(
-                    TodoListTodoCompletionToggled(
-                      todo: todo,
-                      completion: !todo.completion,
-                    ),
-                  );
+                TodoListTodoCompletionToggled(
+                  todo: todo,
+                  completion: !todo.completion,
+                ),
+              );
             } else if (direction == DismissDirection.startToEnd) {
               // Delete
               context.read<TodoListBloc>().add(
-                    TodoListTodoDeleted(
-                      todo: todo,
-                    ),
-                  );
+                TodoListTodoDeleted(
+                  todo: todo,
+                ),
+              );
               SnackBarHandler.info(context, 'Todo has been deleted');
             }
           },
@@ -343,20 +349,22 @@ class TodoListTile extends StatelessWidget {
       text: TextSpan(
         style: todo.completion
             ? Theme.of(context).textTheme.titleMedium?.copyWith(
-                  decoration: TextDecoration.lineThrough,
-                  decorationThickness: 4.0,
-                )
+                decoration: TextDecoration.lineThrough,
+                decorationThickness: 4.0,
+              )
             : Theme.of(context).textTheme.titleMedium,
         text: '',
         children: <TextSpan>[
           for (int i = 0; i < items.length; i++)
             TextSpan(
-                text: i == items.length - 1 ? items[i] : '${items[i]} ',
-                style: Todo.matchProject(items[i]) ||
-                        Todo.matchContext(items[i]) ||
-                        Todo.matchKeyValue(items[i])
-                    ? const TextStyle(fontWeight: FontWeight.bold)
-                    : null),
+              text: i == items.length - 1 ? items[i] : '${items[i]} ',
+              style:
+                  Todo.matchProject(items[i]) ||
+                      Todo.matchContext(items[i]) ||
+                      Todo.matchKeyValue(items[i])
+                  ? const TextStyle(fontWeight: FontWeight.bold)
+                  : null,
+            ),
         ],
       ),
       maxLines: 2,
@@ -393,7 +401,7 @@ class TodoListTile extends StatelessWidget {
             mono: true,
             iconData: Icons.event,
             label: Todo.date2Str(todo.dueDate!)!,
-          )
+          ),
       ],
     );
   }
@@ -447,9 +455,9 @@ class TodoListSaveFilter extends StatelessWidget {
                 tooltip: 'Save filter',
                 icon: const Icon(Icons.save),
                 onPressed: () async {
-                  await context
-                      .read<FilterCubit>()
-                      .update(state.filter.copyWith());
+                  await context.read<FilterCubit>().update(
+                    state.filter.copyWith(),
+                  );
                   if (context.mounted) {
                     SnackBarHandler.info(context, 'Filter saved');
                   }

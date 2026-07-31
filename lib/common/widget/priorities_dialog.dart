@@ -159,7 +159,7 @@ class _FilterPriorityTagDialogState
     });
     widget.cubit.updatePriorities({
       for (PriorityTag t in tags)
-        if (t.selected) t.priority
+        if (t.selected) t.priority,
     });
   }
 }

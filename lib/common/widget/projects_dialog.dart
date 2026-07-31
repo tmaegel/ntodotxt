@@ -56,7 +56,7 @@ class _FilterProjectTagDialogState
   void onUpdate() {
     widget.cubit.updateProjects({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }
@@ -117,7 +117,7 @@ class _TodoProjectTagDialogState extends TagDialogState<TodoProjectTagDialog> {
   void onUpdate() {
     widget.cubit.updateProjects({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }

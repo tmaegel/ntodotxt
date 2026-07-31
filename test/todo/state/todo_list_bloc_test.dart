@@ -225,7 +225,8 @@ void main() {
           ..add(
             TodoListTodoSubmitted(
               todo: todo.copyWith(
-                  description: 'Write some tests +project1 +project2'),
+                description: 'Write some tests +project1 +project2',
+              ),
             ),
           );
 
@@ -238,7 +239,7 @@ void main() {
                   todoList: [
                     todo.copyWith(
                       description: 'Write some tests +project1 +project2',
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -270,7 +271,7 @@ void main() {
                   todoList: [
                     todo.copyWith(
                       description: 'Write some tests',
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -299,7 +300,8 @@ void main() {
           ..add(
             TodoListTodoSubmitted(
               todo: todo.copyWith(
-                  description: 'Write some tests @context1 @context2'),
+                description: 'Write some tests @context1 @context2',
+              ),
             ),
           );
 
@@ -312,7 +314,7 @@ void main() {
                   todoList: [
                     todo.copyWith(
                       description: 'Write some tests @context1 @context2',
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -344,7 +346,7 @@ void main() {
                   todoList: [
                     todo.copyWith(
                       description: 'Write some tests',
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -373,7 +375,8 @@ void main() {
           ..add(
             TodoListTodoSubmitted(
               todo: todo.copyWith(
-                  description: 'Write some tests foo:bar key:val'),
+                description: 'Write some tests foo:bar key:val',
+              ),
             ),
           );
 
@@ -386,7 +389,7 @@ void main() {
                   todoList: [
                     todo.copyWith(
                       description: 'Write some tests foo:bar key:val',
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -418,7 +421,7 @@ void main() {
                   todoList: [
                     todo.copyWith(
                       description: 'Write some tests',
-                    )
+                    ),
                   ],
                 ),
               ),

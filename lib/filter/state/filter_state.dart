@@ -100,9 +100,9 @@ sealed class FilterState extends Equatable {
 
   @override
   List<Object?> get props => [
-        filter,
-        origin,
-      ];
+    filter,
+    origin,
+  ];
 
   @override
   String toString() => 'FilterState { filter: $filter }';
@@ -116,8 +116,7 @@ final class FilterLoading extends FilterState {
 
   FilterLoading copyWith({
     Filter? filter,
-  }) =>
-      super.loading(filter: filter ?? this.filter);
+  }) => super.loading(filter: filter ?? this.filter);
 
   @override
   String toString() => 'FilterLoading { filter: $filter }';
@@ -131,8 +130,7 @@ final class FilterChanged extends FilterState {
 
   FilterChanged copyWith({
     Filter? filter,
-  }) =>
-      super.update(filter: filter ?? this.filter);
+  }) => super.update(filter: filter ?? this.filter);
 
   @override
   String toString() => 'FilterChanged { filter: $filter }';
@@ -146,8 +144,7 @@ final class FilterSaved extends FilterState {
 
   FilterSaved copyWith({
     Filter? filter,
-  }) =>
-      super.save(filter: filter ?? this.filter);
+  }) => super.save(filter: filter ?? this.filter);
 
   @override
   String toString() => 'FilterSaved { filter: $filter }';
@@ -165,16 +162,17 @@ final class FilterError extends FilterState {
   FilterError copyWith({
     String? message,
     Filter? filter,
-  }) =>
-      super.error(
-          message: message ?? this.message, filter: filter ?? this.filter);
+  }) => super.error(
+    message: message ?? this.message,
+    filter: filter ?? this.filter,
+  );
 
   @override
   List<Object?> get props => [
-        message,
-        filter,
-        origin,
-      ];
+    message,
+    filter,
+    origin,
+  ];
 
   @override
   String toString() => 'FilterError { message: $message filter: $filter }';

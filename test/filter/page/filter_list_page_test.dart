@@ -29,8 +29,9 @@ class FakeController extends Fake implements FilterController {
 }
 
 class FilterListPageMaterialApp extends StatelessWidget {
-  final DatabaseController dbController =
-      const DatabaseController(inMemoryDatabasePath);
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final FilterController controller;
 
   const FilterListPageMaterialApp({
@@ -62,8 +63,8 @@ class FilterListPageMaterialApp extends StatelessWidget {
               BlocProvider<FilterListBloc>(
                 create: (BuildContext context) {
                   return FilterListBloc(
-                    repository: context.read<FilterRepository>(),
-                  )
+                      repository: context.read<FilterRepository>(),
+                    )
                     ..add(const FilterListSubscriped())
                     ..add(const FilterListSynchronizationRequested());
                 },
@@ -88,14 +89,17 @@ void main() {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(FilterListPageMaterialApp(
-        controller: FakeController(),
-      ));
+      await tester.pumpWidget(
+        FilterListPageMaterialApp(
+          controller: FakeController(),
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(FilterListTile), findsNWidgets(3));
-      Iterable<FilterListTile> filterTiles =
-          tester.widgetList<FilterListTile>(find.byType(FilterListTile));
+      Iterable<FilterListTile> filterTiles = tester.widgetList<FilterListTile>(
+        find.byType(FilterListTile),
+      );
       expect(filterTiles.elementAt(0).filter.name, 'Filter 01');
       expect(filterTiles.elementAt(1).filter.name, 'Filter 02');
       expect(filterTiles.elementAt(2).filter.name, 'Filter 03');
@@ -109,14 +113,17 @@ void main() {
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(FilterListPageMaterialApp(
-        controller: FakeController(),
-      ));
+      await tester.pumpWidget(
+        FilterListPageMaterialApp(
+          controller: FakeController(),
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(FilterListTile), findsNWidgets(3));
-      Iterable<FilterListTile> filterTiles =
-          tester.widgetList<FilterListTile>(find.byType(FilterListTile));
+      Iterable<FilterListTile> filterTiles = tester.widgetList<FilterListTile>(
+        find.byType(FilterListTile),
+      );
       expect(filterTiles.elementAt(0).filter.name, 'Filter 01');
       expect(filterTiles.elementAt(1).filter.name, 'Filter 02');
       expect(filterTiles.elementAt(2).filter.name, 'Filter 03');

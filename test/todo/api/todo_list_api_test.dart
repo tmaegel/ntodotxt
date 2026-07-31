@@ -199,8 +199,10 @@ void main() {
         );
 
         await repository.writeToSource();
-        expect(
-            await todoFile.readAsLines(), [todo.toString(), todo2.toString()]);
+        expect(await todoFile.readAsLines(), [
+          todo.toString(),
+          todo2.toString(),
+        ]);
       });
     });
 

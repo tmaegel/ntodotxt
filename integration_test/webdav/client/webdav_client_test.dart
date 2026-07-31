@@ -46,8 +46,9 @@ void main() {
         }
       });
       test('wrong host', () async {
-        final WebDAVClient client =
-            createWebDAVClient(server: '$scheme://webdav:$port');
+        final WebDAVClient client = createWebDAVClient(
+          server: '$scheme://webdav:$port',
+        );
         expectLater(
           () async => await client.ping(),
           throwsA(
@@ -56,8 +57,9 @@ void main() {
         );
       });
       test('wrong port', () async {
-        final WebDAVClient client =
-            createWebDAVClient(server: '$scheme://$host:9999');
+        final WebDAVClient client = createWebDAVClient(
+          server: '$scheme://$host:9999',
+        );
         expectLater(
           () async => await client.ping(),
           throwsA(

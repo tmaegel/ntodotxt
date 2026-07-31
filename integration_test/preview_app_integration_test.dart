@@ -64,7 +64,9 @@ class AppPreview extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 8.0),
+                                  horizontal: 12.0,
+                                  vertical: 8.0,
+                                ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,27 +74,24 @@ class AppPreview extends StatelessWidget {
                                     Icon(
                                       Icons.signal_wifi_4_bar,
                                       color: foregroundColor,
-                                      size: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.fontSize,
+                                      size: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall?.fontSize,
                                     ),
                                     Icon(
                                       Icons.signal_cellular_4_bar,
                                       color: foregroundColor,
-                                      size: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.fontSize,
+                                      size: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall?.fontSize,
                                     ),
                                     const SizedBox(width: 2.0),
                                     Icon(
                                       Icons.battery_full,
                                       color: foregroundColor,
-                                      size: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.fontSize,
+                                      size: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall?.fontSize,
                                     ),
                                   ],
                                 ),
@@ -101,14 +100,15 @@ class AppPreview extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 8.0),
+                              horizontal: 12.0,
+                              vertical: 8.0,
+                            ),
                             child: Text(
                               '12:00',
                               style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.fontSize,
+                                fontSize: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.fontSize,
                                 color: foregroundColor,
                               ),
                             ),

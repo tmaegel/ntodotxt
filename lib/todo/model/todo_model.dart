@@ -32,19 +32,19 @@ enum Priority {
   W,
   X,
   Y,
-  Z
+  Z,
 }
 
 extension Priorities on Priority {
   static Set<Priority> get priorities => {
-        for (var p in Priority.values)
-          if (p != Priority.none) p,
-      };
+    for (var p in Priority.values)
+      if (p != Priority.none) p,
+  };
 
   static Set<String> get priorityNames => {
-        for (var p in Priority.values)
-          if (p != Priority.none) p.name,
-      };
+    for (var p in Priority.values)
+      if (p != Priority.none) p.name,
+  };
 
   static Priority byName(String name) {
     try {
@@ -286,11 +286,11 @@ class Todo extends Equatable {
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
-  })  : _completion = completion,
-        _priority = priority,
-        _completionDate = completionDate,
-        _creationDate = creationDate,
-        _description = description {
+  }) : _completion = completion,
+       _priority = priority,
+       _completionDate = completionDate,
+       _creationDate = creationDate,
+       _description = description {
     // Validate completion date.
     if (completion == true) {
       if (completionDate == null) {
@@ -321,15 +321,21 @@ class Todo extends Equatable {
         completionDate = DateTime(now.year, now.month, now.day);
       } else {
         completionDate = DateTime(
-            completionDate.year, completionDate.month, completionDate.day);
+          completionDate.year,
+          completionDate.month,
+          completionDate.day,
+        );
       }
     } else {
       completionDate = null;
     }
 
     if (creationDate != null) {
-      creationDate =
-          DateTime(creationDate.year, creationDate.month, creationDate.day);
+      creationDate = DateTime(
+        creationDate.year,
+        creationDate.month,
+        creationDate.day,
+      );
     }
 
     return Todo._(
@@ -348,8 +354,10 @@ class Todo extends Equatable {
     String? id,
     required String value,
   }) {
-    final todoStr =
-        value.trim().replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' ');
+    final todoStr = value.trim().replaceAllMapped(
+      RegExp(r'\s{2,}'),
+      (match) => ' ',
+    );
 
     bool completion = _str2completion(
       _todoStringElementAt(todoStr, 0),
@@ -440,12 +448,12 @@ class Todo extends Equatable {
 
   @override
   List<Object?> get props => [
-        completion,
-        completionDate,
-        priority,
-        creationDate,
-        description,
-      ];
+    completion,
+    completionDate,
+    priority,
+    creationDate,
+    description,
+  ];
 
   @override
   String toString() {
@@ -464,8 +472,10 @@ class Todo extends Equatable {
     final Random r = Random();
     const chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    final String randomId =
-        List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
+    final String randomId = List.generate(
+      len,
+      (index) => chars[r.nextInt(chars.length)],
+    ).join();
     return sha256.convert(utf8.encode(randomId)).toString();
   }
 

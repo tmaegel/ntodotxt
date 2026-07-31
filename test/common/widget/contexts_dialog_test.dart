@@ -66,7 +66,7 @@ class MaterialAppFilterContextTagDialog extends StatelessWidget {
                                   availableTags: {
                                     'context1',
                                     'context2',
-                                    'context3'
+                                    'context3',
                                   },
                                 );
                               },
@@ -117,7 +117,7 @@ class MaterialAppTodoContextTagDialog extends StatelessWidget {
                                 availableTags: {
                                   'context1',
                                   'context2',
-                                  'context3'
+                                  'context3',
                                 },
                               );
                             },
@@ -168,8 +168,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -191,8 +193,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -238,8 +242,10 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(
@@ -283,8 +289,10 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(

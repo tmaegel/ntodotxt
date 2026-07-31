@@ -28,8 +28,8 @@ sealed class TodoState extends Equatable {
 
   @override
   List<Object> get props => [
-        todo,
-      ];
+    todo,
+  ];
 
   @override
   String toString() => 'TodoState { todo: $todo }';
@@ -50,8 +50,8 @@ final class TodoSuccess extends TodoState {
 
   @override
   List<Object> get props => [
-        todo,
-      ];
+    todo,
+  ];
 
   @override
   String toString() => 'TodoSuccess { todo: "$todo" }';
@@ -77,9 +77,9 @@ final class TodoError extends TodoState {
 
   @override
   List<Object> get props => [
-        message,
-        todo,
-      ];
+    message,
+    todo,
+  ];
 
   @override
   String toString() => 'TodoError { message: $message todo: "$todo" }';

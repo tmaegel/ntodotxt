@@ -1347,10 +1347,20 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoCompletionDateItem (already set)', (tester) async {
+      testWidgets('TodoCompletionDateItem (already set - past)', (
+        tester,
+      ) async {
+        final DateTime past = DateTime.now().subtract(const Duration(days: 10));
+        final String pastStr =
+            '${past.year.toString()}-${past.month.toString().padLeft(2, '0')}-${past.day.toString().padLeft(2, '0')}';
+
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(description: 'x 2024-01-01 Code something'),
+            initTodo: Todo(
+              completion: true,
+              completionDate: past,
+              description: 'Code something',
+            ),
           ),
         );
         await tester.pumpAndSettle();
@@ -1371,13 +1381,53 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final DateTime now = DateTime.now();
-        final String today =
-            '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
             of: find.byType(TodoCompletionDateItem),
-            matching: find.text(today),
+            matching: find.text(pastStr),
+          ),
+          findsOneWidget,
+        );
+      });
+      testWidgets('TodoCompletionDateItem (already set - future)', (
+        tester,
+      ) async {
+        final DateTime future = DateTime.now().add(const Duration(days: 10));
+
+        await tester.pumpWidget(
+          MaterialAppWrapper(
+            initTodo: Todo(
+              completion: true,
+              completionDate: future,
+              description: 'Code something',
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.dragUntilVisible(
+          find.byType(TodoCompletionDateItem),
+          find.byType(CustomScrollView),
+          const Offset(0, -100),
+        );
+
+        await tester.tap(find.byType(TodoCompletionDateItem));
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final DateTime today = DateTime.now();
+        final String todayStr =
+            '${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+        expect(
+          find.descendant(
+            of: find.byType(TodoCompletionDateItem),
+            matching: find.text(todayStr),
           ),
           findsOneWidget,
         );
@@ -1385,7 +1435,10 @@ void main() {
       testWidgets('TodoCompletionDateItem (unset)', (tester) async {
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(completion: true, description: 'Code something'),
+            initTodo: Todo(
+              completion: true,
+              description: 'Code something',
+            ),
           ),
         );
         await tester.pumpAndSettle();
@@ -1444,10 +1497,14 @@ void main() {
           findsOneWidget,
         );
       });
-      testWidgets('TodoDueDateItem (already set)', (tester) async {
+      testWidgets('TodoDueDateItem (already set - past)', (tester) async {
+        final DateTime past = DateTime.now().subtract(const Duration(days: 10));
+        final String pastStr =
+            '${past.year.toString()}-${past.month.toString().padLeft(2, '0')}-${past.day.toString().padLeft(2, '0')}';
+
         await tester.pumpWidget(
           MaterialAppWrapper(
-            initTodo: Todo(description: 'Code something due:2024-02-27'),
+            initTodo: Todo(description: 'Code something due:$pastStr'),
           ),
         );
         await tester.pumpAndSettle();
@@ -1471,13 +1528,52 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final DateTime initial = DateTime.parse('2024-02-27');
-        final String today =
-            '${initial.year.toString()}-${initial.month.toString().padLeft(2, '0')}-${initial.day.toString().padLeft(2, '0')}';
+        final DateTime today = DateTime.now();
+        final String todayStr =
+            '${today.year.toString()}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
         expect(
           find.descendant(
             of: dueDateItem,
-            matching: find.text(today),
+            matching: find.text(todayStr),
+          ),
+          findsOneWidget,
+        );
+      });
+      testWidgets('TodoDueDateItem (already set - future)', (tester) async {
+        final DateTime future = DateTime.now().add(const Duration(days: 10));
+        final String futureStr =
+            '${future.year.toString()}-${future.month.toString().padLeft(2, '0')}-${future.day.toString().padLeft(2, '0')}';
+
+        await tester.pumpWidget(
+          MaterialAppWrapper(
+            initTodo: Todo(description: 'Code something due:$futureStr'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final Finder dueDateItem = find.byType(TodoDueDateItem);
+        await tester.dragUntilVisible(
+          dueDateItem,
+          find.byType(CustomScrollView),
+          const Offset(0, -100),
+        );
+        await tester.ensureVisible(dueDateItem);
+        await tester.pumpAndSettle();
+
+        await tester.tap(dueDateItem);
+        await tester.pumpAndSettle();
+
+        await tester.tap(
+          find.descendant(
+            of: find.byType(DatePickerDialog),
+            matching: find.text('OK'),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: dueDateItem,
+            matching: find.text(futureStr),
           ),
           findsOneWidget,
         );
