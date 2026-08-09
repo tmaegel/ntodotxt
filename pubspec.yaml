@@ -24,11 +24,12 @@ dependencies:
   go_router: ^15.1.2
   intl: any
   logging: ^1.2.0
-  path_provider: ^2.0.11
   path: ^1.9.0
+  path_provider: ^2.0.11
   permission_handler: ^12.0.0
   rxdart: ^0.28.0
   sqflite_common_ffi: ^2.3.1
+  sqlite3: ^3.0.0
   url_launcher: ^6.2.1
   webdav_client: ^1.2.2
 
