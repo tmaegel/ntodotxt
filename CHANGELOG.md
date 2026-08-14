@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.2] - 2026-08-14
+
+### Fix
+
+- Build abis in the same way as fdroid does #120
+
 ## [0.19.1] - 2026-08-09
 
 ### Added
@@ -492,7 +498,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.19.1...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.19.2...HEAD
+[0.19.2]: https://github.com/tmaegel/ntodotxt/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/tmaegel/ntodotxt/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/tmaegel/ntodotxt/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/tmaegel/ntodotxt/compare/v0.17.0...v0.18.0

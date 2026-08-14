@@ -78,8 +78,14 @@ jobs:
       - name: Build apk
         run: flutter build apk --release
 
-      - name: Build apk per ABI
-        run: flutter build apk --split-per-abi
+      - name: Build apk x64
+        run: flutter build apk --split-per-abi --target-platform="android-x64"
+
+      - name: Build apk arm
+        run: flutter build apk --split-per-abi --target-platform="android-arm"
+
+      - name: Build apk arm64
+        run: flutter build apk --split-per-abi --target-platform="android-arm64"
 
       - name: Release
         uses: ncipollo/release-action@v1

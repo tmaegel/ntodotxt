@@ -1,6 +1,6 @@
 // coverage:ignore-file
 
-const String version = '0.19.1';
+const String version = '0.19.2';
 
 /// https://m3.material.io/foundations/layout/applying-layout/window-size-classes
 const int maxScreenWidthCompact = 600;
