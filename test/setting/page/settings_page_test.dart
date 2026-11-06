@@ -13,6 +13,8 @@ import 'package:ntodotxt/setting/controller/setting_controller.dart'
 import 'package:ntodotxt/setting/page/settings_page.dart' show SettingsPage;
 import 'package:ntodotxt/setting/repository/setting_repository.dart'
     show SettingRepository;
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
+import 'package:ntodotxt/setting/state/todo_settings_cubit.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -57,6 +59,16 @@ class SettingsPageBlocProvider extends StatelessWidget {
             create: (BuildContext context) => TodoFileCubit(
               repository: context.read<SettingRepository>(),
             )..load(),
+          ),
+          BlocProvider<TodoSettingsCubit>(
+            create: (BuildContext context) => TodoSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
+          ),
+          BlocProvider<InteractionSettingsCubit>(
+            create: (BuildContext context) => InteractionSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
           ),
         ],
         child: Builder(

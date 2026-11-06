@@ -10,8 +10,8 @@ class Setting extends Equatable {
   });
 
   Setting.fromMap(Map<dynamic, dynamic> map)
-      : key = map['key'] as String,
-        value = map['value'] as String;
+    : key = map['key'] as String,
+      value = map['value'] as String;
 
   static String get tableRepr {
     return '''CREATE TABLE IF NOT EXISTS settings(
@@ -46,7 +46,7 @@ class Setting extends Equatable {
 
   @override
   List<Object?> get props => [
-        key,
-        value,
-      ];
+    key,
+    value,
+  ];
 }

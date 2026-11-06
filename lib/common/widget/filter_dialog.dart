@@ -10,10 +10,10 @@ class FilterStateFilterDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'All': ListFilter.all,
-          'Completed only': ListFilter.completedOnly,
-          'Incompleted only': ListFilter.incompletedOnly,
-        };
+         'All': ListFilter.all,
+         'Completed only': ListFilter.completedOnly,
+         'Incompleted only': ListFilter.incompletedOnly,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -29,27 +29,29 @@ class FilterStateFilterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          String key = items.keys.elementAt(index);
-          ListFilter value = items[key]!;
-          return RadioListTile<ListFilter>(
-            key: Key('${value.name}DialogRadioButton'),
-            contentPadding: EdgeInsets.zero,
-            title: Text(key),
-            value: value,
-            groupValue: cubit.state.filter.filter,
-            onChanged: (ListFilter? value) {
-              if (value != null) {
-                cubit.updateFilter(value);
-              }
-              Navigator.pop(context);
-            },
-          );
+      child: RadioGroup<ListFilter>(
+        groupValue: cubit.state.filter.filter,
+        onChanged: (ListFilter? value) {
+          if (value != null) {
+            cubit.updateFilter(value);
+          }
+          Navigator.pop(context);
         },
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String key = items.keys.elementAt(index);
+            ListFilter value = items[key]!;
+            return RadioListTile<ListFilter>(
+              key: Key('${value.name}DialogRadioButton'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(key),
+              value: value,
+            );
+          },
+        ),
       ),
     );
   }
@@ -63,10 +65,10 @@ class DefaultFilterStateFilterDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'All': ListFilter.all,
-          'Completed only': ListFilter.completedOnly,
-          'Incompleted only': ListFilter.incompletedOnly,
-        };
+         'All': ListFilter.all,
+         'Completed only': ListFilter.completedOnly,
+         'Incompleted only': ListFilter.incompletedOnly,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -83,27 +85,29 @@ class DefaultFilterStateFilterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          String key = items.keys.elementAt(index);
-          ListFilter value = items[key]!;
-          return RadioListTile<ListFilter>(
-            key: Key('${value.name}DialogRadioButton'),
-            contentPadding: EdgeInsets.zero,
-            value: value,
-            title: Text(key),
-            groupValue: cubit.state.filter.filter,
-            onChanged: (ListFilter? value) {
-              if (value != null) {
-                cubit.updateDefaultFilter(value);
-              }
-              Navigator.pop(context);
-            },
-          );
+      child: RadioGroup<ListFilter>(
+        groupValue: cubit.state.filter.filter,
+        onChanged: (ListFilter? value) {
+          if (value != null) {
+            cubit.updateDefaultFilter(value);
+          }
+          Navigator.pop(context);
         },
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String key = items.keys.elementAt(index);
+            ListFilter value = items[key]!;
+            return RadioListTile<ListFilter>(
+              key: Key('${value.name}DialogRadioButton'),
+              contentPadding: EdgeInsets.zero,
+              value: value,
+              title: Text(key),
+            );
+          },
+        ),
       ),
     );
   }

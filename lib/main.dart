@@ -27,6 +27,8 @@ import 'package:ntodotxt/login/state/login_state.dart';
 import 'package:ntodotxt/setting/controller/setting_controller.dart';
 import 'package:ntodotxt/setting/repository/setting_repository.dart'
     show SettingRepository;
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
+import 'package:ntodotxt/setting/state/todo_settings_cubit.dart';
 import 'package:ntodotxt/todo/api/todo_list_api.dart';
 import 'package:ntodotxt/todo/repository/todo_list_repository.dart';
 import 'package:ntodotxt/todo/state/todo_list_bloc.dart';
@@ -42,7 +44,7 @@ final Logger log = Logger('ntodotxt');
 const FlutterSecureStorage secureStorage = FlutterSecureStorage(
   // Pass the option to the constructor
   iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  aOptions: AndroidOptions(),
 );
 
 void main() async {
@@ -146,6 +148,16 @@ class _AppState extends State<App> {
               repository: context.read<FilterRepository>(),
             ),
           ),
+          BlocProvider<TodoSettingsCubit>(
+            create: (BuildContext context) => TodoSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
+          ),
+          BlocProvider<InteractionSettingsCubit>(
+            create: (BuildContext context) => InteractionSettingsCubit(
+              repository: context.read<SettingRepository>(),
+            ),
+          ),
         ],
         child: Builder(
           builder: (BuildContext context) {
@@ -174,6 +186,12 @@ class InitialApp extends StatelessWidget {
   });
 
   Future<bool> _initialize(BuildContext context) async {
+    if (context.mounted) {
+      await context.read<TodoSettingsCubit>().load();
+    }
+    if (context.mounted) {
+      await context.read<InteractionSettingsCubit>().load();
+    }
     if (context.mounted) {
       await context.read<FilterCubit>().load();
     }
@@ -301,13 +319,16 @@ class CoreApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TodoFileCubit, TodoFileState>(
       builder: (BuildContext context, TodoFileState todoFileState) {
-        final TodoListRepository todoListRepository =
-            _createTodoListRepository(loginState, todoFileState);
-        final TodoListBloc todoListBloc = TodoListBloc(
-          repository: todoListRepository,
-        )
-          ..add(const TodoListSubscriptionRequested())
-          ..add(const TodoListSynchronizationRequested());
+        final TodoListRepository todoListRepository = _createTodoListRepository(
+          loginState,
+          todoFileState,
+        );
+        final TodoListBloc todoListBloc =
+            TodoListBloc(
+                repository: todoListRepository,
+              )
+              ..add(const TodoListSubscriptionRequested())
+              ..add(const TodoListSynchronizationRequested());
         return RepositoryProvider(
           create: (BuildContext context) => todoListRepository,
           child: BlocProvider.value(
@@ -340,7 +361,9 @@ class CoreApp extends StatelessWidget {
   }
 
   TodoListRepository _createTodoListRepository(
-      LoginState loginState, TodoFileState todoFileState) {
+    LoginState loginState,
+    TodoFileState todoFileState,
+  ) {
     late TodoListApi api;
     switch (loginState) {
       case LoginLocal():

@@ -10,9 +10,11 @@ class TodoCubit extends Cubit<TodoState> {
 
   void updateTodo(Todo todo) {
     try {
-      emit(state.success(
-        todo: todo.copyWith(),
-      ));
+      emit(
+        state.success(
+          todo: todo.copyWith(),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -20,12 +22,14 @@ class TodoCubit extends Cubit<TodoState> {
 
   void toggleCompletion({bool? completion, DateTime? completionDate}) {
     try {
-      emit(state.success(
-        todo: state.todo.copyWith(
-          completion: completionDate != null ? true : !state.todo.completion,
-          completionDate: completionDate,
+      emit(
+        state.success(
+          todo: state.todo.copyWith(
+            completion: completionDate != null ? true : !state.todo.completion,
+            completionDate: completionDate,
+          ),
         ),
-      ));
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -33,9 +37,11 @@ class TodoCubit extends Cubit<TodoState> {
 
   void updateDescription(String description) {
     try {
-      emit(state.success(
-        todo: state.todo.copyWith(description: description),
-      ));
+      emit(
+        state.success(
+          todo: state.todo.copyWith(description: description),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -43,9 +49,11 @@ class TodoCubit extends Cubit<TodoState> {
 
   void setPriority(Priority priority) {
     try {
-      emit(state.success(
-        todo: state.todo.copyWith(priority: priority),
-      ));
+      emit(
+        state.success(
+          todo: state.todo.copyWith(priority: priority),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -53,9 +61,11 @@ class TodoCubit extends Cubit<TodoState> {
 
   void unsetPriority() {
     try {
-      emit(state.success(
-        todo: state.todo.copyWith(priority: Priority.none),
-      ));
+      emit(
+        state.success(
+          todo: state.todo.copyWith(priority: Priority.none),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -93,18 +103,19 @@ class TodoCubit extends Cubit<TodoState> {
         }
       }
       String description = state.todo.description;
-      Iterable<String> addProjects =
-          projects.where((p) => !state.todo.containsProject(p));
-      Iterable<String> removeProjects =
-          state.todo.projects.where((p) => !projects.contains(p));
+      Iterable<String> addProjects = projects.where(
+        (p) => !state.todo.containsProject(p),
+      );
+      Iterable<String> removeProjects = state.todo.projects.where(
+        (p) => !projects.contains(p),
+      );
       // Remove projects
       for (String p in removeProjects) {
         description = description.replaceAll(Todo.fmtProject(p), '');
       }
       // Add projects
-      description = '$description ${{
-        for (String p in addProjects) Todo.fmtProject(p)
-      }.join(" ")}';
+      description =
+          '$description ${{for (String p in addProjects) Todo.fmtProject(p)}.join(" ")}';
       emit(
         state.success(
           todo: state.todo.copyWith(
@@ -168,18 +179,19 @@ class TodoCubit extends Cubit<TodoState> {
         }
       }
       String description = state.todo.description;
-      Iterable<String> addContexts =
-          contexts.where((c) => !state.todo.containsContext(c));
-      Iterable<String> removeContexts =
-          state.todo.contexts.where((c) => !contexts.contains(c));
+      Iterable<String> addContexts = contexts.where(
+        (c) => !state.todo.containsContext(c),
+      );
+      Iterable<String> removeContexts = state.todo.contexts.where(
+        (c) => !contexts.contains(c),
+      );
       // Remove projects
       for (String c in removeContexts) {
         description = description.replaceAll(Todo.fmtContext(c), '');
       }
       // Add projects
-      description = '$description ${{
-        for (String c in addContexts) Todo.fmtContext(c)
-      }.join(" ")}';
+      description =
+          '$description ${{for (String c in addContexts) Todo.fmtContext(c)}.join(" ")}';
       emit(
         state.success(
           todo: state.todo.copyWith(
@@ -249,8 +261,9 @@ class TodoCubit extends Cubit<TodoState> {
         }
       }
       String description = state.todo.description;
-      Iterable<String> addKeyValues =
-          keyValues.where((kv) => !state.todo.containsKeyValue(kv));
+      Iterable<String> addKeyValues = keyValues.where(
+        (kv) => !state.todo.containsKeyValue(kv),
+      );
       Iterable<String> removeKeyValues = state.todo.keyValues.where((kv) {
         for (String keyVal in keyValues) {
           if (kv.split(':')[0] == keyVal.split(':')[0]) {
@@ -259,15 +272,15 @@ class TodoCubit extends Cubit<TodoState> {
         }
         return true;
       });
-      Iterable<String> existingKeyValues =
-          keyValues.where((kv) => state.todo.containsKeyValue(kv));
+      Iterable<String> existingKeyValues = keyValues.where(
+        (kv) => state.todo.containsKeyValue(kv),
+      );
       // Remove projects
       for (String kv in removeKeyValues) {
         description = description.replaceAll(Todo.fmtKeyValue(kv), '');
       }
-      description = '$description ${{
-        for (String kv in addKeyValues) Todo.fmtKeyValue(kv)
-      }.join(" ")}';
+      description =
+          '$description ${{for (String kv in addKeyValues) Todo.fmtKeyValue(kv)}.join(" ")}';
       // Replace existing key values instead concat them.
       for (String kv in existingKeyValues) {
         description = description.replaceAllMapped(

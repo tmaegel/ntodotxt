@@ -12,8 +12,9 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> login() async {
     try {
       emit(state.loading());
-      String? backendFromsecureStorage =
-          await secureStorage.read(key: 'backend');
+      String? backendFromsecureStorage = await secureStorage.read(
+        key: 'backend',
+      );
       Backend backend;
 
       if (backendFromsecureStorage == null) {
@@ -40,8 +41,8 @@ class LoginCubit extends Cubit<LoginState> {
         String? password = await secureStorage.read(key: 'password');
         bool acceptUntrustedCert =
             (await secureStorage.read(key: 'acceptUntrustedCert')) == '1'
-                ? true
-                : false;
+            ? true
+            : false;
         if (server != null &&
             path != null &&
             username != null &&
@@ -76,7 +77,8 @@ class LoginCubit extends Cubit<LoginState> {
   }) async {
     try {
       LocalTodoListApi.fromString(
-          localFilePath: localTodoFilePath); // Check before login.
+        localFilePath: localTodoFilePath,
+      ); // Check before login.
       await resetSecureStorage();
       await secureStorage.write(key: 'backend', value: Backend.local.name);
       emit(state.loginLocal());
@@ -116,7 +118,9 @@ class LoginCubit extends Cubit<LoginState> {
       await secureStorage.write(key: 'username', value: username);
       await secureStorage.write(key: 'password', value: password);
       await secureStorage.write(
-          key: 'acceptUntrustedCert', value: acceptUntrustedCert ? '1' : '0');
+        key: 'acceptUntrustedCert',
+        value: acceptUntrustedCert ? '1' : '0',
+      );
       emit(
         state.loginWebDAV(
           server: server,

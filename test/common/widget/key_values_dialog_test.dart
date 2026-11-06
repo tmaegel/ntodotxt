@@ -37,7 +37,7 @@ class MaterialAppTodoKeyValueTagDialog extends StatelessWidget {
                                 availableTags: {
                                   'key1:val1',
                                   'key2:val2',
-                                  'key3:val3'
+                                  'key3:val3',
                                 },
                               );
                             },
@@ -99,8 +99,10 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.drag(find.byType(DraggableScrollableSheet),
-          const Offset(0, 500)); // Dismiss dialog.
+      await tester.drag(
+        find.byType(DraggableScrollableSheet),
+        const Offset(0, 500),
+      ); // Dismiss dialog.
       await tester.pumpAndSettle();
 
       expect(

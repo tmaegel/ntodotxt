@@ -34,7 +34,7 @@ class BasicIconChip extends StatelessWidget {
                   ? Theme.of(context).colorScheme.onSurfaceVariant
                   : Theme.of(context).colorScheme.onSecondaryContainer,
             ),
-          )
+          ),
         ],
       ),
     );

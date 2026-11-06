@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ntodotxt/database/controller/database.dart';
 import 'package:ntodotxt/filter/controller/filter_controller.dart';
 import 'package:ntodotxt/filter/model/filter_model.dart' show Filter;
 import 'package:ntodotxt/filter/page/filter_list_page.dart';
 import 'package:ntodotxt/filter/repository/filter_repository.dart';
 import 'package:ntodotxt/filter/state/filter_list_bloc.dart';
 import 'package:ntodotxt/filter/state/filter_list_event.dart';
+import 'package:ntodotxt/setting/controller/setting_controller.dart'
+    show SettingController;
+import 'package:ntodotxt/setting/repository/setting_repository.dart'
+    show SettingRepository;
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FakeController extends Fake implements FilterController {
   List<Filter> items = [
@@ -22,6 +29,9 @@ class FakeController extends Fake implements FilterController {
 }
 
 class FilterListPageMaterialApp extends StatelessWidget {
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final FilterController controller;
 
   const FilterListPageMaterialApp({
@@ -33,8 +43,17 @@ class FilterListPageMaterialApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<SettingRepository>(
+          create: (BuildContext context) =>
+              SettingRepository(SettingController(dbController)),
+        ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(controller),
+        ),
+        BlocProvider<InteractionSettingsCubit>(
+          create: (BuildContext context) => InteractionSettingsCubit(
+            repository: context.read<SettingRepository>(),
+          ),
         ),
       ],
       child: Builder(
@@ -44,8 +63,8 @@ class FilterListPageMaterialApp extends StatelessWidget {
               BlocProvider<FilterListBloc>(
                 create: (BuildContext context) {
                   return FilterListBloc(
-                    repository: context.read<FilterRepository>(),
-                  )
+                      repository: context.read<FilterRepository>(),
+                    )
                     ..add(const FilterListSubscriped())
                     ..add(const FilterListSynchronizationRequested());
                 },
@@ -70,14 +89,17 @@ void main() {
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(FilterListPageMaterialApp(
-        controller: FakeController(),
-      ));
+      await tester.pumpWidget(
+        FilterListPageMaterialApp(
+          controller: FakeController(),
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(FilterListTile), findsNWidgets(3));
-      Iterable<FilterListTile> filterTiles =
-          tester.widgetList<FilterListTile>(find.byType(FilterListTile));
+      Iterable<FilterListTile> filterTiles = tester.widgetList<FilterListTile>(
+        find.byType(FilterListTile),
+      );
       expect(filterTiles.elementAt(0).filter.name, 'Filter 01');
       expect(filterTiles.elementAt(1).filter.name, 'Filter 02');
       expect(filterTiles.elementAt(2).filter.name, 'Filter 03');
@@ -91,14 +113,17 @@ void main() {
       tester.view.physicalSize = const Size(800, 1200);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(FilterListPageMaterialApp(
-        controller: FakeController(),
-      ));
+      await tester.pumpWidget(
+        FilterListPageMaterialApp(
+          controller: FakeController(),
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(FilterListTile), findsNWidgets(3));
-      Iterable<FilterListTile> filterTiles =
-          tester.widgetList<FilterListTile>(find.byType(FilterListTile));
+      Iterable<FilterListTile> filterTiles = tester.widgetList<FilterListTile>(
+        find.byType(FilterListTile),
+      );
       expect(filterTiles.elementAt(0).filter.name, 'Filter 01');
       expect(filterTiles.elementAt(1).filter.name, 'Filter 02');
       expect(filterTiles.elementAt(2).filter.name, 'Filter 03');

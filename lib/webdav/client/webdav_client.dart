@@ -40,7 +40,8 @@ class WebDAVClient {
     this.acceptUntrustedCert = false,
   }) {
     final RegExp exp = RegExp(
-        r'(?<scheme>^(http|https)):\/\/(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$');
+      r'(?<scheme>^(http|https)):\/\/(?<host>[a-zA-Z0-9.-]+)(:(?<port>\d+)){0,1}$',
+    );
     final RegExpMatch? match = exp.firstMatch(server);
     if (match != null) {
       scheme = match.namedGroup('scheme')!;
@@ -78,8 +79,9 @@ class WebDAVClient {
     dio.httpClientAdapter = IOHttpClientAdapter(
       createHttpClient: () {
         // Don't trust any certificate just because their root cert is trusted.
-        final HttpClient httpClient =
-            HttpClient(context: SecurityContext(withTrustedRoots: false));
+        final HttpClient httpClient = HttpClient(
+          context: SecurityContext(withTrustedRoots: false),
+        );
         httpClient.idleTimeout = const Duration(
           milliseconds: idleTimeout,
         );
@@ -87,8 +89,8 @@ class WebDAVClient {
           milliseconds: connectionTimeout,
         );
         // You can test the intermediate / root cert here. We just ignore it.
-        httpClient.badCertificateCallback =
-            (cert, host, port) => acceptUntrustedCert;
+        httpClient.badCertificateCallback = (cert, host, port) =>
+            acceptUntrustedCert;
         return httpClient;
       },
       validateCertificate: (cert, host, port) => acceptUntrustedCert,
@@ -186,11 +188,6 @@ class WebDAVClient {
           'UNKNOWN ERROR',
           'Possible cause may be a connection problem or an invalid SSL certificate',
         );
-      default:
-        return (
-          'UNKNOWN ERROR',
-          'Possible cause may be a connection problem or an invalid SSL certificate',
-        );
     }
 
     return (
@@ -205,6 +202,12 @@ class WebDAVClient {
       webdav.Client client = await connection;
       await client.ping();
     } on DioException catch (e) {
+      // Handle 204 No Content as success
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 204) {
+        log.fine('204 No Content (treated as success)');
+        return;
+      }
       log.severe(e);
       final (String, String) error = _handleDioError(e);
       throw WebDAVClientException('${error.$1}: ${error.$2}');
@@ -299,8 +302,10 @@ class WebDAVClient {
     }
   }
 
-  Future<void> mkdir(
-      {required String directory, bool recursive = false}) async {
+  Future<void> mkdir({
+    required String directory,
+    bool recursive = false,
+  }) async {
     webdav.Client client = await connection;
     if (directory.startsWith('/')) {
       directory = directory.substring(1);

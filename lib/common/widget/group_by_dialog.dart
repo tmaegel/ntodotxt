@@ -10,12 +10,12 @@ class FilterStateGroupDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'None': ListGroup.none,
-          'Upcoming': ListGroup.upcoming,
-          'Priority': ListGroup.priority,
-          'Project': ListGroup.project,
-          'Context': ListGroup.context,
-        };
+         'None': ListGroup.none,
+         'Upcoming': ListGroup.upcoming,
+         'Priority': ListGroup.priority,
+         'Project': ListGroup.project,
+         'Context': ListGroup.context,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -31,27 +31,29 @@ class FilterStateGroupDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          String key = items.keys.elementAt(index);
-          ListGroup value = items[key]!;
-          return RadioListTile<ListGroup>(
-            key: Key('${value.name}DialogRadioButton'),
-            contentPadding: EdgeInsets.zero,
-            title: Text(key),
-            value: value,
-            groupValue: cubit.state.filter.group,
-            onChanged: (ListGroup? value) {
-              if (value != null) {
-                cubit.updateGroup(value);
-              }
-              Navigator.pop(context);
-            },
-          );
+      child: RadioGroup<ListGroup>(
+        groupValue: cubit.state.filter.group,
+        onChanged: (ListGroup? value) {
+          if (value != null) {
+            cubit.updateGroup(value);
+          }
+          Navigator.pop(context);
         },
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String key = items.keys.elementAt(index);
+            ListGroup value = items[key]!;
+            return RadioListTile<ListGroup>(
+              key: Key('${value.name}DialogRadioButton'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(key),
+              value: value,
+            );
+          },
+        ),
       ),
     );
   }
@@ -65,12 +67,12 @@ class DefaultFilterStateGroupDialog extends StatelessWidget {
     required this.cubit,
     super.key,
   }) : items = const {
-          'None': ListGroup.none,
-          'Upcoming': ListGroup.upcoming,
-          'Priority': ListGroup.priority,
-          'Project': ListGroup.project,
-          'Context': ListGroup.context,
-        };
+         'None': ListGroup.none,
+         'Upcoming': ListGroup.upcoming,
+         'Priority': ListGroup.priority,
+         'Project': ListGroup.project,
+         'Context': ListGroup.context,
+       };
 
   static Future<void> dialog({
     required BuildContext context,
@@ -87,26 +89,29 @@ class DefaultFilterStateGroupDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          String key = items.keys.elementAt(index);
-          ListGroup value = items[key]!;
-          return RadioListTile<ListGroup>(
+      child: RadioGroup<ListGroup>(
+        groupValue: cubit.state.filter.group,
+        onChanged: (ListGroup? value) {
+          if (value != null) {
+            cubit.updateDefaultGroup(value);
+          }
+          Navigator.pop(context);
+        },
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            String key = items.keys.elementAt(index);
+            ListGroup value = items[key]!;
+            return RadioListTile<ListGroup>(
               key: Key('${value.name}DialogRadioButton'),
               contentPadding: EdgeInsets.zero,
               value: value,
               title: Text(key),
-              groupValue: cubit.state.filter.group,
-              onChanged: (ListGroup? value) {
-                if (value != null) {
-                  cubit.updateDefaultGroup(value);
-                }
-                Navigator.pop(context);
-              });
-        },
+            );
+          },
+        ),
       ),
     );
   }

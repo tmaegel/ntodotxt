@@ -53,8 +53,10 @@ void main() {
         localPath: '/local',
         remotePath: '/remote',
       );
-      expect('$state',
-          'TodoFileLoading { localFile /local/todo.txt remoteFile: /remote/todo.txt }');
+      expect(
+        '$state',
+        'TodoFileLoading { localFile /local/todo.txt remoteFile: /remote/todo.txt }',
+      );
     });
     test('toString() with trailing /', () {
       TodoFileLoading state = TodoFileLoading(
@@ -62,8 +64,10 @@ void main() {
         localPath: '/local/',
         remotePath: '/remote/',
       );
-      expect('$state',
-          'TodoFileLoading { localFile /local/todo.txt remoteFile: /remote/todo.txt }');
+      expect(
+        '$state',
+        'TodoFileLoading { localFile /local/todo.txt remoteFile: /remote/todo.txt }',
+      );
     });
     test('load()', () {
       TodoFileLoading state = TodoFileLoading();
@@ -133,8 +137,10 @@ void main() {
         localPath: '/local',
         remotePath: '/remote',
       );
-      expect('$state',
-          'TodoFileReady { localFile /local/todo.txt remoteFile: /remote/todo.txt }');
+      expect(
+        '$state',
+        'TodoFileReady { localFile /local/todo.txt remoteFile: /remote/todo.txt }',
+      );
     });
     test('toString() with trailing /', () {
       TodoFileReady state = TodoFileReady(
@@ -142,8 +148,10 @@ void main() {
         localPath: '/local/',
         remotePath: '/remote/',
       );
-      expect('$state',
-          'TodoFileReady { localFile /local/todo.txt remoteFile: /remote/todo.txt }');
+      expect(
+        '$state',
+        'TodoFileReady { localFile /local/todo.txt remoteFile: /remote/todo.txt }',
+      );
     });
     test('load()', () {
       TodoFileReady state = TodoFileReady();
@@ -218,8 +226,10 @@ void main() {
         localPath: '/local',
         remotePath: '/remote',
       );
-      expect('$state',
-          'TodoFileError { message error localFile /local/todo.txt remoteFile: /remote/todo.txt }');
+      expect(
+        '$state',
+        'TodoFileError { message error localFile /local/todo.txt remoteFile: /remote/todo.txt }',
+      );
     });
     test('toString() with trailing /', () {
       TodoFileError state = TodoFileError(
@@ -228,8 +238,10 @@ void main() {
         localPath: '/local/',
         remotePath: '/remote/',
       );
-      expect('$state',
-          'TodoFileError { message error localFile /local/todo.txt remoteFile: /remote/todo.txt }');
+      expect(
+        '$state',
+        'TodoFileError { message error localFile /local/todo.txt remoteFile: /remote/todo.txt }',
+      );
     });
     test('load()', () {
       TodoFileError state = TodoFileError(message: 'error');

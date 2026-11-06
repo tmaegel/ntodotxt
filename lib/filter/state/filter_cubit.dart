@@ -16,13 +16,13 @@ class FilterCubit extends Cubit<FilterState> {
     required SettingRepository settingRepository,
     required FilterRepository filterRepository,
     Filter? filter,
-  })  : _settingRepository = settingRepository,
-        _filterRepository = filterRepository,
-        super(
-          filter == null
-              ? FilterLoading(filter: const Filter())
-              : FilterSaved(filter: filter),
-        );
+  }) : _settingRepository = settingRepository,
+       _filterRepository = filterRepository,
+       super(
+         filter == null
+             ? FilterLoading(filter: const Filter())
+             : FilterSaved(filter: filter),
+       );
 
   Future<void> load() async {
     try {
@@ -31,11 +31,14 @@ class FilterCubit extends Cubit<FilterState> {
           state.save(
             filter: Filter(
               order: Order.byName(
-                  (await _settingRepository.get(key: 'order'))?.value),
+                (await _settingRepository.get(key: 'order'))?.value,
+              ),
               filter: Filters.byName(
-                  (await _settingRepository.get(key: 'filter'))?.value),
+                (await _settingRepository.get(key: 'filter'))?.value,
+              ),
               group: Groups.byName(
-                  (await _settingRepository.get(key: 'group'))?.value),
+                (await _settingRepository.get(key: 'group'))?.value,
+              ),
             ),
           ),
         );
@@ -86,11 +89,13 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateName(String name) {
     try {
-      emit(state.update(
-        filter: state.filter.copyWith(
-          name: name.replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' '),
+      emit(
+        state.update(
+          filter: state.filter.copyWith(
+            name: name.replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' '),
+          ),
         ),
-      ));
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -98,9 +103,11 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateOrder(ListOrder order) {
     try {
-      emit(state.update(
-        filter: state.filter.copyWith(order: order),
-      ));
+      emit(
+        state.update(
+          filter: state.filter.copyWith(order: order),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -108,9 +115,11 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateFilter(ListFilter filter) {
     try {
-      emit(state.update(
-        filter: state.filter.copyWith(filter: filter),
-      ));
+      emit(
+        state.update(
+          filter: state.filter.copyWith(filter: filter),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }
@@ -118,9 +127,11 @@ class FilterCubit extends Cubit<FilterState> {
 
   void updateGroup(ListGroup group) {
     try {
-      emit(state.update(
-        filter: state.filter.copyWith(group: group),
-      ));
+      emit(
+        state.update(
+          filter: state.filter.copyWith(group: group),
+        ),
+      );
     } on Exception catch (e) {
       emit(state.error(message: e.toString()));
     }

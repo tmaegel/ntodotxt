@@ -32,19 +32,19 @@ enum Priority {
   W,
   X,
   Y,
-  Z
+  Z,
 }
 
 extension Priorities on Priority {
   static Set<Priority> get priorities => {
-        for (var p in Priority.values)
-          if (p != Priority.none) p,
-      };
+    for (var p in Priority.values)
+      if (p != Priority.none) p,
+  };
 
   static Set<String> get priorityNames => {
-        for (var p in Priority.values)
-          if (p != Priority.none) p.name,
-      };
+    for (var p in Priority.values)
+      if (p != Priority.none) p.name,
+  };
 
   static Priority byName(String name) {
     try {
@@ -191,7 +191,7 @@ class Todo extends Equatable {
 
   Set<String> get fmtProjects => {for (var p in projects) '+$p'};
 
-  static fmtProject(String p) => p.startsWith('+') ? p : '+$p';
+  static String fmtProject(String p) => p.startsWith('+') ? p : '+$p';
 
   bool containsProject(String project) {
     if (project.startsWith('+')) {
@@ -218,7 +218,7 @@ class Todo extends Equatable {
 
   Set<String> get fmtContexts => {for (var c in contexts) '@$c'};
 
-  static fmtContext(String c) => c.startsWith('@') ? c : '@$c';
+  static String fmtContext(String c) => c.startsWith('@') ? c : '@$c';
 
   bool containsContext(String context) {
     if (context.startsWith('@')) {
@@ -247,7 +247,7 @@ class Todo extends Equatable {
 
   Set<String> get fmtKeyValues => keyValues;
 
-  static fmtKeyValue(String keyValue) => keyValue;
+  static String fmtKeyValue(String keyValue) => keyValue;
 
   /// Checks if a key value pair with specific key already exists.
   bool containsKeyValue(String keyValue) {
@@ -286,11 +286,11 @@ class Todo extends Equatable {
     DateTime? completionDate,
     DateTime? creationDate,
     String? description,
-  })  : _completion = completion,
-        _priority = priority,
-        _completionDate = completionDate,
-        _creationDate = creationDate,
-        _description = description {
+  }) : _completion = completion,
+       _priority = priority,
+       _completionDate = completionDate,
+       _creationDate = creationDate,
+       _description = description {
     // Validate completion date.
     if (completion == true) {
       if (completionDate == null) {
@@ -321,18 +321,21 @@ class Todo extends Equatable {
         completionDate = DateTime(now.year, now.month, now.day);
       } else {
         completionDate = DateTime(
-            completionDate.year, completionDate.month, completionDate.day);
+          completionDate.year,
+          completionDate.month,
+          completionDate.day,
+        );
       }
     } else {
       completionDate = null;
     }
 
-    if (creationDate == null) {
-      // Initialize creationDate to be sure there is always one set.
-      creationDate = DateTime(now.year, now.month, now.day);
-    } else {
-      creationDate =
-          DateTime(creationDate.year, creationDate.month, creationDate.day);
+    if (creationDate != null) {
+      creationDate = DateTime(
+        creationDate.year,
+        creationDate.month,
+        creationDate.day,
+      );
     }
 
     return Todo._(
@@ -351,8 +354,10 @@ class Todo extends Equatable {
     String? id,
     required String value,
   }) {
-    final todoStr =
-        value.trim().replaceAllMapped(RegExp(r'\s{2,}'), (match) => ' ');
+    final todoStr = value.trim().replaceAllMapped(
+      RegExp(r'\s{2,}'),
+      (match) => ' ',
+    );
 
     bool completion = _str2completion(
       _todoStringElementAt(todoStr, 0),
@@ -441,50 +446,14 @@ class Todo extends Equatable {
     );
   }
 
-  /// Creates a todo object that only sets the values
-  /// that have been explicitly edited.
-  /// The other values remain to null.
-  Todo copyDiff({
-    bool? completion,
-    Priority? priority,
-    DateTime? completionDate,
-    DateTime? creationDate,
-    String? description,
-  }) {
-    return Todo(
-      id: id,
-      completion: completion,
-      priority: priority,
-      completionDate: completionDate,
-      // Once the creationDate is set, keep it.
-      creationDate: creationDate ?? this.creationDate,
-      description: description,
-    );
-  }
-
-  /// Copy only the explicitly set attributes into the new object.
-  /// Use the existing values for the rest.
-  /// If the values of _<variables> are not null, they have been
-  /// explicitly edited.
-  Todo copyMerge(Todo todo) {
-    return Todo(
-      id: id,
-      completion: _completion ?? todo.completion,
-      priority: _priority ?? todo.priority,
-      completionDate: _completionDate ?? todo.completionDate,
-      creationDate: _creationDate ?? todo.creationDate,
-      description: _description ?? todo.description,
-    );
-  }
-
   @override
   List<Object?> get props => [
-        completion,
-        completionDate,
-        priority,
-        creationDate,
-        description,
-      ];
+    completion,
+    completionDate,
+    priority,
+    creationDate,
+    description,
+  ];
 
   @override
   String toString() {
@@ -503,8 +472,10 @@ class Todo extends Equatable {
     final Random r = Random();
     const chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    final String randomId =
-        List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
+    final String randomId = List.generate(
+      len,
+      (index) => chars[r.nextInt(chars.length)],
+    ).join();
     return sha256.convert(utf8.encode(randomId)).toString();
   }
 

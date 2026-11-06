@@ -8,8 +8,12 @@ class LicenceListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MainAppBar(title: 'Licenses'),
-      body: LicenseListView(),
+      body: CustomScrollView(
+        slivers: [
+          MainSliverAppBar(title: 'Licenses'),
+          LicenseListView(),
+        ],
+      ),
     );
   }
 }
@@ -19,28 +23,28 @@ class LicenseListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      itemCount: allDependencies.length,
-      itemBuilder: (BuildContext context, int index) {
-        Package package = allDependencies[index];
-        return ListTile(
-          title: Text(package.name),
-          subtitle: Text(package.repository ?? (package.homepage ?? '')),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return LicenceDetailPage(
-                    title: package.name,
-                    licence: package.license ?? package.description,
-                  );
-                },
-              ),
-            );
-          },
-        );
-      },
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          Package package = allDependencies[index];
+          return ListTile(
+            title: Text(package.name),
+            subtitle: Text(package.repository ?? (package.homepage ?? '')),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return LicenceDetailPage(
+                      title: package.name,
+                      licence: package.license ?? package.description,
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -58,19 +62,17 @@ class LicenceDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(title: title),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Text(licence),
-              ],
+      body: CustomScrollView(
+        slivers: [
+          MainSliverAppBar(title: title),
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              child: Text(licence),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

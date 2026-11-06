@@ -101,7 +101,7 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
     return DraggableScrollableSheet(
       initialChildSize: 0.35,
       minChildSize: 0.15,
-      maxChildSize: 0.6,
+      maxChildSize: 0.75,
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
         return BlocBuilder<DrawerCubit, DrawerState>(
@@ -152,7 +152,9 @@ class BottomSheetNavigationDrawer extends StatelessWidget {
                           if (index == 0) const SizedBox(height: 14.0),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 2.0),
+                              horizontal: 16.0,
+                              vertical: 2.0,
+                            ),
                             child: ListTile(
                               selected: drawerState.index == index,
                               leading: drawerState.index == index

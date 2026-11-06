@@ -14,12 +14,12 @@ sealed class TodoFileState extends Equatable {
     this.doneFilename = defaultDoneFilename,
     String localPath = defaultLocalTodoPath,
     String remotePath = defaultLocalTodoPath,
-  })  : localPath = localPath.endsWith(Platform.pathSeparator)
-            ? localPath
-            : '$localPath${Platform.pathSeparator}',
-        remotePath = remotePath.endsWith(Platform.pathSeparator)
-            ? remotePath
-            : '$remotePath${Platform.pathSeparator}';
+  }) : localPath = localPath.endsWith(Platform.pathSeparator)
+           ? localPath
+           : '$localPath${Platform.pathSeparator}',
+       remotePath = remotePath.endsWith(Platform.pathSeparator)
+           ? remotePath
+           : '$remotePath${Platform.pathSeparator}';
 
   String get localTodoFilePath => '$localPath$todoFilename';
 
@@ -71,11 +71,11 @@ sealed class TodoFileState extends Equatable {
 
   @override
   List<Object?> get props => [
-        todoFilename,
-        doneFilename,
-        localPath,
-        remotePath,
-      ];
+    todoFilename,
+    doneFilename,
+    localPath,
+    remotePath,
+  ];
 
   @override
   String toString() =>
@@ -165,12 +165,12 @@ final class TodoFileError extends TodoFileState {
 
   @override
   List<Object?> get props => [
-        message,
-        todoFilename,
-        doneFilename,
-        localPath,
-        remotePath,
-      ];
+    message,
+    todoFilename,
+    doneFilename,
+    localPath,
+    remotePath,
+  ];
 
   @override
   String toString() =>

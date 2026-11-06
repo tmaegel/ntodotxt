@@ -32,8 +32,9 @@ class BlocRepositoryWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseController dbController =
-        DatabaseController(inMemoryDatabasePath);
+    final DatabaseController dbController = DatabaseController(
+      inMemoryDatabasePath,
+    );
 
     return MultiRepositoryProvider(
       providers: [
@@ -63,8 +64,9 @@ void main() {
   group('FilterCreateEditPage', () {
     group('narrow view', () {
       group('create mode', () {
-        testWidgets('found no SaveFilterIconButton if name is empty',
-            (tester) async {
+        testWidgets('found no SaveFilterIconButton if name is empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -81,8 +83,9 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found SaveFilterIconButton if name is not empty',
-            (tester) async {
+        testWidgets('found SaveFilterIconButton if name is not empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -121,30 +124,32 @@ void main() {
 
       group('edit mode', () {
         testWidgets(
-            'found no SaveFilterIconButton if filter has not be changed',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(400, 800);
-          tester.view.devicePixelRatio = 1.0;
-          await tester.pumpWidget(
-            BlocRepositoryWrapper(
-              initFilter: const Filter().copyWith(name: 'filter'),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(
-            find.descendant(
-              of: find.byType(SaveFilterIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveFilterIconButton if filter has be changed',
-            (tester) async {
+          'found no SaveFilterIconButton if filter has not be changed',
+          (tester) async {
+            // Increase size to ensure all elements in list are visible.
+            tester.view.physicalSize = const Size(400, 800);
+            tester.view.devicePixelRatio = 1.0;
+            await tester.pumpWidget(
+              BlocRepositoryWrapper(
+                initFilter: const Filter().copyWith(name: 'filter'),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(
+              find.descendant(
+                of: find.byType(SaveFilterIconButton),
+                matching: find.byType(IconButton),
+              ),
+              findsNothing,
+            );
+            // resets the screen to its original size after the test end
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+          },
+        );
+        testWidgets('found SaveFilterIconButton if filter has be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(400, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -156,7 +161,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.dragUntilVisible(
             find.byType(FilterOrderItem),
-            find.byType(ListView),
+            find.byType(CustomScrollView),
             const Offset(0, -100),
           );
           await tester.tap(find.byType(FilterOrderItem));
@@ -217,8 +222,9 @@ void main() {
 
     group('wide view', () {
       group('create mode', () {
-        testWidgets('found no SaveFilterIconButton if name is empty',
-            (tester) async {
+        testWidgets('found no SaveFilterIconButton if name is empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -235,8 +241,9 @@ void main() {
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
         });
-        testWidgets('found SaveFilterIconButton if name is not empty',
-            (tester) async {
+        testWidgets('found SaveFilterIconButton if name is not empty', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -274,30 +281,32 @@ void main() {
       });
       group('edit mode', () {
         testWidgets(
-            'found no SaveFilterIconButton if filter has not be changed',
-            (tester) async {
-          // Increase size to ensure all elements in list are visible.
-          tester.view.physicalSize = const Size(800, 800);
-          tester.view.devicePixelRatio = 1.0;
-          await tester.pumpWidget(
-            BlocRepositoryWrapper(
-              initFilter: const Filter().copyWith(name: 'filter'),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(
-            find.descendant(
-              of: find.byType(SaveFilterIconButton),
-              matching: find.byType(IconButton),
-            ),
-            findsNothing,
-          );
-          // resets the screen to its original size after the test end
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-        });
-        testWidgets('found SaveFilterIconButton if filter has be changed',
-            (tester) async {
+          'found no SaveFilterIconButton if filter has not be changed',
+          (tester) async {
+            // Increase size to ensure all elements in list are visible.
+            tester.view.physicalSize = const Size(800, 800);
+            tester.view.devicePixelRatio = 1.0;
+            await tester.pumpWidget(
+              BlocRepositoryWrapper(
+                initFilter: const Filter().copyWith(name: 'filter'),
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(
+              find.descendant(
+                of: find.byType(SaveFilterIconButton),
+                matching: find.byType(IconButton),
+              ),
+              findsNothing,
+            );
+            // resets the screen to its original size after the test end
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+          },
+        );
+        testWidgets('found SaveFilterIconButton if filter has be changed', (
+          tester,
+        ) async {
           // Increase size to ensure all elements in list are visible.
           tester.view.physicalSize = const Size(800, 800);
           tester.view.devicePixelRatio = 1.0;
@@ -309,7 +318,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.dragUntilVisible(
             find.byType(FilterOrderItem),
-            find.byType(ListView),
+            find.byType(CustomScrollView),
             const Offset(0, -100),
           );
           await tester.tap(find.byType(FilterOrderItem));
@@ -374,7 +383,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterOrderItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -394,7 +403,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterFilterItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -413,7 +422,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterGroupItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -432,7 +441,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterPrioritiesItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -457,7 +466,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -482,7 +491,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -514,7 +523,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterNameTextField),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -534,7 +543,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterOrderItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -552,14 +561,15 @@ void main() {
       testWidgets('FilterFilterItem', (tester) async {
         await tester.pumpWidget(
           BlocRepositoryWrapper(
-            initFilter:
-                const Filter().copyWith(filter: ListFilter.completedOnly),
+            initFilter: const Filter().copyWith(
+              filter: ListFilter.completedOnly,
+            ),
           ),
         );
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterFilterItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -583,7 +593,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterGroupItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -608,7 +618,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterPrioritiesItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -643,7 +653,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -678,7 +688,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
         expect(
@@ -710,7 +720,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterOrderItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -744,7 +754,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterFilterItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -778,7 +788,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterGroupItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -810,30 +820,37 @@ void main() {
       testWidgets('FilterPrioritiesItem', (tester) async {
         await tester.pumpWidget(const BlocRepositoryWrapper());
         await tester.pumpAndSettle();
+        final Finder prioritiesItem = find.byType(FilterPrioritiesItem);
         await tester.dragUntilVisible(
-          find.byType(FilterPrioritiesItem),
-          find.byType(ListView),
+          prioritiesItem,
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
-
-        await tester.tap(find.byType(FilterPrioritiesItem));
+        await tester.ensureVisible(prioritiesItem);
         await tester.pumpAndSettle();
 
-        await tester.ensureVisible(find.byType(FilterPriorityTagDialog));
+        await tester.tap(prioritiesItem);
+        await tester.pumpAndSettle();
+
+        final Finder priorityDialog = find.byType(FilterPriorityTagDialog);
+        expect(priorityDialog, findsOneWidget);
+        await tester.ensureVisible(priorityDialog);
         await tester.pumpAndSettle();
         await tester.tap(
           find.descendant(
-            of: find.byType(FilterPriorityTagDialog),
+            of: priorityDialog,
             matching: find.text('A'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
           find.descendant(
-            of: find.byType(FilterPrioritiesItem),
+            of: prioritiesItem,
             matching: find.byWidgetPredicate(
               (Widget widget) => widget is BasicChip && widget.label == 'A',
             ),
@@ -850,7 +867,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterProjectTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -865,8 +882,10 @@ void main() {
             matching: find.text('project1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(
@@ -889,7 +908,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.dragUntilVisible(
           find.byType(FilterContextTagsItem),
-          find.byType(ListView),
+          find.byType(CustomScrollView),
           const Offset(0, -100),
         );
 
@@ -904,8 +923,10 @@ void main() {
             matching: find.text('context1'),
           ),
         );
-        await tester.drag(find.byType(DraggableScrollableSheet),
-            const Offset(0, 500)); // Dismiss dialog.
+        await tester.drag(
+          find.byType(DraggableScrollableSheet),
+          const Offset(0, 500),
+        ); // Dismiss dialog.
         await tester.pumpAndSettle();
 
         expect(

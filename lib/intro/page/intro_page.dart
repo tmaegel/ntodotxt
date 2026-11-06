@@ -139,11 +139,11 @@ class IntroPageLocal extends StatelessWidget {
     (' mode.', null),
     (
       '\nIn this mode, the app manages your todos locally only. This means that the app only reads and writes your todos from and to your todo file on your device.',
-      null
+      null,
     ),
     (
       '\n\nUse this option if you don\'t need synchronisation across multiple devices, or if you have an external app that takes care of syncing the folder (e.g. Syncthing, Nextcloud, etc.).',
-      null
+      null,
     ),
   ];
 
@@ -197,8 +197,8 @@ class IntroPageWebDav extends StatelessWidget {
     (' mode.', null),
     (
       '\nIn this mode, the app manages your todos with a webdav server of your choice. This means that the app reads and writes your todos from and to your todo file on your device and synchronizes this file with your backend server.',
-      null
-    )
+      null,
+    ),
   ];
 
   @override

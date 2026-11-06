@@ -11,7 +11,7 @@ final ThemeData dark = CustomTheme.dark;
 /// Customize versions of the theme data.
 final ThemeData lightTheme = light.copyWith(
   appBarTheme: light.appBarTheme.copyWith(
-    backgroundColor: Colors.transparent,
+    // backgroundColor: Colors.transparent,
     systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark,
@@ -33,10 +33,7 @@ final ThemeData lightTheme = light.copyWith(
   listTileTheme: light.listTileTheme.copyWith(
     selectedColor: light.textTheme.bodySmall?.color,
     selectedTileColor: light.hoverColor,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
   ),
   scrollbarTheme: light.scrollbarTheme.copyWith(
     thickness: WidgetStateProperty.all(5.0),
@@ -65,7 +62,7 @@ final ThemeData lightTheme = light.copyWith(
 );
 final ThemeData darkTheme = dark.copyWith(
   appBarTheme: dark.appBarTheme.copyWith(
-    backgroundColor: Colors.transparent,
+    // backgroundColor: Colors.transparent,
     systemOverlayStyle: const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.light,
@@ -87,10 +84,7 @@ final ThemeData darkTheme = dark.copyWith(
   listTileTheme: dark.listTileTheme.copyWith(
     selectedColor: dark.textTheme.bodySmall?.color,
     selectedTileColor: dark.hoverColor,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
   ),
   scrollbarTheme: dark.scrollbarTheme.copyWith(
     thickness: WidgetStateProperty.all(5.0),

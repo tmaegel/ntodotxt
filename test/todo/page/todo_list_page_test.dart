@@ -16,6 +16,7 @@ import 'package:ntodotxt/setting/controller/setting_controller.dart'
     show SettingController;
 import 'package:ntodotxt/setting/repository/setting_repository.dart'
     show SettingRepository;
+import 'package:ntodotxt/setting/state/interaction_settings_cubit.dart';
 import 'package:ntodotxt/todo/api/todo_list_api.dart';
 import 'package:ntodotxt/todo/page/todo_list_page.dart';
 import 'package:ntodotxt/todo/repository/todo_list_repository.dart';
@@ -24,8 +25,9 @@ import 'package:ntodotxt/todo/state/todo_list_event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class TodoListPageMaterialApp extends StatelessWidget {
-  final DatabaseController dbController =
-      const DatabaseController(inMemoryDatabasePath);
+  final DatabaseController dbController = const DatabaseController(
+    inMemoryDatabasePath,
+  );
   final File localFile;
   final Filter? filter;
 
@@ -46,12 +48,18 @@ class TodoListPageMaterialApp extends StatelessWidget {
         RepositoryProvider<TodoListRepository>(
           create: (BuildContext context) {
             return TodoListRepository(
-                LocalTodoListApi.fromFile(localFile: localFile));
+              LocalTodoListApi.fromFile(localFile: localFile),
+            );
           },
         ),
         RepositoryProvider<FilterRepository>(
           create: (BuildContext context) => FilterRepository(
             FilterController(dbController),
+          ),
+        ),
+        BlocProvider<InteractionSettingsCubit>(
+          create: (BuildContext context) => InteractionSettingsCubit(
+            repository: context.read<SettingRepository>(),
           ),
         ),
       ],
@@ -67,11 +75,12 @@ class TodoListPageMaterialApp extends StatelessWidget {
                 ),
               ),
               BlocProvider(
-                create: (BuildContext context) => TodoListBloc(
-                  repository: context.read<TodoListRepository>(),
-                )
-                  ..add(const TodoListSubscriptionRequested())
-                  ..add(const TodoListSynchronizationRequested()),
+                create: (BuildContext context) =>
+                    TodoListBloc(
+                        repository: context.read<TodoListRepository>(),
+                      )
+                      ..add(const TodoListSubscriptionRequested())
+                      ..add(const TodoListSynchronizationRequested()),
               ),
               BlocProvider<FilterListBloc>(
                 create: (BuildContext context) {
@@ -116,13 +125,16 @@ void main() {
         'TodoB',
         'TODOC',
       ];
-      await tester.pumpWidget(TodoListPageMaterialApp(
-        localFile: file,
-      ));
+      await tester.pumpWidget(
+        TodoListPageMaterialApp(
+          localFile: file,
+        ),
+      );
       await tester.pumpAndSettle();
 
-      Iterable<TodoListTile> todoTiles =
-          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      Iterable<TodoListTile> todoTiles = tester.widgetList<TodoListTile>(
+        find.byType(TodoListTile),
+      );
       expect(todoTiles.length, expectedTiles.length);
 
       for (int i = 0; i < expectedTiles.length; i++) {
@@ -140,18 +152,21 @@ void main() {
         'TodoB',
         'TODOC',
       ];
-      await tester.pumpWidget(TodoListPageMaterialApp(
-        localFile: file,
-        filter: const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
+      await tester.pumpWidget(
+        TodoListPageMaterialApp(
+          localFile: file,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
-      Iterable<TodoListTile> todoTiles =
-          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      Iterable<TodoListTile> todoTiles = tester.widgetList<TodoListTile>(
+        find.byType(TodoListTile),
+      );
       expect(todoTiles.length, expectedTiles.length);
 
       for (int i = 0; i < expectedTiles.length; i++) {
@@ -169,18 +184,21 @@ void main() {
         'TodoB',
         'todoA',
       ];
-      await tester.pumpWidget(TodoListPageMaterialApp(
-        localFile: file,
-        filter: const Filter(
-          order: ListOrder.descending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
+      await tester.pumpWidget(
+        TodoListPageMaterialApp(
+          localFile: file,
+          filter: const Filter(
+            order: ListOrder.descending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
-      Iterable<TodoListTile> todoTiles =
-          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      Iterable<TodoListTile> todoTiles = tester.widgetList<TodoListTile>(
+        find.byType(TodoListTile),
+      );
       expect(todoTiles.length, expectedTiles.length);
 
       for (int i = 0; i < expectedTiles.length; i++) {
@@ -213,18 +231,21 @@ void main() {
         'TodoB',
         'TodoC',
       ];
-      await tester.pumpWidget(TodoListPageMaterialApp(
-        localFile: file,
-        filter: const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.all,
-          group: ListGroup.none,
+      await tester.pumpWidget(
+        TodoListPageMaterialApp(
+          localFile: file,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.all,
+            group: ListGroup.none,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
-      Iterable<TodoListTile> todoTiles =
-          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      Iterable<TodoListTile> todoTiles = tester.widgetList<TodoListTile>(
+        find.byType(TodoListTile),
+      );
       expect(todoTiles.length, expectedTiles.length);
 
       for (int i = 0; i < expectedTiles.length; i++) {
@@ -241,18 +262,21 @@ void main() {
         'TodoB',
         'TodoC',
       ];
-      await tester.pumpWidget(TodoListPageMaterialApp(
-        localFile: file,
-        filter: const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.completedOnly,
-          group: ListGroup.none,
+      await tester.pumpWidget(
+        TodoListPageMaterialApp(
+          localFile: file,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.completedOnly,
+            group: ListGroup.none,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
-      Iterable<TodoListTile> todoTiles =
-          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      Iterable<TodoListTile> todoTiles = tester.widgetList<TodoListTile>(
+        find.byType(TodoListTile),
+      );
       expect(todoTiles.length, expectedTiles.length);
 
       for (int i = 0; i < expectedTiles.length; i++) {
@@ -268,18 +292,21 @@ void main() {
       final List<String> expectedTiles = [
         'TodoA',
       ];
-      await tester.pumpWidget(TodoListPageMaterialApp(
-        localFile: file,
-        filter: const Filter(
-          order: ListOrder.ascending,
-          filter: ListFilter.incompletedOnly,
-          group: ListGroup.none,
+      await tester.pumpWidget(
+        TodoListPageMaterialApp(
+          localFile: file,
+          filter: const Filter(
+            order: ListOrder.ascending,
+            filter: ListFilter.incompletedOnly,
+            group: ListGroup.none,
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
-      Iterable<TodoListTile> todoTiles =
-          tester.widgetList<TodoListTile>(find.byType(TodoListTile));
+      Iterable<TodoListTile> todoTiles = tester.widgetList<TodoListTile>(
+        find.byType(TodoListTile),
+      );
       expect(todoTiles.length, expectedTiles.length);
 
       for (int i = 0; i < expectedTiles.length; i++) {
@@ -314,18 +341,21 @@ void main() {
           'TodoC',
           'TodoB', // Completed todo come always at last.
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.none,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.ascending,
+              filter: ListFilter.all,
+              group: ListGroup.none,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -344,18 +374,21 @@ void main() {
           'TodoA',
           'TodoB', // Completed todo come always at last.
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.descending,
-            filter: ListFilter.all,
-            group: ListGroup.none,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.descending,
+              filter: ListFilter.all,
+              group: ListGroup.none,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -411,18 +444,21 @@ void main() {
           'TodoA1',
           'TodoA2',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.upcoming,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.ascending,
+              filter: ListFilter.all,
+              group: ListGroup.upcoming,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -457,18 +493,21 @@ void main() {
           'TodoA2',
           'TodoA1',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.descending,
-            filter: ListFilter.all,
-            group: ListGroup.upcoming,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.descending,
+              filter: ListFilter.all,
+              group: ListGroup.upcoming,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -513,18 +552,21 @@ void main() {
           'TodoC',
           'TodoD',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.priority,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.ascending,
+              filter: ListFilter.all,
+              group: ListGroup.priority,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -548,18 +590,21 @@ void main() {
           'TodoA2',
           'TodoA1', // Completed todo come always at last.
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.descending,
-            filter: ListFilter.all,
-            group: ListGroup.priority,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.descending,
+              filter: ListFilter.all,
+              group: ListGroup.priority,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -600,18 +645,21 @@ void main() {
           'TodoC',
           'TodoD',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.project,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.ascending,
+              filter: ListFilter.all,
+              group: ListGroup.project,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -635,18 +683,21 @@ void main() {
           'TodoD',
           'TodoC',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.descending,
-            filter: ListFilter.all,
-            group: ListGroup.project,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.descending,
+              filter: ListFilter.all,
+              group: ListGroup.project,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -687,18 +738,21 @@ void main() {
           'TodoC',
           'TodoD',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.ascending,
-            filter: ListFilter.all,
-            group: ListGroup.context,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.ascending,
+              filter: ListFilter.all,
+              group: ListGroup.context,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {
@@ -722,18 +776,21 @@ void main() {
           'TodoD',
           'TodoC',
         ];
-        await tester.pumpWidget(TodoListPageMaterialApp(
-          localFile: file,
-          filter: const Filter(
-            order: ListOrder.descending,
-            filter: ListFilter.all,
-            group: ListGroup.context,
+        await tester.pumpWidget(
+          TodoListPageMaterialApp(
+            localFile: file,
+            filter: const Filter(
+              order: ListOrder.descending,
+              filter: ListFilter.all,
+              group: ListGroup.context,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
-        Iterable<ListTile> listTiles =
-            tester.widgetList<ListTile>(find.byType(ListTile));
+        Iterable<ListTile> listTiles = tester.widgetList<ListTile>(
+          find.byType(ListTile),
+        );
         expect(listTiles.length, expectedTiles.length);
 
         for (int i = 0; i < expectedTiles.length; i++) {

@@ -7,6 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.3] - 2026-11-06
+
+### Fixed
+
+- Preserve the task list's scroll position when opening, closing or deleting a task #115 #124
+
+## [0.19.2] - 2026-08-14
+
+### Fix
+
+- Build abis in the same way as fdroid does #120
+
+## [0.19.1] - 2026-08-09
+
+### Added
+
+- Explicitly add `sqlite3` #120
+
+## [0.19.0] - 2026-07-31
+
+### Changed
+
+- Make creation date optional #49 [@max-baz](https://github.com/max-baz)
+- Bump `flutter` to 3.41.9
+- Bump `collection` to 1.19.1
+- Bump `crypto` to 3.0.7
+- Bump `cupertino_icons` to 1.0.9
+- Bump `dio` to 5.9.2
+- Bump `equatable` to 2.0.8
+- Bump `file_picker` to 10.3.10
+- Bump `flex_color_scheme` to 8.4.0
+- Bump `flutter_secure_storage` to 10.3.1
+- Bump `go_router` to 15.1.3
+- Bump `permission_handler` to 12.0.3
+- Bump `sqflite_common_ffi` to 2.4.0+3
+- Bump `url_launcher` to 6.3.2
+
+### Removed
+
+- Package `sqlite3_flutter_libs`
+
+## [0.18.0] - 2026-06-04
+
+### Added
+
+- Filter dialog based on DraggableScrollableSheet
+
+### Changed
+
+- Migrated AppBar to SliverAppBar
+
+### Removed
+
+- Filter bar in AppBar
+
+## [0.17.0] - 2026-03-13
+
+### Added
+
+- Option to enable or disable swipe-right and swipe-left actions for list items #107
+- Option to delete filters via swipe-right action
+
+## [0.16.1] - 2026-01-05
+
+### Fixed
+
+- 204 responses indicate no errors during the ping
+
 ## [0.16.0] - 2025-09-26
 
 ### Added
@@ -436,7 +504,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Intiial release
 
-[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.16.0...HEAD
+[unreleased]: https://github.com/tmaegel/ntodotxt/compare/v0.19.3...HEAD
+[0.19.3]: https://github.com/tmaegel/ntodotxt/compare/v0.19.2...v0.19.3
+[0.19.2]: https://github.com/tmaegel/ntodotxt/compare/v0.19.1...v0.19.2
+[0.19.1]: https://github.com/tmaegel/ntodotxt/compare/v0.19.0...v0.19.1
+[0.19.0]: https://github.com/tmaegel/ntodotxt/compare/v0.18.0...v0.19.0
+[0.18.0]: https://github.com/tmaegel/ntodotxt/compare/v0.17.0...v0.18.0
+[0.17.0]: https://github.com/tmaegel/ntodotxt/compare/v0.16.1...v0.17.0
+[0.16.1]: https://github.com/tmaegel/ntodotxt/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/tmaegel/ntodotxt/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/tmaegel/ntodotxt/compare/v0.14.2...v0.15.0
 [0.14.2]: https://github.com/tmaegel/ntodotxt/compare/v0.14.1...v0.14.2

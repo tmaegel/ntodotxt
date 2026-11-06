@@ -23,7 +23,7 @@ class TodoKeyValueTagDialog extends TagDialog {
     required TodoCubit cubit,
     required Set<String> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => TodoKeyValueTagDialog(
@@ -60,7 +60,7 @@ class _TodoKeyValueTagDialogState
   void onUpdate() {
     widget.cubit.updateKeyValues({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }

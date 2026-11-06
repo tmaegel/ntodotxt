@@ -23,7 +23,7 @@ class FilterContextTagDialog extends TagDialog {
     required FilterCubit cubit,
     required Set<String> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => FilterContextTagDialog(
@@ -56,7 +56,7 @@ class _FilterContextTagDialogState
   void onUpdate() {
     widget.cubit.updateContexts({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }
@@ -81,7 +81,7 @@ class TodoContextTagDialog extends TagDialog {
     required TodoCubit cubit,
     required Set<String> availableTags,
   }) async {
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) => TodoContextTagDialog(
@@ -117,7 +117,7 @@ class _TodoContextTagDialogState extends TagDialogState<TodoContextTagDialog> {
   void onUpdate() {
     widget.cubit.updateContexts({
       for (Tag t in tags)
-        if (t.selected) t.name
+        if (t.selected) t.name,
     });
   }
 }

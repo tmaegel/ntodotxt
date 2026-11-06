@@ -13,6 +13,7 @@ import 'package:ntodotxt/filter/state/filter_cubit.dart';
 import 'package:ntodotxt/filter/state/filter_state.dart';
 import 'package:ntodotxt/login/state/login_cubit.dart';
 import 'package:ntodotxt/login/state/login_state.dart';
+import 'package:ntodotxt/setting/widget/settings_item.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_cubit.dart';
 import 'package:ntodotxt/todo_file/state/todo_file_state.dart';
 
@@ -21,10 +22,14 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PopScopeDrawer(
+    return PopScopeDrawer(
       child: Scaffold(
-        appBar: MainAppBar(title: 'Settings'),
-        body: SettingsView(),
+        body: CustomScrollView(
+          slivers: [
+            MainSliverAppBar(title: 'Settings'),
+            SettingsView(),
+          ],
+        ),
       ),
     );
   }
@@ -35,46 +40,53 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          ListTile(
             title: Text(
               'Filter',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        const DefaultListOrderSettingsItem(),
-        const DefaultListFilterSettingsItem(),
-        const DefaultListGroupSettiungsItem(),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const DefaultListOrderSettingsItem(),
+          const DefaultListFilterSettingsItem(),
+          const DefaultListGroupSettingsItem(),
+          const Divider(),
+          ListTile(
+            title: Text(
+              'Todo',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          const AutoCreationDateEnabledSettingsItem(),
+          const Divider(),
+          ListTile(
+            title: Text(
+              'Interaction',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          const SwipeLeftActionEnabledSettingsItem(),
+          const SwipeRightActionEnabledSettingsItem(),
+          const Divider(),
+          ListTile(
             title: Text(
               'Storage',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        const TodoFilenameSettingsItem(),
-        const LocalPathSettingsItem(),
-        const RemotePathSettingsItem(),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const TodoFilenameSettingsItem(),
+          const LocalPathSettingsItem(),
+          const RemotePathSettingsItem(),
+          const Divider(),
+          ListTile(
             title: Text(
               'App',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          ListTile(
             title: const Text('Reinitialization'),
             subtitle: const Text('Reinitialization of the app.'),
             onTap: () async {
@@ -94,25 +106,19 @@ class SettingsView extends StatelessWidget {
               }
             },
           ),
-        ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          const Divider(),
+          ListTile(
             title: Text(
               'Others',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
+          ListTile(
             title: const Text('About'),
             onTap: () => context.pushNamed('app-info'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -126,18 +132,15 @@ class DefaultListOrderSettingsItem extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.order != state.filter.order,
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Default order'),
-            subtitle: Text(state.filter.order.name),
-            onTap: () async {
-              await DefaultFilterStateOrderDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
-          ),
+        return ListTile(
+          title: const Text('Default order'),
+          subtitle: Text(state.filter.order.name),
+          onTap: () async {
+            await DefaultFilterStateOrderDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -153,26 +156,23 @@ class DefaultListFilterSettingsItem extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.filter != state.filter.filter,
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Default filter'),
-            subtitle: Text(state.filter.filter.name),
-            onTap: () async {
-              await DefaultFilterStateFilterDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
-          ),
+        return ListTile(
+          title: const Text('Default filter'),
+          subtitle: Text(state.filter.filter.name),
+          onTap: () async {
+            await DefaultFilterStateFilterDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
   }
 }
 
-class DefaultListGroupSettiungsItem extends StatelessWidget {
-  const DefaultListGroupSettiungsItem({super.key});
+class DefaultListGroupSettingsItem extends StatelessWidget {
+  const DefaultListGroupSettingsItem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -180,18 +180,15 @@ class DefaultListGroupSettiungsItem extends StatelessWidget {
       buildWhen: (FilterState previousState, FilterState state) =>
           previousState.filter.group != state.filter.group,
       builder: (BuildContext context, FilterState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Default grouping'),
-            subtitle: Text(state.filter.group.name),
-            onTap: () async {
-              await DefaultFilterStateGroupDialog.dialog(
-                context: context,
-                cubit: BlocProvider.of<FilterCubit>(context),
-              );
-            },
-          ),
+        return ListTile(
+          title: const Text('Default grouping'),
+          subtitle: Text(state.filter.group.name),
+          onTap: () async {
+            await DefaultFilterStateGroupDialog.dialog(
+              context: context,
+              cubit: BlocProvider.of<FilterCubit>(context),
+            );
+          },
         );
       },
     );
@@ -207,17 +204,14 @@ class LocalPathSettingsItem extends StatelessWidget {
       buildWhen: (TodoFileState previousState, TodoFileState state) =>
           previousState.localPath != state.localPath,
       builder: (BuildContext context, TodoFileState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Local path'),
-            subtitle: Text(state.localPath),
-            onTap: () => InfoDialog.dialog(
-              context: context,
-              title: 'Local path',
-              message:
-                  'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
-            ),
+        return ListTile(
+          title: const Text('Local path'),
+          subtitle: Text(state.localPath),
+          onTap: () => InfoDialog.dialog(
+            context: context,
+            title: 'Local path',
+            message:
+                'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
           ),
         );
       },
@@ -235,21 +229,22 @@ class RemotePathSettingsItem extends StatelessWidget {
         return Visibility(
           visible: loginState is LoginWebDAV,
           child: BlocBuilder<TodoFileCubit, TodoFileState>(
-            buildWhen: (TodoFileState previousTodoFileState,
-                    TodoFileState todoFileState) =>
-                previousTodoFileState.remotePath != todoFileState.remotePath,
+            buildWhen:
+                (
+                  TodoFileState previousTodoFileState,
+                  TodoFileState todoFileState,
+                ) =>
+                    previousTodoFileState.remotePath !=
+                    todoFileState.remotePath,
             builder: (BuildContext context, TodoFileState todoFileState) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListTile(
-                  title: const Text('Remote path'),
-                  subtitle: Text(todoFileState.remotePath),
-                  onTap: () => InfoDialog.dialog(
-                    context: context,
-                    title: 'Remote path',
-                    message:
-                        'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
-                  ),
+              return ListTile(
+                title: const Text('Remote path'),
+                subtitle: Text(todoFileState.remotePath),
+                onTap: () => InfoDialog.dialog(
+                  context: context,
+                  title: 'Remote path',
+                  message:
+                      'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
                 ),
               );
             },
@@ -269,17 +264,14 @@ class TodoFilenameSettingsItem extends StatelessWidget {
       buildWhen: (TodoFileState previousState, TodoFileState state) =>
           previousState.todoFilename != state.todoFilename,
       builder: (BuildContext context, TodoFileState state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListTile(
-            title: const Text('Todo filename'),
-            subtitle: Text(state.todoFilename),
-            onTap: () => InfoDialog.dialog(
-              context: context,
-              title: 'Todo filename',
-              message:
-                  'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
-            ),
+        return ListTile(
+          title: const Text('Todo filename'),
+          subtitle: Text(state.todoFilename),
+          onTap: () => InfoDialog.dialog(
+            context: context,
+            title: 'Todo filename',
+            message:
+                'Changing this value after initializing the app is not supported.\n\nIf you want to change this value, you must reinitialize the app.',
           ),
         );
       },
