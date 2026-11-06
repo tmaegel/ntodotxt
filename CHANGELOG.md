@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Automatically focus the description field when creating a new todo #106 [@bflorat](https://github.com/bflorat)
+
 ## [0.19.3] - 2026-11-06
 
 ### Fixed
