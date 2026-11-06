@@ -77,7 +77,7 @@ class TodoCreateEditPage extends StatelessWidget {
                 SliverList(
                   delegate: SliverChildListDelegate(
                     [
-                      const TodoDescriptionTextField(),
+                      TodoDescriptionTextField(autofocus: newTodo),
                       const Divider(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
