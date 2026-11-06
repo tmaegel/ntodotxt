@@ -19,24 +19,22 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          bashInteractive
-          cmake
           flutter341
-          gtk3
           jdk21
-          libsecret
-          nil
-          ninja
-          nixd
-          pre-commit
-          shellcheck
-          shfmt
-          sqlite
         ];
 
-        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-          pkgs.sqlite
-          pkgs.libsecret
+        nativeBuildInputs = with pkgs; [
+          clang
+          cmake
+          gcc
+          ninja
+          pkg-config
+        ];
+
+        buildInputs = with pkgs; [
+          gtk3
+          libsecret
+          sqlite
         ];
       };
 

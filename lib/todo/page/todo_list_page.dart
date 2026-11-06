@@ -70,6 +70,8 @@ class _TodoListPageState extends ScollToTopViewState<TodoListPage> {
                   child: LoadingIndicatorWrapper(
                     loading: todoListState is TodoListLoading,
                     child: CustomScrollView(
+                      key: const PageStorageKey<String>('todo-list'),
+                      controller: scrollController,
                       slivers: [
                         MainSliverAppBar(
                           title: 'Todos',

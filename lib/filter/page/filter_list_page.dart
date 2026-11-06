@@ -29,6 +29,7 @@ class _FilterListPageState extends ScollToTopViewState<FilterListPage> {
         return PopScopeDrawer(
           child: Scaffold(
             body: CustomScrollView(
+              key: const PageStorageKey<String>('filter-list'),
               controller: scrollController,
               slivers: [
                 MainSliverAppBar(
